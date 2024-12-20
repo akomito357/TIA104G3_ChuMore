@@ -7,4 +7,4 @@ bin/
 *.idea
 *.iml
 .DS_Store
-
+db.properties
