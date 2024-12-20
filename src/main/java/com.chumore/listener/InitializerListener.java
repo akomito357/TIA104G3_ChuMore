@@ -1,6 +1,6 @@
 package com.chumore.listener;
 
-import com.chumore.HibernateUtil;
+import com.chumore.util.HibernateUtil;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

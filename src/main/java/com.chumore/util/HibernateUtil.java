@@ -1,4 +1,4 @@
-package com.chumore;
+package com.chumore.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
