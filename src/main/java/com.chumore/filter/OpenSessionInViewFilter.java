@@ -1,6 +1,6 @@
 package com.chumore.filter;
 
-import com.chumore.HibernateUtil;
+import com.chumore.util.HibernateUtil;
 import org.hibernate.SessionFactory;
 
 import javax.servlet.*;
