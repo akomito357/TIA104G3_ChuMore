@@ -13,12 +13,10 @@
 <!--	<listener-class>com.chumore.listener.InitializerListener</listener-class>-->
 <!--  </listener>-->
 
-
 <!--  <filter>-->
 <!--	<filter-name>SessionInViewFilter</filter-name>-->
 <!--	<filter-class>com.chumore.filter.OpenSessionInViewFilter</filter-class>-->
 <!--  </filter>-->
-
 
 <!--  <filter-mapping>-->
 <!--	<filter-name>SessionInViewFilter</filter-name>-->
