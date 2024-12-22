@@ -8,3 +8,5 @@ bin/
 *.iml
 .DS_Store
 db.properties
+application-secret.properties
+
