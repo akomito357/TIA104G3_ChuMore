@@ -9,7 +9,7 @@ import java.io.IOException;
 
 
 // 在進入頁面時，開啟一個session，並且在頁面結束時，關閉session
-@WebFilter
+//@WebFilter
 public class OpenSessionInViewFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

@@ -14,7 +14,7 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">validate</property>
         <property name="current_session_context_class">thread</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/chumore_test?serverTimezone=Asia/Taipei</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/chumore?serverTimezone=Asia/Taipei</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">123456</property>
     </session-factory>

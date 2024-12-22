@@ -7,7 +7,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 // 啟動與關閉應用程式時自動建立與關閉 SessionFactory
-@WebListener
+//@WebListener
 public class InitializerListener implements ServletContextListener {
 
     @Override
