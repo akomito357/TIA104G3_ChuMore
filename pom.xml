@@ -34,20 +34,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		<!-- 用途說明5: Starter for using Spring Data JPA with Hibernate 很重要！ -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -185,19 +171,6 @@
 			<!-- <version>8.0.29</version> -->       <!-- spring-boot(2.7.0) 已內建依賴8.029，但預設未下載 -->
 		</dependency>
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		<!-- ========================================================================================== -->
 		<!-- ●以下為 thymeleaf 預備使用● -->
 
@@ -223,6 +196,10 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>4.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
 
 	</dependencies>
