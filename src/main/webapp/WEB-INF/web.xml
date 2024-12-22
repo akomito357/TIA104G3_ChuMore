@@ -23,7 +23,6 @@
 <!--	<url-pattern>/*</url-pattern>-->
 <!--  </filter-mapping>-->
 
-
   <resource-ref>
     <description>DB Connection</description>
     <res-ref-name>chumore/envImg</res-ref-name>
