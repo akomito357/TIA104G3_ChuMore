@@ -30,8 +30,8 @@ public class OrderMasterVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
-//	private RestVO rest;
-	private Integer restId;
+	private RestVO rest;
+//	private Integer restId;
 	
 	@ManyToOne
 	@JoinColumn(name = "member_id", referencedColumnName = "member_id")
@@ -85,36 +85,36 @@ public class OrderMasterVO implements Serializable{
 		this.orderTableId = orderTableId;
 	}
 	
-	public Integer getRestId() {
-		return restId;
-	}
-	public void setRestId(Integer restId) {
-		this.restId = restId;
-	}
-	
-//	public RestVO getRest() {
-//		return rest;
+//	public Integer getRestId() {
+//		return restId;
 //	}
-//	
-//	public void setRest(RestVO rest) {
-//		this.rest = rest;
+//	public void setRestId(Integer restId) {
+//		this.restId = restId;
 //	}
 	
-//	public MemberVO getMember() {
-//		return member;
-//	}
-//
-//	public void setMember(MemberVO member) {
-//		this.member = member;
-//	}
-
-	public Integer getMemberId() {
-		return memberId;
+	public RestVO getRest() {
+		return rest;
+	}
+	
+	public void setRest(RestVO rest) {
+		this.rest = rest;
+	}
+	
+	public MemberVO getMember() {
+		return member;
 	}
 
-	public void setMemberId(Integer memberId) {
-		this.memberId = memberId;
+	public void setMember(MemberVO member) {
+		this.member = member;
 	}
+
+//	public Integer getMemberId() {
+//		return memberId;
+//	}
+
+//	public void setMemberId(Integer memberId) {
+//		this.memberId = memberId;
+//	}
 	
 	
 	
@@ -174,8 +174,8 @@ public class OrderMasterVO implements Serializable{
 	public String toString() {
 		return "[order_id = " + orderId 
 				+ ", order_table_id = " + orderTableId 
-				+ ", rest_id = " + restId
-				+ ", member_id = " + memberId
+				+ ", rest_id = " + rest
+				+ ", member_id = " + member
 				+ ", order_status = " + orderStatus
 				+ ", subtotal_price = " + subtotalPrice
 				+ ", total_price = " + totalPrice
