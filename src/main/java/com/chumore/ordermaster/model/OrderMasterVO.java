@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
 
 @Entity
