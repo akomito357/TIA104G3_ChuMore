@@ -35,8 +35,8 @@ public class OrderMasterVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "member_id", referencedColumnName = "member_id")
-//	private MemberVO member;
-	private Integer memberId;
+	private MemberVO member;
+//	private Integer memberId;
 	
 	@Column(name = "order_status", columnDefinition = "TINYINT")
 	private Integer orderStatus;
