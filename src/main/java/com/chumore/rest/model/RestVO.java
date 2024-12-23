@@ -106,8 +106,8 @@ public class RestVO implements Serializable{
 //	private Set<>
 	
 	
-//	public RestVO() {	
-//	}
+	public RestVO() {	
+	}
 	
 	public Integer getRestId() {
 		return restId;
