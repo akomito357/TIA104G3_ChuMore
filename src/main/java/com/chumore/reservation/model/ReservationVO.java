@@ -1,11 +1,23 @@
 package com.chumore.reservation.model;
 
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.chumore.member.model.MemberVO;
+import com.chumore.rest.model.RestVO;
 
 @Entity
 @Table(name="reservation")
@@ -43,7 +55,7 @@ public class ReservationVO implements Serializable{
     private MemberVO memberVO;
 
 
-    public Reservation() {
+    public ReservationVO() {
 
     }
 
