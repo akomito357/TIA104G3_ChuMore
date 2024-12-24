@@ -16,4 +16,7 @@ public interface LocationRepository extends JpaRepository<LocationVO, Integer>{
 =======
 >>>>>>> 66f000b fix: resolve the conflict due to configuration of hibernate and spring data jpa
 	
+	@Query(value = "select l.city from LocationVO l where l.city = ?1")
+	List<String> findCity(String city);
+	
 }
