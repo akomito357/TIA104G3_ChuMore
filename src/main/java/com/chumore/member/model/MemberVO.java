@@ -37,7 +37,7 @@ public class MemberVO implements Serializable {
     private String memberPhoneNumber;
     
     @NotNull(message = "性別不能為空")
-    @Column(name = "member_gender")
+    @Column(name = "member_gender",columnDefinition="TINYINT")
     private Integer memberGender;
     
     @Past(message = "生日必須是過去的日期")

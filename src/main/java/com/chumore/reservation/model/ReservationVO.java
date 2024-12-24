@@ -48,31 +48,31 @@ public class ReservationVO implements Serializable{
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "rest_id",referencedColumnName = "rest_id")
-    private RestVO restVO;
+    private RestVO rest;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "member_id",referencedColumnName = "member_id")
-    private MemberVO memberVO;
+    private MemberVO member;
 
 
     public ReservationVO() {
 
     }
 
-    public RestVO getRestVO() {
-        return restVO;
+    public RestVO getRest() {
+        return rest;
     }
 
-    public void setRestVO(RestVO restVO) {
-        this.restVO = restVO;
+    public void setRest(RestVO rest) {
+        this.rest = rest;
     }
 
-    public MemberVO getMemberVO() {
-        return memberVO;
+    public MemberVO getMember() {
+        return member;
     }
 
-    public void setMemberVO(MemberVO memberVO) {
-        this.memberVO = memberVO;
+    public void setMember(MemberVO member) {
+        this.member = member;
     }
 
     public Integer getReservationId() {
