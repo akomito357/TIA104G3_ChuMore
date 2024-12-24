@@ -3,13 +3,17 @@ package com.chumore.config;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.naming.NamingException;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
+@ComponentScan(basePackages={"com.chumore"})
 @EnableTransactionManagement
 public class HibernateConfig {
 
@@ -51,17 +56,8 @@ public class HibernateConfig {
 
     }
 
-    public DriverManagerDataSource dataSource2() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
-        dataSource.setUrl(env.getProperty("spring.datasource.url"));
-        dataSource.setUsername(env.getProperty("spring.datasource.username"));
-        dataSource.setPassword(env.getProperty("spring.datasource.password"));
-        return dataSource;
-    }
 
-
-
+    // 原生 Hibernate
     @Bean
     public LocalSessionFactoryBean sessionFactory() throws IOException, NamingException {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -72,11 +68,35 @@ public class HibernateConfig {
         return sessionFactory;
     }
 
+    // Spring Data JPA 的 EntityManagerFactory 設定
+    @Bean
+    @Primary
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws NamingException {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(dataSource());
+        emf.setPackagesToScan("com.chumore"); // 掃描 JPA 的 Entity
+
+        // 明確指定 Persistence Provider (Hibernate)
+        emf.setJpaVendorAdapter(new org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter());
+
+        // 加入 Hibernate 相關屬性
+        emf.setJpaProperties(hibernateProperties());
+        return emf;
+    }
+
 
     // 配置 TransactionManager
     @Bean
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
         return new HibernateTransactionManager(sessionFactory);
+    }
+
+    @Bean
+    @Primary
+    public JpaTransactionManager jpaTransactionManager() throws NamingException {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return transactionManager;
     }
 
     private Properties hibernateProperties() throws NamingException {
