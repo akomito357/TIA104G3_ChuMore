@@ -24,9 +24,10 @@ public class OrderMasterVO implements Serializable{
 	@Column(name = "order_id")
 	private Integer orderId;
 	
-	@ManyToOne
-	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
+//	@ManyToOne
+//	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
 //	private OrderTableVO orderTable;
+	@Column(name = "order_table_id")
 	private Integer orderTableId;
 	
 	@ManyToOne
@@ -42,10 +43,10 @@ public class OrderMasterVO implements Serializable{
 	@Column(name = "order_status", columnDefinition = "TINYINT")
 	private Integer orderStatus;
 	
-	@Column(name = "subtotal_price")
+	@Column(name = "subtotal_price", columnDefinition = "DECIMAL")
 	private Double subtotalPrice;
 	
-	@Column(name = "total_price")
+	@Column(name = "total_price", columnDefinition = "DECIMAL")
 	private Double totalPrice;
 	
 	@Column(name = "served_datetime", columnDefinition = "DATETIME")
