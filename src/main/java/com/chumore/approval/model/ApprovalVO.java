@@ -25,7 +25,7 @@ public class ApprovalVO implements Serializable {
 	@JoinColumn(name = "emp_id", referencedColumnName = "emp_id", nullable = false)
 	private EmpVO emp; // 對應員工ID (FK)
 
-	@Column(name = "approval_result", nullable = false)
+	@Column(name = "approval_result", nullable = false, columnDefinition = "TINYINT")
 	private Integer approvalResult;
 
 	@Column(name = "submission_datetime", nullable = false)
