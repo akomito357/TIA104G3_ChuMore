@@ -22,7 +22,7 @@ public class EmpVO implements java.io.Serializable {
 	@Column(name = "emp_password", nullable = false, length = 50) 
 	private String empPassword; // 密碼
 	
-	@Column(name = "emp_account_status", nullable = false) 
+	@Column(name = "emp_account_status", nullable = false, columnDefinition = "TINYINT")
 	private Integer empAccountStatus; // 帳號狀態 (true: 啟用, false: 停用)
 	
 	@Column(name = "emp_create_time", nullable = false, updatable = false)
