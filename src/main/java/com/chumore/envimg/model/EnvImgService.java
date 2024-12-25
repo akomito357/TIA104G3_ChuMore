@@ -1,10 +1,12 @@
 package com.chumore.envimg.model;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service("envImgService")
 public class EnvImgService {
@@ -12,20 +14,25 @@ public class EnvImgService {
 	EnvImgRepository repository;
 
 	// 新增單一環境圖片
-	public void addEnvImg(EnvImgVO envImgVO) {
-		repository.save(envImgVO);
+	public void addEnvImg(EnvImgVO envImg) {
+		repository.save(envImg);
 	}
 
 	// 新增多張環境圖片
-	public void addMultipleEnvImgs(List<EnvImgVO> envImgVOs) {
-		if (envImgVOs != null && !envImgVOs.isEmpty()) {
-			repository.saveAll(envImgVOs); // 使用 JPA 的批量儲存方法
+	public void addMultipleEnvImgs(MultipartFile file, Integer restId) {
+		try {
+			EnvImgVO envImg = new EnvImgVO();
+			envImg.setImage(file.getBytes());
+			envImg.getRest().getRestId();
+			repository.save(envImg);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to save menu image", e);
 		}
 	}
 
 	// 修改環境圖片
-	public void updateEnvImg(EnvImgVO envImgVO) {
-		repository.save(envImgVO);
+	public void updateEnvImg(EnvImgVO envImg) {
+		repository.save(envImg);
 	}
 
 	// 查詢單一環境圖片

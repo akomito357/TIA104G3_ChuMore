@@ -1,4 +1,4 @@
-package com.chumore.envimg.model;
+package com.chumore.ordertable.model;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface EnvImgRepository extends JpaRepository<EnvImgVO, Integer> {
+public interface OrderTableRepository extends JpaRepository<OrderTableVO, Integer> {
 	
 	@Transactional
 	@Modifying
-	@Query(value = "delete from env_img where env_img_id =?1", nativeQuery = true)
-	void deleteByEnvImgId(int envImgId);
+	@Query(value = "delete from order_table where env_img_id =?1", nativeQuery = true)
+	void deleteByEnvImgId(int orderTableId);
 
 }
