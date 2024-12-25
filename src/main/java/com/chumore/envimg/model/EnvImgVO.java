@@ -47,7 +47,7 @@ public class EnvImgVO implements java.io.Serializable {
 		this.restId = restId;
 	}
 
-	@Column(name = "image")
+	@Column(name = "image",columnDefinition="MEDIUMBLOB")
 	public byte[] getImage() {
 		return image;
 	}
