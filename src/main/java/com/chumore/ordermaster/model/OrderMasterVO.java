@@ -75,6 +75,12 @@ public class OrderMasterVO implements Serializable{
 	
 //	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 //	private Set<ReviewVO> reviews;
+		
+//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+//	private Set<orderItemVO> orderItems;
+	
+//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+//	private Set<ReviewVO> reviews;
 	
 	public OrderMasterVO() {
 		
