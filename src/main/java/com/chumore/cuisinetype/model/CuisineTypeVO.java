@@ -24,7 +24,7 @@ public class CuisineTypeVO implements Serializable{
 	private Integer cuisineTypeId;
 	
 	@OneToMany(mappedBy = "cuisineType", cascade = CascadeType.ALL)
-	private Set<RestVO> rest;
+	private Set<RestVO> rests;
 
 	@Column(name = "cuisine_descr")
 	private String cuisineDescr;
@@ -50,11 +50,11 @@ public class CuisineTypeVO implements Serializable{
 	}
 
 	public Set<RestVO> getRests() {
-		return rest;
+		return rests;
 	}
 
-	public void setRests(Set<RestVO> rest) {
-		this.rest = rest;
+	public void setRests(Set<RestVO> rests) {
+		this.rests = rests;
 	}
 
 	@Override

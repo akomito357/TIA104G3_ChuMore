@@ -15,7 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.chumore.approval.model.ApprovalVO;
 import com.chumore.cuisinetype.model.CuisineTypeVO;
+import com.chumore.discpts.model.DiscPtsVO;
+import com.chumore.envimg.model.EnvImgVO;
+import com.chumore.favrest.model.FavRestVO;
+import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.reservation.model.ReservationVO;
+import com.chumore.tabletype.model.TableTypeVO;
 
 @Entity
 @Table(name = "rest")
@@ -99,13 +106,47 @@ public class RestVO implements Serializable{
 	@Column(name = "updated_datetime", columnDefinition = "DATETIME CURRENT TIMESTAMP")
 	private Timestamp updatedDatetime;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<DiscPtsVO> discPts;
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<DiscPtsVO> discPts;
+	
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<OrderMasterVO> orderMasters;
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<>
+//	private Set<ProductVO> products;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<ProductCategoryVO> productCategories;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<OrderTableVO> orderTables;
+	
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<ReservationVO> reservations;
+	
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<ApprovalVO> approvals;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<DailyReservationVO> dailyReservations;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<ReviewVO> reviews;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<EnvImgVO> envImgs;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<MenuImgVO> menuImgs;
+	
+//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	private Set<TableTypeVO> tableTypes;
+	
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<FavRestVO> favRests;
 	
 	
+
 	public RestVO() {	
 	}
 	
@@ -263,6 +304,63 @@ public class RestVO implements Serializable{
 	public void setUpdatedDatetime(Timestamp updatedDatetime) {
 		this.updatedDatetime = updatedDatetime;
 	}
+	
+	public Set<DiscPtsVO> getDiscPts() {
+		return discPts;
+	}
+
+	public void setDiscPts(Set<DiscPtsVO> discPts) {
+		this.discPts = discPts;
+	}
+	
+	public Set<OrderMasterVO> getOrderMasters() {
+		return orderMasters;
+	}
+
+	public void setOrderMasters(Set<OrderMasterVO> orderMasters) {
+		this.orderMasters = orderMasters;
+	}
+
+	public Set<ReservationVO> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(Set<ReservationVO> reservations) {
+		this.reservations = reservations;
+	}
+
+	public Set<ApprovalVO> getApprovals() {
+		return approvals;
+	}
+
+	public void setApprovals(Set<ApprovalVO> approvals) {
+		this.approvals = approvals;
+	}
+
+//	public Set<EnvImgVO> getEnvImgs() {
+//		return envImgs;
+//	}
+//
+//	public void setEnvImgs(Set<EnvImgVO> envImgs) {
+//		this.envImgs = envImgs;
+//	}
+
+//	public Set<TableTypeVO> getTableTypes() {
+//		return tableTypes;
+//	}
+//
+//	public void setTableTypes(Set<TableTypeVO> tableTypes) {
+//		this.tableTypes = tableTypes;
+//	}
+
+	public Set<FavRestVO> getFavRests() {
+		return favRests;
+	}
+
+	public void setFavRests(Set<FavRestVO> favRests) {
+		this.favRests = favRests;
+	}
+
 	@Override
 	public String toString() {
 		return "RestVO [restId=" + restId + ", restName=" + restName + ", restCity=" + restCity + ", restDist="
