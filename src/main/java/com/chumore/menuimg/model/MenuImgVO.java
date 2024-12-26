@@ -1,4 +1,4 @@
-package com.chumore.envimg.model;
+package com.chumore.menuimg.model;
 
 import java.sql.Timestamp;
 
@@ -15,12 +15,12 @@ import javax.persistence.Table;
 import com.chumore.rest.model.RestVO;
 
 @Entity
-@Table(name = "env_img")
-public class EnvImgVO implements java.io.Serializable {
+@Table(name = "menu_img")
+public class MenuImgVO implements java.io.Serializable {
 	@Id
-	@Column(name = "env_img_id")
+	@Column(name = "menu_img_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer envImgId;
+	private Integer menuImgId;
 	
 	@Column(name = "image", columnDefinition = "MEDIUMBLOB")
 	private byte[] image;
@@ -40,15 +40,15 @@ public class EnvImgVO implements java.io.Serializable {
 		this.rest = rest;
 	}
 
-	public EnvImgVO() {
+	public MenuImgVO() {
 	};
 
-	public Integer getEnvImgId() {
-		return envImgId;
+	public Integer getMenuImgId() {
+		return menuImgId;
 	}
 
-	public void setEnvImgId(Integer envImgId) {
-		this.envImgId = envImgId;
+	public void setMenuImgId(Integer menuImgId) {
+		this.menuImgId = menuImgId;
 	}
 
 	public byte[] getImage() {
