@@ -2,7 +2,9 @@ package com.chumore.ordermaster.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,10 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
+import com.chumore.usepoints.model.UsePointsVO;
 
 @Entity
 @Table(name = "order_master")
@@ -61,6 +65,15 @@ public class OrderMasterVO implements Serializable{
 	@Column(name = "checkout_datetime", columnDefinition = "DATETIME")
 	private Timestamp checkoutDatetime;
 	
+	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+	private Set<UsePointsVO> usePoints;
+	
+//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+//	private Set<orderItemVO> orderItems;
+	
+//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+//	private Set<ReviewVO> reviews;
+	
 	public OrderMasterVO() {
 		
 	}
@@ -87,13 +100,6 @@ public class OrderMasterVO implements Serializable{
 		this.orderTableId = orderTableId;
 	}
 	
-//	public Integer getRestId() {
-//		return restId;
-//	}
-//	public void setRestId(Integer restId) {
-//		this.restId = restId;
-//	}
-	
 	public RestVO getRest() {
 		return rest;
 	}
@@ -108,17 +114,7 @@ public class OrderMasterVO implements Serializable{
 
 	public void setMember(MemberVO member) {
 		this.member = member;
-	}
-
-//	public Integer getMemberId() {
-//		return memberId;
-//	}
-
-//	public void setMemberId(Integer memberId) {
-//		this.memberId = memberId;
-//	}
-	
-	
+	}	
 	
 	public Integer getOrderStatus() {
 		return orderStatus;

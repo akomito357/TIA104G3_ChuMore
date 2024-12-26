@@ -5,8 +5,8 @@ import java.util.List;
 public interface CuisineTypeService {
 	List<CuisineTypeVO> getAllTypes();
 	CuisineTypeVO getOneCuisineType(Integer cuisineTypeId);
-	List<CuisineTypeVO> getTypesByName(String cuisineDescr);
+	List<CuisineTypeVO> getTypesByDescr(String cuisineDescr);
 	
-	CuisineTypeVO addCuisineType(String cuisineDescr);
-	CuisineTypeVO updateCuisineType(Integer cuisineTypeId, String cuisineDescr);
+	void addCuisineType(CuisineTypeVO cuisineType);
+	void updateCuisineType(CuisineTypeVO cuisineType);
 }
