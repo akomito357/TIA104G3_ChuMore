@@ -1,6 +1,6 @@
 package com.chumore.productcategory.model;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,9 +32,8 @@ public class ProductCategory_Service {
 	}
 	
 	
-	public ProductCategoryVO getAllCategoryByRest(Integer restId) {
-		Optional<ProductCategoryVO> optional = repository.findById(restId);
-		return optional.orElse(null);
+	public List<ProductCategoryVO> getAllCategoryByRest(Integer restId) {
+		return repository.getCategoryListByRest(restId);
 	}
 	
 	
