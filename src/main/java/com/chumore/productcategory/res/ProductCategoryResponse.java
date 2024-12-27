@@ -1,11 +1,10 @@
-package com.chumore.orderitem.res;
+package com.chumore.productcategory.res;
 
-public class OrderItemResponse<T> {
-	
+public class ProductCategoryResponse<T> {
 	private String msg;
-	
+
 	private int code;
-	
+
 	private T data;
 
 	public String getMsg() {
@@ -32,16 +31,17 @@ public class OrderItemResponse<T> {
 		this.data = data;
 	}
 
-	public OrderItemResponse() {
+	public ProductCategoryResponse() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderItemResponse(String msg, int code, T data) {
+	public ProductCategoryResponse(String msg, int code, T data) {
 		super();
 		this.msg = msg;
 		this.code = code;
 		this.data = data;
 	}
+	
 	
 }
