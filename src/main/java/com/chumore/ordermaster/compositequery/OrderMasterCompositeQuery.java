@@ -1,6 +1,6 @@
 package com.chumore.ordermaster.compositequery;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class OrderMasterCompositeQuery {
 			predicate = builder.equal(root.get(columnName), Double.valueOf(value));
 		} else if ("servedDatetime".equals(columnName) || "checkoutDatetime".equals(columnName)) {
 			// Datetime
-			predicate = builder.equal(root.get(columnName), Timestamp.valueOf(value));
+			predicate = builder.equal(root.get(columnName), LocalDateTime.parse(value));
 		} else if ("orderTableId".equals(columnName)) {
 			
 		} else if ("restId".equals(columnName)) {
