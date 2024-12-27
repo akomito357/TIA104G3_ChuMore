@@ -1,6 +1,6 @@
 package com.chumore.rest.compositequery;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class RestCompositeQuery {
 			predicate = builder.like(root.get(columnName), "%" + value + "%");
 		} else if ("registerDatetime".equals(columnName) || "createdDatetime".equals(columnName) || "updatedDatetime".equals(columnName)) {
 			// datetime
-			predicate = builder.equal(root.get(columnName), Timestamp.valueOf(value));
+			predicate = builder.equal(root.get(columnName), LocalDateTime.parse(value));
 		} else if ("cuisineTypeId".equals(columnName)) {
 			CuisineTypeVO cuisineType = new CuisineTypeVO();
 			cuisineType.setCuisineTypeId(Integer.valueOf(value));

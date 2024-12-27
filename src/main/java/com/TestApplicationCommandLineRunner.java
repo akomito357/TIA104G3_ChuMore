@@ -1,6 +1,8 @@
 package com;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,9 @@ import com.chumore.cuisinetype.model.CuisineTypeRepository;
 import com.chumore.favrest.model.FavRestRepository;
 import com.chumore.location.model.LocationRepository;
 import com.chumore.ordermaster.model.OrderMasterRepository;
-import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.rest.compositequery.RestCompositeQuery;
 import com.chumore.rest.model.RestRepository;
+import com.chumore.rest.model.RestVO;
 
 @SpringBootApplication
 public class TestApplicationCommandLineRunner implements CommandLineRunner{
@@ -45,9 +48,9 @@ public class TestApplicationCommandLineRunner implements CommandLineRunner{
 //		RestVO rest = optional.get();
 //		System.out.println(rest);
 		
-		Optional<OrderMasterVO> optional2 = orderRepos.findById(1);
-		OrderMasterVO type = optional2.get();
-		System.out.println(type);
+//		Optional<OrderMasterVO> optional2 = orderRepos.findById(1);
+//		OrderMasterVO type = optional2.get();
+//		System.out.println(type);
 		
 //		CuisineTypeVO type2 = new CuisineTypeVO();
 //		type2.setCuisineTypeId(11);

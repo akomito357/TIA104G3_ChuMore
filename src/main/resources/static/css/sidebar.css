@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'jf-openhuninn-2.1';
+    src: url("/fonts/jf-openhuninn-2.1.ttf");
+}
+
+.sidebar {
+    background-color: var(--dark);
+    width: var(--sidebar_width);
+    min-height: 100vh;
+    border-right: 1px solid #dee2e6;
+    margin-top: var(--header_height);
+    height: calc(100% - var(--header_height));
+    overflow-y: auto;
+    position: fixed;
+}
+
+.nav-link {
+    color: var(--light);
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+    background-color: var(--lighten_dark);
+    color: var(--light);
+    border-radius: 8px;
+}
+.nav-link.active{
+    color: var(--light);
+    background-color: var(--primary);
+    border-radius: 8px;
+}
+.nav-item > .nav-link.active{
+    background-color: var(--dark);
+}
+.nav-item > .nav-link.active:hover{
+    background-color: var(--lightenDark);
+}
+
+.submenu {
+    padding-left: 2rem;
+}
+
+.submenu .nav-link {
+    font-size: 0.9rem;
+}
+
+.menu-icon {
+    width: 1.2rem;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+.chevron {
+    float: right;
+    transition: transform 0.3s;
+}
+
+.chevron.rotated {
+    transform: rotate(90deg);
+}
