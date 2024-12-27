@@ -20,11 +20,9 @@ import javax.validation.constraints.Pattern;
 import com.chumore.approval.model.ApprovalVO;
 import com.chumore.cuisinetype.model.CuisineTypeVO;
 import com.chumore.discpts.model.DiscPtsVO;
-import com.chumore.envimg.model.EnvImgVO;
 import com.chumore.favrest.model.FavRestVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.reservation.model.ReservationVO;
-import com.chumore.tabletype.model.TableTypeVO;
 
 @Entity
 @Table(name = "rest")
