@@ -43,5 +43,4 @@ public class ProductResponse<T> {
 		this.data = data;
 	}
 	
-	
 }
