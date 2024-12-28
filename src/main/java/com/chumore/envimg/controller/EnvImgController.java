@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.envimg.model.EnvImgService;
 import com.chumore.envimg.model.EnvImgVO;
+
 
 
 
@@ -29,9 +31,10 @@ public class EnvImgController {
 	
 	
 	@PostMapping("addMultipleEnvImgs")
-	public String addMutipleEnvImg(@RequestBody List<EnvImgVO> envImgVOs) {
-		envImgSvc.addMultipleEnvImgs(envImgVOs);
-		
+	public String addMutipleEnvImg( @RequestParam("file") MultipartFile file, @RequestParam("restId") Integer restId) {
+		EnvImgService empSvc = new EnvImgService();
+		envImgSvc.addMultipleEnvImgs(file, restId);
+			
 		return "back-end/secure/rest/resturant_registration_form";
 	} 
 	

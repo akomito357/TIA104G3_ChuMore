@@ -1,5 +1,8 @@
 package com.chumore.tabletype.model;
 import javax.persistence.*;
+
+import com.chumore.rest.model.RestVO;
+
 import java.io.Serializable;
 
 @Entity
@@ -18,22 +21,22 @@ public class TableTypeVO implements Serializable {
     @Column(name = "reserved_limit")
     private String reservedLimit;
 
-//    @ManyToOne(fetch=FetchType.EAGER)
-//    @JoinColumn(name="rest_Id",referencedColumnName="rest_id")
-//    private Rest rest;
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="rest_Id",referencedColumnName="rest_id")
+    private RestVO rest;
 
     public TableTypeVO(){
 
     }
 
 
-//    public Rest getRest() {
-//        return rest;
-//    }
-//
-//    public void setRest(Rest rest) {
-//        this.rest = rest;
-//    }
+    public RestVO getRest() {
+        return rest;
+    }
+
+    public void setRest(RestVO rest) {
+        this.rest = rest;
+    }
 
     public Integer getTableTypeId() {
         return tableTypeId;
