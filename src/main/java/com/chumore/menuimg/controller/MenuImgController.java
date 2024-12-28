@@ -98,7 +98,7 @@ public class MenuImgController {
 		List<FieldError> errorsListToKeep = result.getFieldErrors().stream()
 				.filter(fieldname -> !fieldname.getField().equals(removedFieldname))
 				.collect(Collectors.toList());
-		result = new BeanPropertyBindingResult(menuImgVO, "envImgVO");
+		result = new BeanPropertyBindingResult(menuImgVO, "menuImgVO");
 		for (FieldError fieldError : errorsListToKeep) {
 			result.addError(fieldError);
 		}
