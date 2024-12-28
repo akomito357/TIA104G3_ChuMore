@@ -1,4 +1,4 @@
-package com.chumore.review.model;
+package com.chumore.reviewimg.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

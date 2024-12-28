@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chumore.reviewimg.model.ReviewImageService;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -40,7 +42,7 @@ public class ReviewService {
             throw new RuntimeException("無權限修改此評論");
         }
 
-        validateReviewUpdate(existingReview);
+//        validateReviewUpdate(existingReview);
         
         existingReview.setReviewText(updateRequest.getReviewText());
         existingReview.setReviewRating(updateRequest.getReviewRating());
@@ -126,10 +128,10 @@ public class ReviewService {
         }
     }
 
-    private void validateReviewUpdate(ReviewVO review) {
-        Timestamp deadline = new Timestamp(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000);
-        if (review.getReviewDatetime().before(deadline)) {
-            throw new RuntimeException("評論已超過可修改期限(7天)");
-        }
-    }
+//    private void validateReviewUpdate(ReviewVO review) {
+//        Timestamp deadline = new Timestamp(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000);
+//        if (review.getReviewDatetime().before(deadline)) {
+//            throw new RuntimeException("評論已超過可修改期限(7天)");
+//        }
+//    }
 }

@@ -2,6 +2,9 @@ package com.chumore.review.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import com.chumore.reviewimg.model.ReviewImageVO;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
