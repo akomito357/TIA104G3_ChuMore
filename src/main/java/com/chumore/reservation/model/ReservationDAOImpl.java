@@ -50,7 +50,7 @@ public class ReservationDAOImpl implements ReservationDAO{
 
     @Override
     public List<ReservationVO> findByMemberIdAndDate(int memberId, LocalDate date) {
-        return entityManager.createQuery("FROM ReservationVO r where r.memberId = :memberId AND r.reservationDate = :reservationDate", ReservationVO.class)
+        return entityManager.createQuery("FROM ReservationVO r where r.member.memberId = :memberId AND r.reservationDate = :reservationDate", ReservationVO.class)
                 .setParameter("memberId",memberId)
                 .setParameter("reservationDate",date)
                 .getResultList();
