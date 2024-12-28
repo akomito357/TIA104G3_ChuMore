@@ -43,5 +43,4 @@ public class ProductCategoryResponse<T> {
 		this.data = data;
 	}
 	
-	
 }
