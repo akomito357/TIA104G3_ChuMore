@@ -72,8 +72,8 @@ public class OrderMasterVO implements Serializable{
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 	private Set<UsePointsVO> usePoints;
 	
-	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
-	private Set<OrderItemVO> orderItems;
+//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+//	private Set<OrderItemVO> orderItems;
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 	private Set<ReviewVO> reviews;
@@ -183,13 +183,13 @@ public class OrderMasterVO implements Serializable{
 		this.usePoints = usePoints;
 	}
 
-	public Set<OrderItemVO> getOrderItems() {
-		return orderItems;
-	}
-
-	public void setOrderItems(Set<OrderItemVO> orderItems) {
-		this.orderItems = orderItems;
-	}
+//	public Set<OrderItemVO> getOrderItems() {
+//		return orderItems;
+//	}
+//
+//	public void setOrderItems(Set<OrderItemVO> orderItems) {
+//		this.orderItems = orderItems;
+//	}
 
 	public Set<ReviewVO> getReviews() {
 		return reviews;

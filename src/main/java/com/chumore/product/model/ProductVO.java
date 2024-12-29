@@ -42,7 +42,7 @@ public class ProductVO {
 	@Column(name = "product_image", columnDefinition = "mediumblob")
 	private byte[] productImage;
 	
-	@Column(name ="supply_status")
+	@Column(name ="supply_status", columnDefinition = "TINYINT")
 	private Integer supplyStatus;
 	
 	public Integer getProductId() {

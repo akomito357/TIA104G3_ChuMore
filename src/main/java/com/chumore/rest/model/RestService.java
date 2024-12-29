@@ -7,7 +7,7 @@ public interface RestService {
 	
 	void addRest(RestVO rest);
 	void updateRest(RestVO rest);
-	RestVO getById(Integer restId);
+	RestVO getOneById(Integer restId);
 	List<RestVO> getAll();
 	List<RestVO> getAllCompos(Map<String, String[]> map);
 	
