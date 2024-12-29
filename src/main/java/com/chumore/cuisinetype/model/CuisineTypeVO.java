@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "cuisine_type")
@@ -24,6 +25,7 @@ public class CuisineTypeVO implements Serializable{
 	private Integer cuisineTypeId;
 	
 	@OneToMany(mappedBy = "cuisineType", cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<RestVO> rests;
 
 	@Column(name = "cuisine_descr")

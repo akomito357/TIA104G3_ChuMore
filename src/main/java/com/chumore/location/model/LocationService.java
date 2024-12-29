@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface LocationService {
 
-	LocationVO getById(Integer locationId);
+	LocationVO getOneById(Integer locationId);
 	List<LocationVO> getAll();
-	List<LocationVO> getDistByCity(String city);
-	List<LocationVO> getCity(String city);
+	List<String> getDistByCity(String city);
+	List<String> getCity(String city);
 
 }

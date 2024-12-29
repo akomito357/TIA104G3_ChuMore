@@ -19,10 +19,17 @@ import javax.validation.constraints.Pattern;
 
 import com.chumore.approval.model.ApprovalVO;
 import com.chumore.cuisinetype.model.CuisineTypeVO;
+import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.discpts.model.DiscPtsVO;
+import com.chumore.envimg.model.EnvImgVO;
 import com.chumore.favrest.model.FavRestVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.product.model.ProductVO;
+import com.chumore.productcategory.model.ProductCategoryVO;
 import com.chumore.reservation.model.ReservationVO;
+import com.chumore.review.model.ReviewVO;
+import com.chumore.tabletype.model.TableTypeVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "rest")
@@ -66,6 +73,7 @@ public class RestVO implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "cuisine_type_id", referencedColumnName = "cuisine_type_id")
 	@NotEmpty(message = "請輸入餐廳料理類型")
+	@JsonBackReference
 	private CuisineTypeVO cuisineType;
 	
 	@Column(name = "rest_intro", columnDefinition = "text")
@@ -130,11 +138,11 @@ public class RestVO implements Serializable{
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<OrderMasterVO> orderMasters;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<ProductVO> products;
-		
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<ProductCategoryVO> productCategories;
+	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
+	private Set<ProductVO> products;
+	
+	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
+	private Set<ProductCategoryVO> productCategories;
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 //	private Set<OrderTableVO> orderTables;
@@ -145,19 +153,19 @@ public class RestVO implements Serializable{
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<ApprovalVO> approvals;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<DailyReservationVO> dailyReservations;
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<DailyReservationVO> dailyReservations;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<ReviewVO> reviews;
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	private Set<ReviewVO> reviews;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
-//	private Set<EnvImgVO> envImgs;
+	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
+	private Set<EnvImgVO> envImgs;
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 //	private Set<MenuImgVO> menuImgs;
 	
-//	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+//	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
 //	private Set<TableTypeVO> tableTypes;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
@@ -360,13 +368,13 @@ public class RestVO implements Serializable{
 		this.approvals = approvals;
 	}
 
-//	public Set<EnvImgVO> getEnvImgs() {
-//		return envImgs;
-//	}
-//
-//	public void setEnvImgs(Set<EnvImgVO> envImgs) {
-//		this.envImgs = envImgs;
-//	}
+	public Set<EnvImgVO> getEnvImgs() {
+		return envImgs;
+	}
+
+	public void setEnvImgs(Set<EnvImgVO> envImgs) {
+		this.envImgs = envImgs;
+	}
 
 //	public Set<TableTypeVO> getTableTypes() {
 //		return tableTypes;
@@ -382,6 +390,38 @@ public class RestVO implements Serializable{
 
 	public void setFavRests(Set<FavRestVO> favRests) {
 		this.favRests = favRests;
+	}
+	
+	public Set<ProductVO> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<ProductVO> products) {
+		this.products = products;
+	}
+
+	public Set<ProductCategoryVO> getProductCategories() {
+		return productCategories;
+	}
+
+	public void setProductCategories(Set<ProductCategoryVO> productCategories) {
+		this.productCategories = productCategories;
+	}
+
+	public Set<DailyReservationVO> getDailyReservations() {
+		return dailyReservations;
+	}
+
+	public void setDailyReservations(Set<DailyReservationVO> dailyReservations) {
+		this.dailyReservations = dailyReservations;
+	}
+
+	public Set<ReviewVO> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(Set<ReviewVO> reviews) {
+		this.reviews = reviews;
 	}
 
 	@Override

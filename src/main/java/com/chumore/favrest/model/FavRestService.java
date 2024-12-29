@@ -9,6 +9,7 @@ public interface FavRestService {
 	void addFavRest(FavRestVO favRest) ;
 	void deleteFavRest(Integer favRestId);
 	List<String> getRestByMember(MemberVO member);
+	FavRestVO getOneFavRestById(Integer favRestId);
 	
 
 }
