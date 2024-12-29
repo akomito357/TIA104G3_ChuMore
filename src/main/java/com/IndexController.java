@@ -27,9 +27,4 @@ public class IndexController {
 		return "header_member";
 	}
 	
-	@GetMapping("/check") // test
-	public String checktest() {
-		return "secure/rest/order/restCheckout";
-	}
-	
 }
