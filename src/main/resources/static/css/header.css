@@ -1,4 +1,42 @@
-.header{
+:root {
+    --primary: #FEA116;
+    --btn_hover: #ffc107;
+    --light: #F1F8FF;
+    --dark: #0F172B;
+    --lighten_dark: #383b3f;
+    --header_height: 62.5px;
+    --sidebar_width: 240px;
+}
+
+.header-container{
+    /* height: 100%; */
+    position: relative;
+    
+}
+
+.pageheader{
     box-sizing: border-box;
     height: var(--header_height);
+    position: sticky;
+    background-color: var(--dark);
 }
+
+h1.header-title{
+    color: var(--primary) !important;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+@media(max-width: 991.98px) {
+    .pageheader{
+        height: auto;
+        /* float: left;
+        width: 100vh; */
+    }
+    .header-collapse{
+        z-index: 999;
+        float: left;
+    }
+}
+

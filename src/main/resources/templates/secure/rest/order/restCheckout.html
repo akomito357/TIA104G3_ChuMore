@@ -4,103 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐廳結帳確認頁</title>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="common.css" rel="stylesheet">
-    <link href="css/restCheckout.css" rel="stylesheet">
     
+    <link href="css/restCheckout.css" rel="stylesheet">
+    <head th:insert="~{/header_merchant.html}"></head>
+    <head th:insert="~{/sidebar_merchant.html}"></head>
+    <head th:insert="~{/included.html}"></head>
 </head>
 <body>
-    <div class="checkout-container">
-        <!-- Order Info -->
-        <div class="order-info">
-            <div class="row">
-                <div class="col-6">
-                    <i class="fas fa-chair me-2"></i>
-                    <span th:text="${orderMaster.orderTable.tableNumber}">內用座位C</span>
-                </div>
-                <div class="col-6">
-                    <i class="fas fa-clock me-2"></i>
-                    <span>入座時間：</span><span th:text="${orderMaster.servedDatetime}">2024/11/06 17:00</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Order Items -->
-        <div class="p-4 order_item">
-            <div class="order-time">
-                第一次點餐 17:03
-            </div>
-            
-            <!-- Table Headers -->
-            <div class="row table-header">
-                <div class="col-6">品項</div>
-                <div class="col-2 text-end">單價</div>
-                <div class="col-2 text-end">數量</div>
-                <div class="col-2 text-end">小計</div>
-            </div>
-
-            <!-- Order Line Items -->
-            <div class="order_line_item">
+    <main class="main">
+        <div class="checkout-container">
+            <!-- Order Info -->
+            <div class="order-info">
                 <div class="row">
                     <div class="col-6">
-                        <div>起司牛肉堡</div>
-                        
+                        <i class="fas fa-chair me-2"></i>
+                        <!-- <span th:text="${orderMaster.orderTable.tableNumber}">內用座位C</span> -->
                     </div>
-                    <div class="col-2 text-end">$200</div>
-                    <div class="col-2 text-end">2</div>
-                    <div class="col-2 text-end">$400</div>
+                    <div class="col-6">
+                        <i class="fas fa-clock me-2"></i>
+                        <!-- <span>入座時間：</span><span th:text="${orderMaster.servedDatetime}">2024/11/06 17:00</span> -->
+                    </div>
                 </div>
             </div>
 
-            <div class="order_line_item">
-                <div class="row">
-                    <div class="col-6">薯條(中)</div>
-                    <div class="col-2 text-end">$200</div>
-                    <div class="col-2 text-end">2</div>
-                    <div class="col-2 text-end">$400</div>
+            <!-- Order Items -->
+            <div class="p-4 order_item">
+                <div class="order-time">
+                    第一次點餐 17:03
+                </div>
+                
+                <!-- Table Headers -->
+                <div class="row table-header">
+                    <div class="col-6">品項</div>
+                    <div class="col-2 text-end">單價</div>
+                    <div class="col-2 text-end">數量</div>
+                    <div class="col-2 text-end">小計</div>
+                </div>
+
+                <!-- Order Line Items -->
+                <div class="order_line_item">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>起司牛肉堡</div>
+                            
+                        </div>
+                        <div class="col-2 text-end">$200</div>
+                        <div class="col-2 text-end">2</div>
+                        <div class="col-2 text-end">$400</div>
+                    </div>
+                </div>
+
+                <div class="order_line_item">
+                    <div class="row">
+                        <div class="col-6">薯條(中)</div>
+                        <div class="col-2 text-end">$200</div>
+                        <div class="col-2 text-end">2</div>
+                        <div class="col-2 text-end">$400</div>
+                    </div>
+                </div>
+                <div class="order_item_options">
+                    - 餐點備註
                 </div>
             </div>
-            <div class="order_item_options">
-                - 餐點備註
+
+            <!-- Member Verification Section -->
+            <div class="discount-section">
+                <div class="member-section justify-content-end">
+                    <label class="mb-0">會員驗證：</label>
+                    <input type="tel" class="form-control" style="max-width: 200px;" 
+                        placeholder="請輸入手機號碼" id="phoneNumber">
+                    <button class="btn btn-primary" id="verifyMember">驗證</button>
+                    <div id="memberStatus" class="member-status"></div>
+                </div>
             </div>
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span>小計</span>
+                    <span>$ 1,000</span>
+                </div>
+                <div class="total-row">
+                    <span>會員折扣</span>
+                    <span id="discountAmount">$ 0</span>
+                </div>
+                <div class="total-row">
+                    <span><strong>總金額</strong></span>
+                    <span><strong id="finalTotal">$ 1,000</strong></span>
+                </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <button class="checkout-btn btn">
+                $ 1,000 結帳
+            </button>
         </div>
-
-        <!-- Member Verification Section -->
-        <div class="discount-section">
-            <div class="member-section justify-content-end">
-                <label class="mb-0">會員驗證：</label>
-                <input type="tel" class="form-control" style="max-width: 200px;" 
-                       placeholder="請輸入手機號碼" id="phoneNumber">
-                <button class="btn btn-primary" id="verifyMember">驗證</button>
-                <div id="memberStatus" class="member-status"></div>
-            </div>
-        </div>
-
-        <!-- Total Section -->
-        <div class="total-section">
-            <div class="total-row">
-                <span>小計</span>
-                <span>$ 1,000</span>
-            </div>
-            <div class="total-row">
-                <span>會員折扣</span>
-                <span id="discountAmount">$ 0</span>
-            </div>
-            <div class="total-row">
-                <span><strong>總金額</strong></span>
-                <span><strong id="finalTotal">$ 1,000</strong></span>
-            </div>
-        </div>
-
-        <!-- Checkout Button -->
-        <button class="checkout-btn btn">
-            $ 1,000 結帳
-        </button>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    </main>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script> -->
     <script>
         // $(document).ready(function() {
         //      // 模擬會員資料庫

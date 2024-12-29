@@ -8,31 +8,46 @@
     width: var(--sidebar_width);
     min-height: 100vh;
     border-right: 1px solid #dee2e6;
-    margin-top: var(--header_height);
+    top: var(--header_height);
     height: calc(100% - var(--header_height));
     overflow-y: auto;
     position: fixed;
+    left: 0;
 }
 
-.nav-link {
+@media(max-width: 991.98px){
+    .sidebar{
+        background-color: var(--dark);
+        width: var(--sidebar_width);
+        min-height: 100vh;
+        border-right: 1px solid #dee2e6;
+        top: 80px;
+        height: calc(100% - 80px);
+        overflow-y: auto;
+        position: fixed;
+        left: 0;
+    }
+}
+
+.sidebar-link {
     color: var(--light);
     padding: 0.5rem 1rem;
 }
 
-.nav-link:hover {
+.sidebar-link:hover {
     background-color: var(--lighten_dark);
     color: var(--light);
     border-radius: 8px;
 }
-.nav-link.active{
+.sidebar-link.active{
     color: var(--light);
     background-color: var(--primary);
     border-radius: 8px;
 }
-.nav-item > .nav-link.active{
+.sidebar-item > .sidebar-link.active{
     background-color: var(--dark);
 }
-.nav-item > .nav-link.active:hover{
+.sidebar-item > .sidebar-link.active:hover{
     background-color: var(--lightenDark);
 }
 
@@ -58,3 +73,4 @@
 .chevron.rotated {
     transform: rotate(90deg);
 }
+
