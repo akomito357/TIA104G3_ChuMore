@@ -34,7 +34,7 @@ public class OrderMasterVO implements Serializable{
 //	@ManyToOne
 //	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
 //	private OrderTableVO orderTable;
-//	@Column(name = "order_table_id")
+	@Column(name = "order_table_id")
 	@NotEmpty(message = "點餐桌位：請填寫點餐桌位")
 	private Integer orderTableId;
 	
