@@ -10,7 +10,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItemVO , Integer
 	@Query("SELECT DISTINCT oi.orderId FROM OrderItemVO oi ORDER BY oi.orderId")
 	List<Integer> getOrderIdList();
 	
-	@Query("FROM OrderItemVO oi WHERE oi.orderId = :orderId")
+	@Query(value = "SELECT * FROM order_item oi WHERE oi.order_id = :orderId", nativeQuery = true)
 	List<OrderItemVO> findByOrderId(Integer orderId);
 	
 }

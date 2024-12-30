@@ -12,88 +12,97 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.chumore.ordermaster.model.OrderMasterVO;
 
 @Entity
 @Table(name = "order_item")
 public class OrderItemVO {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "order_item_id")
 	private Integer orderItemId;
-	
+
 //	@ManyToOne
-//	@JoinColumn(name = "order_id")
-//	private OrderVO order;
-	
+//	@JoinColumn(name = "order_id", referencedColumnName = "order_id")
+//	private OrderMasterVO orderMaster;
+
 	@Column(name = "order_id")
 	private Integer orderId;
-	
+
 	@Column(name = "memo")
 	private String memo;
-	
+
 	@Column(name = "created_datetime")
 	private Timestamp createdDatetime;
-	
+
 	@Column(name = "updated_datetime")
 	private Timestamp updatedDatetime;
-	
-	
+
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	
+
 	public Integer getOrderItemId() {
 		return orderItemId;
 	}
+
 	public void setOrderItemId(Integer orderItemId) {
 		this.orderItemId = orderItemId;
 	}
-	
-//	public OrderVO getOrder() {
-//		return order;
+
+//	public OrderMasterVO getOrderMaster() {
+//		return orderMaster;
 //	}
-//	public void setOrder(OrderVO order) {
-//		this.order = order;
+//
+//	public void setOrderMaster(OrderMasterVO orderMaster) {
+//		this.orderMaster = orderMaster;
 //	}
-	public Integer getOrderId() {
+
+	 public Integer getOrderId() {
 		return orderId;
 	}
 	public void setOrderId(Integer orderId) {
 		this.orderId = orderId;
 	}
+	
 	public String getMemo() {
 		return memo;
 	}
+
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+
 	public Timestamp getCreatedDatetime() {
 		return createdDatetime;
 	}
+
 	public void setCreatedDatetime(Timestamp createdDatetime) {
 		this.createdDatetime = createdDatetime;
 	}
+
 	public Timestamp getUpdatedDatetime() {
 		return updatedDatetime;
 	}
+
 	public void setUpdatedDatetime(Timestamp updatedDatetime) {
 		this.updatedDatetime = updatedDatetime;
 	}
-	
+
 	public String getFormatCreatedDatetime() {
-		if(createdDatetime != null) {
+		if (createdDatetime != null) {
 			return createdDatetime.toLocalDateTime().format(FORMATTER);
-		}else {
+		} else {
 			return null;
 		}
 	}
-	
+
 	public String getFormatUpdatedDatetime() {
-		if(updatedDatetime != null) {
+		if (updatedDatetime != null) {
 			return updatedDatetime.toLocalDateTime().format(FORMATTER);
-		}else {
+		} else {
 			return null;
 		}
-		
+
 	}
-	
+
 }
