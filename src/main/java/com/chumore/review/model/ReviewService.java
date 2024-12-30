@@ -1,15 +1,17 @@
 package com.chumore.review.model;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
+import com.chumore.reviewimg.model.ReviewImageService;
 
 @Service
 public class ReviewService {
@@ -36,7 +38,7 @@ public class ReviewService {
         }
         
         ReviewVO existingReview = existingReviewOpt.get();
-        if (!existingReview.getMemberId().equals(memberId)) {
+        if (!existingReview.getMember().getMemberId().equals(memberId)) {
             throw new RuntimeException("無權限修改此評論");
         }
 
@@ -45,7 +47,7 @@ public class ReviewService {
         existingReview.setReviewText(updateRequest.getReviewText());
         existingReview.setReviewRating(updateRequest.getReviewRating());
         existingReview.setAvgCost(updateRequest.getAvgCost());
-        existingReview.setProductId(updateRequest.getProductId());
+        existingReview.setProduct(updateRequest.getProduct());
         
         return reviewRepository.save(existingReview);
     }
@@ -59,7 +61,7 @@ public class ReviewService {
         }
         
         ReviewVO review = reviewOpt.get();
-        if (!review.getMemberId().equals(memberId)) {
+        if (!review.getMember().getMemberId().equals(memberId)) {
             throw new RuntimeException("無權限刪除此評論");
         }
         
@@ -121,7 +123,7 @@ public class ReviewService {
             throw new RuntimeException("平均消費金額必須大於0");
         }
 
-        if (reviewRepository.existsByOrderId(review.getOrderId())) {
+        if (reviewRepository.existsByOrderId(review.getOrderMaster().getOrderId())) {
             throw new RuntimeException("此訂單已經評價過");
         }
     }

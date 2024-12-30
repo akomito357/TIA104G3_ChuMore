@@ -17,7 +17,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import com.chumore.member.model.MemberVO;
+import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.rest.model.RestVO;
+import com.chumore.review.model.ReviewVO;
 import com.chumore.usepoints.model.UsePointsVO;
 
 @Entity
@@ -71,10 +73,10 @@ public class OrderMasterVO implements Serializable{
 	private Set<UsePointsVO> usePoints;
 	
 //	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
-//	private Set<orderItemVO> orderItems;
+//	private Set<OrderItemVO> orderItems;
 	
-//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
-//	private Set<ReviewVO> reviews;
+	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+	private Set<ReviewVO> reviews;
 	
 	public OrderMasterVO() {
 		
@@ -171,6 +173,32 @@ public class OrderMasterVO implements Serializable{
 		this.checkoutDatetime = checkoutDatetime;
 	}
 	
+	
+	
+	public Set<UsePointsVO> getUsePoints() {
+		return usePoints;
+	}
+
+	public void setUsePoints(Set<UsePointsVO> usePoints) {
+		this.usePoints = usePoints;
+	}
+
+//	public Set<OrderItemVO> getOrderItems() {
+//		return orderItems;
+//	}
+//
+//	public void setOrderItems(Set<OrderItemVO> orderItems) {
+//		this.orderItems = orderItems;
+//	}
+
+	public Set<ReviewVO> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(Set<ReviewVO> reviews) {
+		this.reviews = reviews;
+	}
+
 	public String toString() {
 		return "[order_id = " + orderId 
 				+ ", order_table_id = " + orderTableId 

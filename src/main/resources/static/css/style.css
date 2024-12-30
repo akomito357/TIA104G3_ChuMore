@@ -121,16 +121,19 @@
 }
 
 /*header為自加class*/
-.header{
+/* .header{
     box-sizing: border-box;
     height: var(--header_height);
     
-}
+} */
 
 @media (max-width: 991.98px) {
     .sticky-top.navbar-dark {
-        position: relative;
-        border: 1px solid red;
+        position: sticky;
+        top: 0;
+        background-color: var(--dark);
+        /* position: relative; */
+        /* border: 1px solid red; */
     }
 
     .navbar-dark .navbar-collapse {
@@ -142,7 +145,9 @@
         font-weight: 500;
         outline: none;
         transition: .5s;
+        /* width: 100vh; */
     }
+
 
     .navbar-dark .navbar-nav .nav-link,
     .sticky-top.navbar-dark .navbar-nav .nav-link {
@@ -154,11 +159,22 @@
     .navbar-dark .navbar-brand img {
         max-height: 45px;
     }
+
+    /* #navbarCollapse{
+        border: 2px solid green;
+        width: 100vh;
+    } */
+    
+    .header-collapse{
+        /* border: 2px solid red; */
+        /* width: 100%; */
+        position: relative;
+    }
 }
 
 @media (min-width: 992px) {
     .navbar-dark {
-        position: absolute;
+        /* position: absolute; */
         padding: 0;
         width: 100%;
         top: 0;
@@ -169,7 +185,7 @@
     }
     
     .sticky-top.navbar-dark {
-        position: fixed;
+        /* position: fixed; */
         background: var(--dark) !important;
     }
 }

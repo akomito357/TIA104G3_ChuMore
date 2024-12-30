@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface OrderMasterService {
 	
-	OrderMasterVO getById(Integer orderId);
+	OrderMasterVO getOneById(Integer orderId);
 	List<OrderMasterVO> getAllOrder();
 	List<OrderMasterVO> getAllOrder(Map<String, String[]> map);
 	
