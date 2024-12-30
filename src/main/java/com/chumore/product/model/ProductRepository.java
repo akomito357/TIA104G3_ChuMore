@@ -14,4 +14,8 @@ public interface ProductRepository extends JpaRepository<ProductVO, Integer>{
 	
 	@Query("FROM ProductVO p WHERE p.restId = :restId AND p.supplyStatus = 0 ORDER BY p.productCategoryId")
 	List<ProductVO> getMenuBySupplyStatus(Integer restId);
+	
+
+	@Query("FROM ProductVO p WHERE p.productCategoryId = :productCategoryId")
+	List<ProductVO> getProductListByProductCatId(Integer productCategoryId);
 }

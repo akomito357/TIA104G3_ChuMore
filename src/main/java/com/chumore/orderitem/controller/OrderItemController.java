@@ -34,6 +34,7 @@ public class OrderItemController {
 		return ResponseEntity.ok(response);
 	}
 
+
 	@PostMapping("insertOrderItem")
 	public ResponseEntity<OrderItemResponse> insert(@RequestBody OrderItemVO orderItem) {
 		OrderItemVO vo = null;
@@ -42,10 +43,7 @@ public class OrderItemController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		OrderItemResponse<OrderItemVO> response = new OrderItemResponse<OrderItemVO>();
-		response.setData(vo);
-		response.setCode(200);
-		response.setMsg("Success");
+		OrderItemResponse<OrderItemVO> response = new OrderItemResponse<OrderItemVO>("Success",200,vo);
 		return ResponseEntity.ok(response);
 	}
 	
@@ -55,10 +53,7 @@ public class OrderItemController {
 	public ResponseEntity<OrderItemResponse> delete(@RequestBody Map<String, Integer> request){
 		Integer orderItemId = request.get("orderItemId");
 		Integer vo = orderItemSvc.deleteOrderItem(orderItemId);
-		OrderItemResponse<Integer> response = new OrderItemResponse<Integer>();
-		response.setData(vo);
-		response.setCode(200);
-		response.setMsg("Success");
+		OrderItemResponse<Integer> response = new OrderItemResponse<Integer>("Success",200,vo);
 		return ResponseEntity.ok(response);
 	}
 	
@@ -67,10 +62,7 @@ public class OrderItemController {
 	public ResponseEntity<OrderItemResponse> findByOrderItemId(@RequestBody Map<String, Integer> request){
 		Integer orderItemId = request.get("orderItemId");
 		OrderItemVO vo = orderItemSvc.getOrderItemListByOrderItemId(orderItemId);
-		OrderItemResponse<OrderItemVO> response = new OrderItemResponse<OrderItemVO>();
-		response.setData(vo);
-		response.setCode(200);
-		response.setMsg("Success");
+		OrderItemResponse<OrderItemVO> response = new OrderItemResponse<OrderItemVO>("Success",200,vo);
 		return ResponseEntity.ok(response);
 	}
 	
@@ -78,10 +70,7 @@ public class OrderItemController {
 	public ResponseEntity<OrderItemResponse> findByOrderId(@RequestBody Map<String, Integer> request){
 		Integer orderId = request.get("orderId");
 		List<OrderItemVO> vo = orderItemSvc.getOrderItemListByOrderId(orderId);
-		OrderItemResponse<List<OrderItemVO>> response = new OrderItemResponse<List<OrderItemVO>>();
-		response.setData(vo);
-		response.setCode(200);
-		response.setMsg("success");
+		OrderItemResponse<List<OrderItemVO>> response = new OrderItemResponse<List<OrderItemVO>>("Success",200,vo);
 		return ResponseEntity.ok(response);
 	}
 	
@@ -90,8 +79,7 @@ public class OrderItemController {
 	@GetMapping("getorderidlist")
 	public ResponseEntity<OrderItemResponse> getOrderIdList(){
 		List<Integer> vo = orderItemSvc.findAllDistinctOrderIds();
-		OrderItemResponse<List<Integer>> response = new OrderItemResponse<List<Integer>>();
-		response.setData(vo);
+		OrderItemResponse<List<Integer>> response = new OrderItemResponse<List<Integer>>("Success",200,vo);
 		return ResponseEntity.ok(response);
 	}
 	

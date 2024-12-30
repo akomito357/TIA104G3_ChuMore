@@ -13,7 +13,7 @@ public class OrderItem_Service {
 	@Autowired
 	OrderItemRepository repository;
 
-	public OrderItemVO addOrUpdateOrderItem(OrderItemVO orderItem) throws Exception {
+	public OrderItemVO addOrUpdateOrderItem(OrderItemVO orderItem) {
 		if (orderItem.getOrderId() == null) {
 			throw new IllegalArgumentException("ORDER ID CANNOT BE NULL");
 		}
@@ -23,13 +23,12 @@ public class OrderItem_Service {
 		if (orderItem.getOrderItemId() == null) {
 
 			orderItem.setCreatedDatetime(now);
-		}
-		OrderItemVO existingOrderItem = repository.findById(orderItem.getOrderItemId()).orElse(null);
-		
-		if(existingOrderItem != null) {
-			orderItem.setCreatedDatetime(existingOrderItem.getCreatedDatetime());
-		} else {
-			throw new Exception("ORDER ITEM NOT FOUND");
+		}else {
+			OrderItemVO existingOrderItem = repository.findById(orderItem.getOrderItemId()).orElse(null);
+			
+			if(existingOrderItem != null) {
+				orderItem.setCreatedDatetime(existingOrderItem.getCreatedDatetime());
+			} 
 		}
 		orderItem.setUpdatedDatetime(now);
 		return repository.save(orderItem);

@@ -15,10 +15,17 @@ public class ProductCategory_Service {
 		return repository.save(productCategory);
 	}
 	
+	
+	
+	
 	public ProductCategoryVO updateProductCategory(ProductCategoryVO productCategory) {
 		if(productCategory.getProductCategoryId() == null) {
 			throw new IllegalArgumentException("getProductCategoryId CANNOT BE NULL");
 		}else {
+			ProductCategoryVO exstingProductCategory = repository.findById(productCategory.getProductCategoryId()).orElse(null);
+			if(exstingProductCategory != null) {
+				productCategory.setRestId(exstingProductCategory.getRestId());
+			}
 			return repository.save(productCategory);
 		}
 	}
@@ -36,5 +43,5 @@ public class ProductCategory_Service {
 		return repository.getCategoryListByRest(restId);
 	}
 	
-	
+		
 }

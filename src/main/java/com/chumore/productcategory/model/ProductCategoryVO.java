@@ -1,11 +1,18 @@
 package com.chumore.productcategory.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.chumore.product.model.ProductVO;
 
 @Entity
 @Table(name = "product_category")
@@ -26,6 +33,9 @@ public class ProductCategoryVO {
 	@Column(name = "category_name")
 	private String categoryName;
 
+	@OneToMany(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "product_category_id", referencedColumnName = "product_category_id")
+	private List<ProductVO> productList;
 
 	public Integer getProductCategoryId() {
 		return productCategoryId;
@@ -57,6 +67,14 @@ public class ProductCategoryVO {
 
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+
+	public List<ProductVO> getProductList() {
+		return productList;
+	}
+
+	public void setProductList(List<ProductVO> productList) {
+		this.productList = productList;
 	}
 	
 }
