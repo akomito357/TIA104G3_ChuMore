@@ -20,7 +20,7 @@ public class CuisineTypeController {
 //	@Autowired
 	RestService restSvc;
 	
-	@GetMapping("addCuisineType")
+	@GetMapping("/addCuisineType")
 	public String addCuisineType(ModelMap model) {
 		CuisineTypeVO cuisineType = new CuisineTypeVO();
 		model.addAttribute(cuisineType);

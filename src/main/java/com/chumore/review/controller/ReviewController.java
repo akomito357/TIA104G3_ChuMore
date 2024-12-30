@@ -1,18 +1,28 @@
 package com.chumore.review.controller;
 
-import com.chumore.review.model.ReviewImageService;
-import com.chumore.review.model.ReviewImageVO;
-import com.chumore.review.model.ReviewService;
-import com.chumore.review.model.ReviewVO;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import com.chumore.member.model.MemberService;
+import com.chumore.review.model.ReviewService;
+import com.chumore.review.model.ReviewVO;
+import com.chumore.reviewimg.model.ReviewImageService;
+import com.chumore.reviewimg.model.ReviewImageVO;
 
 @RestController
 @RequestMapping("/reviews")
@@ -23,6 +33,9 @@ public class ReviewController {
 
     @Autowired
     private ReviewImageService reviewImageService;
+    
+    @Autowired
+    private MemberService memberService;
 
     /**
      * 獲取訂單資訊用於評論頁面初始化
@@ -54,7 +67,7 @@ public class ReviewController {
             @Valid @RequestBody ReviewVO review,
             @RequestParam(value = "photos", required = false) MultipartFile[] photos) {
         try {
-            review.setMemberId(memberId);
+            review.setMember(memberService.getOneMember(memberId).orElse(null));
             ReviewVO createdReview = reviewService.createReview(review);
 
             // 處理圖片上傳

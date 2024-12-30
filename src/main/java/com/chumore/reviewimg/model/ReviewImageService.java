@@ -1,11 +1,5 @@
-package com.chumore.review.model;
+package com.chumore.reviewimg.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +7,16 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.chumore.review.model.ReviewRepository;
+import com.chumore.review.model.ReviewVO;
 
 @Service
 public class ReviewImageService {
@@ -31,7 +35,7 @@ public class ReviewImageService {
         ReviewVO review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("評論不存在"));
 
-        if (!review.getMemberId().equals(memberId)) {
+        if (!review.getMember().getMemberId().equals(memberId)) {
             throw new RuntimeException("無權限上傳圖片至此評論");
         }
 
@@ -58,7 +62,7 @@ public class ReviewImageService {
         }
 
         ReviewImageVO image = imageOpt.get();
-        if (!image.getReview().getMemberId().equals(memberId)) {
+        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
             throw new RuntimeException("無權限刪除此圖片");
         }
 
@@ -110,7 +114,7 @@ public class ReviewImageService {
     public boolean isImageOwner(Integer imageId, Integer memberId) {
         Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
         return imageOpt.map(image -> 
-            image.getReview().getMemberId().equals(memberId)
+            image.getReview().getMember().getMemberId().equals(memberId)
         ).orElse(false);
     }
 }
