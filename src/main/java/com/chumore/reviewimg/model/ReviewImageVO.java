@@ -2,7 +2,6 @@ package com.chumore.reviewimg.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.chumore.review.model.ReviewVO;
 
@@ -27,13 +27,13 @@ public class ReviewImageVO implements Serializable {
     @Column(name = "review_img_id")
     private Integer reviewImgId;
 
-//    @NotNull(message = "圖片不能為空")
+    @NotNull(message = "圖片不能為空")
     @Lob
     @Column(name = "review_image", nullable = false, columnDefinition = "MEDIUMBLOB")
     private byte[] reviewImage;
 
     @Column(name = "upload_datetime", nullable = false)
-    private LocalDateTime uploadDatetime;
+    private Timestamp uploadDatetime;
 
     @ManyToOne
     @JoinColumn(name = "review_id")
@@ -56,11 +56,11 @@ public class ReviewImageVO implements Serializable {
         this.reviewImage = reviewImage;
     }
 
-    public LocalDateTime getUploadDatetime() {
+    public Timestamp getUploadDatetime() {
         return uploadDatetime;
     }
 
-    public void setUploadDatetime(LocalDateTime uploadDatetime) {
+    public void setUploadDatetime(Timestamp uploadDatetime) {
         this.uploadDatetime = uploadDatetime;
     }
 

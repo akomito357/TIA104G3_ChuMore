@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.review.model.ReviewRepository;
+import com.chumore.review.model.ReviewVO;
 
 @Service
 public class ReviewImageService {
@@ -29,64 +31,51 @@ public class ReviewImageService {
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     @Transactional
-    public void uploadImage(ReviewImageVO reviewImage) {
-    	reviewImageRepository.save(reviewImage);
-    	
-//        ReviewVO review = reviewRepository.findById(reviewId)
-//                .orElseThrow(() -> new RuntimeException("評論不存在"));
+    public ReviewImageVO uploadImage(MultipartFile file, Integer reviewId, Integer memberId) {
+        ReviewVO review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("評論不存在"));
 
-//        if (!review.getMember().equals(memberId)) {
-//            throw new RuntimeException("無權限上傳圖片至此評論");
-//        }
+        if (!review.getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("無權限上傳圖片至此評論");
+        }
 
-//        validateImageUpload(file, reviewId);
-//        try {
-//            ReviewImageVO reviewImage = new ReviewImageVO();
-//            reviewImage.setReview(review);
-//            reviewImage.setReviewImage(compressImage(file.getBytes()));
-////            reviewImage.setUploadDatetime(new Timestamp(System.currentTimeMillis()));
-//
-//            return reviewImageRepository.save(reviewImage);
-//        } catch (IOException e) {
-//            throw new RuntimeException("圖片處理失敗: " + e.getMessage());
-//        }
-    }
-    
-    
-    public void addImage(ReviewImageVO reviewImage) {
-    	reviewImageRepository.save(reviewImage);
+        validateImageUpload(file, reviewId);
+
+        try {
+            ReviewImageVO reviewImage = new ReviewImageVO();
+            reviewImage.setReview(review);
+            reviewImage.setReviewImage(compressImage(file.getBytes()));
+            reviewImage.setUploadDatetime(new Timestamp(System.currentTimeMillis()));
+
+            return reviewImageRepository.save(reviewImage);
+        } catch (IOException e) {
+            throw new RuntimeException("圖片處理失敗: " + e.getMessage());
+        }
     }
 
     @Transactional
     public void deleteImage(Integer imageId, Integer memberId) {
-    	if (reviewImageRepository.existsById(imageId)) {
-    		reviewImageRepository.deleteByReviewIdNative(imageId);
-    	}
-    	
-//        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
-//        if (imageOpt.isEmpty()) {
-//            throw new RuntimeException("圖片不存在");
-//        }
-//        ReviewImageVO image = imageOpt.get();
-//        if (!image.getReview().getMember().equals(memberId)) {
-//            throw new RuntimeException("無權限刪除此圖片");
-//        }
-//        reviewImageRepository.deleteById(imageId);
+        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
+        
+        if (imageOpt.isEmpty()) {
+            throw new RuntimeException("圖片不存在");
+        }
+
+        ReviewImageVO image = imageOpt.get();
+        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("無權限刪除此圖片");
+        }
+
+        reviewImageRepository.deleteById(imageId);
     }
 
     public List<ReviewImageVO> getReviewImages(Integer reviewId) {
         return reviewImageRepository.findByReviewOrderByUploadDatetimeDesc(reviewId);
     }
-    
-    public ReviewImageVO getOneReviewImageById(Integer reviewImagesId) {
-    	Optional<ReviewImageVO> optional = reviewImageRepository.findById(reviewImagesId);
-    	return optional.orElse(null);
-    }
 
     @Transactional
     public void deleteAllByReviewId(Integer reviewId) {
-//        reviewImageRepository.deleteByReview_ReviewId(reviewId);
-    	reviewImageRepository.deleteByReviewIdNative(reviewId);
+        reviewImageRepository.deleteByReview_ReviewId(reviewId);
     }
 
     private void validateImageUpload(MultipartFile file, Integer reviewId) {
@@ -122,10 +111,10 @@ public class ReviewImageService {
         return bos.toByteArray();
     }
 
-//    public boolean isImageOwner(Integer imageId, Integer memberId) {
-//        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
-//        return imageOpt.map(image -> 
-//            image.getReview().getMember().getMamberId().equals(memberId)
-//        ).orElse(false);
-//    }
+    public boolean isImageOwner(Integer imageId, Integer memberId) {
+        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
+        return imageOpt.map(image -> 
+            image.getReview().getMember().getMemberId().equals(memberId)
+        ).orElse(false);
+    }
 }
