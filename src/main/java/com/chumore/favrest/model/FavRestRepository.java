@@ -11,8 +11,8 @@ import com.chumore.member.model.MemberVO;
 
 public interface FavRestRepository extends JpaRepository<FavRestVO, Integer> {
 
-	@Query(value = "SELECT f.rest FROM FavRestVO f WHERE f.member = ?1")
-	List<String> findRestByMember(MemberVO member);	
+	@Query(value = "FROM FavRestVO f WHERE f.member = ?1")
+	List<FavRestVO> findFavRestByMember(MemberVO member);	
 	
 	@Transactional
 	@Modifying

@@ -10,6 +10,6 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 	@Transactional
 	@Modifying
 	@Query(value = "delete from order_master where order_id = ?1", nativeQuery = true)
-	void deleteByOrderId(Integer orderId);
+	OrderMasterVO deleteByOrderId(Integer orderId);
 	
 }

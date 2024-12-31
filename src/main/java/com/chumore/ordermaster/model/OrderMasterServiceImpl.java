@@ -39,18 +39,23 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 	}
 
 	@Override
-	public void addOrderMaster(OrderMasterVO orderMaster) {
-		repository.save(orderMaster);
+	public OrderMasterVO addOrderMaster(OrderMasterVO orderMaster) {
+		return repository.save(orderMaster);
 	}
 
 	@Override
-	public void updateOrderMaster(OrderMasterVO orderMaster) {
-		repository.save(orderMaster);
+	public OrderMasterVO updateOrderMaster(OrderMasterVO orderMaster) {
+		return repository.save(orderMaster);
 	}
 
 	@Override
-	public void deleteOrderMasterById(Integer orderId) {
-		repository.deleteByOrderId(orderId);
+	public Integer deleteOrderMasterById(Integer orderId) {
+		if (repository.existsById(orderId)) {
+			repository.deleteByOrderId(orderId);
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 	
 	public Set<UsePointsVO> getUsePointsByOrderId(Integer orderId){
