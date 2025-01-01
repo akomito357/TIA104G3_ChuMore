@@ -1,8 +1,11 @@
 // let restId = 2001; // for testing
-let orderItem = null;
 
 // 定義元素
 // let productCateNavEle = $(".productCategoryNav");
+let productCategoryJson = null; // line33
+let productJson = null; // line53
+let orderMasterJson = null;
+let orderItemJson = null; //
 
 // ajax
 // function for ProductCategories and Products
@@ -28,6 +31,7 @@ function getProductCategoriesAndProducts(){
             $.each(res.data, function(i, productCategory){
                 // console.log(i);
                 // console.log(item);
+                productCategoryJson = productCategory;
                 if (productCategory.productList.length != 0){
                     productCategories += `<a class="nav-link productCategory" href="#procat${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
                 }
@@ -47,6 +51,7 @@ function getProductCategoriesAndProducts(){
                     
                     $.each(productCategory.productList, function(index, product){
                         // console.log(product);
+                        productJSON = product;
                         if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
                             // let productDiv = "";
                             productCategorySections += `
@@ -111,13 +116,36 @@ function getProductCategoriesAndProducts(){
 }
 
 /**get orderMaster */
+function getOrderMaster(){
+    let url = "http://localhost:8080/orders/findOneByOrderId";
+    let orderData = {
+        orderId: 1
+    };
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        data: orderData,
+        async: true,
+
+        success: res => {
+            console.log('getOrderMaster success');
+            orderMasterJson = res.data;
+            console.log(orderMasterJson);
+        },
+        error: err =>{
+            console.log('getOrderMaster error');
+            console.log(err);
+        }
+    })
 
 
-
+}
 
 /** for 點餐紀錄 */
 function getOrderItem(){
-    let url = "http://localhost:8080/rest/orderitem/findByOrderId"
+    let url = "http://localhost:8080/rest/orderitem/findByOrderId";
     let orderData = {
         orderId: 1
     };
@@ -131,9 +159,9 @@ function getOrderItem(){
 
         success: res =>{
             console.log("getOrderItem success");
-            console.log(res);
-            orderItem = res;
-            console.log(orderItem);
+            // console.log(res);
+            orderItemJson = res.data;
+            console.log(orderItemJson);
         },
 
         error: err =>{
@@ -143,13 +171,26 @@ function getOrderItem(){
     })
 }
 
+function getOrderLineItem(){
+    let url = ""
+
+}
+
+// 將order相關紀錄加入點餐紀錄
+function setOrderHistory(orderMasterJson){
+    // console.log('test');
+    // console.log(orderMasterJson);
+    // console.log('test');
+}
 
 
 
 
 
 getProductCategoriesAndProducts();
+getOrderMaster();
 getOrderItem();
+// setOrderHistory(orderMasterJson);
 
 
 
