@@ -13,6 +13,6 @@ public interface OrderTableRepository extends JpaRepository<OrderTableVO, Intege
 	@Transactional
 	@Modifying
 	@Query(value = "delete from order_table where env_img_id =?1", nativeQuery = true)
-	void deleteByEnvImgId(int orderTableId);
+	void deleteByOrderTableId(int orderTableId);
 
 }

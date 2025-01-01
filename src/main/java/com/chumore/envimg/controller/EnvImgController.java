@@ -74,9 +74,9 @@ public class EnvImgController {
 	}
 	
 	@PostMapping("delete")
-	public String delete(@RequestParam("emv_img_id") String envImgId, ModelMap model) {
-		EnvImgService empSvc = new EnvImgService();
-		empSvc.deleteEnvImg(Integer.valueOf(envImgId));
+	public String delete(@RequestParam("env_img_id") String envImgId, ModelMap model) {
+		EnvImgService envImgSvc = new EnvImgService();
+		envImgSvc.deleteEnvImg(Integer.valueOf(envImgId));
 		
 		List<EnvImgVO> envImgList = envImgSvc.getAll();
 		model.addAttribute("envImg",envImgList); 

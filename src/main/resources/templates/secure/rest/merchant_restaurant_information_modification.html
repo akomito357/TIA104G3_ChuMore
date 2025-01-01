@@ -233,16 +233,70 @@ $(document).ready(function() {
         { id: 2, url: '/path/to/menu2.jpg' }
     ];
 
-    // 縣市區域數據
-    const cityDistricts = {
-        taipei: ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
-        newtaipei: ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區'],
-        taoyuan: ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '龜山區', '龍潭區', '大溪區', '大園區']
-    };
-
     let deletedImageIds = []; // 記錄被刪除的圖片ID
 
-    // 初始化顯示現有圖片
+    // 切換會員資料編輯狀態
+    $('#editMemberBtn').click(function() {
+        const isEditing = $('#memberName').prop('readonly');
+        if (isEditing) {
+            // 進入編輯模式
+            $('#memberForm input').not('#memberEmail').prop('readonly', false).removeClass('read-only-field');
+            $('.password-fields').show();
+            $('#updateMemberBtn').show();
+            $(this).text('取消修改');
+        } else {
+            // 取消編輯模式
+            $('#memberForm input').not('#memberEmail').prop('readonly', true).addClass('read-only-field');
+            $('.password-fields').hide();
+            $('#updateMemberBtn').hide();
+            $(this).text('修改資料');
+            $('#memberForm')[0].reset();
+            $('#passwordMatchFeedback').empty();
+        }
+    });
+
+    // 切換餐廳資料編輯狀態
+    $('#editRestaurantBtn').click(function() {
+        const isEditing = $('#restaurantName').prop('readonly');
+        if (isEditing) {
+            // 進入編輯模式
+            $('#restaurantForm input, #restaurantForm textarea, #restaurantForm select')
+                .not('#businessId')
+                .prop('readonly', false)
+                .prop('disabled', false)
+                .removeClass('read-only-field');
+            
+            $('#environmentImages, #menuImages').show();
+            $('#updateRestaurantBtn').show();
+            $('.delete-image').show();
+            $(this).text('取消修改');
+        } else {
+            // 取消編輯模式
+            resetRestaurantForm();
+        }
+    });
+
+    // 重置餐廳表單狀態
+    function resetRestaurantForm() {
+        $('#restaurantForm input, #restaurantForm textarea, #restaurantForm select')
+            .not('#memberEmail, #memberName, #memberPhone')  // 排除會員資料欄位
+            .prop('readonly', true)
+            .prop('disabled', true)
+            .addClass('read-only-field');
+            
+        $('#environmentImages, #menuImages').hide();
+        $('#updateRestaurantBtn').hide();
+        $('.delete-image').hide();
+        $('#editRestaurantBtn').text('修改資料');
+        $('#restaurantForm')[0].reset();
+        deletedImageIds = [];
+        
+        // 重新顯示圖片
+        displayExistingImages(existingEnvironmentImages, 'environmentImagesDisplay', 'environment');
+        displayExistingImages(existingMenuImages, 'menuImagesDisplay', 'menu');
+    }
+
+    // 顯示圖片的函數
     function displayExistingImages(images, containerId, type) {
         const container = $(`#${containerId}`);
         container.empty();
@@ -277,57 +331,6 @@ $(document).ready(function() {
     displayExistingImages(existingEnvironmentImages, 'environmentImagesDisplay', 'environment');
     displayExistingImages(existingMenuImages, 'menuImagesDisplay', 'menu');
 
-    // 切換會員資料編輯狀態
-    $('#editMemberBtn').click(function() {
-        const isEditing = $('#memberName').prop('readonly');
-        if (isEditing) {
-            $('#memberName, #memberPhone').prop('readonly', false).removeClass('read-only-field');
-            $('.password-fields').show();
-            $('#updateMemberBtn').show();
-            $(this).text('取消修改');
-        } else {
-            $('#memberName, #memberPhone').prop('readonly', true).addClass('read-only-field');
-            $('.password-fields').hide();
-            $('#updateMemberBtn').hide();
-            $(this).text('修改資料');
-            $('#memberForm')[0].reset();
-            $('#passwordMatchFeedback').empty();
-        }
-    });
-
-    // 切換餐廳資料編輯狀態
-    $('#editRestaurantBtn').click(function() {
-        const isEditing = $('#restaurantName').prop('readonly');
-        if (isEditing) {
-            // 進入編輯模式
-            $('input, textarea, select').not('#businessId, #memberEmail')
-                .prop('readonly', false)
-                .prop('disabled', false)
-                .removeClass('read-only-field');
-            $('#environmentImages, #menuImages').show();
-            $('#updateRestaurantBtn').show();
-            $('.delete-image').show();
-            $(this).text('取消修改');
-        } else {
-            resetForm();
-        }
-    });
-
-    // 重置表單狀態
-    function resetForm() {
-        $('input, textarea, select').prop('readonly', true)
-                                  .prop('disabled', true)
-                                  .addClass('read-only-field');
-        $('#environmentImages, #menuImages').hide();
-        $('#updateRestaurantBtn').hide();
-        $('.delete-image').hide();
-        $('#editRestaurantBtn').text('修改資料');
-        $('#restaurantForm')[0].reset();
-        deletedImageIds = [];
-        displayExistingImages(existingEnvironmentImages, 'environmentImagesDisplay', 'environment');
-        displayExistingImages(existingMenuImages, 'menuImagesDisplay', 'menu');
-    }
-
     // 密碼確認驗證
     $('#confirmPassword').on('input', function() {
         const newPassword = $('#newPassword').val();
@@ -341,15 +344,31 @@ $(document).ready(function() {
         }
     });
 
-    // 縣市選擇時更新區域選項
-    $('#city').change(function() {
-        const selectedCity = $(this).val();
-        const districtSelect = $('#district');
-        districtSelect.empty().append('<option value="">選擇鄉鎮市區</option>');
+    // 處理圖片刪除
+    $(document).on('click', '.delete-image', function(e) {
+        e.preventDefault();
+        const imgWrapper = $(this).closest('.image-wrapper');
+        const imgElement = imgWrapper.find('img');
+        const imgId = imgElement.data('id');
+        const imgType = imgElement.data('type');
         
-        if (selectedCity && cityDistricts[selectedCity]) {
-            cityDistricts[selectedCity].forEach(district => {
-                districtSelect.append(`<option value="${district}">${district}</option>`);
+        if (confirm('確定要刪除這張圖片嗎？')) {
+            if (imgId) {
+                deletedImageIds.push({
+                    id: imgId,
+                    type: imgType
+                });
+            }
+            
+            imgWrapper.fadeOut(300, function() {
+                $(this).remove();
+                
+                const containerType = imgType === 'environment' ? 'environmentImagesDisplay' : 'menuImagesDisplay';
+                if ($(`#${containerType} .image-wrapper`).length === 0) {
+                    $(`#${containerType}`).append(
+                        '<div class="text-muted no-images">尚無圖片</div>'
+                    );
+                }
             });
         }
     });
@@ -392,49 +411,6 @@ $(document).ready(function() {
     handleNewImagePreview('environmentImages', 'environmentImagesDisplay', 'environment');
     handleNewImagePreview('menuImages', 'menuImagesDisplay', 'menu');
 
-    // 處理圖片刪除
-    $(document).on('click', '.delete-image', function(e) {
-        e.preventDefault();
-        const imgWrapper = $(this).closest('.image-wrapper');
-        const imgElement = imgWrapper.find('img');
-        const imgId = imgElement.data('id');
-        const imgType = imgElement.data('type');
-        
-        if (confirm('確定要刪除這張圖片嗎？')) {
-            if (imgId) {
-                deletedImageIds.push({
-                    id: imgId,
-                    type: imgType
-                });
-            }
-
-            imgWrapper.fadeOut(300, function() {
-                $(this).remove();
-                
-                const containerType = imgType === 'environment' ? 'environmentImagesDisplay' : 'menuImagesDisplay';
-                if ($(`#${containerType} .image-wrapper`).length === 0) {
-                    $(`#${containerType}`).append(
-                        '<div class="text-muted no-images">尚無圖片</div>'
-                    );
-                }
-            });
-        }
-    
-            
-
-            imgWrapper.fadeOut(300, function() {
-                $(this).remove();
-                
-                const containerType = imgType === 'environment' ? 'environmentImagesDisplay' : 'menuImagesDisplay';
-                if ($(`#${containerType} .image-wrapper`).length === 0) {
-                    $(`#${containerType}`).append(
-                        '<div class="text-muted no-images">尚無圖片</div>'
-                    );
-                }
-            });
-        
-    });
-
     // 更新會員資料
     $('#updateMemberBtn').click(function() {
         if ($('#newPassword').val() !== $('#confirmPassword').val()) {
@@ -449,25 +425,17 @@ $(document).ready(function() {
             newPassword: $('#newPassword').val()
         };
 
-        $.ajax({
-            url: '/api/member/update',
-            type: 'POST',
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
-            success: function(response) {
-                alert('會員資料已更新成功！');
-                $('#memberName, #memberPhone').prop('readonly', true)
-                                            .addClass('read-only-field');
-                $('.password-fields').hide();
-                $('#updateMemberBtn').hide();
-                $('#editMemberBtn').text('修改資料');
-                $('#oldPassword, #newPassword, #confirmPassword').val('');
-                $('#passwordMatchFeedback').empty();
-            },
-            error: function(error) {
-                alert('更新失敗，請重試！');
-            }
-        });
+        // 這裡是發送更新請求的示例
+        console.log('更新會員資料:', formData);
+        alert('會員資料已更新成功！');
+        
+        // 重置會員表單狀態
+        $('#memberForm input').not('#memberEmail').prop('readonly', true).addClass('read-only-field');
+        $('.password-fields').hide();
+        $('#updateMemberBtn').hide();
+        $('#editMemberBtn').text('修改資料');
+        $('#oldPassword, #newPassword, #confirmPassword').val('');
+        $('#passwordMatchFeedback').empty();
     });
 
     // 更新餐廳資料
@@ -485,10 +453,10 @@ $(document).ready(function() {
         formData.append('smallTables', $('#smallTables').val());
         formData.append('mediumTables', $('#mediumTables').val());
         formData.append('largeTables', $('#largeTables').val());
-
+        
         // 添加已刪除的圖片ID
         formData.append('deletedImages', JSON.stringify(deletedImageIds));
-
+        
         // 添加新上傳的圖片
         const environmentFiles = $('#environmentImages')[0].files;
         const menuFiles = $('#menuImages')[0].files;
@@ -501,20 +469,12 @@ $(document).ready(function() {
             formData.append('newMenuImages', file);
         });
 
-        $.ajax({
-            url: '/api/restaurant/update',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                alert('餐廳資料已更新成功！');
-                resetForm();
-            },
-            error: function(error) {
-                alert('更新失敗，請重試！');
-            }
-        });
+        // 這裡是發送更新請求的示例
+        console.log('更新餐廳資料:', formData);
+        alert('餐廳資料已更新成功！');
+        
+        // 重置餐廳表單狀態
+        resetRestaurantForm();
     });
 });
 </script>
