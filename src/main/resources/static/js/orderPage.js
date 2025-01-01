@@ -1,14 +1,15 @@
-let restId = 2001; // for testing
+// let restId = 2001; // for testing
+let orderItem = null;
 
 // 定義元素
-let productCateNavEle = $(".productCategoryNav");
+// let productCateNavEle = $(".productCategoryNav");
 
 // ajax
 // function for ProductCategories and Products
 function getProductCategoriesAndProducts(){
     let apiUrl= "http://localhost:8080/rest/productcategory/getListByRestId"
     let restData = {
-        restId: 2003
+        restId: 2001
     };
 
     $.ajax({
@@ -19,8 +20,8 @@ function getProductCategoriesAndProducts(){
         async: true,
 
         success: res =>{
-            console.log(res);
-            console.log('success')
+            // console.log(res);
+            console.log('getProductCategoriesAndProducts success')
 
             /** 將餐點分類加入上方導覽列 **/
             let productCategories = "";
@@ -37,7 +38,6 @@ function getProductCategoriesAndProducts(){
             /**  將餐點分類代入下方菜單h3標題與餐點代入菜單 **/
             let productCategorySections = "";
             $.each(res.data, function(i, productCategory){
-                
                 if (productCategory.productList.length != 0){ // 該類別有餐點才顯示
                     productCategorySections += 
                     `<section id="procat${productCategory.productCategoryId}" class="menu-section productCategorySection">
@@ -46,19 +46,19 @@ function getProductCategoriesAndProducts(){
                     // console.log(productCategory.productList);
                     
                     $.each(productCategory.productList, function(index, product){
-                        console.log(product);
+                        // console.log(product);
                         if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
-                            let productDiv = "";
+                            // let productDiv = "";
                             productCategorySections += `
                             <div class="menu-item product">
                                 <div class="menu-item-img-container">`;
                             if (product.productImages){ // 有圖片才顯示，否則顯示預設
                                 // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
-                                console.log('not null');
-                                console.log(product.productImage);
+                                // console.log('not null');
+                                // console.log(product.productImage);
                                 productCategorySections += `<img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
                             }else{
-                                console.log('null');
+                                // console.log('null');
                                 productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
                             }
                                     // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
@@ -85,22 +85,17 @@ function getProductCategoriesAndProducts(){
                     })
                     productCategorySections += `</section>`
                     // $(".productCategorySection").html(productDiv);
-                    // console.log("================")
-
+                    // console.log("================")S
                 } else {
                     // productCategorySections += `</section>`
                 }
-                
                 $(".menuContainer").html(productCategorySections);
-
             })
             // console.log(productCategorySections);
-            
-
         },
         error: err =>{
-            console.log(err);
-            console.log('error');
+            // console.log(err);
+            console.log('getProductCategoriesAndProducts error');
         },
     })
 
@@ -115,6 +110,38 @@ function getProductCategoriesAndProducts(){
     // });
 }
 
+/**get orderMaster */
+
+
+
+
+/** for 點餐紀錄 */
+function getOrderItem(){
+    let url = "http://localhost:8080/rest/orderitem/findByOrderId"
+    let orderData = {
+        orderId: 1
+    };
+    
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        data: orderData,
+        async: true,
+
+        success: res =>{
+            console.log("getOrderItem success");
+            console.log(res);
+            orderItem = res;
+            console.log(orderItem);
+        },
+
+        error: err =>{
+            console.log("getOrderItem error");
+            console.log(err);
+        },
+    })
+}
 
 
 
@@ -122,6 +149,7 @@ function getProductCategoriesAndProducts(){
 
 
 getProductCategoriesAndProducts();
+getOrderItem();
 
 
 

@@ -573,8 +573,12 @@
         </div>
     
         <!-- 購物車按鈕 -->
-        <div class="cart-button">
-            <button class="btn btn-primary w-100 position-relative">
+        <div class="cart-button d-flex">
+            <button class="btn btn-outline-primary w-100 position-relative checkCart">
+                <div>檢視購物車 $<span>0</span></div>
+                <!-- <span class="cart-badge">0</span> -->
+            </button>
+            <button class="btn btn-primary w-100 position-relative addToCart">
                 <div>加入購物車 $<span class="currentPrice">0</span></div>
                 <span class="cart-badge">0</span>
             </button>
@@ -666,7 +670,7 @@
                         items += count;
                     });
     
-                    let cartButton = $('.cart-button .btn');
+                    let cartButton = $('.cart-button .addToCart');
                     cartButton.html(`
                         加入購物車 $${total}
                         ${items > 0 ? `<span class="cart-badge">${items}</span>` : ''}
@@ -780,7 +784,7 @@
 
             // 頁面加載完成後初始化
             initialize();
-        }); 
-    </script> -->
+        });  
+    </script>-->
 </body>
 </html>
