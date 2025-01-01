@@ -8,10 +8,12 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chumore.orderitem.model.OrderItemVO;
@@ -21,6 +23,7 @@ import com.chumore.orderitem.res.OrderItemResponse;
 //@Controller
 @RestController
 @RequestMapping("/rest/orderitem")
+@CrossOrigin // for dev
 public class OrderItemController {
 
 	@Autowired
@@ -69,8 +72,9 @@ public class OrderItemController {
 	}
 	
 	@GetMapping("findByOrderId")
-	public ResponseEntity<OrderItemResponse> findByOrderId(@RequestBody Map<String, Integer> request){
-		Integer orderId = request.get("orderId");
+//	public ResponseEntity<OrderItemResponse> findByOrderId(@RequestBody Map<String, Integer> request)
+	public ResponseEntity<OrderItemResponse> findByOrderId(@RequestParam Integer orderId){
+//		Integer orderId = request.get("orderId");
 		List<OrderItemVO> vo = orderItemSvc.getOrderItemListByOrderId(orderId);
 		OrderItemResponse<List<OrderItemVO>> response = new OrderItemResponse<List<OrderItemVO>>("Success",200,vo);
 		return ResponseEntity.ok(response);

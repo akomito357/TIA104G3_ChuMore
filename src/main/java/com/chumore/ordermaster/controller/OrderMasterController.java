@@ -31,13 +31,19 @@ public class OrderMasterController {
 	OrderMasterService orderSvc;
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
-	@PostMapping("getOneForCheckOut")
+	@PostMapping("getOne")
 	public String getOneForCheckOut(@RequestParam("orderId") String orderId, Model model) {
 		// 之後要再把id改成從session取得
 		OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
 		model.addAttribute("orderMaster", orderMaster);		
 		return "";
 	}
+	
+//	// getOneOrder (RESTful)
+//	public ResponseEntity<OrderMasterResponse> getOneOrder(@RequestBody Map<String, Integer>, ){
+//		
+//	}
+	
 	
 	// updateOrder
 	@PostMapping("updateOrder")
