@@ -29,8 +29,13 @@ public class LocationServiceImpl implements LocationService{
 	}
 
 	@Override
-	public List<String> getCity(String city) {
-		return repository.findCity(city);
+	public List<String> getCitys() {
+		return repository.findCitys();
+	}
+	
+	@Override
+	public List<String[]> getCityAndDistByCity(String city){
+		return repository.findCityAndDistByCity(city);
 	}
 	
 

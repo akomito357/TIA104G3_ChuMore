@@ -11,7 +11,7 @@ import com.chumore.cuisinetype.model.CuisineTypeVO;
 import com.chumore.rest.model.RestService;
 
 //@Controller
-@RequestMapping("/cuisineType")
+@RequestMapping("/cuisineTypes")
 public class CuisineTypeController {
 
 //	@Autowired

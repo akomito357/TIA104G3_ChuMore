@@ -9,9 +9,9 @@ public interface OrderMasterService {
 	List<OrderMasterVO> getAllOrder();
 	List<OrderMasterVO> getAllOrder(Map<String, String[]> map);
 	
-	void addOrderMaster(OrderMasterVO orderMaster);
-	void updateOrderMaster(OrderMasterVO orderMaster);
-	void deleteOrderMasterById(Integer orderId);
+	OrderMasterVO addOrderMaster(OrderMasterVO orderMaster);
+	OrderMasterVO updateOrderMaster(OrderMasterVO orderMaster);
+	Integer deleteOrderMasterById(Integer orderId);
 	
 	List<OrderMasterVO> getByMemberId(Integer memberId);
 

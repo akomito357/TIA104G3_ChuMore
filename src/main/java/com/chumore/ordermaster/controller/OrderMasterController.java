@@ -7,27 +7,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.ordermaster.res.OrderMasterResponse;
 
 @Controller
-@RequestMapping("/orderMaster")
+@RequestMapping("/orders")
 public class OrderMasterController {
 	
 	@Autowired
 	OrderMasterService orderSvc;
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
-	@PostMapping("/getOneOrder_For_CheckOut")
+	@PostMapping("getOneForCheckOut")
 	public String getOneForCheckOut(@RequestParam("orderId") String orderId, Model model) {
 		// 之後要再把id改成從session取得
 		OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
@@ -36,6 +39,7 @@ public class OrderMasterController {
 	}
 	
 	// updateOrder
+	@PostMapping("updateOrder")
 	public String updateOrder(@Valid OrderMasterVO orderMaster, BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
 			return ""; // 返回並進行錯誤顯示
@@ -48,7 +52,7 @@ public class OrderMasterController {
 	
 	
 	// addOrder
-	@GetMapping("/addOrder")
+	@GetMapping("addOrder")
 	public String addOrder(ModelMap model) {
 		OrderMasterVO orderMaster = new OrderMasterVO(); // 此處提供基礎結構，用於前端頁面與後端的數據綁定。（通道）
 		model.addAttribute("orderMaster", orderMaster);
@@ -56,21 +60,37 @@ public class OrderMasterController {
 	}
 	
 	// insert
-	public String insertOrder(@Valid OrderMasterVO orderMaster, BindingResult result, ModelMap model) {
-		// 1. 錯誤處理
-		if(result.hasErrors()) {
-			return ""; // return to show error msg
+	@PostMapping("insert")
+	public ResponseEntity<OrderMasterResponse> insert(@RequestBody OrderMasterVO orderMaster){
+		OrderMasterVO vo = null;
+		OrderMasterResponse<OrderMasterVO> res = null;
+		try {
+			vo = orderSvc.addOrderMaster(orderMaster);
+			res = new OrderMasterResponse<>(200, "success", vo);
+			return ResponseEntity.ok(res);
+		}catch (Exception e){
+			res = new OrderMasterResponse<>(400, "error", vo);
+			return ResponseEntity.badRequest().body(res);
 		}
-		// 2. 永續層存取，新增資料
-		orderSvc.addOrderMaster(orderMaster);
-		// 3. 準備轉交
-		orderMaster = orderSvc.getOneById(orderMaster.getOrderId());
-		model.addAttribute("orderMaster", orderMaster);		
-		return "";
 	}
 	
+	// insert
+//	public String insertOrder(@Valid OrderMasterVO orderMaster, BindingResult result, ModelMap model) {
+//		// 1. 錯誤處理
+//		if(result.hasErrors()) {
+//			return ""; // return to show error msg
+//		}
+//		// 2. 永續層存取，新增資料
+//		orderSvc.addOrderMaster(orderMaster);
+//		// 3. 準備轉交
+//		orderMaster = orderSvc.getOneById(orderMaster.getOrderId());
+//		model.addAttribute("orderMaster", orderMaster);		
+//		return "";
+//	}
+	
 	// get by Member or Rest or else
-	public String getOrdersByMember(HttpServletRequest req, Model model) {
+	@GetMapping("findOrderBy")
+	public String getOrdersByOther(HttpServletRequest req, Model model) {
 		// 1. 錯誤處理
 		// 2. 永續層存取，新增資料
 		Map<String, String[]> map = req.getParameterMap();

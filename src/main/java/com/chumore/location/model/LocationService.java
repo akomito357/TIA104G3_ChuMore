@@ -7,6 +7,7 @@ public interface LocationService {
 	LocationVO getOneById(Integer locationId);
 	List<LocationVO> getAll();
 	List<String> getDistByCity(String city);
-	List<String> getCity(String city);
+	List<String> getCitys();
+	List<String[]> getCityAndDistByCity(String city);
 
 }

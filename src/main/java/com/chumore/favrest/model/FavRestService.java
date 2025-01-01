@@ -6,9 +6,9 @@ import com.chumore.member.model.MemberVO;
 
 public interface FavRestService {
 	
-	void addFavRest(FavRestVO favRest) ;
-	void deleteFavRest(Integer favRestId);
-	List<String> getRestByMember(MemberVO member);
+	FavRestVO addFavRest(FavRestVO favRest) ;
+	Integer deleteFavRest(Integer favRestId);
+	List<FavRestVO> getFavRestByMember(MemberVO member);
 	FavRestVO getOneFavRestById(Integer favRestId);
 	
 
