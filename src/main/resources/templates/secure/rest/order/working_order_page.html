@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐廳點餐系統</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: calc(20vh + 200px);
+            padding-bottom: 80px;
+        }
+
+        .fixed-top-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: white;
+        }
+
+        .restaurant-banner {
+            position: relative;
+            height: 10vh;
+            background-color: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .banner-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 10px;
+        }
+
+        .restaurant-info {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .order-history-link {
+            color: #6c757d;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .order-history-link:hover {
+            color: #0d6efd;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 4px 4px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .suggestion-item {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .nav-tabs {
+            background: white;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            border-bottom: none;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-tabs .nav-link {
+            white-space: nowrap;
+            border: none;
+            color: #495057;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* 新的菜品卡片樣式 */
+        .menu-item {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            background: white;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .menu-item-img-container {
+            width: 40%;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+        }
+
+        .menu-item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .menu-item-content {
+            flex-grow: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item-description {
+            flex-grow: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item-footer {
+            margin-top: auto;
+        }
+
+        .menu-section {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            scroll-margin-top: 300px;
+            min-height: 300px;
+        }
+
+        .menu-section-title {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .cart-button {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1040;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        .cart-badge.bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .btn-pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Scrollbar styling */
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav-tabs::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 2px;
+        }
+
+        .nav-tabs::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* Modal styling */
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .highlight {
+            animation: highlight 1.5s ease-out;
+        }
+
+        @keyframes highlight {
+            0% { background-color: #fff; }
+            20% { background-color: #e3f2fd; }
+            100% { background-color: #fff; }
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#menuTabs" data-bs-offset="300">
+    <div class="fixed-top-section">
+        <!-- 餐廳橫幅 -->
+        <div class="restaurant-banner restBanner">
+            <img src="https://placehold.co/400x200" alt="餐廳圖片" class="w-100 h-100 object-fit-cover restEnvImg">
+            <div class="banner-text">
+                <h5 class="m-0">今日特價：指定主餐85折</h5>
+            </div>
+        </div>
+
+        <!-- 餐廳資訊 -->
+        <div class="restaurant-info restInfo">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="m-0 restName">ABC餐館</h2>
+                    <a href="#" class="order-history-link" data-bs-toggle="modal" data-bs-target="#orderHistoryModal">
+                        <i class="fas fa-history"></i>
+                        查看點餐記錄
+                    </a>
+                </div>
+                <div class="text-end">
+                    <div><span>桌號：</span><span class="tableName">A5</span></div>
+                    <div class="text-primary mb-2"><span>目前消費：$</span><span class=" subtotal_price">300</span></div>
+                    <!-- 搜尋欄 -->
+                    <div class="input-group" style="width: 200px;">
+                        <input type="text" class="form-control form-control-sm" placeholder="搜尋餐點...">
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions">
+                        <!-- 搜尋建議會動態插入這裡 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分類導航 -->
+        <nav id="menuTabs" class="nav nav-tabs productCategoryNav">
+            <!-- <a class="nav-link productCategory" href="#appetizer">前菜</a>
+            <a class="nav-link productCategory" href="#main">主餐</a>
+            <a class="nav-link productCategory" href="#soup">湯品</a>
+            <a class="nav-link productCategory" href="#drinks">飲料</a>
+            <a class="nav-link productCategory" href="#dessert">甜點</a> -->
+        </nav>
+    </div>
+
+    <!-- 點餐記錄彈窗 -->
+    <div class="modal fade" id="orderHistoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">點餐記錄</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 第一次點餐 -->
+                    <div class="card mb-3 orderItem">
+                        <div class="card-header d-flex justify-content-between">
+                            <div><span>第</span><span class="orderItemCount">一</span><span>次點餐</span></div>
+                            <div><span class="text-muted orderItemCreateDatetime">19:30</span></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="orderLineItem">凱薩沙拉</div>
+                                <div>$<span class="orderLineItemPrice">180</span> x <span class="orderLineItemQuantity">1</span></div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="orderLineItem">菲力牛排</div>
+                                <div>$<span class="orderLineItemPrice">580</span> x <span class="orderLineItemQuantity">1</span></div>
+                            </div>
+                            <div class="border-top pt-2 mt-2 text-end">
+                                <strong>小計：$<span class="orderLinePrice">760</span></strong>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 第二次點餐 -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div><span>第</span><span class="orderItemCount">二</span><span>次點餐</span></div>
+                            <div><span class="text-muted orderItemCreateDatetime">20:15</span></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="orderLineItem">提拉米蘇</div>
+                                <div>$<span class="orderLineItemPrice">160</span> x <span class="orderLineItemQuantity">2</span></div>
+                            </div>
+                            <div class="border-top pt-2 mt-2 text-end">
+                                <strong>小計：$<span class="orderLinePrice">320</span></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100 text-end">
+                        <div class="text-muted mb-2">總計消費</div>
+                        <div class="h4">$<span class="subtotal_price">1,080</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 餐點列表內容 -->
+    <div class="container pb-5 menuContainer">
+        <!-- 前菜區 -->
+        <section id="appetizer" class="menu-section productCategorySection">
+            <h3 class="menu-section-title productCategoryTitle">前菜</h3>
+            <div class="menu-item product">
+                <div class="menu-item-img-container">
+                    <img src="https://placehold.co/160x120" alt="凱薩沙拉" class="menu-item-img productImage">
+                </div>
+                <div class="menu-item-content">
+                    <h5 class="productName">凱薩沙拉</h5>
+                    <div class="menu-item-description">
+                        <p class="text-muted small mb-0 productDescription">新鮮生菜配以特製凱薩醬及帕瑪森起司，搭配酥脆麵包丁與煙燻培根，口感豐富，是開胃的完美前菜選擇。</p>
+                    </div>
+                    <div class="menu-item-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="h5 mb-0">$<span class="productPrice">180</span></div>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item product">
+                <div class="menu-item-img-container">
+                    <img src="https://placehold.co/160x120" alt="炸軟殼蟹" class="menu-item-img productImage">
+                </div>
+                <div class="menu-item-content">
+                    <h5 class="productName">炸軟殼蟹</h5>
+                    <div class="menu-item-description">
+                        <p class="text-muted small mb-0 productDescription">精選新鮮軟殼蟹，以特製麵衣裹炸，外酥內嫩，搭配特製塔塔醬，完美呈現海鮮的鮮美。</p>
+                    </div>
+                    <div class="menu-item-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="h5 mb-0">$<span class="productPrice">220</span></div>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+            <!-- 主餐區 -->
+            <section id="main" class="menu-section productCategorySection">
+                <h3 class="menu-section-title productCategoryTitle">主餐</h3>
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="菲力牛排" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">菲力牛排</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">紐西蘭頂級菲力，搭配當季時蔬與手工薯條。主廚特調黑胡椒醬與蘑菇醬，讓您享受極致的美味。牛排可依個人喜好選擇熟度：三分、五分、七分或全熟。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">580</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="海鮮燉飯" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">海鮮燉飯</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">使用義大利進口米製作，搭配新鮮蝦仁、淡菜、花枝等海鮮，以海鮮高湯慢火燉煮，香濃可口。撒上帕瑪森起司，令人回味無窮。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">420</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <!-- 湯品區 -->
+            <section id="soup" class="menu-section productCategorySection">
+                <h3 class="menu-section-title productCategoryTitle">湯品</h3>
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="法式洋蔥湯" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">法式洋蔥湯</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">精選洋蔥慢火熬製，搭配自製牛高湯，濃郁香醇。表層覆以焗烤起司麵包，金黃酥脆，是經典的法式湯品。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">160</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <!-- 飲料區 -->
+            <section id="drinks" class="menu-section productCategorySection">
+                <h3 class="menu-section-title productCategoryTitle">飲料</h3>
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="水果茶" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">水果茶</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">嚴選斯里蘭卡紅茶為基底，搭配新鮮季節水果，清爽怡人。可選擇熱飲或冰飲，並可依喜好調整甜度。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">150</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="摩卡咖啡" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">摩卡咖啡</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">使用義大利進口咖啡豆，搭配比利時頂級巧克力，口感濃郁。頂部灑上可可粉，香氣四溢。可選擇熱飲或冰飲。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">140</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <!-- 甜點區 -->
+            <section id="dessert" class="menu-section productCategorySection">
+                <h3 class="menu-section-title productCategoryTitle">甜點</h3>
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="提拉米蘇" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">提拉米蘇</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">經典義大利甜點，以手指餅乾浸泡特調咖啡，層層堆疊馬斯卡彭起司餡，表層撒上可可粉，口感細緻綿密。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">160</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="menu-item product">
+                    <div class="menu-item-img-container">
+                        <img src="https://placehold.co/160x120" alt="巧克力熔岩蛋糕" class="menu-item-img productImage">
+                    </div>
+                    <div class="menu-item-content">
+                        <h5 class="productName">巧克力熔岩蛋糕</h5>
+                        <div class="menu-item-description">
+                            <p class="text-muted small mb-0 productDescription">使用比利時頂級巧克力製作，外層鬆軟，內餡濃郁流心。搭配香草冰淇淋與新鮮草莓，溫熱與冰涼的完美結合。</p>
+                        </div>
+                        <div class="menu-item-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="h5 mb-0">$<span class="productPrice">180</span></div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    
+        <!-- 購物車按鈕 -->
+        <div class="cart-button">
+            <button class="btn btn-primary w-100 position-relative">
+                <div>加入購物車 $<span class="currentPrice">0</span></div>
+                <span class="cart-badge">0</span>
+            </button>
+        </div>
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/orderPage.js}"></script>
+        <script src="/static/js/orderPage.js"></script>
+        <!-- <script>
+            $(document).ready(function() {
+                // 初始化 Bootstrap ScrollSpy
+                var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+                    target: '#menuTabs',
+                    offset: 300
+                });
+    
+                // 平滑滾動功能
+                $('.nav-tabs a').on('click', function(e) {
+                    e.preventDefault();
+                    let target = $($(this).attr('href'));
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 280
+                    }, 500);
+                });
+    
+                // 搜尋功能
+                $('.search-bar input').on('input', function() {
+                    let searchText = $(this).val().toLowerCase();
+                    let suggestions = [];
+                    
+                    $('.menu-item h5').each(function() {
+                        let itemName = $(this).text().toLowerCase();
+                        if (itemName.includes(searchText) && searchText.length > 0) {
+                            suggestions.push($(this).text());
+                        }
+                    });
+    
+                    let suggestionsHtml = suggestions.map(suggestion => 
+                        `<div class="suggestion-item">${suggestion}</div>`
+                    ).join('');
+                    
+                    $('.search-suggestions').html(suggestionsHtml);
+                    
+                    if (suggestions.length > 0 && searchText.length > 0) {
+                        $('.search-suggestions').show();
+                    } else {
+                        $('.search-suggestions').hide();
+                    }
+                });
+    
+                // 點擊搜尋建議
+                $(document).on('click', '.suggestion-item', function() {
+                    let selectedText = $(this).text();
+                    $('.search-bar input').val(selectedText);
+                    $('.search-suggestions').hide();
+                    
+                    // 滾動到對應的菜品
+                    let targetItem = $(`h5:contains("${selectedText}")`).closest('.menu-item');
+                    if (targetItem.length) {
+                        $('html, body').animate({
+                            scrollTop: targetItem.offset().top - 500
+                        }, 300);
+                        
+                        // 高亮顯示找到的項目
+                        targetItem.addClass('highlight')
+                        setTimeout(() => {
+                            targetItem.removeClass('highlight');
+                        }, 1500);
+                    }
+                });
+    
+                // 點擊頁面其他區域關閉搜尋建議
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.search-bar').length) {
+                        $('.search-suggestions').hide();
+                    }
+                });
+    
+                // 更新購物車總額和數量
+                function updateCart() {
+                    let total = 0;
+                    let items = 0;
+                    $('.btn-group .disabled').each(function() {
+                        let count = parseInt($(this).text());
+                        let price = parseInt($(this).closest('.menu-item')
+                            .find('.h5').text().replace('$', ''));
+                        total += count * price;
+                        items += count;
+                    });
+    
+                    let cartButton = $('.cart-button .btn');
+                    cartButton.html(`
+                        加入購物車 $${total}
+                        ${items > 0 ? `<span class="cart-badge">${items}</span>` : ''}
+                    `);
+    
+                    // 更新按鈕狀態
+                    if (items > 0) {
+                        cartButton.addClass('btn-primary').removeClass('btn-outline-primary');
+                    } else {
+                        cartButton.addClass('btn-outline-primary').removeClass('btn-primary');
+                    }
+                }
+    
+                // 數量加減按鈕功能
+                $('.btn-group .btn').on('click', function() {
+                    let countSpan = $(this).siblings('.disabled');
+                    let count = parseInt(countSpan.text());
+                    let isPlus = $(this).text() === '+';
+                    
+                    if (isPlus) {
+                        count++;
+                    } else if (count > 0) {
+                        count--;
+                    }
+                    
+                    countSpan.text(count);
+                    
+                    // 添加動畫效果
+                    if (isPlus && count === 1) {
+                        $('.cart-button .btn').addClass('btn-pulse');
+                        setTimeout(() => {
+                            $('.cart-button .btn').removeClass('btn-pulse');
+                        }, 500);
+                    }
+                    
+                    updateCart();
+                    
+                    //購物車數量變化動畫
+                    let badge = $('.cart-badge');
+                badge.addClass('bounce');
+                setTimeout(() => {
+                    badge.removeClass('bounce');
+                }, 500);
+            });
+
+            // 優化滾動監聽
+            let lastScrollTop = 0;
+            let ticking = false;
+            let activeSection = null;
+
+            // 計算元素可見度
+            function getVisibility(element) {
+                const rect = element.getBoundingClientRect();
+                const windowHeight = $(window).height();
+                const headerOffset = 200; // 頂部固定區域的高度
+
+                // 計算元素在視窗中可見的部分
+                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, headerOffset);
+                const elementHeight = rect.height;
+                
+                // 如果元素完全不可見，返回0
+                if (visibleHeight <= 0) return 0;
+                
+                // 返回可見比例
+                return visibleHeight / elementHeight;
+            }
+
+            $(window).on('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        let scrollTop = $(window).scrollTop();
+                        let maxVisibility = 0;
+                        let mostVisibleSection = null;
+
+                        // 找出最大可見度的區塊
+                        $('.menu-section').each(function() {
+                            const visibility = getVisibility(this);
+                            if (visibility > maxVisibility) {
+                                maxVisibility = visibility;
+                                mostVisibleSection = this;
+                            }
+                        });
+
+                        // 只有當最可見區塊改變時才更新導航
+                        if (mostVisibleSection && mostVisibleSection !== activeSection) {
+                            activeSection = mostVisibleSection;
+                            const id = $(mostVisibleSection).attr('id');
+                            $('.nav-tabs .nav-link').removeClass('active');
+                            $(`.nav-tabs .nav-link[href="#${id}"]`).addClass('active');
+                        }
+
+                        lastScrollTop = scrollTop;
+                        ticking = false;
+                    });
+
+                    ticking = true;
+                }
+            });
+
+            // 初始化
+            function initialize() {
+                // 設置第一個標籤為活動狀態
+                $('.nav-tabs .nav-link:first').addClass('active');
+                
+                // 初始化購物車
+                updateCart();
+
+                // 觸發一次滾動事件來正確設置當前視圖的活動標籤
+                $(window).trigger('scroll');
+            }
+
+            // 頁面加載完成後初始化
+            initialize();
+        }); 
+    </script> -->
+</body>
+</html>

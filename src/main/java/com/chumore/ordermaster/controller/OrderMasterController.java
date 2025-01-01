@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,12 @@ public class OrderMasterController {
 		model.addAttribute("memberOrderList", list);
 		// 3. 準備轉交
 		return "";
+	}
+	
+	@GetMapping("test")
+	public String getOneForOrder(HttpSession session, ModelMap map) {
+		session.setAttribute("orderId", 1);
+		return "/secure/rest/order/working_order_page";
 	}
 	
 }
