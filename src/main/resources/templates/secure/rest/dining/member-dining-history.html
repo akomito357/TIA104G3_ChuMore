@@ -487,34 +487,34 @@ body {
                 method: "GET",
             }).then(res => res.json())
               .then(response => {
-            //    console.log(response);
+               console.log(response);
 
-                // const orderList = response.data;
+                const orderList = response.data;
 
                 
-                // let table_body = "";
-                // orderList.forEach((orderMaster, index) => {
+                let table_body = "";
+                orderList.forEach((orderMaster, index) => {
 
-                //     const[date, time] = orderMaster.servedDatetime.split(" ");
+                    const[date, time] = orderMaster.servedDatetime.split(" ");
 
-                //     table_body += `
-                //     <tr>
-                //         <td class="px-4 py-3">${index+1}</td>
-                //         <td class="px-4 py-3">${orderMaster.restName}</td>
-                //         <td class="px-4 py-3">${date}</td>
-                //         <td class="px-4 py-3">${time}</td>
-                //     	<td class="px-4 py-3">${orderMaster.totalPrice}</td>
-                //         <td class="px-4 py-3"><a href="#" class="show-detail">
-                //                 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                //         </td>        
-                //     	<td class="px-4 py-3">${orderMaster.reviewId? "已評論" : "未評論"}</td>
-                //     	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
-                //     	<td class="px-4 py-3">
-                //         	<button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId? "查看評論" : "進行評論"}</button>
-                //     	</td>
+                    table_body += `
+                    <tr>
+                        <td class="px-4 py-3">${index+1}</td>
+                        <td class="px-4 py-3">${orderMaster.restName}</td>
+                        <td class="px-4 py-3">${date}</td>
+                        <td class="px-4 py-3">${time}</td>
+                    	<td class="px-4 py-3">${orderMaster.totalPrice}</td>
+                        <td class="px-4 py-3"><a href="#" class="show-detail">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </td>        
+                    	<td class="px-4 py-3">${orderMaster.reviewId? "已評論" : "未評論"}</td>
+                    	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
+                    	<td class="px-4 py-3">
+                        	<button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId? "查看評論" : "進行評論"}</button>
+                    	</td>
 
             
-                //     </tr>`;
+                    </tr>`;
 
 
                     });
@@ -525,31 +525,9 @@ body {
             });
             
             
-            fetch("/rest/productcategory/getListByRestId?restId=2001",{
-            	method: "GET"
-            }).then(res => res.json())
-              .then(response => {
-                console.log(response);
-
-                const orderList = response.data;
-
-                
-                let table_body = "";
-                orderList.forEach((productCetetory, index) => {
-
-             
-
-                    table_body += `
-                    <tr>
-                        <td class="px-4 py-3">${productCetetory.productName}</td>
-                    	</td>
-
-            
-                    </tr>`;
-                
-              });
             
             
+                document.getElementById("order-tbody").innerHTML = table_body;
 
             //頁面切換
             tabs.on("click", function (e) {

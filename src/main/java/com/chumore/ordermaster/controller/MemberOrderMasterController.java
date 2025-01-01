@@ -28,10 +28,10 @@ public class MemberOrderMasterController {
 	HttpSession session;
 	
 	@Autowired
-	OrderMasterService ordersvc;
+	OrderMasterService orderSvc;
 	
 	@Autowired
-	ReviewService reviewSvc;
+	ReviewService reviewService;
 	
 	@GetMapping("findByMemberId")
 	public ResponseEntity<OrderMasterResponse> findByMemberId(){
@@ -46,10 +46,10 @@ public class MemberOrderMasterController {
 		
 		List<OrderMasterDto> dtoList = new ArrayList<OrderMasterDto>();
 		
-		List<OrderMasterVO> list = ordersvc.getByMemberId(memberId);
+		List<OrderMasterVO> list = orderSvc.getByMemberId(memberId);
 		
 		for(OrderMasterVO data : list) {
-			ReviewVO review = reviewSvc.getReviewByOrderId(data.getOrderId());
+			ReviewVO review = reviewService.getReviewByOrderId(data.getOrderId());
 			OrderMasterDto dto = new OrderMasterDto(data, review);
 			dtoList.add(dto);
 		}
