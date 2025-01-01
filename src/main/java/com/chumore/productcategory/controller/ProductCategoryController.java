@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chumore.productcategory.model.ProductCategoryVO;
@@ -47,8 +48,8 @@ public class ProductCategoryController {
 	}
 	
 	@GetMapping("getListByRestId")
-	public ResponseEntity<ProductCategoryResponse>getListByRestId(@RequestBody Map<String, Integer>request){
-		Integer restId = request.get("restId");
+	public ResponseEntity<ProductCategoryResponse>getListByRestId(@RequestParam Integer restId){
+//		Integer restId = request.get("restId");
 		List<ProductCategoryVO> vo = productCategorySvc.getAllCategoryByRest(restId);
 		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>("Success",200,vo);
 		

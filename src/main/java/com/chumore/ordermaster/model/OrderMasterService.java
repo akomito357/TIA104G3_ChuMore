@@ -12,5 +12,7 @@ public interface OrderMasterService {
 	OrderMasterVO addOrderMaster(OrderMasterVO orderMaster);
 	OrderMasterVO updateOrderMaster(OrderMasterVO orderMaster);
 	Integer deleteOrderMasterById(Integer orderId);
+	
+	List<OrderMasterVO> getByMemberId(Integer memberId);
 
 }

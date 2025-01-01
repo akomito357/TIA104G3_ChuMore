@@ -72,4 +72,9 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 	
 	
 
+	@Override
+	public List<OrderMasterVO> getByMemberId(Integer memberId) {
+		return repository.getByMemberId(memberId);
+	}
+
 }

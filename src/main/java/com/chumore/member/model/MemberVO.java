@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "member")
@@ -89,20 +90,20 @@ public class MemberVO implements Serializable {
         this.memberPhoneNumber = memberPhoneNumber;
     }
 
-    public Integer getMemberGender() {
+    public @NotNull(message = "性別不能為空") Integer getMemberGender() {
         return memberGender;
     }
 
-    public void setMemberGender(Integer memberGender) {
-        this.memberGender = memberGender;
+    public void setMemberGender(Integer memberGender2) {
+        this.memberGender = memberGender2;
     }
 
-    public Date getMemberBirthdate() {
+    public @Past(message = "生日必須是過去的日期") Date getMemberBirthdate() {
         return memberBirthdate;
     }
 
-    public void setMemberBirthdate(Date memberBirthdate) {
-        this.memberBirthdate = memberBirthdate;
+    public void setMemberBirthdate(Date memberBirthdate2) {
+        this.memberBirthdate = memberBirthdate2;
     }
 
     public String getMemberAddress() {

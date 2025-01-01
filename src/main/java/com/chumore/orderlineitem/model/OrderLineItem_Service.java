@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.chumore.orderitem.model.OrderItemRepository;
-import com.chumore.orderitem.model.OrderItemVO;
-import com.chumore.product.model.ProductVO;
+import com.chumore.product.model.ProductRepository;
 
 @Service("orderLineItemSvc")
 public class OrderLineItem_Service {
@@ -16,8 +15,8 @@ public class OrderLineItem_Service {
 	@Autowired
 	OrderLineItemRepository repository;
 
-//	@Autowired
-//	private ProductRepository productRepository;
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Autowired
 	private OrderItemRepository orderItemRepository;
@@ -40,9 +39,17 @@ public class OrderLineItem_Service {
 
 	public OrderLineItemVO updateOrderLineItem(OrderLineItemVO orderLineItem) {
 		if (orderLineItem.getOrderLineItemId() == null) {
-			throw new IllegalArgumentException("ORDER LINE ID CANNOT BE NULL");
+			throw new IllegalArgumentException("ORDER LINE ITEM ID CANNOT BE NULL");
 		} else {
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			OrderLineItemVO existingOrderLineItem = repository.findById(orderLineItem.getOrderLineItemId()).orElse(null);
+			if(existingOrderLineItem != null) {
+				orderLineItem.setOrderItemId(existingOrderLineItem.getOrderItemId());
+				orderLineItem.setCreatedDatetime(existingOrderLineItem.getCreatedDatetime());
+			}
+			orderLineItem.setUpdatedDatetime(now);
 			return repository.save(orderLineItem);
+			
 		}
 	}
 

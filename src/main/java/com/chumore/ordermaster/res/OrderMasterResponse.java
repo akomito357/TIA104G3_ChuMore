@@ -1,37 +1,46 @@
 package com.chumore.ordermaster.res;
 
 public class OrderMasterResponse<T> {
-	private int resCode;
-	private String resMsg;
+	
+	private String msg;
+	
+	private int code;
+	
 	private T data;
-	
-	public OrderMasterResponse() {
-		super();
-	}
-	
-	public OrderMasterResponse(int resCode, String resMsg, T data) {
-		super();
-		this.resCode = resCode;
-		this.resMsg = resMsg;
-		this.data = data;
+
+	public String getMsg() {
+		return msg;
 	}
 
-	public int getResCode() {
-		return resCode;
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
-	public void setResCode(int resCode) {
-		this.resCode = resCode;
+
+	public int getCode() {
+		return code;
 	}
-	public String getResMsg() {
-		return resMsg;
+
+	public void setCode(int code) {
+		this.code = code;
 	}
-	public void setResMsg(String resMsg) {
-		this.resMsg = resMsg;
-	}
+
 	public T getData() {
 		return data;
 	}
+
 	public void setData(T data) {
+		this.data = data;
+	}
+
+	public OrderMasterResponse() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public OrderMasterResponse(String msg, int code, T data) {
+		super();
+		this.msg = msg;
+		this.code = code;
 		this.data = data;
 	}
 	

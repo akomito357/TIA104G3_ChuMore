@@ -134,4 +134,8 @@ public class ReviewService {
             throw new RuntimeException("評論已超過可修改期限(7天)");
         }
     }
+    
+    public ReviewVO getReviewByOrderId(Integer orderId) {
+    	return reviewRepository.getReviewByOrderId(orderId);
+    }
 }
