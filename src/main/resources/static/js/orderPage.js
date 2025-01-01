@@ -4,12 +4,11 @@ let restId = 2001; // for testing
 let productCateNavEle = $(".productCategoryNav");
 
 // ajax
-
-// function for ProductCategories
-function getProductCategories(){
+// function for ProductCategories and Products
+function getProductCategoriesAndProducts(){
     let apiUrl= "http://localhost:8080/rest/productcategory/getListByRestId"
     let restData = {
-        restId: 2001
+        restId: 2003
     };
 
     $.ajax({
@@ -23,27 +22,80 @@ function getProductCategories(){
             console.log(res);
             console.log('success')
 
-            // 將餐點分類加入上方導覽列
+            /** 將餐點分類加入上方導覽列 **/
             let productCategories = "";
-            $.each(res.data, function(i, item){
+            $.each(res.data, function(i, productCategory){
                 // console.log(i);
                 // console.log(item);
-                productCategories += `<a class="nav-link productCategory" href="#procat${item.productCategoryId}">${item.categoryName}</a>`;
+                if (productCategory.productList.length != 0){
+                    productCategories += `<a class="nav-link productCategory" href="#procat${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
+                }
             });
-            console.log(productCategories);
-            
+            // console.log(productCategories);
             $(".productCategoryNav").html(productCategories);
             
-            // 將餐點分類代入下方菜單h3標題
+            /**  將餐點分類代入下方菜單h3標題與餐點代入菜單 **/
             let productCategorySections = "";
-            $.each(res.data, function(i, item){
-                productCategorySections += 
-                `<section id="procat${item.productCategoryId}" class="menu-section productCategorySection">
-                <h3 class="menu-section-title productCategoryTitel">${item.categoryName}</h3>
-                </section>`;
+            $.each(res.data, function(i, productCategory){
+                
+                if (productCategory.productList.length != 0){ // 該類別有餐點才顯示
+                    productCategorySections += 
+                    `<section id="procat${productCategory.productCategoryId}" class="menu-section productCategorySection">
+                    <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
+                    `;
+                    // console.log(productCategory.productList);
+                    
+                    $.each(productCategory.productList, function(index, product){
+                        console.log(product);
+                        if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
+                            let productDiv = "";
+                            productCategorySections += `
+                            <div class="menu-item product">
+                                <div class="menu-item-img-container">`;
+                            if (product.productImages){ // 有圖片才顯示，否則顯示預設
+                                // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
+                                console.log('not null');
+                                console.log(product.productImage);
+                                productCategorySections += `<img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
+                            }else{
+                                console.log('null');
+                                productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
+                            }
+                                    // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
+                            productCategorySections +=  `</div>
+                                <div class="menu-item-content">
+                                    <h5 class="productName">${product.productName}</h5>
+                                    <div class="menu-item-description">
+                                        <p class="text-muted small mb-0 productDescription">${product.productDescription}</p>
+                                    </div>
+                                    <div class="menu-item-footer">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="h5 mb-0">$<span class="productPrice">${product.productPrice}</span></div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                                <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                                <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }
+                        
+                    })
+                    productCategorySections += `</section>`
+                    // $(".productCategorySection").html(productDiv);
+                    // console.log("================")
+
+                } else {
+                    // productCategorySections += `</section>`
+                }
+                
+                $(".menuContainer").html(productCategorySections);
+
             })
-            console.log(productCategorySections);
-            $(".menuContainer").html(productCategorySections);
+            // console.log(productCategorySections);
+            
 
         },
         error: err =>{
@@ -63,19 +115,13 @@ function getProductCategories(){
     // });
 }
 
-// function for products
-function getProduct(){
-    let url = "";
-    
-
-
-}
 
 
 
 
 
-getProductCategories();
+
+getProductCategoriesAndProducts();
 
 
 
