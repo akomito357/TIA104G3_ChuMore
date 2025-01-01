@@ -27,4 +27,8 @@ public class IndexController {
 		return "header_member";
 	}
 	
+	@GetMapping("/restDiningHistory")
+	public String restDiningHistory() {
+		return "secure/rest/dining/member-dining-history";
+	}
 }

@@ -27,4 +27,9 @@ public interface ReviewRepository extends JpaRepository<ReviewVO, Integer> {
 
     @Query("SELECT AVG(r.reviewRating) FROM ReviewVO r WHERE r.rest.restId = :restId")
     BigDecimal calculateAverageRating(@Param("restId") Integer restId);
+    
+    @Query("SELECT r FROM ReviewVO r WHERE r.orderId = :orderId")
+    ReviewVO getReviewByOrderId(@Param("orderId") Integer orderId);
+
+
 }
