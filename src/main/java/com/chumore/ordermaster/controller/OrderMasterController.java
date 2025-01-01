@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +67,10 @@ public class OrderMasterController {
 		OrderMasterResponse<OrderMasterVO> res = null;
 		try {
 			vo = orderSvc.addOrderMaster(orderMaster);
-			res = new OrderMasterResponse<>(200, "success", vo);
+			res = new OrderMasterResponse<>("success", 200, vo);
 			return ResponseEntity.ok(res);
 		}catch (Exception e){
-			res = new OrderMasterResponse<>(400, "error", vo);
+			res = new OrderMasterResponse<>("error", 400, vo);
 			return ResponseEntity.badRequest().body(res);
 		}
 	}
@@ -98,6 +99,12 @@ public class OrderMasterController {
 		model.addAttribute("memberOrderList", list);
 		// 3. 準備轉交
 		return "";
+	}
+	
+	@GetMapping("test")
+	public String getOneForOrder(HttpSession session, ModelMap map) {
+		session.setAttribute("orderId", 1);
+		return "/secure/rest/order/working_order_page";
 	}
 	
 }
