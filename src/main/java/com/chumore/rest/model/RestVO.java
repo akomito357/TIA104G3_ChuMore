@@ -161,7 +161,7 @@ public class RestVO implements Serializable{
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<ReviewVO> reviews;
 	
-	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<EnvImgVO> envImgs;
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
