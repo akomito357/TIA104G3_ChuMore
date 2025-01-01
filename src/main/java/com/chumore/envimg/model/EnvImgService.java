@@ -1,9 +1,9 @@
 package com.chumore.envimg.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service("envImgService")
@@ -11,21 +11,20 @@ public class EnvImgService {
 	@Autowired
 	EnvImgRepository repository;
 
-	// 新增單一環境圖片
-	public void addEnvImg(EnvImgVO envImgVO) {
-		repository.save(envImgVO);
+	// 新增環境圖片
+	
+	public void addEnvImg(EnvImgVO envImg) {
+		repository.save(envImg);
 	}
 
 	// 新增多張環境圖片
-	public void addMultipleEnvImgs(List<EnvImgVO> envImgVOs) {
-		if (envImgVOs != null && !envImgVOs.isEmpty()) {
-			repository.saveAll(envImgVOs); // 使用 JPA 的批量儲存方法
-		}
-	}
+	public void addMultipleEnvImgs(EnvImgVO envImg) {
+		repository.save(envImg);
+	}	
 
 	// 修改環境圖片
-	public void updateEnvImg(EnvImgVO envImgVO) {
-		repository.save(envImgVO);
+	public void updateEnvImg(EnvImgVO envImg) {
+		repository.save(envImg);
 	}
 
 	// 查詢單一環境圖片
