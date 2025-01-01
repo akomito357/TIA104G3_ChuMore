@@ -3,6 +3,8 @@ package com.chumore.reservation.model;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,9 +30,11 @@ public class ReservationVO implements Serializable{
     @Column(name="phone_number")
     private String phoneNumber;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="reservation_date")
     private LocalDate reservationDate;
 
+    @JsonFormat(pattern="HH:mm[:ss]")
     @Column(name="reservation_time")
     private LocalTime reservationTime;
 
@@ -39,10 +43,13 @@ public class ReservationVO implements Serializable{
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
+    @JsonBackReference("reservation-rest")
     private RestVO rest;
+
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    @JsonBackReference("reservation-member")
     private MemberVO member;
 
 
@@ -51,6 +58,7 @@ public class ReservationVO implements Serializable{
     }
 
     // Getters and Setters
+
 
     public RestVO getRest() {
         return rest;
@@ -127,8 +135,8 @@ public class ReservationVO implements Serializable{
 
     @Override
     public String toString() {
-        return "Reservation[" +"reservation_id="+ reservationId +", rest_name="+rest.getRestName()+", member_name="+member.getMemberName()+
-                ", guest_count="+ guestCount +", reservation_status="+ reservationStatus +", phone_number="+ phoneNumber +
-                ", reservation_date="+ reservationDate +", reservation_time="+ reservationTime +", created_datetime="+ createdDatetime +"]";
+       return "Reservation[" +"reservation_id="+ reservationId +", rest_name="+rest.getRestName()+", member_name="+member.getMemberName()+
+               ", guest_count="+ guestCount +", reservation_status="+ reservationStatus +", phone_number="+ phoneNumber +
+               ", reservation_date="+ reservationDate +", reservation_time="+ reservationTime +", created_datetime="+ createdDatetime +"]";
     }
 }

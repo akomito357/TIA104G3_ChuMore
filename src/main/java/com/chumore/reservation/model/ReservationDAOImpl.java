@@ -1,8 +1,7 @@
 package com.chumore.reservation.model;
 
-import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.exception.BookingConflictException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.chumore.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -24,72 +23,120 @@ public class ReservationDAOImpl implements ReservationDAO{
     @PersistenceContext
     private EntityManager entityManager;
 
+
     @Override
     public ReservationVO findById(int reservationId) {
-        return entityManager.find(ReservationVO.class, reservationId);
+        ReservationVO reservation = entityManager.find(ReservationVO.class, reservationId);
+        if (reservation == null) {
+            throw new ResourceNotFoundException("Reservation not found for ID: " + reservationId);
+        }
+        return reservation;
     }
 
     @Override
     public List<ReservationVO> findAll() {
-        return entityManager.createQuery("SELECT r FROM ReservationVO r", ReservationVO.class).getResultList();
+        List<ReservationVO> reservations =
+                entityManager.createQuery("SELECT r FROM ReservationVO r", ReservationVO.class)
+                .getResultList();
+        if( reservations.isEmpty()){
+            throw new ResourceNotFoundException("No reservations found");
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findAllByMemberId(int memberId) {
-        return entityManager.createQuery("FROM ReservationVO r WHERE r.member.memberId = :memberId", ReservationVO.class)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.member.memberId = :memberId", ReservationVO.class)
                 .setParameter("memberId", memberId)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Member ID: " + memberId);
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findAllByRestId(int restId) {
-        return entityManager.createQuery("FROM ReservationVO r WHERE r.rest.restId = :restId", ReservationVO.class)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.rest.restId = :restId", ReservationVO.class)
                 .setParameter("restId", restId)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Restaurant ID: " + restId);
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findByMemberIdAndDate(int memberId, LocalDate date) {
-        return entityManager.createQuery("FROM ReservationVO r where r.member.memberId = :memberId AND r.reservationDate = :reservationDate", ReservationVO.class)
-                .setParameter("memberId",memberId)
-                .setParameter("reservationDate",date)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.member.memberId = :memberId AND r.reservationDate = :reservationDate", ReservationVO.class)
+                .setParameter("memberId", memberId)
+                .setParameter("reservationDate", date)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Member ID: " + memberId + " on date: " + date);
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findByRestIdAndDate(int restId, LocalDate date) {
-        return entityManager.createQuery("FROM ReservationVO r where r.rest.restId = :restId AND r.reservationDate = :reservationDate", ReservationVO.class)
-                .setParameter("restId",restId)
-                .setParameter("reservationDate",date)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.rest.restId = :restId AND r.reservationDate = :reservationDate", ReservationVO.class)
+                .setParameter("restId", restId)
+                .setParameter("reservationDate", date)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Restaurant ID: " + restId + " on date: " + date);
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findByRestIdAndReservationStatus(int restId, String reservationStatus) {
-        return entityManager.createQuery("FROM ReservationVO r where r.rest.restId = :restId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
-                .setParameter("restId",restId)
-                .setParameter("reservationStatus",reservationStatus)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.rest.restId = :restId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
+                .setParameter("restId", restId)
+                .setParameter("reservationStatus", reservationStatus)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Restaurant ID: " + restId + " with status: " + reservationStatus);
+        }
+        return reservations;
     }
 
     @Override
     public List<ReservationVO> findByMemberIdAndReservationStatus(int memberId, String reservationStatus) {
-        return entityManager.createQuery("FROM ReservationVO r where r.member.memberId = :memberId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
-                .setParameter("memberId",memberId)
-                .setParameter("reservationStatus",reservationStatus)
+        List<ReservationVO> reservations = entityManager.createQuery(
+                        "FROM ReservationVO r WHERE r.member.memberId = :memberId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
+                .setParameter("memberId", memberId)
+                .setParameter("reservationStatus", reservationStatus)
                 .getResultList();
+
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations found for Member ID: " + memberId + " with status: " + reservationStatus);
+        }
+        return reservations;
     }
 
     @Override
     public ReservationVO addReservation(ReservationVO reservationVO) {
-        try{
+        try {
             entityManager.persist(reservationVO);
             entityManager.flush();
-        }catch(PersistenceException e){
+        } catch (PersistenceException e) {
             Throwable cause = e.getCause();
-            if(cause !=null && cause.getCause()!=null){
+            // 捕捉來自 SQL 的錯誤
+            if (cause != null && cause.getCause() != null) {
                 String message = cause.getCause().getMessage();
-                if(message.contains("Reservation limit reached for the selected time slot.")){
+                if (message.contains("Reservation limit reached for the selected time slot.")) {
                     throw new BookingConflictException("選取的時段已無可預約的座位，請重新選擇時段");
                 }
             }
@@ -100,22 +147,30 @@ public class ReservationDAOImpl implements ReservationDAO{
 
     @Override
     public ReservationVO updateReservation(ReservationVO reservationVO) {
-        entityManager.merge(reservationVO);
-        return reservationVO;
+        ReservationVO existingReservation = entityManager.find(ReservationVO.class, reservationVO.getReservationId());
+        if (existingReservation == null) {
+            throw new ResourceNotFoundException("Reservation not found for ID: " + reservationVO.getReservationId());
+        }
+        return entityManager.merge(reservationVO);
     }
-
 
     @Override
     public List<ReservationVO> findByCompositeQuery(Map<String, String> params) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<ReservationVO> criteria = builder.createQuery(ReservationVO.class);
         Root<ReservationVO> reservationTable = criteria.from(ReservationVO.class);
-        List<Predicate> predicates = buildPredicates(builder,reservationTable,params);
-        criteria.where(predicates.toArray(new Predicate[predicates.size()]));
-        TypedQuery<ReservationVO> query = entityManager.createQuery(criteria);
-        return query.getResultList();
-    }
 
+        List<Predicate> predicates = buildPredicates(builder, reservationTable, params);
+        criteria.where(predicates.toArray(new Predicate[0]));
+
+        TypedQuery<ReservationVO> query = entityManager.createQuery(criteria);
+        List<ReservationVO> results = query.getResultList();
+
+        if (results.isEmpty()) {
+            throw new ResourceNotFoundException("No reservations match the specified criteria.");
+        }
+        return results;
+    }
 
     private List<Predicate> buildPredicates(CriteriaBuilder builder,Root<ReservationVO> reservationTable,Map<String,String> params) {
         List<Predicate> predicates = new ArrayList<>();

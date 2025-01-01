@@ -1,7 +1,6 @@
 package com.chumore.reservation.model;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +10,8 @@ public interface ReservationService {
     List<ReservationVO> findReservationsByCompositeQuery(Map<String, String> params);
 
     List<ReservationVO> findCurrentDateReservation(int restId);
+
+    List<ReservationVO> findReservationsByRestIdAndDate(int restId,LocalDate date);
 
     List<ReservationVO> findAllRestReservations(int restId);
 
@@ -25,12 +26,5 @@ public interface ReservationService {
 
     ReservationVO processCheckIn(int reservationId);
 
-    ReservationVO addReservation(
-            int memberId,
-            int restId,
-            LocalDate reservationDate,
-            LocalTime reservationTime,
-            int guestCount,
-            String phoneNumber
-    );
+    ReservationVO addReservation(ReservationVO reservation);
 }

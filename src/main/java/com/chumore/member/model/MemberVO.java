@@ -2,11 +2,15 @@ package com.chumore.member.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import com.chumore.reservation.model.ReservationVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "member")
@@ -48,6 +52,10 @@ public class MemberVO implements Serializable {
     
     @Column(name = "member_address")
     private String memberAddress;
+
+    @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
+    @JsonManagedReference("reservation-member")
+    private Set<ReservationVO> reservations;
 
     // Getters and Setters
     public Integer getMemberId() {
@@ -112,5 +120,13 @@ public class MemberVO implements Serializable {
 
     public void setMemberAddress(String memberAddress) {
         this.memberAddress = memberAddress;
+    }
+
+    public Set<ReservationVO> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<ReservationVO> reservations) {
+        this.reservations = reservations;
     }
 }
