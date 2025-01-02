@@ -2,515 +2,434 @@
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>用餐紀錄 - 會員中心</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-	rel="stylesheet">
-<style>
-:root {
-	--primary: #F2994A;
-	--secondary: #1A1F2C;
-	--background: #F5F6F8;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用餐紀錄 - 會員中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #F2994A;
+            --secondary: #1A1F2C;
+            --background: #F5F6F8;
+        }
 
-body {
-	background-color: var(--background);
-}
+        body {
+            background-color: var(--background);
+        }
 
-.content-wrapper {
-	background-color: #FFFFFF;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	min-height: 400px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-}
+        .content-wrapper {
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.nav-tabs .nav-link {
-	color: var(--secondary);
-	border: none;
-	border-bottom: 2px solid transparent;
-	padding: 0.5rem 1rem;
-}
+        .nav-tabs .nav-link {
+            color: var(--secondary);
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+        }
 
-.nav-tabs .nav-link.active {
-	color: var(--primary);
-	background: none;
-	border-bottom: 2px solid var(--primary);
-}
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background: none;
+            border-bottom: 2px solid var(--primary);
+        }
 
-.table-hover tbody tr:hover {
-	background-color: rgba(242, 153, 74, 0.05);
-}
+        .table-hover tbody tr:hover {
+            background-color: rgba(242, 153, 74, 0.05);
+        }
 
-.status-badge {
-	padding: 0.25rem 0.75rem;
-	border-radius: 50px;
-	font-size: 0.875rem;
-}
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+        }
 
-.status-pending {
-	background-color: rgba(242, 153, 74, 0.1);
-	color: var(--primary);
-}
+        .status-pending {
+            background-color: rgba(242, 153, 74, 0.1);
+            color: var(--primary);
+        }
 
-.status-completed {
-	background-color: rgba(39, 174, 96, 0.1);
-	color: #27AE60;
-}
+        .status-completed {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27AE60;
+        }
 
-.btn-primary {
-	background-color: var(--primary);
-	border-color: var(--primary);
-}
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
 
-.btn-primary:hover {
-	background-color: #E08B3E;
-	border-color: #E08B3E;
-}
+        .btn-primary:hover {
+            background-color: #E08B3E;
+            border-color: #E08B3E;
+        }
 
-.btn-outline-secondary {
-	color: var(--secondary);
-	border-color: var(--secondary);
-}
+        .btn-outline-secondary {
+            color: var(--secondary);
+            border-color: var(--secondary);
+        }
 
-.table th {
-	color: var(--secondary);
-	font-weight: 600;
-	font-size: 0.875rem;
-	text-transform: uppercase;
-	text-align: center;
-	vertical-align: middle;
-}
+        .table th {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            text-align: center;
+            vertical-align: middle;
+        }
 
-.table td {
-	text-align: center;
-	vertical-align: middle;
-}
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
 
-.fa-solid {
-	color: var(--secondary);
-	text-decoration: none;
-}
+        .fa-solid {
+            color: var(--secondary);
+            text-decoration: none;
+        }
 
-.fa-solid:hover {
-	color: var(--primary);
-}
+        .fa-solid:hover {
+            color: var(--primary);
+        }
 
-.tab-content {
-	display: none;
-}
+        .tab-content {
+            display: none;
+        }
 
-.tab-content.active {
-	display: block;
-}
+        .tab-content.active {
+            display: block;
+        }
 
-.pagination-btns {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 15px;
-	/* 調整按鈕間的間距 */
-	margin-top: 20%;
-}
+        .pagination-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            /* 調整按鈕間的間距 */
+            margin-top: 20%;
+        }
 
-.pagination-btns button {
-	padding: 5px 10px;
-	background-color: #FEA116;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
+        .pagination-btns button {
+            padding: 5px 10px;
+            background-color: #FEA116;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.pagination-btns .page-num {
-	font-size: 16px;
-	font-weight: bold;
-}
+        .pagination-btns .page-num {
+            font-size: 16px;
+            font-weight: bold;
+        }
 
-.sort-icon {
-	display: inline-block;
-	margin-left: 4px;
-	vertical-align: middle;
-}
+        .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
 
-/* 評論 */
-.review-card {
-	border: 1px solid #dee2e6;
-	border-radius: 8px;
-	margin-bottom: 1.5rem;
-	padding: 1.5rem;
-	background-color: white;
-}
+        /* 評論 */
+        .review-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: white;
+        }
 
-.restaurant-image {
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
-	border-radius: 4px;
-}
+        .restaurant-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
 
-.star-rating {
-	color: #ffc107;
-	font-size: 1.2rem;
-}
+        .star-rating {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
 
-.star-rating .far {
-	color: #dee2e6;
-}
+        .star-rating .far {
+            color: #dee2e6;
+        }
 
-.review-content {
-	max-height: 50px;
-	overflow: hidden;
-	position: relative;
-}
+        .review-content {
+            max-height: 50px;
+            overflow: hidden;
+            position: relative;
+        }
 
-.review-content.expanded {
-	max-height: none;
-}
+        .review-content.expanded {
+            max-height: none;
+        }
 
-.show-more {
-	color: #0d6efd;
-	cursor: pointer;
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	background: linear-gradient(90deg, transparent, white 50%);
-	padding-left: 2rem;
-}
+        .show-more {
+            color: #0d6efd;
+            cursor: pointer;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, white 50%);
+            padding-left: 2rem;
+        }
 
-.action-buttons .btn {
-	width: 100%;
-	margin-bottom: 0.5rem;
-}
+        .action-buttons .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
 
-.delete-btn {
-	background-color: #dc3545;
-	color: white;
-}
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
 
-.delete-btn:hover {
-	background-color: #bb2d3b;
-	color: white;
-}
+        .delete-btn:hover {
+            background-color: #bb2d3b;
+            color: white;
+        }
 
-.pagination {
-	margin-top: 2rem;
-	margin-bottom: 2rem;
-}
+        .pagination {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
 
-#mealDetailsModal {
-	display: none;
-	/* 確保初始隱藏 */
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 1000;
-}
+        #mealDetailsModal {
+            display: none;
+            /* 確保初始隱藏 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
 
-#mealDetailsModal.show {
-	display: flex;
-	/* 顯示 Modal */
-}
+        #mealDetailsModal.show {
+            display: flex;
+            /* 顯示 Modal */
+        }
 
-.modal-content {
-	background-color: white;
-	border-radius: 10px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-	width: 700px;
-	max-width: 1000px;
-}
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 700px;
+            max-width: 1000px;
+        }
 
-.modal-header, .modal-footer {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
+        .modal-header,
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.modal-header h3 {
-	font-size: 1.25rem;
-	font-weight: bold;
-}
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
 
-.modal-body {
-	padding: 20px;
-}
+        .modal-body {
+            padding: 20px;
+        }
 
-.order-section {
-	margin-bottom: 1.5rem;
-}
+        .order-section {
+            margin-bottom: 1.5rem;
+        }
 
-.text-gray-600 {
-	color: #757575;
-}
+        .text-gray-600 {
+            color: #757575;
+        }
 
-.btn_close {
-	background-color: #ca0909;
-	color: white;
-	padding: 4px 8px;
-	border-radius: 5px;
-	cursor: pointer;
-	border: none;
-	font-size: 0.875rem;
-	height: 30px;
-	width: 30px;
-	margin-right: 20px;
-}
+        .btn_close {
+            background-color: #ca0909;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            height: 30px;
+            width: 30px;
+            margin-right: 20px;
+        }
 
-.btn_close:hover {
-	background-color: #ac1a1a;
-}
-</style>
+        .btn_close:hover {
+            background-color: #ac1a1a;
+        }
+    </style>
 </head>
 
 <body>
-	<div class="container py-4">
-		<div class="content-wrapper">
-			<!-- 頁面標題 -->
-			<div class="d-flex justify-content-between align-items-center mb-4">
-				<h2 class="mb-0">用餐紀錄</h2>
-			</div>
+    <div class="container py-4">
+        <div class="content-wrapper">
+            <!-- 頁面標題 -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">用餐紀錄</h2>
+            </div>
 
-			<!-- 分頁標籤 -->
-			<ul class="nav nav-tabs border-0 mb-4">
-				<li class="nav-item"><a class="nav-link active" href="#"
-					data-target="tab1">用餐紀錄</a></li>
-				<li class="nav-item"><a class="nav-link" href="#"
-					data-target="tab2">評價紀錄</a></li>
-			</ul>
+            <!-- 分頁標籤 -->
+            <ul class="nav nav-tabs border-0 mb-4">
+                <li class="nav-item"><a class="nav-link active" href="#" data-target="tab1">用餐紀錄</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-target="tab2">評價紀錄</a></li>
+            </ul>
 
-			<!-- 用餐紀錄表格內容 -->
-			<div class="card border-0 tab-content active" id="tab1">
-				<div class="card-body p-0">
-					<div class="table-responsive">
-						<table class="table table-hover mb-0">
-							<thead>
-								<tr>
-									<th class="px-4 py-3">#</th>
-									<th class="px-4 py-3">餐廳名稱<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">用餐日期<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">用餐時間<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">用餐金額<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">餐點明細</th>
-									<th class="px-4 py-3">評論狀態<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">獲得點數<span class="sort-icon"
-										data-sort="amount"><i class="fas fa-sort"></i></span></th>
-									<th class="px-4 py-3">操作</th>
-								</tr>
-							</thead>
-							<tbody id="order-tbody">
-								<!-- <tr>
-                                    <td class="px-4 py-3">1</td>
-                                    <td class="px-4 py-3">Darlene Robertson</td>
-                                    <td class="px-4 py-3">2024/02/07</td>
-                                    <td class="px-4 py-3">17:00</td>
-                                    <td class="px-4 py-3">$2,798</td>
-                                    <td class="px-4 py-3">
-                                        <a href="#" class="show-detail"><i
-                                                class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="status-badge status-pending">未評論</span>
-                                    </td>
-                                    <td class="px-4 py-3">5</td>
-                                    <td class="px-4 py-3">
-                                        <button class="btn btn-primary btn-sm">進行評論</button>
-                                    </td>
-                                </tr>
+            <!-- 用餐紀錄表格內容 -->
+            <div class="card border-0 tab-content active" id="tab1">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
                                 <tr>
-                                    <td class="px-4 py-3">1</td>
-                                    <td class="px-4 py-3">Darlene Robertson</td>
-                                    <td class="px-4 py-3">2024/02/07</td>
-                                    <td class="px-4 py-3">17:00</td>
-                                    <td class="px-4 py-3">$2,798</td>
-                                    <td class="px-4 py-3">
-                                        <a href="#" class="show-detail"><i
-                                                class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="status-badge status-pending">未評論</span>
-                                    </td>
-                                    <td class="px-4 py-3">5</td>
-                                    <td class="px-4 py-3">
-                                        <button class="btn btn-primary btn-sm">進行評論</button>
-                                    </td>
+                                    <th class="px-4 py-3">#</th>
+                                    <th class="px-4 py-3">餐廳名稱<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">用餐日期<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">用餐時間<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">用餐金額<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">餐點明細</th>
+                                    <th class="px-4 py-3">評論狀態<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">獲得點數<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th class="px-4 py-3">操作</th>
                                 </tr>
-                                <tr>
-                                    <td class="px-4 py-3">1</td>
-                                    <td class="px-4 py-3">Darlene Robertson</td>
-                                    <td class="px-4 py-3">2024/02/07</td>
-                                    <td class="px-4 py-3">17:00</td>
-                                    <td class="px-4 py-3">$2,798</td>
-                                    <td class="px-4 py-3">
-                                        <a href="#" class="show-detail"><i
-                                                class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="status-badge status-pending">未評論</span>
-                                    </td>
-                                    <td class="px-4 py-3">5</td>
-                                    <td class="px-4 py-3">
-                                        <button class="btn btn-primary btn-sm">進行評論</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">2</td>
-                                    <td class="px-4 py-3">Ronald Richards</td>
-                                    <td class="px-4 py-3">2024/02/07</td>
-                                    <td class="px-4 py-3">17:00</td>
-                                    <td class="px-4 py-3">$4,600</td>
-                                    <td class="px-4 py-3">
-                                        <a href="#" class="show-detail"><i
-                                                class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="status-badge status-completed">已評論</span>
-                                    </td>
-                                    <td class="px-4 py-3">3</td>
-                                    <td class="px-4 py-3">
-                                        <button class="btn btn-outline-secondary btn-sm">查看評論</button>
-                                    </td>
-                                </tr> -->
-								<!-- 更多表格行... -->
-							</tbody>
-						</table>
-						<!-- 分頁按鈕 -->
-						<div class="pagination-btns">
-							<button class="prev-btn" style="background-color: #ddd;">上一頁</button>
-							<span class="page-num"> 1 </span>
-							<!-- 顯示當前頁數 -->
-							<button class="next-btn">下一頁</button>
-						</div>
-					</div>
-				</div>
-			</div>
+                            </thead>
+                            <tbody id="order-tbody">
+
+                            </tbody>
+                        </table>
+                        <!-- 分頁按鈕 -->
+                        <div class="pagination-btns">
+                            <button class="prev-btn" style="background-color: #ddd;">上一頁</button>
+                            <span class="page-num"> 1 </span>
+                            <!-- 顯示當前頁數 -->
+                            <button class="next-btn">下一頁</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-			<div id="mealDetailsModal"
-				class="hidden fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-				<div class="modal-content bg-white rounded-lg shadow-lg">
-					<div
-						class="modal-header px-6 py-4 border-b flex justify-between items-center">
-						<h3 class="text-xl font-semibold" style="margin-left: 20px;">餐點明細</h3>
-						<button onclick="closeModal()" class="btn_close">X</button>
-					</div>
-					<div class="modal-body p-6">
-						<!-- 第一次跟第二次點餐內容要刪除 -->
-						<div class="order-section mb-6">
-							<h4 class="text-lg font-semibold text-gray-800">第一次點餐</h4>
-							<div id="firstOrderDetails">
-								<!-- 由 JavaScript 動態填充第一次點餐細項 -->
-							</div>
-						</div>
-						<!-- 第二次點餐 -->
-						<div class="order-section">
-							<h4 class="text-lg font-semibold text-gray-800">第二次點餐</h4>
-							<div id="secondOrderDetails">
-								<!-- 由 JavaScript 動態填充第二次點餐細項 -->
-							</div>
-						</div>
-					</div>
-					<div
-						class="modal-footer p-4 border-t flex justify-between items-center">
-						<div class="summary">
-							<p class="text-gray-600">
-								折扣點數: <span id="discountPoints">50</span>
-							</p>
-							<p class="text-xl font-semibold">
-								訂單總金額: <span id="totalAmount">$3,500</span>
-							</p>
-						</div>
+            <div id="mealDetailsModal"
+                class="hidden fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+                <div class="modal-content bg-white rounded-lg shadow-lg">
+                    <div class="modal-header px-6 py-4 border-b flex justify-between items-center">
+                        <h3 class="text-xl font-semibold" style="margin-left: 20px;">餐點明細</h3>
+                        <button onclick="closeModal()" class="btn_close">X</button>
+                    </div>
+                    <div class="modal-body p-6">
+                        <!-- 第一次跟第二次點餐內容要刪除 -->
+                        <div class="order-section mb-6">
+                            <h4 class="text-lg font-semibold text-gray-800">第一次點餐</h4>
+                            <div id="firstOrderDetails">
+                                <!-- 由 JavaScript 動態填充第一次點餐細項 -->
+                            </div>
+                        </div>
+                        <!-- 第二次點餐 -->
+                        <div class="order-section">
+                            <h4 class="text-lg font-semibold text-gray-800">第二次點餐</h4>
+                            <div id="secondOrderDetails">
+                                <!-- 由 JavaScript 動態填充第二次點餐細項 -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer p-4 border-t flex justify-between items-center">
+                        <div class="summary">
+                            <p class="text-gray-600">
+                                折扣點數: <span id="discountPoints">50</span>
+                            </p>
+                            <p class="text-xl font-semibold">
+                                訂單總金額: <span id="totalAmount">$3,500</span>
+                            </p>
+                        </div>
 
-					</div>
-				</div>
-			</div>
+                    </div>
+                </div>
+            </div>
 
 
 
-			<!-- 評價紀錄表格內容 -->
-			<div class="card border-0 tab-content" id="tab2">
-				<div class="card-body p-0">
-					<div class="table-responsive">
+            <!-- 評價紀錄表格內容 -->
+            <div class="card border-0 tab-content" id="tab2">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
 
-						<!-- 評論卡片 -->
-						<div class="container py-4">
-							<div id="reviewsList"></div>
+                        <!-- 評論卡片 -->
+                        <div class="container py-4">
+                            <div id="reviewsList"></div>
 
-							<!-- Pagination
+                            <!-- Pagination
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center" id="pagination">
                                 </ul>
                             </nav> -->
-						</div>
-					</div>
+                        </div>
+                    </div>
 
 
-					<!-- 分頁按鈕 -->
-					<div class="pagination-btns">
-						<button class="prev-btn" style="background-color: #ddd;">上一頁</button>
-						<span class="page-num"> 1 </span>
-						<!-- 顯示當前頁數 -->
-						<button class="next-btn">下一頁</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	</div>
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet"
-		href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+                    <!-- 分頁按鈕 -->
+                    <div class="pagination-btns">
+                        <button class="prev-btn" style="background-color: #ddd;">上一頁</button>
+                        <span class="page-num"> 1 </span>
+                        <!-- 顯示當前頁數 -->
+                        <button class="next-btn">下一頁</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-	<script>
+    <script>
 
         $(document).ready(function () {
             const tabs = $(".nav-link");
             const content = $(".tab-content");
-          
+
 
             fetch("member/orderMaster/findByMemberId", {
                 method: "GET",
             }).then(res => res.json())
-              .then(response => {
-               console.log(response);
+                .then(response => {
+                    console.log(response);
 
-                const orderList = response.data;
+                    const orderList = response.data;
 
-                
-                let table_body = "";
-                orderList.forEach((orderMaster, index) => {
 
-                    const[date, time] = orderMaster.servedDatetime.split(" ");
+                    let table_body = "";
+                    orderList.forEach((orderMaster, index) => {
 
-                    table_body += `
+                        const [date, time] = orderMaster.servedDatetime.split(" ");
+
+                        table_body += `
                     <tr>
-                        <td class="px-4 py-3">${index+1}</td>
+                        <td class="px-4 py-3">${index + 1}</td>
                         <td class="px-4 py-3">${orderMaster.restName}</td>
                         <td class="px-4 py-3">${date}</td>
                         <td class="px-4 py-3">${time}</td>
                     	<td class="px-4 py-3">${orderMaster.totalPrice}</td>
-                        <td class="px-4 py-3"><a href="#" class="show-detail">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        <td class="px-4 py-3"><a href="" class="show-detail">
+                                <i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a>
                         </td>        
-                    	<td class="px-4 py-3">${orderMaster.reviewId? "已評論" : "未評論"}</td>
+                    	<td class="px-4 py-3"><span class="status-badge status-pending">${orderMaster.reviewId ? "已評論" : "未評論"}</span></td>
                     	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
                     	<td class="px-4 py-3">
-                        	<button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId? "查看評論" : "進行評論"}</button>
+                        	<button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId ? "查看評論" : "進行評論"}</button>
                     	</td>
 
             
@@ -521,13 +440,22 @@ body {
 
                     document.getElementById("order-tbody").innerHTML = table_body;
 
-            
-            });
-            
-            
-            
-            
-                document.getElementById("order-tbody").innerHTML = table_body;
+                    const detailLinks = document.querySelectorAll('td a i.fa-arrow-up-right-from-square');
+                    console.log(detailLinks);
+                    detailLinks.forEach((link) =>
+                        link.addEventListener("click", function (event) {
+                            let orderId = $(this).attr("data-orderId");
+
+                            event.preventDefault();
+                            showModal(orderId);
+                        })
+                    );
+                });
+
+
+
+
+
 
             //頁面切換
             tabs.on("click", function (e) {
@@ -569,26 +497,71 @@ body {
         }
 
         // 顯示 Modal
-        function showModal() {
-            let hostName = window.location.hostname;
-            console.log(hostName);
-            
-            fetch(hostName + "/ajax/teach/api/add.php", {
-                method: "GET",
-                body: form_data
-            }).then(res => res.json()).then(data => {
-                console.log(data);
-                let list_html = ""
-                list_html += ` 
-                    
-                        
-                
-                
-                
-                `;
+        function showModal(orderId) {
 
-            
-            });
+
+            fetch("member/orderLineItem/showOrderItemList", {
+                method: "GET",
+            }).then(res => res.json())
+                .then(response => {
+
+                    const mealDetailList = response.data;
+
+                    let mealDetail_body = "";
+
+                    mealDetailList.forEach((orderItem, index) => {
+                        mealDetail_body = `
+                            <div class="order-section mb-6">
+							<h4 class="text-lg font-semibold text-gray-800">第${index + 1}次點餐</h4>
+							<div>
+                                
+							</div>
+						</div>
+                        
+                        
+                        `;
+
+
+                    });
+
+                });
+
+
+
+
+
+            // const orderList = response.data;
+
+
+            // let table_body = "";
+            // orderList.forEach((orderMaster, index) => {
+
+            //     const[date, time] = orderMaster.servedDatetime.split(" ");
+
+            //     table_body += `
+            //     <tr>
+            //         <td class="px-4 py-3">${index+1}</td>
+            //         <td class="px-4 py-3">${orderMaster.restName}</td>
+            //         <td class="px-4 py-3">${date}</td>
+            //         <td class="px-4 py-3">${time}</td>
+            //         <td class="px-4 py-3">${orderMaster.totalPrice}</td>
+            //         <td class="px-4 py-3"><a href="#" class="show-detail">
+            //                 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            //         </td>        
+            //         <td class="px-4 py-3"><span class="status-badge status-pending">${orderMaster.reviewId? "已評論" : "未評論"}</span></td>
+            //         <td class="px-4 py-3">${orderMaster.pointEarned}</td>
+            //         <td class="px-4 py-3">
+            //             <button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId? "查看評論" : "進行評論"}</button>
+            //         </td>
+
+
+            //     </tr>`;
+
+
+            //     });
+
+            //     document.getElementById("order-tbody").innerHTML = table_body;
+
 
 
 
@@ -638,15 +611,17 @@ body {
 
 
         // 為 "餐點明細" 的連結加上點擊事件
-        document.addEventListener("DOMContentLoaded", function () {
-            const detailLinks = document.querySelectorAll('td a i.fa-arrow-up-right-from-square');
-            detailLinks.forEach((link) =>
-                link.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    showModal();
-                })
-            );
-        });
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     const detailLinks = document.querySelectorAll('td a i.fa-arrow-up-right-from-square');
+        //     detailLinks.forEach((link) =>
+        //         link.addEventListener("click", function (event) {
+        //             console.log($(this).attr("data-orderId"));
+
+        //             event.preventDefault();
+        //             showModal();
+        //         })
+        //     );
+        // });
 
 
 
@@ -672,6 +647,8 @@ body {
         //         });
         //     });
         // });
+
+
 
         // Sample review data
         const reviews = [
