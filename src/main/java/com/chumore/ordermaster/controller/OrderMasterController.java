@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +31,19 @@ public class OrderMasterController {
 	OrderMasterService orderSvc;
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
-	@PostMapping("getOneForCheckOut")
+	@PostMapping("getOne")
 	public String getOneForCheckOut(@RequestParam("orderId") String orderId, Model model) {
 		// 之後要再把id改成從session取得
 		OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
 		model.addAttribute("orderMaster", orderMaster);		
 		return "";
 	}
+	
+//	// getOneOrder (RESTful)
+//	public ResponseEntity<OrderMasterResponse> getOneOrder(@RequestBody Map<String, Integer>, ){
+//		
+//	}
+	
 	
 	// updateOrder
 	@PostMapping("updateOrder")
@@ -98,6 +105,12 @@ public class OrderMasterController {
 		model.addAttribute("memberOrderList", list);
 		// 3. 準備轉交
 		return "";
+	}
+	
+	@GetMapping("test")
+	public String getOneForOrder(HttpSession session, ModelMap map) {
+		session.setAttribute("orderId", 1);
+		return "/secure/rest/order/working_order_page";
 	}
 	
 }

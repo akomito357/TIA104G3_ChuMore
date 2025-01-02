@@ -30,6 +30,7 @@ import com.chumore.reservation.model.ReservationVO;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.tabletype.model.TableTypeVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "rest")
@@ -146,8 +147,9 @@ public class RestVO implements Serializable{
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 //	private Set<OrderTableVO> orderTables;
-	
-	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy="rest",cascade=CascadeType.ALL)
+	@JsonManagedReference("reservation-rest")
 	private Set<ReservationVO> reservations;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
@@ -159,7 +161,7 @@ public class RestVO implements Serializable{
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<ReviewVO> reviews;
 	
-	@OneToMany(mappedBy = "restId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
 	private Set<EnvImgVO> envImgs;
 	
 //	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)

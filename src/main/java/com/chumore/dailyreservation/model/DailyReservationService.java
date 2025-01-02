@@ -16,17 +16,17 @@ public interface DailyReservationService {
     DailyReservationVO findDailyReservationByCompositeQuery(Map<String, String> conditions);
 
     // 新增與更新相關方法
-    DailyReservationVO addDailyReservation(Integer restId, Integer tableTypeId, LocalDate reservedDate, String reservedTables, String reservedLimit);
+    DailyReservationVO addDailyReservation(DailyReservationVO dailyReservationVO);
 
-    void updateDailyReservation(Integer dailyReservationId, String reservedTables, String reservedLimit);
+    DailyReservationVO updateDailyReservation(DailyReservationVO dailyReservation);
 
     // 修改可訂位上限相關方法
     DailyReservationVO addReservedLimit(Integer dailyReservationId, String time, Integer amount);
 
-    void addReservedLimitByInterval(Integer dailyReservationId, String startTime, String endTime, Integer amount);
+    DailyReservationVO addReservedLimitByInterval(DailyReservationVO dailyReservation, String startTime, String endTime, Integer amount);
 
-    DailyReservationVO addReservedLimitByCondition(Map<String, String> conditions);
-
+    DailyReservationVO addReservedLimitByCondition(DailyReservationVO dailyReservation, Map<String, String> conditions);
 
     // 設定公休日
+    List<DailyReservationVO> setClosedDay(Integer restId, LocalDate date);
 }
