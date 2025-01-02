@@ -1,12 +1,21 @@
 package com.chumore.discpts.model;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
-
-import java.io.Serializable;
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "disc_pts")
@@ -25,6 +34,7 @@ public class DiscPtsVO implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rest_id", referencedColumnName = "rest_id", nullable = false)
+    @JsonBackReference("discPts-rest")
     private RestVO rest; // 對應餐廳ID (FK)
 
     @Column(name = "disc_pts_qty", nullable = false)

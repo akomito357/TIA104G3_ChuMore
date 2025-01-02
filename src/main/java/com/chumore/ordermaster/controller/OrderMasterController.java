@@ -9,21 +9,23 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
 
-@Controller
+@CrossOrigin // for dev
+@RestController
 @RequestMapping("/orders")
 public class OrderMasterController {
 	
@@ -31,18 +33,32 @@ public class OrderMasterController {
 	OrderMasterService orderSvc;
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
-	@PostMapping("getOne")
-	public String getOneForCheckOut(@RequestParam("orderId") String orderId, Model model) {
+	@GetMapping("getOne")
+	public String getOneForCheckOut(HttpSession session, Model model) {
 		// 之後要再把id改成從session取得
-		OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
+//		OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
+//		OrderMasterVO orderMaster = orderSvc.getOneById(1);
+		session.setAttribute("orderId", 1);
+		OrderMasterVO orderMaster = orderSvc.getOneById((Integer)session.getAttribute("orderId"));
 		model.addAttribute("orderMaster", orderMaster);		
-		return "";
+		return "secure/rest/order/working_order_page";
 	}
 	
-//	// getOneOrder (RESTful)
-//	public ResponseEntity<OrderMasterResponse> getOneOrder(@RequestBody Map<String, Integer>, ){
-//		
-//	}
+	// getOneOrder (RESTful)
+	@GetMapping("findOneByOrderId")
+	public ResponseEntity<OrderMasterResponse> findOneOrder(@RequestParam Integer orderId){
+		OrderMasterResponse<OrderMasterVO> res = null;
+		OrderMasterVO orderMaster = null;
+		try {
+//			Integer orderId = req.get("orderId");
+			orderMaster = orderSvc.getOneById(orderId);
+			res = new OrderMasterResponse<>("success", 200, orderMaster);
+			return ResponseEntity.ok(res);
+		}catch (Exception e){
+			res = new OrderMasterResponse<>("error", 400, orderMaster);
+			return ResponseEntity.badRequest().body(res);
+		}
+	}
 	
 	
 	// updateOrder
