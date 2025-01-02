@@ -38,15 +38,16 @@ public class MemberOrderMasterController {
 		Object memId = session.getAttribute("memberId");
 		Integer memberId = null;
 		if(memId == null) {
-			memberId = 1003;			
+			memberId = 1007;			
 		} else {
 			MemberVO member = (MemberVO) memId;
 			memberId = member.getMemberId();
 		}
 		
+		List<OrderMasterVO> list = orderSvc.getByMemberId(memberId);
+
 		List<OrderMasterDto> dtoList = new ArrayList<OrderMasterDto>();
 		
-		List<OrderMasterVO> list = orderSvc.getByMemberId(memberId);
 		
 		for(OrderMasterVO data : list) {
 			ReviewVO review = reviewService.getReviewByOrderId(data.getOrderId());

@@ -2,17 +2,20 @@ package com.chumore.orderitem.model;
 
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.orderlineitem.model.OrderLineItemVO;
 
 @Entity
 @Table(name = "order_item")
@@ -38,7 +41,14 @@ public class OrderItemVO {
 
 	@Column(name = "updated_datetime")
 	private Timestamp updatedDatetime;
-
+	
+	
+	@OneToMany(cascade = CascadeType.REMOVE)
+	@JoinColumn(name="order_item_id",referencedColumnName = "order_item_id")
+	@OrderBy("created_datetime asc")
+	private List<OrderLineItemVO> orderLineItem;
+	
+	
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public Integer getOrderItemId() {
@@ -104,5 +114,15 @@ public class OrderItemVO {
 		}
 
 	}
+
+	public List<OrderLineItemVO> getOrderLineItem() {
+		return orderLineItem;
+	}
+
+	public void setOrderLineItem(List<OrderLineItemVO> orderLineItem) {
+		this.orderLineItem = orderLineItem;
+	}
+	
+	
 
 }

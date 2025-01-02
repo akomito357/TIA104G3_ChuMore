@@ -35,4 +35,8 @@ public class Product_Service {
 	public List<ProductVO> getAllProductByActiveStatus(Integer restId) {
 		return repository.getMenuBySupplyStatus(restId);
 	}
+	
+	public ProductVO getProductById(Integer productId) {
+		return repository.findById(productId).orElse(null);
+	}
 }

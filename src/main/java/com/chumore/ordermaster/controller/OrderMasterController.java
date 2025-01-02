@@ -73,10 +73,10 @@ public class OrderMasterController {
 		OrderMasterResponse<OrderMasterVO> res = null;
 		try {
 			vo = orderSvc.addOrderMaster(orderMaster);
-			res = new OrderMasterResponse<>("success", 200, vo);
+			res = new OrderMasterResponse<>("success",200, vo);
 			return ResponseEntity.ok(res);
 		}catch (Exception e){
-			res = new OrderMasterResponse<>("error", 400, vo);
+			res = new OrderMasterResponse<>("error",400, vo);
 			return ResponseEntity.badRequest().body(res);
 		}
 	}
