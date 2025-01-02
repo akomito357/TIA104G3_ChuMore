@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
+
+// @SessionAttributes(names={"rest","member"})
 
 @Controller
 @RequestMapping("/rests")
@@ -44,18 +47,19 @@ public class RestController {
 		model.addAttribute("rest", rest);
 		return "";
 	}
-	
+	// @SessionAttribute("rest") RestVO rest 
 	
 	// update
 	@PostMapping("update")
-	public String update(@Valid RestVO rest, BindingResult result, ModelMap model) {
+	public String update(@Valid RestVO rest, BindingResult result, ModelMap model,HttpSession session) {
 		if(result.hasErrors()) {
 			return "";
 		}
 		restSvc.updateRest(rest);
 		rest = restSvc.getOneById(Integer.valueOf(rest.getRestId()));
-		model.addAttribute("rest", rest);
-		return "";
+		session.setAttribute("rest",rest);
+		model.addAttribute("rest", session.getAttribute("rest"));
+		return "/secure/rest/merchant_restaurant_information_modification";
 	}
 	
 	// getOne - for thymeleaf
