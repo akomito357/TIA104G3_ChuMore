@@ -1,41 +1,48 @@
 package com.chumore.cuisinetype.model;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.chumore.rest.model.RestVO;
 
 public class CuisineTypeServiceImpl implements CuisineTypeService{
-	private CuisineTypeDAO dao;
+
+	@Autowired
+	CuisineTypeRepository repository;
 	
-	public CuisineTypeServiceImpl() {
-		dao = new CuisineTypeJDBCDAO();
-	}
-
+	
+	@Override
 	public List<CuisineTypeVO> getAllTypes() {
-		return dao.getAll();		
+		return repository.findAll();
 	}
 
+	@Override
 	public CuisineTypeVO getOneCuisineType(Integer cuisineTypeId) {
-		return dao.getById(cuisineTypeId);
+		Optional<CuisineTypeVO> optional = repository.findById(cuisineTypeId);
+		return optional.orElse(null);
 	}
 
-	public List<CuisineTypeVO> getTypesByName(String cuisineDescr) {
-		return dao.getByName(cuisineDescr);
+	@Override
+	public List<CuisineTypeVO> getTypesByDescr(String cuisineDescr) {
+		return repository.findByDescr(cuisineDescr);
 	}
 
-	public CuisineTypeVO addCuisineType(String cuisineDescr) {
-		CuisineTypeVO cuisineTypeVO = new CuisineTypeVO();
-		cuisineTypeVO.setCuisineDescr(cuisineDescr);
+	@Override
+	public void addCuisineType(CuisineTypeVO cuisineType) {
+		repository.save(cuisineType);
 		
-		dao.insert(cuisineTypeVO);
-		return cuisineTypeVO;
 	}
 
-	public CuisineTypeVO updateCuisineType(Integer cuisineTypeId, String cuisineDescr) {
-		CuisineTypeVO cuisineTypeVO = new CuisineTypeVO();
-		cuisineTypeVO.setCuisineTypeId(cuisineTypeId);
-		cuisineTypeVO.setCuisineDescr(cuisineDescr);
-		dao.update(cuisineTypeVO);
-		
-		return cuisineTypeVO;
+	@Override
+	public void updateCuisineType(CuisineTypeVO cuisineType) {
+		repository.save(cuisineType);
+	}
+	
+	public Set<RestVO> getRestsByCuisineTypeId(Integer cuisineTypeId){
+		return getOneCuisineType(cuisineTypeId).getRests();
 	}
 
 }

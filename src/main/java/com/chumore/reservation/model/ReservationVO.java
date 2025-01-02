@@ -1,23 +1,16 @@
 package com.chumore.reservation.model;
 
 
-import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name="reservation")
@@ -25,39 +18,47 @@ public class ReservationVO implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="reservation_id",updatable=false,nullable=false)
+    @Column(name="reservation_id",updatable=false)
     private Integer reservationId;
 
-    @Column(name="guest_count",nullable=false)
+    @Column(name="guest_count")
     private Integer guestCount;
 
-    @Column(name="reservation_status",columnDefinition = "TINYINT",nullable=false)
+    @Column(name="reservation_status",columnDefinition = "TINYINT")
     private Integer reservationStatus;
 
-    @Column(name="phone_number",nullable=false)
+    @Column(name="phone_number")
     private String phoneNumber;
 
-    @Column(name="reservation_date",nullable=false)
-    private Date reservationDate;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @Column(name="reservation_date")
+    private LocalDate reservationDate;
 
-    @Column(name="reservation_time",nullable=false)
-    private Time reservationTime;
+    @JsonFormat(pattern="HH:mm[:ss]")
+    @Column(name="reservation_time")
+    private LocalTime reservationTime;
 
-    @Column(name="created_datetime",insertable=false,updatable=false,nullable=false,columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp createdDatetime;
+    @Column(name="created_datetime",insertable=false,updatable=false,columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdDatetime;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name = "rest_id",referencedColumnName = "rest_id")
+    @JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
+    @JsonBackReference("reservation-rest")
     private RestVO rest;
 
+
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name = "member_id",referencedColumnName = "member_id")
+    @JoinColumn(name = "member_id", referencedColumnName = "member_id")
+    @JsonBackReference("reservation-member")
     private MemberVO member;
 
 
     public ReservationVO() {
 
     }
+
+    // Getters and Setters
+
 
     public RestVO getRest() {
         return rest;
@@ -74,6 +75,7 @@ public class ReservationVO implements Serializable{
     public void setMember(MemberVO member) {
         this.member = member;
     }
+
 
     public Integer getReservationId() {
         return reservationId;
@@ -107,32 +109,34 @@ public class ReservationVO implements Serializable{
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getReservationDate() {
+    public LocalDate getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservationDate(Date reservationDate) {
+    public void setReservationDate(LocalDate reservationDate) {
         this.reservationDate = reservationDate;
     }
 
-    public Time getReservationTime() {
+    public LocalTime getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(Time reservationTime) {
+    public void setReservationTime(LocalTime reservationTime) {
         this.reservationTime = reservationTime;
     }
 
-    public Timestamp getCreatedDatetime() {
+    public LocalDateTime getCreatedDatetime() {
         return createdDatetime;
     }
 
-    public void setCreatedDatetime(Timestamp createdDatetime) {
+    public void setCreatedDatetime(LocalDateTime createdDatetime) {
         this.createdDatetime = createdDatetime;
     }
 
     @Override
     public String toString() {
-        return "Reservation[" +"reservation_id="+ reservationId +", guest_count="+ guestCount +", reservation_status="+ reservationStatus +", phone_number="+ phoneNumber +", reservation_date="+ reservationDate +", reservation_time="+ reservationTime +", created_datetime="+ createdDatetime +"]";
+       return "Reservation[" +"reservation_id="+ reservationId +", rest_name="+rest.getRestName()+", member_name="+member.getMemberName()+
+               ", guest_count="+ guestCount +", reservation_status="+ reservationStatus +", phone_number="+ phoneNumber +
+               ", reservation_date="+ reservationDate +", reservation_time="+ reservationTime +", created_datetime="+ createdDatetime +"]";
     }
 }

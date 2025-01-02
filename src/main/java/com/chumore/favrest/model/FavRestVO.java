@@ -1,6 +1,7 @@
 package com.chumore.favrest.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class FavRestVO {
 	private RestVO rest;
 	
 	@Column(name = "saved_datetime", columnDefinition = "DATETIME CURRENT TIMESTAMP")
-	private Timestamp savedDatetime;
+	private LocalDateTime savedDatetime;
 	
 	public FavRestVO() {
 	
@@ -62,11 +63,11 @@ public class FavRestVO {
 		this.rest = rest;
 	}
 
-	public Timestamp getSavedDatetime() {
+	public LocalDateTime getSavedDatetime() {
 		return savedDatetime;
 	}
 
-	public void setSavedDatetime(Timestamp savedDatetime) {
+	public void setSavedDatetime(LocalDateTime savedDatetime) {
 		this.savedDatetime = savedDatetime;
 	}
 

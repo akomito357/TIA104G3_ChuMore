@@ -120,39 +120,72 @@
     max-height: 45px;
 }
 
+/*header為自加class*/
+/* .header{
+    box-sizing: border-box;
+    height: var(--header_height);
+    
+} */
+
 @media (max-width: 991.98px) {
     .sticky-top.navbar-dark {
-        position: relative;
+        position: sticky;
+        top: 0;
+        background-color: var(--dark);
+        /* position: relative; */
+        /* border: 1px solid red; */
     }
 
     .navbar-dark .navbar-collapse {
         margin-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, .1)
+        border-top: 1px solid rgba(255, 255, 255, .1);
+        /* border: 1px solid blue; */
+        background-color: var(--dark);
+        color: var(--light);
+        font-weight: 500;
+        outline: none;
+        transition: .5s;
+        /* width: 100vh; */
     }
+
 
     .navbar-dark .navbar-nav .nav-link,
     .sticky-top.navbar-dark .navbar-nav .nav-link {
         padding: 10px 0;
         margin-left: 0;
+        /* border: 1px solid green; */
     }
 
     .navbar-dark .navbar-brand img {
         max-height: 45px;
     }
+
+    /* #navbarCollapse{
+        border: 2px solid green;
+        width: 100vh;
+    } */
+    
+    .header-collapse{
+        /* border: 2px solid red; */
+        /* width: 100%; */
+        position: relative;
+    }
 }
 
 @media (min-width: 992px) {
     .navbar-dark {
-        position: absolute;
+        /* position: absolute; */
+        padding: 0;
         width: 100%;
         top: 0;
         left: 0;
         z-index: 999;
-        background: transparent !important;
+        /* background: transparent !important; */
+        
     }
     
     .sticky-top.navbar-dark {
-        position: fixed;
+        /* position: fixed; */
         background: var(--dark) !important;
     }
 }

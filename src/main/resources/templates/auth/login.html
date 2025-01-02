@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChuMore - 會員登入</title>
+
+    <!-- CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+
+    <style>
+        .login-container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #FEA116;
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #FEA116;
+            background-color: transparent;
+            border-bottom: 3px solid #FEA116;
+        }
+
+        .btn-primary {
+            background-color: #FEA116;
+            border-color: #FEA116;
+            padding: 0.8rem 2rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #e89214;
+            border-color: #e89214;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="login-container">
+                    <!-- 錯誤訊息 -->
+                    <div th:if="${errorMessage}" class="alert alert-danger mb-4" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <!-- 登入表單標籤 -->
+                    <ul class="nav nav-tabs mb-4" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#memberLogin">一般會員登入</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#restaurantLogin">餐廳會員登入</a>
+                        </li>
+                    </ul>
+
+                    <!-- 表單內容 -->
+                    <div class="tab-content">
+                        <!-- 一般會員登入 -->
+                        <div class="tab-pane fade show active" id="memberLogin">
+                            <form th:action="@{/auth/memlogin}" method="post" th:object="${loginRequest}">
+                                <input type="hidden" name="userType" value="MEMBER">
+                                <div class="mb-3">
+                                    <label class="form-label">會員信箱</label>
+                                    <input type="email" class="form-control" th:field="*{email}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">密碼</label>
+                                    <input type="password" class="form-control" th:field="*{password}" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">登入</button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a th:href="@{/auth/register}" class="text-decoration-none">註冊新會員</a>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 餐廳會員登入 -->
+                        <div class="tab-pane fade" id="restaurantLogin">
+                            <form th:action="@{/auth/memlogin}" method="post" th:object="${loginRequest}">
+                                <input type="hidden" name="userType" value="RESTAURANT">
+                                <div class="mb-3">
+                                    <label class="form-label">餐廳管理者信箱</label>
+                                    <input type="email" class="form-control" th:field="*{email}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">密碼</label>
+                                    <input type="password" class="form-control" th:field="*{password}" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">登入</button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a th:href="@{/auth/register/restaurant}" class="text-decoration-none">註冊餐廳會員</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/mainpage.js}"></script>
+</body>
+</html>
