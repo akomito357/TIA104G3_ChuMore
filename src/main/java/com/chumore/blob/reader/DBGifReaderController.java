@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import com.chumore.envimg.model.EnvImgService;
 
 @Controller
-@RequestMapping("/envImg")
+@RequestMapping("/DBGifReader")
 public class DBGifReaderController {
 	
 	@Autowired
@@ -24,7 +24,7 @@ public class DBGifReaderController {
 	/*
 	 * This method will serve as listOneEmp.html , listAllEmp.html handler.
 	 */
-	@GetMapping("DBGifReader")
+	@GetMapping("envImg")
 	public void dBGifReader(@RequestParam("env_img_id") String envImg, HttpServletRequest req, HttpServletResponse res)
 			                                                                                          throws IOException {
 		res.setContentType("image/gif");
@@ -38,4 +38,5 @@ public class DBGifReaderController {
 			out.write(buf);
 		}
 	}
+	//
 }
