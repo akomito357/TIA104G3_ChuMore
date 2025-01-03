@@ -1,7 +1,7 @@
 package com.chumore.orderlineitem.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.chumore.orderitem.model.OrderItemVO;
@@ -11,9 +11,9 @@ import com.chumore.product.model.ProductVO;
 
 public class OrderLineItemDto {
 
-	private Double subtotalPrice; // orderMaster
+	private BigDecimal subtotalPrice; // orderMaster
 	private Integer pointUsed; // orderMaster
-	private Double totalPrice; // orderMaster
+	private BigDecimal totalPrice; // orderMaster
 	private List<OrderItemListDto> orderItemListDto;
 
 	public OrderLineItemDto() {
@@ -25,11 +25,11 @@ public class OrderLineItemDto {
 		setTotalPrice(data.getTotalPrice());
 	}
 
-	public Double getSubtotalPrice() {
+	public BigDecimal getSubtotalPrice() {
 		return subtotalPrice;
 	}
 
-	public void setSubtotalPrice(Double subtotalPrice) {
+	public void setSubtotalPrice(BigDecimal subtotalPrice) {
 		this.subtotalPrice = subtotalPrice;
 	}
 
@@ -41,11 +41,11 @@ public class OrderLineItemDto {
 		this.pointUsed = pointUsed;
 	}
 
-	public Double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 	
@@ -62,6 +62,7 @@ public class OrderLineItemDto {
 	public static class OrderItemListDto {
 		private Integer orderItemId; // order_line_item
 		private String memo; // order item
+		private Timestamp updatedDatetime; // order_item
 		private List<LineItemDto> lineItemList;
 
 		public Integer getOrderItemId() {
@@ -78,6 +79,14 @@ public class OrderLineItemDto {
 
 		public void setMemo(String memo) {
 			this.memo = memo;
+		}
+
+		public Timestamp getUpdatedDatetime() {
+			return updatedDatetime;
+		}
+
+		public void setUpdatedDatetime(Timestamp updatedDatetime) {
+			this.updatedDatetime = updatedDatetime;
 		}
 
 		public List<LineItemDto> getLineItemList() {
@@ -141,3 +150,30 @@ public class OrderLineItemDto {
 	}
 
 }
+
+class OrderItemDtoForOrder{
+	private Integer orderItemId;
+	private String memo;
+	private Timestamp updateDatetime;
+	
+	public Integer getOrderItemId() {
+		return orderItemId;
+	}
+	public void setOrderItemId(Integer orderItemId) {
+		this.orderItemId = orderItemId;
+	}
+	public String getMemo() {
+		return memo;
+	}
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+	public Timestamp getUpdateDatetime() {
+		return updateDatetime;
+	}
+	public void setUpdateDatetime(Timestamp updateDatetime) {
+		this.updateDatetime = updateDatetime;
+	}
+	
+}
+

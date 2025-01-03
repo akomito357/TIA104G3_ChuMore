@@ -1,5 +1,6 @@
 package com.chumore.ordermaster.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,7 +11,7 @@ public class OrderMasterDto {
 	
 	private String restName;
 	private String servedDatetime;
-	private Double totalPrice;
+	private BigDecimal totalPrice;
 	private Integer orderId;
 	private Integer reviewId;
 	private Integer pointEarned;
@@ -46,10 +47,10 @@ public class OrderMasterDto {
 	public void setServedDatetime(String servedDatetime) {
 		this.servedDatetime = servedDatetime;
 	}
-	public Double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 	public Integer getOrderId() {

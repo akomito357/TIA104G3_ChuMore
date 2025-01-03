@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -18,14 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
 
 @CrossOrigin // for dev
-@RestController
+@Controller
 @RequestMapping("/orders")
 public class OrderMasterController {
 	
@@ -41,11 +42,12 @@ public class OrderMasterController {
 		session.setAttribute("orderId", 1);
 		OrderMasterVO orderMaster = orderSvc.getOneById((Integer)session.getAttribute("orderId"));
 		model.addAttribute("orderMaster", orderMaster);		
-		return "secure/rest/order/working_order_page";
+		return "secure/rest/order/order_page";
 	}
 	
 	// getOneOrder (RESTful)
 	@GetMapping("findOneByOrderId")
+	@ResponseBody
 	public ResponseEntity<OrderMasterResponse> findOneOrder(@RequestParam Integer orderId){
 		OrderMasterResponse<OrderMasterVO> res = null;
 		OrderMasterVO orderMaster = null;
@@ -121,12 +123,6 @@ public class OrderMasterController {
 		model.addAttribute("memberOrderList", list);
 		// 3. 準備轉交
 		return "";
-	}
-	
-	@GetMapping("test")
-	public String getOneForOrder(HttpSession session, ModelMap map) {
-		session.setAttribute("orderId", 1);
-		return "/secure/rest/order/working_order_page";
 	}
 	
 }

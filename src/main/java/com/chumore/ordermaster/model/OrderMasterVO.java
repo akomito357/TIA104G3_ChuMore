@@ -1,6 +1,7 @@
 package com.chumore.ordermaster.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -53,10 +54,10 @@ public class OrderMasterVO implements Serializable{
 	private Integer orderStatus;
 	
 	@Column(name = "subtotal_price", columnDefinition = "DECIMAL")
-	private Double subtotalPrice;
+	private BigDecimal subtotalPrice;
 	
 	@Column(name = "total_price", columnDefinition = "DECIMAL")
-	private Double totalPrice;
+	private BigDecimal totalPrice;
 	
 	@Column(name = "served_datetime", columnDefinition = "DATETIME")
 	private LocalDateTime servedDatetime;
@@ -121,18 +122,18 @@ public class OrderMasterVO implements Serializable{
 		this.orderStatus = orderStatus;
 	}
 	
-	public Double getSubtotalPrice() {
+	public BigDecimal getSubtotalPrice() {
 		return subtotalPrice;
 	}
-	public void setSubtotalPrice(Double subtotalPrice) {
+	public void setSubtotalPrice(BigDecimal subtotalPrice) {
 		this.subtotalPrice = subtotalPrice;
 	}
 	
-	public Double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 	
