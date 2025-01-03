@@ -1,6 +1,7 @@
 package com.chumore.ordermaster.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -18,9 +19,11 @@ import javax.validation.constraints.NotEmpty;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.orderitem.model.OrderItemVO;
+import com.chumore.ordertable.model.OrderTableVO;
 import com.chumore.rest.model.RestVO;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.usepoints.model.UsePointsVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "order_master")
@@ -31,31 +34,30 @@ public class OrderMasterVO implements Serializable{
 	@Column(name = "order_id")
 	private Integer orderId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
-//	private OrderTableVO orderTable;
-	@Column(name = "order_table_id")
+	@ManyToOne
+	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
 	@NotEmpty(message = "點餐桌位：請填寫點餐桌位")
-	private Integer orderTableId;
+	private OrderTableVO orderTable;
+//	@Column(name = "order_table_id")
 	
 	@ManyToOne
 	@JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
+	@JsonBackReference("orderMaster-rest")
 	private RestVO rest;
-//	private Integer restId;
 	
 	@ManyToOne
 	@JoinColumn(name = "member_id", referencedColumnName = "member_id")
+	@JsonBackReference("orderMaster-member")
 	private MemberVO member;
-//	private Integer memberId;
 	
 	@Column(name = "order_status", columnDefinition = "TINYINT")
 	private Integer orderStatus;
 	
 	@Column(name = "subtotal_price", columnDefinition = "DECIMAL")
-	private Double subtotalPrice;
+	private BigDecimal subtotalPrice;
 	
 	@Column(name = "total_price", columnDefinition = "DECIMAL")
-	private Double totalPrice;
+	private BigDecimal totalPrice;
 	
 	@Column(name = "served_datetime", columnDefinition = "DATETIME")
 	private LocalDateTime servedDatetime;
@@ -72,8 +74,8 @@ public class OrderMasterVO implements Serializable{
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 	private Set<UsePointsVO> usePoints;
 	
-//	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
-//	private Set<OrderItemVO> orderItems;
+	@OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL)
+	private Set<OrderItemVO> orderItems;
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 	private Set<ReviewVO> reviews;
@@ -89,19 +91,12 @@ public class OrderMasterVO implements Serializable{
 		this.orderId = orderId;
 	}
 	
-//	public OrderTableVO getOrderTable() {
-//		return orderTable;
-//	}
-//
-//	public void setOrderTable(OrderTableVO orderTable) {
-//		this.orderTable = orderTable;
-//	}
-
-	public Integer getOrderTableId() {
-		return orderTableId;
+	public OrderTableVO getOrderTable() {
+		return orderTable;
 	}
-	public void setOrderTableId(Integer orderTableId) {
-		this.orderTableId = orderTableId;
+
+	public void setOrderTable(OrderTableVO orderTable) {
+		this.orderTable = orderTable;
 	}
 	
 	public RestVO getRest() {
@@ -127,18 +122,18 @@ public class OrderMasterVO implements Serializable{
 		this.orderStatus = orderStatus;
 	}
 	
-	public Double getSubtotalPrice() {
+	public BigDecimal getSubtotalPrice() {
 		return subtotalPrice;
 	}
-	public void setSubtotalPrice(Double subtotalPrice) {
+	public void setSubtotalPrice(BigDecimal subtotalPrice) {
 		this.subtotalPrice = subtotalPrice;
 	}
 	
-	public Double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 	
@@ -183,13 +178,13 @@ public class OrderMasterVO implements Serializable{
 		this.usePoints = usePoints;
 	}
 
-//	public Set<OrderItemVO> getOrderItems() {
-//		return orderItems;
-//	}
-//
-//	public void setOrderItems(Set<OrderItemVO> orderItems) {
-//		this.orderItems = orderItems;
-//	}
+	public Set<OrderItemVO> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(Set<OrderItemVO> orderItems) {
+		this.orderItems = orderItems;
+	}
 
 	public Set<ReviewVO> getReviews() {
 		return reviews;
@@ -201,7 +196,7 @@ public class OrderMasterVO implements Serializable{
 
 	public String toString() {
 		return "[order_id = " + orderId 
-				+ ", order_table_id = " + orderTableId 
+				+ ", order_table = " + orderTable
 				+ ", rest_id = " + rest
 				+ ", member_id = " + member
 				+ ", order_status = " + orderStatus

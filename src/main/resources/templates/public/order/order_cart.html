@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物車</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .cart-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-group{
+            display: flex;
+            align-items: center;
+            /* gap: 0.5rem; */
+        }
+        
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .delete-btn {
+            border: 1px solid #ddd;
+            background: white;
+            color: #6c757d;
+            padding: 0.375rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .main-content {
+            margin-bottom: 120px;
+        }
+        
+        .fade-animation {
+            transition: all 0.3s ease;
+        }
+
+        .item-price {
+            font-weight: 500;
+            text-align: right;
+            margin-bottom: 0.25rem;
+        }
+
+        .item-name {
+            margin-bottom: 0.5rem;
+        }
+
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .notification{
+            height: 80px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-0">
+        <!-- Header -->
+        <div class="cart-header p-3">
+            <div class="row align-items-center">
+                <div class="col-2">
+                    <button class="btn" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+                <div class="col-8 text-center">
+                    <h1 class="h4 mb-0">購物車</h1>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="cart-items px-3 mt-2">
+                <!-- Cart items will be dynamically inserted here -->
+                <span class="d-flex justify-content-center align-items-center notification">購物車內尚無餐點！</span>
+            </div>
+
+            <!-- Subtotal -->
+            <div class="subtotal px-3 py-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">小計</h2>
+                    <span class="h5 mb-0" id="total-amount">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Buttons -->
+        <div class="bottom-buttons">
+            <div class="row g-2">
+                <div class="col-6">
+                    <button class="btn btn-secondary w-100" onclick="continueShopping()">
+                        繼續點餐
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary w-100" onclick="submitOrder()">
+                        送出訂單
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">確認刪除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    確定要刪除這個項目嗎？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/orderCart.js}"></script>
+    <script src="/static/js/orderCart.js"></script>
+    <script>
+    //     // Sample cart data
+    //     let cartItems = [
+    //         { id: 1, name: '沙拉', price: 200, quantity: 1 },
+    //         { id: 2, name: '義大利麵', price: 200, quantity: 1 },
+    //         { id: 3, name: '濃湯', price: 200, quantity: 1 }
+    //     ];
+
+    //     // Initialize
+    //     $(document).ready(function() {
+    //         renderCart();
+    //         updateTotal();
+    //     });
+
+    //     // Render cart items
+    //     function renderCart() {
+    //         const cartContainer = $('.cart-items');
+    //         cartContainer.empty();
+            
+    //         cartItems.forEach(item => {
+    //             cartContainer.append(`
+    //                 <div class="cart-item" data-id="${item.id}">
+    //                     <div class="row">
+    //                         <div class="col">
+    //                             <div class="item-name h5 mb-0">${item.name}</div>
+                                
+    //                             <div class="btn-group mt-3 col-4">
+    //                                 <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+    //                                 <span class="btn btn-outline-primary btn-sm disabled orderCount">${item.quantity}</span>
+    //                                 <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+    //                             </div>
+
+    //                         </div>
+    //                         <div class="col-auto">
+    //                             <div class="right-content">
+    //                                 <div class="item-price">$${item.price}</div>
+    //                                 <button class="delete-btn" onclick="showDeleteConfirm(${item.id})">
+    //                                     <i class="fas fa-trash"></i>
+    //                                     刪除
+    //                                 </button>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             `);
+    //         });
+    //     }
+
+    //     // Update quantity
+    //     function updateQuantity(itemId, change) {
+    //         const item = cartItems.find(item => item.id === itemId);
+    //         if (item) {
+    //             const newQuantity = item.quantity + change;
+    //             if (newQuantity >= 1) {
+    //                 item.quantity = newQuantity;
+    //                 renderCart();
+    //                 updateTotal();
+    //             }
+    //         }
+    //     }
+
+    //     // Show delete confirmation
+    //     function showDeleteConfirm(itemId) {
+    //         const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    //         $('#confirmDelete').off('click').on('click', function() {
+    //             deleteItem(itemId);
+    //             modal.hide();
+    //         });
+    //         modal.show();
+    //     }
+
+    //     // Delete item
+    //     function deleteItem(itemId) {
+    //         cartItems = cartItems.filter(item => item.id !== itemId);
+    //         renderCart();
+    //         updateTotal();
+    //     }
+
+    //     // Update total amount
+    //     function updateTotal() {
+    //         const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    //         $('#total-amount').fadeOut(150, function() {
+    //             $(this).text('$' + total).fadeIn(150);
+    //         });
+    //     }
+
+    //     // Continue shopping
+    //     function continueShopping() {
+    //         history.back();
+    //     }
+
+    //     // Submit order
+    //     function submitOrder() {
+    //         if (cartItems.length === 0) {
+    //             alert('購物車為空，請先添加餐點');
+    //             return;
+    //         }
+            
+    //         // Here you would typically send the order to your backend
+    //         alert('訂單已送出！');
+    //         cartItems = [];
+    //         renderCart();
+    //         updateTotal();
+    //         setTimeout(() => {
+    //             history.back();
+    //         }, 1000);
+    //     }
+    // </script>
+</body>
+</html>

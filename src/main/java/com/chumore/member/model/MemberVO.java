@@ -1,16 +1,29 @@
 package com.chumore.member.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import com.chumore.reservation.model.ReservationVO;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.io.Serializable;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.reservation.model.ReservationVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "member")
@@ -56,6 +69,10 @@ public class MemberVO implements Serializable {
     @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
     @JsonManagedReference("reservation-member")
     private Set<ReservationVO> reservations;
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonManagedReference("orderMaster-member")
+    private Set<OrderMasterVO> orderMasters;
 
     // Getters and Setters
     public Integer getMemberId() {

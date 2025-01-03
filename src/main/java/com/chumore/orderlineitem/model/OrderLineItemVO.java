@@ -32,12 +32,12 @@ public class OrderLineItemVO {
 //	@JoinColumn(name = "order_item_id")
 //	private OrderItemVO orderItem;
 	
-	@Column(name = "product_id")
-	private Integer productId;
+//	@Column(name = "product_id")
+//	private Integer productId;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "product_id")
-//	private ProductVO product;
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	private ProductVO product;
 
 	@Column(name = "quantity")	
 	private Integer quantity;
@@ -72,19 +72,19 @@ public class OrderLineItemVO {
 //	public void setOrderItem(OrderItemVO orderItem) {
 //		this.orderItem = orderItem;
 //	}
-	public Integer getProductId() {
-		return productId;
-	}
-	public void setProductId(Integer productId) {
-		this.productId = productId;
-	}
+//	public Integer getProductId() {
+//		return productId;
+//	}
+//	public void setProductId(Integer productId) {
+//		this.productId = productId;
+//	}
 	
-//	public ProductVO getProduct() {
-//		return product;
-//	}
-//	public void setProduct(ProductVO product) {
-//		this.product = product;
-//	}
+	public ProductVO getProduct() {
+		return product;
+	}
+	public void setProduct(ProductVO product) {
+		this.product = product;
+	}
 	public Integer getQuantity() {
 		return quantity;
 	}
