@@ -81,8 +81,5 @@ public class MemberOrderLineItemController {
 		return ResponseEntity.ok(orderLineItemDto);
 	}	
 	
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 9110ee2 (新增OrderLineItem controller)
