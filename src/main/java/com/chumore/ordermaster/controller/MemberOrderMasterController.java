@@ -38,7 +38,7 @@ public class MemberOrderMasterController {
 		Object memId = session.getAttribute("memberId");
 		Integer memberId = null;
 		if(memId == null) {
-			memberId = 1007;			
+			memberId = 1002;			
 		} else {
 			MemberVO member = (MemberVO) memId;
 			memberId = member.getMemberId();
