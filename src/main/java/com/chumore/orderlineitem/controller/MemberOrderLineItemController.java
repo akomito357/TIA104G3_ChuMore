@@ -66,8 +66,7 @@ public class MemberOrderLineItemController {
 			for(OrderLineItemVO orderLineItem : orderLineItemList) {
 				LineItemDto lineItemDto = new LineItemDto();
 				
-//				ProductVO product = productSvc.getProductById(orderLineItem.getProductId());
-				ProductVO product = orderLineItem.getProduct();
+				ProductVO product = productSvc.getProductById(orderLineItem.getProductId());
 				lineItemDto.setProductName(product.getProductName());
 				lineItemDto.setQuantity(orderLineItem.getQuantity());
 				lineItemDto.setPrice(orderLineItem.getPrice());
@@ -79,7 +78,50 @@ public class MemberOrderLineItemController {
 		}
 		
 		return ResponseEntity.ok(orderLineItemDto);
-	}	
+	}
 	
-
+	
+//	public List<LineItemDto> lineResult(List<OrderLineItemVO> list){
+//		List<LineItemDto> lineResult = new ArrayList<LineItemDto>();
+//		for(OrderLineItemVO data: list) {
+//			//productVo
+//			LineItemDto lineItem = new LineItemDto(data, product);
+//			lineResult.add(lineItem);
+//		}
+//		return lineResult;
+//		
+//	}
+	
+//	public List<OrderItemListDto> itemList(List<OrderItemVO> list){
+//		List<OrderItemListDto> itemList = new ArrayList<OrderItemListDto>();
+//		for(OrderItemVO data : list) {
+//			OrderItemListDto dto = new OrderItemListDto(data);
+//			itemList.add(dto);
+//		}
+//		
+//		return itemList;
+//	}
+	
+	
+	
+//	public List<OrderLineItemDto> orderMainList(List<OrderMasterVO> list) {
+//
+//		List<OrderLineItemDto> orderMainList = new ArrayList<OrderLineItemDto>();
+//
+//		if (list != null) {
+//			for (OrderMasterVO data : list) {
+//				OrderLineItemDto dto = new OrderLineItemDto(data);
+//				orderMainList.add(dto);
+//			}
+//		}
+//
+//		return orderMainList;
+//	}
+	
+	
+	
+	
+	
+	
+	
 }
