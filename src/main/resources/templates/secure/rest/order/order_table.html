@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,11 +12,11 @@
             transition: transform 0.2s;
             cursor: pointer;
         }
-
+        
         .table-card:hover {
             transform: translateY(-5px);
         }
-
+        
         .add-table-card {
             height: 100%;
             border: 2px dashed #dee2e6;
@@ -26,88 +26,54 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-
+        
         .add-table-card:hover {
             background-color: #f8f9fa;
         }
-
+        
         .table-number {
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 1rem;
         }
-
-        .status-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
+        
         .qr-code-container {
             text-align: center;
             margin-bottom: 1rem;
         }
-
+        
         .qr-code-container canvas {
             margin: 0 auto;
         }
-
+        
         .delete-btn {
             position: relative;
             overflow: hidden;
         }
-
+        
         .delete-btn .spinner-border {
             display: none;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
-
+        
         .delete-btn.loading .spinner-border {
             display: inline-block;
         }
-
+        
         .delete-btn.loading span {
             visibility: hidden;
         }
     </style>
 </head>
 <body>
+    <main class="main"></main>
     <div class="container py-4">
         <h2 class="mb-4">桌位管理</h2>
-
+        
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4" id="tableCards">
-            <!-- 使用 Thymeleaf 渲染桌位卡片 -->
-            <div class="col" th:each="table : ${tables}">
-                <div class="card table-card" th:onclick="'showEditTableModal(' + ${table.id} + ')'">
-                    <div class="card-body">
-                        <span class="status-badge badge" th:classappend="${table.status} ? 'bg-success' : 'bg-secondary'">
-                            <span th:text="${table.status} ? '啟用中' : '已停用'"></span>
-                        </span>
-                        <h3 class="table-number" th:text="'桌號 #' + ${table.number}"></h3>
-                        <div class="text-center mb-3">
-                            <div class="qr-code-container d-inline-block" th:id="'qr-' + ${table.id}"></div>
-                        </div>
-                        <p class="url-text mb-2" th:text="${table.url}"></p>
-                        <input type="hidden" th:id="'url-' + ${table.id}" th:value="${table.url}">
-                        <button class="btn btn-outline-primary btn-sm copy-button"
-                                th:onclick="'copyUrl(url-' + ${table.id} + '); event.stopPropagation();'">
-                            複製連結
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 新增桌位卡片 -->
-            <div class="col">
-                <div class="card add-table-card h-100" onclick="showAddTableModal()">
-                    <div class="card-body text-center">
-                        <i class="bi bi-plus-circle" style="font-size: 2rem;"></i>
-                        <h5 class="mt-2">新增桌位</h5>
-                    </div>
-                </div>
-            </div>
+            <!-- 卡片會由 JavaScript 動態產生 -->
         </div>
     </div>
 
@@ -138,13 +104,6 @@
                         <div class="mb-3">
                             <label class="form-label">QR Code</label>
                             <div id="editTableQrCode" class="qr-code-container"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">狀態</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="editTableStatus">
-                                <label class="form-check-label" id="statusLabel">啟用</label>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -189,13 +148,6 @@
                             <label class="form-label">QR Code 預覽</label>
                             <div id="addTableQrCode" class="qr-code-container"></div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">狀態</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="addTableStatus" checked>
-                                <label class="form-check-label">啟用</label>
-                            </div>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -218,9 +170,9 @@
 
         function loadTables() {
             tables = [
-                { id: 1, number: '001', url: 'https://example.com/table/001', status: true },
-                { id: 2, number: '002', url: 'https://example.com/table/002', status: false },
-                { id: 3, number: '003', url: 'https://example.com/table/003', status: true }
+                { id: 1, number: '001', url: 'https://example.com/table/001' },
+                { id: 2, number: '002', url: 'https://example.com/table/002' },
+                { id: 3, number: '003', url: 'https://example.com/table/003' }
             ];
             
             renderTables();
@@ -256,9 +208,6 @@
                 <div class="col">
                     <div class="card table-card" onclick="showEditTableModal(${table.id})">
                         <div class="card-body">
-                            <span class="status-badge badge ${table.status ? 'bg-success' : 'bg-secondary'}">
-                                ${table.status ? '啟用中' : '已停用'}
-                            </span>
                             <h3 class="table-number">桌號 #${table.number}</h3>
                             <div class="text-center mb-3">
                                 <div class="qr-code-container d-inline-block" id="qr-${table.id}"></div>
@@ -282,8 +231,6 @@
             $('#editTableId').val(table.id);
             $('#editTableNumber').val(table.number);
             $('#editTableUrl').val(table.url);
-            $('#editTableStatus').prop('checked', table.status);
-            updateStatusLabel();
             
             // 生成QR碼
             $('#editTableQrCode').empty();
@@ -295,7 +242,6 @@
         function showAddTableModal() {
             $('#addTableNumber').val('');
             $('#addTableUrl').val('');
-            $('#addTableStatus').prop('checked', true);
             $('#addTableQrCode').empty();
             
             $('#addTableNumber').off('input').on('input', function() {
@@ -340,16 +286,10 @@
             });
         }
 
-        function updateStatusLabel() {
-            const status = $('#editTableStatus').prop('checked');
-            $('#statusLabel').text(status ? '啟用' : '停用');
-        }
-
         function saveTableChanges() {
             const tableId = $('#editTableId').val();
             const updateData = {
-                url: $('#editTableUrl').val(),
-                status: $('#editTableStatus').prop('checked')
+                url: $('#editTableUrl').val()
             };
             
             const tableIndex = tables.findIndex(t => t.id === parseInt(tableId));
@@ -363,7 +303,6 @@
         function addNewTable() {
             const tableNumber = $('#addTableNumber').val().trim();
             const url = $('#addTableUrl').val();
-            const status = $('#addTableStatus').prop('checked');
             
             if (!tableNumber) {
                 alert('請輸入桌號！');
@@ -378,8 +317,7 @@
             const newTable = {
                 id: tables.length + 1,
                 number: tableNumber,
-                url: url || generateTableUrl(tableNumber),
-                status: status
+                url: url || generateTableUrl(tableNumber)
             };
             
             tables.push(newTable);
@@ -388,7 +326,6 @@
             
             $('#addTableNumber').val('');
             $('#addTableUrl').val('');
-            $('#addTableStatus').prop('checked', true);
             $('#addTableQrCode').empty();
         }
 
@@ -418,8 +355,6 @@
             const baseUrl = 'https://example.com/table/';
             return baseUrl + tableNumber;
         }
-
-        $('#editTableStatus').on('change', updateStatusLabel);
     </script>
 </body>
 </html>

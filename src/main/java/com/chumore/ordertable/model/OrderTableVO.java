@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "order_table")
@@ -23,7 +24,9 @@ public class OrderTableVO implements java.io.Serializable{
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rest_Id", referencedColumnName = "rest_id")
+	@JsonBackReference("orderTable-rest")
 	private RestVO rest;
+	
 	
 	@Column(name = "table_number")
 	private String tableNumber;
@@ -31,6 +34,11 @@ public class OrderTableVO implements java.io.Serializable{
 	@Column(name = "order_table_url")
 	private String orderTableUrl;
 
+	
+//	public Integer getRestId() {
+//		return rest.getRestId();
+//	}
+	
 	public Integer getOrderTableId() {
 		return orderTableId;
 	}
