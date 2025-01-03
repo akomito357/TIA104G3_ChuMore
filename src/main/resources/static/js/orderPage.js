@@ -15,100 +15,105 @@
 function getProductCategoriesAndProducts(){
     let apiUrl= "http://localhost:8080/rest/productcategory/getListByRestId"
     let restData = {
-        restId: 2003
+        restId: 2001
     };
 
-    $.ajax({
-        url: apiUrl,
-        method: 'GET',
-        dataType: 'json',
-        data: restData,
-        async: true,
+    return new Promise((resolve, reject) =>{
+        $.ajax({
+            url: apiUrl,
+            method: 'GET',
+            dataType: 'json',
+            data: restData,
+            async: true,
 
-        success: res =>{
-            // console.log(res);
-            console.log('getProductCategoriesAndProducts success')
-            let productCategoryJson = "";
-            /** 將餐點分類加入上方導覽列 **/
-            let productCategories = "";
-            console.log(res);
-            $.each(res.data, function(i, productCategory){
-                // console.log(i);
-                // console.log(item);
-                productCategoryJson = productCategory;
-                if (productCategory.productList.length != 0){
-                    productCategories += `<a class="nav-link productCategory" href="#procat${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
-                }
-            });
-            // console.log(productCategories);
-            $(".productCategoryNav").html(productCategories);
-            
-            /**  將餐點分類代入下方菜單h3標題與餐點代入菜單 **/
-            let productCategorySections = "";
-            $.each(res.data, function(i, productCategory){
-                if (productCategory.productList.length != 0){ // 該類別有餐點才顯示
-                    productCategorySections += 
-                    `<section id="procat-${productCategory.productCategoryId}" class="menu-section productCategorySection">
-                    <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
-                    `;
-                    // console.log(productCategory.productList);
-                    
-                    $.each(productCategory.productList, function(index, product){
-                        // console.log(product);
-                        productJSON = product;
-                        if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
-                            // let productDiv = "";
-                            productCategorySections += `
-                            <div class="menu-item product" id="product-${product.productId}">
-                                <div class="menu-item-img-container">`;
-                            if (product.productImages){ // 有圖片才顯示，否則顯示預設
-                                // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
-                                // console.log('not null');
-                                // console.log(product.productImage);
-                                productCategorySections += `<img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
-                            }else{
-                                // console.log('null');
-                                productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
-                            }
-                                    // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
-                            productCategorySections +=  `</div>
-                                <div class="menu-item-content">
-                                    <h5 class="productName">${product.productName}</h5>
-                                    <div class="menu-item-description">
-                                        <p class="text-muted small mb-0 productDescription">${product.productDescription}</p>
-                                    </div>
-                                    <div class="menu-item-footer">
-                                        <div class="d-flex justify-content-between align-items-center priceAndCount">
-                                            <div class="h5 mb-0">$<span class="productPrice">${product.productPrice}</span></div>
-                                            <div class="btn-group">
-                                                <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
-                                                <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
-                                                <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+            success: res =>{
+                // console.log(res);
+                console.log('getProductCategoriesAndProducts success')
+                let productCategoryJson = "";
+                /** 將餐點分類加入上方導覽列 **/
+                let productCategories = "";
+                // console.log(res);
+                $.each(res.data, function(i, productCategory){
+                    // console.log(i);
+                    // console.log(item);
+                    productCategoryJson = productCategory;
+                    if (productCategory.productList.length != 0){
+                        productCategories += `<a class="nav-link productCategory" href="#procat-${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
+                    }
+                });
+                // console.log(productCategories);
+                $(".productCategoryNav").html(productCategories);
+                
+                /**  將餐點分類代入下方菜單h3標題與餐點代入菜單 **/
+                let productCategorySections = "";
+                $.each(res.data, function(i, productCategory){
+                    if (productCategory.productList.length != 0){ // 該類別有餐點才顯示
+                        productCategorySections += 
+                        `<section id="procat-${productCategory.productCategoryId}" class="menu-section productCategorySection">
+                        <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
+                        `;
+                        // console.log(productCategory.productList);
+                        
+                        $.each(productCategory.productList, function(index, product){
+                            // console.log(product);
+                            productJSON = product;
+                            if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
+                                // let productDiv = "";
+                                productCategorySections += `
+                                <div class="menu-item product" id="product-${product.productId}">
+                                    <div class="menu-item-img-container">`;
+                                if (product.productImages){ // 有圖片才顯示，否則顯示預設
+                                    // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
+                                    // console.log('not null');
+                                    // console.log(product.productImage);
+                                    productCategorySections += `<img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
+                                }else{
+                                    // console.log('null');
+                                    productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
+                                }
+                                        // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
+                                productCategorySections +=  `</div>
+                                    <div class="menu-item-content">
+                                        <h5 class="productName">${product.productName}</h5>
+                                        <div class="menu-item-description">
+                                            <p class="text-muted small mb-0 productDescription">${product.productDescription}</p>
+                                        </div>
+                                        <div class="menu-item-footer">
+                                            <div class="d-flex justify-content-between align-items-center priceAndCount">
+                                                <div class="h5 mb-0">$<span class="productPrice">${product.productPrice}</span></div>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>`;
-                        }
-                        
-                    })
-                    productCategorySections += `</section>`
-                    // $(".productCategorySection").html(productDiv);
-                    // console.log("================")S
-                } else {
-                    // productCategorySections += `</section>`
-                }
-                $(".menuContainer").html(productCategorySections);
-            })
-            // console.log(productCategorySections);
-        },
-        error: err =>{
-            // console.log(err);
-            console.log('getProductCategoriesAndProducts error');
-        },
-    })
+                                </div>`;
+                            }
+                            
+                        })
+                        productCategorySections += `</section>`
+                        // $(".productCategorySection").html(productDiv);
+                        // console.log("================")S
+                    } else {
+                        // productCategorySections += `</section>`
+                    }
+                    $(".menuContainer").html(productCategorySections);
+                })
+                // console.log(productCategorySections);
+                resolve(res);
+            },
+            error: err =>{
+                // console.log(err);
+                console.log('getProductCategoriesAndProducts error');
+                reject(err);
+            },
+        
+        });
 
-    
+    });
+        
 }
 
 /**get orderMaster */
@@ -128,7 +133,7 @@ function getOrderMaster(){
         success: res => {
             console.log('getOrderMaster success');
             orderMasterJson = res.data;
-            console.log(orderMasterJson);
+            // console.log(orderMasterJson);
 
             // 將orderItem資料代入點餐紀錄
             let orderItemHistory = "";
@@ -146,7 +151,7 @@ function getOrderMaster(){
                 let orderLineItemHistory = "";
                 let orderItemPrice = 0;
                 $.each(orderItem.orderLineItem, function(index, orderLineItem){
-                    console.log(orderLineItem);
+                    // console.log(orderLineItem);
                     orderLineItemHistory += `<div class="d-flex justify-content-between mb-2">
                                 <div class="orderLineItem">${orderLineItem.product.productName}</div>
                                 <div>$<span class="orderLineItemPrice">${orderLineItem.product.productPrice}</span> x <span class="orderLineItemQuantity">${orderLineItem.quantity}</span></div>
@@ -184,42 +189,6 @@ function getOrderMaster(){
 
 }
 
-/** for 點餐紀錄 */
-// function getOrderItem(){
-//     let url = "http://localhost:8080/rest/orderitem/findByOrderId";
-//     let orderData = {
-//         orderId: 1
-//     };
-    
-//     $.ajax({
-//         url: url,
-//         method: 'GET',
-//         dataType: 'json',
-//         data: orderData,
-//         async: true,
-
-//         success: res =>{
-//             console.log("getOrderItem success");
-//             // console.log(res);
-//             orderItemJson = res.data;
-//             console.log(orderItemJson);
-//         },
-
-//         error: err =>{
-//             console.log("getOrderItem error");
-//             console.log(err);
-//         },
-//     })
-// }
-
-
-getProductCategoriesAndProducts();
-getOrderMaster();
-// getOrderItem();
-// setOrderHistory(orderMasterJson);
-
-
-
 /**按按鈕的時候數量變更 */
 function productCountChange(){
     let cartData = {};
@@ -232,83 +201,14 @@ function productCountChange(){
         thisItemCount ++;
         // console.log(thisItemCount);
         thisOrderCountEle.text(thisItemCount);
-
-        // 檢查是否有index
-        // if (!localStorage['cartIndex']){
-        //     localStorage['cartIndex'] = 0;
-        // }
-
-       
+        thisOrderCountEle.addClass("hasCount"); // for cart update
 
         // 新點餐
         let productIdText = $(this).closest('.product').attr('id').replace('product-', '')
         let productNameText = $(this).closest('.menu-item-content').children('h5.productName').text()
         let productPriceInt = parseInt($(this).closest(".priceAndCount").children("div.h5").children(".productPrice").text());
-        // console.log(productEl.text())
 
-        let newData = {
-            // index: localStorage['cartIndex'],
-            productId: productIdText,
-            productName: productNameText,
-            count: thisItemCount,
-            origPriceForOne: productPriceInt,
-        }
-
-        if (localStorage['cartData']){
-            let newCartData = [];
-            let originCartData = JSON.parse(localStorage.cartData);
-            console.log(originCartData);
-            let isSame = false;
-            // console.log(JSON.stringify(originCartData));
-
-            // originCartData.forEach(function(i, item){
-            //     console.log(i);
-            //     console.log(item);
-            // });
-
-            for (let i = 0; i < originCartData.order.length; i++){
-                console.log(originCartData.order[i].productId);
-                // const test = originCartData.order[i];
-                // console.log(typeof test); // obj
-                let thisLineItem = originCartData.order[i];
-                if (thisLineItem.productId == newData.productId){
-                    // 如果購物車已有此商品
-                    console.log('had!');
-                    let newItemData = {...thisLineItem, count: thisItemCount};
-                    console.log(newItemData);
-                    originCartData.order[i] = newItemData;
-                    isSame = true;
-                    // thisLineItem.count = parseInt(thisItemCount);
-                    // console.log(newCartData);
-                    // localStorage.cartData = JSON.stringify({order: [originCartData.order]}); // localStorage只能存字串
-                    break;
-                } else{
-                    console.log('no');
-                    
-                    // let newCartData = [];
-                    // console.log(originCartData);
-                    // localStorage.cartData = JSON.stringify(newCartData);
-                }
-            }
-            if (!isSame){
-                originCartData.order.push(newData);
-            }
-            localStorage.cartData = JSON.stringify({order: originCartData.order});
-            // let newCartData = {...originCartData, }
-        
-        } else {
-            localStorage.cartData = JSON.stringify({order: [newData]})
-            
-        }
-
-
-        // // 檢查購物車資料存不存在(local storage裡面有沒有相應的物件)，
-        // if (localStorage['cartData'] != undefined) {
-        //     // originCartData = localStorage.cartData
-
-        // } else {
-
-        // }
+        orderInStorage(productIdText, productNameText, productPriceInt, thisItemCount);
 
     })
 
@@ -320,26 +220,133 @@ function productCountChange(){
         let thisItemCount = parseInt(thisOrderCountEle.text());
         if (thisItemCount > 0){
             thisItemCount --;
+            thisOrderCountEle.text(thisItemCount);
+
+            if (thisItemCount == 0){
+                thisOrderCountEle.removeClass('hasCount');
+            }
+            
+            let productIdText = $(this).closest('.product').attr('id').replace('product-', '');
+            let productNameText = $(this).closest('.menu-item-content').children('h5.productName').text();
+            let productPriceInt = parseInt($(this).closest(".priceAndCount").children("div.h5").children(".productPrice").text());
+
+            orderInStorage(productIdText, productNameText, productPriceInt, thisItemCount);
         }
         // console.log(thisItemCount);
-        thisOrderCountEle.text(thisItemCount);
     })
 }
 
+function orderInStorage(productIdText, productNameText, productPriceInt, thisItemCount){
+    let newData = {
+        // index: localStorage['cartIndex'],
+        productId: productIdText,
+        productName: productNameText,
+        count: thisItemCount,
+        origPriceForOne: productPriceInt,
+    }
+
+    if (localStorage['cartData']){
+        let newCartData = [];
+        let cartData = JSON.parse(localStorage.cartData);
+        // console.log(cartData);
+        let isSame = false;
+
+        for (let i = 0; i < cartData.order.length; i++){
+            // console.log(cartData.order[i].productId);
+            let thisLineItem = cartData.order[i];
+            if (thisLineItem.productId == newData.productId){
+                // 如果購物車已有此商品
+                // console.log('had!');
+                let newItemData = {...thisLineItem, count: thisItemCount};
+                // console.log(newItemData);
+                cartData.order[i] = newItemData;
+
+                // 如果數量是0就移除
+                if (cartData.order[i].count == 0){
+                    cartData.order.splice(i, 1);
+                }
+                
+                isSame = true;
+
+                break;
+            };
+        }
+        if (!isSame){
+            cartData.order.push(newData);
+        }
+
+        // 如果購物車空，移除localstorage
+        if (cartData.order.length == 0){
+            localStorage.removeItem("cartData");
+        } else{
+            localStorage.cartData = JSON.stringify({order: cartData.order});
+        }
+
+    } else {
+        localStorage.cartData = JSON.stringify({order: [newData]})
+    }
+    updateCartBtn();
+}
 
 
 /** 更新購物車總額和數量*/ 
 // 更新購物車總額和數量
+function updateCartBtn(){
+    let totalItemCount = 0;
+    let totalPriceForBtnView = 0;
 
+    $(".orderCount").each(function(){
+        let thisCount = parseInt($(this).text());
+        // console.log($(this).closest('.btn-group').closest('.priceAndCount'));
+        let thisPrice = parseInt($(this).closest('.menu-item-footer').find('.productPrice').text());
+        totalItemCount += thisCount;
+        totalPriceForBtnView += thisPrice * thisCount;
+        // console.log(thisPrice);
+    })
 
-// 更新按鈕狀態 - 當購物車內的物品數量>0，按鈕樣式變更
-// 商品的數量加減按鈕功能
+    $("span.currentPrice").text(totalPriceForBtnView);
+    $("span.cart-badge").text(totalItemCount);
 
+    // 更新按鈕狀態 - 當購物車內的物品數量>0，按鈕樣式變更
+    if (totalItemCount > 0){
+        $("span.cart-badge").removeClass("d-none");
+        $("button.cart").addClass("btn-primary");
+        $("button.cart").removeClass("btn-outline-primary")
+    } else {
+        $("span.cart-badge").addClass("d-none");
+        $("button.cart").removeClass("btn-primary");
+        $("button.cart").addClass("btn-outline-primary")
+    }
 
+}
+
+// 載入頁面時讀取local storage的資料
+function init(){
+    if (localStorage.cartData){
+        // console.log(localStorage.cartData);
+        let cartData = JSON.parse(localStorage.cartData).order;
+        // console.log(cartData);
+        cartData.forEach(orderLine => {
+            // console.log(orderLine.productId);
+            let productId = "product-" + orderLine.productId;
+            // console.log('id= '+ productId);
+            let productEle = document.getElementById(productId);
+            // console.log(productEle.querySelector(".orderCount"));
+            productEle.querySelector(".orderCount").innerText = orderLine.count;
+        });
+    }
+
+}
 
 
 // 初始化
-function init(){
-    
+async function main(){
+    productCountChange()
+    await getProductCategoriesAndProducts();
+    await init()
+    await updateCartBtn()
+    getOrderMaster();
 }
-productCountChange()
+
+main();
+
