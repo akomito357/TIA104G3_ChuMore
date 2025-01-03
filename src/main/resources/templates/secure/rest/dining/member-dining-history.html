@@ -137,6 +137,88 @@
             vertical-align: middle;
         }
 
+        #mealDetailsModal {
+            display: none;
+            /* 確保初始隱藏 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        #mealDetailsModal.show {
+            display: flex;
+            /* 顯示 Modal */
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            min-height: 500px;
+        }
+
+        .modal-header,
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 10px;
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .flex {
+            margin-bottom: 0px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            margin-right: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #mealDetailsModal {
+            border-bottom: none;
+        }
+
+        .order-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .text-gray-600 {
+            color: #757575;
+        }
+
+        .btn_close {
+            background-color: #ca0909;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            height: 30px;
+            width: 30px;
+            margin-right: 20px;
+        }
+
+        .btn_close:hover {
+            background-color: #ac1a1a;
+        }
+
         /* 評論 */
         .review-card {
             border: 1px solid #dee2e6;
@@ -200,70 +282,6 @@
         .pagination {
             margin-top: 2rem;
             margin-bottom: 2rem;
-        }
-
-        #mealDetailsModal {
-            display: none;
-            /* 確保初始隱藏 */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-        }
-
-        #mealDetailsModal.show {
-            display: flex;
-            /* 顯示 Modal */
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 700px;
-            max-width: 1000px;
-        }
-
-        .modal-header,
-        .modal-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .order-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .text-gray-600 {
-            color: #757575;
-        }
-
-        .btn_close {
-            background-color: #ca0909;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            border: none;
-            font-size: 0.875rem;
-            height: 30px;
-            width: 30px;
-            margin-right: 20px;
-        }
-
-        .btn_close:hover {
-            background-color: #ac1a1a;
         }
     </style>
 </head>
@@ -329,31 +347,8 @@
                         <h3 class="text-xl font-semibold" style="margin-left: 20px;">餐點明細</h3>
                         <button onclick="closeModal()" class="btn_close">X</button>
                     </div>
-                    <div class="modal-body p-6">
-                        <!-- 第一次跟第二次點餐內容要刪除 -->
-                        <div class="order-section mb-6">
-                            <h4 class="text-lg font-semibold text-gray-800">第一次點餐</h4>
-                            <div id="firstOrderDetails">
-                                <!-- 由 JavaScript 動態填充第一次點餐細項 -->
-                            </div>
-                        </div>
-                        <!-- 第二次點餐 -->
-                        <div class="order-section">
-                            <h4 class="text-lg font-semibold text-gray-800">第二次點餐</h4>
-                            <div id="secondOrderDetails">
-                                <!-- 由 JavaScript 動態填充第二次點餐細項 -->
-                            </div>
-                        </div>
-                    </div>
+                    <div class="modal-body p-6"></div>
                     <div class="modal-footer p-4 border-t flex justify-between items-center">
-                        <div class="summary">
-                            <p class="text-gray-600">
-                                折扣點數: <span id="discountPoints">50</span>
-                            </p>
-                            <p class="text-xl font-semibold">
-                                訂單總金額: <span id="totalAmount">$3,500</span>
-                            </p>
-                        </div>
 
                     </div>
                 </div>
@@ -423,10 +418,13 @@
                         <td class="px-4 py-3">${date}</td>
                         <td class="px-4 py-3">${time}</td>
                     	<td class="px-4 py-3">${orderMaster.totalPrice}</td>
-                        <td class="px-4 py-3"><a href="" class="show-detail">
+                        <td class="px-4 py-3"><a href="javascript:void(0);" class="show-detail">
                                 <i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a>
                         </td>        
-                    	<td class="px-4 py-3"><span class="status-badge status-pending">${orderMaster.reviewId ? "已評論" : "未評論"}</span></td>
+                    	<td class="px-4 py-3">
+                            ${orderMaster.reviewId ? `<span class="status-badge status-completed">已評論</span>` :
+                                `<span class="status-badge status-pending">未評論</span>`}
+                        </td>
                     	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
                     	<td class="px-4 py-3">
                         	<button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId ? "查看評論" : "進行評論"}</button>
@@ -453,10 +451,6 @@
                 });
 
 
-
-
-
-
             //頁面切換
             tabs.on("click", function (e) {
                 e.preventDefault();
@@ -478,51 +472,65 @@
         });
 
 
-
-        // 模擬餐點資料
-        const mealDetails = {
-            firstOrder: [
-                { id: 1, name: "牛排", quantity: 2, price: "$1,398" },
-                { id: 2, name: "沙拉", quantity: 1, price: "$400", memo: "無洋蔥" }
-            ],
-            secondOrder: [
-                { id: 3, name: "飲料", quantity: 2, price: "$200", memo: "" }
-            ],
-            discountPoints: 50
-        };
-
-        // 計算訂單總金額
-        function calculateTotalAmount(orderDetails) {
-            return orderDetails.reduce((total, item) => total + parseFloat(item.price.replace('$', '').replace(',', '')), 0);
-        }
-
         // 顯示 Modal
         function showModal(orderId) {
 
-
-            fetch("member/orderLineItem/showOrderItemList", {
+            fetch(`member/orderLineItem/showOrderItemList?orderId=${orderId}`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(response => {
 
-                    const mealDetailList = response.data;
+                    console.log(response);
+                    const mealDetailList = response.orderItemListDto;
+                    console.log(mealDetailList);
+
+
 
                     let mealDetail_body = "";
 
                     mealDetailList.forEach((orderItem, index) => {
-                        mealDetail_body = `
+
+                        const mealLineList = orderItem.lineItemList;
+                        let mealLineDetail_body = "";
+
+                        mealLineList.forEach((orderLineItem, index) => {
+
+                            mealLineDetail_body += `
+                            	<div class="flex justify-between items-center mb-1 p-2 border-b">
+	                                <span style="margin-left: 40px">${orderLineItem.productName} x ${orderLineItem.quantity}</span>
+	                                <span class="text-gray-600  flex-grow text-right">$ ${orderLineItem.price}</span>
+	                            </div>
+
+                            `;
+                        });
+
+
+                        mealDetail_body += `
                             <div class="order-section mb-6">
-							<h4 class="text-lg font-semibold text-gray-800">第${index + 1}次點餐</h4>
-							<div>
-                                
-							</div>
-						</div>
-                        
+                                <h4 class="text-lg font-semibold text-gray-800" style="margin-left: 20px">第${index + 1}次點餐</h4>
+                                <div>${mealLineDetail_body}
+                                  ${orderItem.memo ? `<div class="text-sm text-gray-500 mb-3 mt-3" style="margin-left: 20px;">備註: ${orderItem.memo}</div>` : ''}
+                                </div >
+                            </div >
+                            `;
+
+                    });
+
+                    let mealSummary = "";
+
+                    mealSummary += `
+                        <div class="summary">
+                                <p class="text-gray-600">小計: <span id="discountPoints">${response.subtotalPrice}</span></p>
+                                <p class="text-gray-600">折扣點數: <span id="discountPoints">${response.pointUsed}點   (＝折抵${response.pointUsed * 10} 元)</span></p>
+                                <p class="text-xl font-semibold">訂單總金額: <span id="totalAmount">${response.totalPrice}</span></p>
+                        </div>
                         
                         `;
 
+                    // console.log(mealDetail_body);
+                    document.querySelector(".modal-body").innerHTML = mealDetail_body;
+                    document.querySelector(".modal-footer").innerHTML = mealSummary;
 
-                    });
 
                 });
 
@@ -530,73 +538,8 @@
 
 
 
-            // const orderList = response.data;
-
-
-            // let table_body = "";
-            // orderList.forEach((orderMaster, index) => {
-
-            //     const[date, time] = orderMaster.servedDatetime.split(" ");
-
-            //     table_body += `
-            //     <tr>
-            //         <td class="px-4 py-3">${index+1}</td>
-            //         <td class="px-4 py-3">${orderMaster.restName}</td>
-            //         <td class="px-4 py-3">${date}</td>
-            //         <td class="px-4 py-3">${time}</td>
-            //         <td class="px-4 py-3">${orderMaster.totalPrice}</td>
-            //         <td class="px-4 py-3"><a href="#" class="show-detail">
-            //                 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-            //         </td>        
-            //         <td class="px-4 py-3"><span class="status-badge status-pending">${orderMaster.reviewId? "已評論" : "未評論"}</span></td>
-            //         <td class="px-4 py-3">${orderMaster.pointEarned}</td>
-            //         <td class="px-4 py-3">
-            //             <button class="btn btn-outline-secondary btn-sm">${orderMaster.reviewId? "查看評論" : "進行評論"}</button>
-            //         </td>
-
-
-            //     </tr>`;
-
-
-            //     });
-
-            //     document.getElementById("order-tbody").innerHTML = table_body;
-
-
-
 
             const modal = document.getElementById("mealDetailsModal");
-            const firstOrderDetails = document.getElementById("firstOrderDetails");
-            const secondOrderDetails = document.getElementById("secondOrderDetails");
-
-            // 填充第一次點餐
-            firstOrderDetails.innerHTML = mealDetails.firstOrder
-                .map(
-                    (item, index) => `
-        <div class="flex justify-between items-center mb-4 p-2 border-b">
-            <span>${item.name} x ${item.quantity}</span>
-            <span class="text-gray-600">${item.price}</span>
-        </div>
-        <div class="text-sm text-gray-500">備註: ${item.memo}</div>`
-                )
-                .join("");
-
-            // 填充第二次點餐
-            secondOrderDetails.innerHTML = mealDetails.secondOrder
-                .map(
-                    (item, index) => `
-        <div class="flex justify-between items-center mb-4 p-2 border-b">
-            <span>${item.name} x ${item.quantity}</span>
-            <span class="text-gray-600">${item.price}</span>
-        </div>
-        <div class="text-sm text-gray-500">備註: ${item.memo}</div>`
-                )
-                .join("");
-
-            // 更新折扣點數和訂單總金額
-            const totalAmount = calculateTotalAmount(mealDetails.firstOrder) + calculateTotalAmount(mealDetails.secondOrder);
-            document.getElementById("discountPoints").innerText = mealDetails.discountPoints;
-            document.getElementById("totalAmount").innerText = `$${totalAmount.toFixed(2)}`;
 
             // 顯示 Modal
             modal.classList.add("show");
@@ -607,21 +550,6 @@
             const modal = document.getElementById("mealDetailsModal");
             modal.classList.remove("show");
         }
-
-
-
-        // 為 "餐點明細" 的連結加上點擊事件
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     const detailLinks = document.querySelectorAll('td a i.fa-arrow-up-right-from-square');
-        //     detailLinks.forEach((link) =>
-        //         link.addEventListener("click", function (event) {
-        //             console.log($(this).attr("data-orderId"));
-
-        //             event.preventDefault();
-        //             showModal();
-        //         })
-        //     );
-        // });
 
 
 
@@ -817,9 +745,7 @@
                             </div>
                             <div class="col-2">
                                 <div class="action-buttons">
-                                    <button class="btn btn-outline-secondary edit-btn">
-                                        編輯
-                                    </button>
+                                    <button class="btn btn-outline-secondary edit-btn">編輯</button>
                                     <button class="btn delete-btn">
                                         <i class="fas fa-trash-alt me-1"></i>刪除
                                     </button>
@@ -828,6 +754,7 @@
                         </div>
                     </div>
                 `);
+
             });
 
             // Update pagination
@@ -842,26 +769,26 @@
 
             //     // Previous button
             pagination.append(`
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage - 1}">上一頁</a>
-                </li>
-            `);
+                            < li class="page-item ${currentPage === 1 ? 'disabled' : ''}" >
+                                <a class="page-link" href="#" data-page="${currentPage - 1}">上一頁</a>
+                </li >
+                            `);
 
             // Page numbers
             for (let i = 1; i <= totalPages; i++) {
                 pagination.append(`
-                    <li class="page-item ${currentPage === i ? 'active' : ''}">
-                        <a class="page-link" href="#" data-page="${i}">${i}</a>
-                    </li>
-                `);
+                            < li class="page-item ${currentPage === i ? 'active' : ''}" >
+                                <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li >
+                            `);
             }
 
             // Next button
             pagination.append(`
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}">下一頁</a>
-                </li>
-            `);
+                            < li class="page-item ${currentPage === totalPages ? 'disabled' : ''}" >
+                                <a class="page-link" href="#" data-page="${currentPage + 1}">下一頁</a>
+                </li >
+                            `);
         }
 
         // Generate star rating HTML
@@ -872,6 +799,7 @@
             }
             return stars;
         }
+
 
         // Setup event handlers
         function setupEventHandlers() {
@@ -941,7 +869,7 @@
             }
 
             // Remove from UI with animation
-            $(`.review-card[data-id="${reviewId}"]`).fadeOut(300, function () {
+            $(`.review - card[data - id="${reviewId}"]`).fadeOut(300, function () {
                 $(this).remove();
             });
         }
