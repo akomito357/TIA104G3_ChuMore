@@ -1,7 +1,6 @@
 package com.chumore.orderlineitem.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.chumore.orderitem.model.OrderItemVO;
@@ -11,9 +10,9 @@ import com.chumore.product.model.ProductVO;
 
 public class OrderLineItemDto {
 
-	private Double subtotalPrice; // orderMaster
+	private BigDecimal subtotalPrice; // orderMaster
 	private Integer pointUsed; // orderMaster
-	private Double totalPrice; // orderMaster
+	private BigDecimal totalPrice; // orderMaster
 	private List<OrderItemListDto> orderItemListDto;
 
 	public OrderLineItemDto() {
@@ -25,11 +24,11 @@ public class OrderLineItemDto {
 		setTotalPrice(data.getTotalPrice());
 	}
 
-	public Double getSubtotalPrice() {
+	public BigDecimal getSubtotalPrice() {
 		return subtotalPrice;
 	}
 
-	public void setSubtotalPrice(Double subtotalPrice) {
+	public void setSubtotalPrice(BigDecimal subtotalPrice) {
 		this.subtotalPrice = subtotalPrice;
 	}
 
@@ -41,11 +40,11 @@ public class OrderLineItemDto {
 		this.pointUsed = pointUsed;
 	}
 
-	public Double getTotalPrice() {
+	public BigDecimal getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 	

@@ -66,7 +66,8 @@ public class MemberOrderLineItemController {
 			for(OrderLineItemVO orderLineItem : orderLineItemList) {
 				LineItemDto lineItemDto = new LineItemDto();
 				
-				ProductVO product = productSvc.getProductById(orderLineItem.getProductId());
+//				ProductVO product = productSvc.getProductById(orderLineItem.getProductId());
+				ProductVO product = orderLineItem.getProduct();
 				lineItemDto.setProductName(product.getProductName());
 				lineItemDto.setQuantity(orderLineItem.getQuantity());
 				lineItemDto.setPrice(orderLineItem.getPrice());
