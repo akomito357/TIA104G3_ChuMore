@@ -29,8 +29,8 @@ public class OrderTableService {
 		return optional.orElse(null);
 	}
 	
-	public List<OrderTableVO> getAll(){
-		return repository.findAll();
+	public List<OrderTableVO> getAllByRestId(Integer restId){
+		return repository.findByRestId(restId);
 	}
 
 }

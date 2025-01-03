@@ -32,6 +32,7 @@ public class OrderTableVO implements java.io.Serializable{
 	@JsonBackReference("orderTable-rest")
 	private RestVO rest;
 	
+	
 	@Column(name = "table_number")
 	private String tableNumber;
 	
@@ -41,6 +42,11 @@ public class OrderTableVO implements java.io.Serializable{
 	@OneToMany(mappedBy = "orderTable", cascade = CascadeType.ALL)
 	private Set<OrderMasterVO> orderMasters;
 
+	
+//	public Integer getRestId() {
+//		return rest.getRestId();
+//	}
+	
 	public Integer getOrderTableId() {
 		return orderTableId;
 	}

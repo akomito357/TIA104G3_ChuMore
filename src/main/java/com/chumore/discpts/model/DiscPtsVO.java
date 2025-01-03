@@ -16,6 +16,11 @@ import javax.persistence.Table;
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "disc_pts")
@@ -34,6 +39,7 @@ public class DiscPtsVO implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rest_id", referencedColumnName = "rest_id", nullable = false)
+
     @JsonBackReference("discPts-rest")
     private RestVO rest; // 對應餐廳ID (FK)
 

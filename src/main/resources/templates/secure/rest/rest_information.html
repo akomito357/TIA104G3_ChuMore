@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯餐廳資料</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px;
+            position: relative;
+        }
+
+        .image-wrapper {
+            display: inline-block;
+            position: relative;
+            margin: 10px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #environmentImagesDisplay,
+        #menuImagesDisplay {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">編輯餐廳資料</h2>
+        
+        <form id="editForm">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span>負責人資料</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">負責人姓名</label>
+                            <input type="text" class="form-control" id="merchantName" name="merchantName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">負責人電話</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="mb-3">密碼修改</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">目前密碼</label>
+                            <input type="password" class="form-control" name="oldPassword" id="oldPassword">
+                            <div class="form-text">若不修改密碼則此欄位留空</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">新密碼</label>
+                            <input type="password" class="form-control" name="newPassword" id="newPassword">
+                            <div id="passwordStrength" class="form-text"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">確認新密碼</label>
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span>餐廳資料</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">餐廳名稱</label>
+                            <input type="text" class="form-control" id="restName" name="restName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">餐廳電話</label>
+                            <input type="tel" class="form-control" id="restPhone" name="restPhone" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">料理類型</label>
+                            <select class="form-select" id="cuisineType" name="cuisineType" required>
+                                <option value="">請選擇料理類型</option>
+                                <option value="taiwanese">台式料理</option>
+                                <option value="chinese">中式料理</option>
+                                <option value="japanese">日式料理</option>
+                                <option value="western">西式料理</option>
+                                <option value="korean">韓式料理</option>
+                                <option value="thai">泰式料理</option>
+                                <option value="vegetarian">素食料理</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label">地址</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <select class="form-select" id="city" name="restCity" required>
+                                        <option value="">選擇縣市</option>
+                                        <option value="taipei">台北市</option>
+                                        <option value="newtaipei">新北市</option>
+                                        <option value="taoyuan">桃園市</option>
+                                        <!-- 其他縣市選項 -->
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="district" name="restDist" required>
+                                        <option value="">選擇鄉鎮市區</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="restAddress" name="restAddress" placeholder="詳細地址" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">餐廳簡介</label>
+                        <textarea class="form-control" id="restIntro" name="restIntro" rows="4" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">環境圖片</label>
+                        <div id="environmentImagesDisplay" class="d-flex flex-wrap">
+                            <!-- 顯示現有環境圖片 -->
+                            <div th:each="img : ${environmentImages}" class="image-wrapper position-relative mb-3 me-3">
+                                <input type="hidden" name="existingEnvironmentImageIds" th:value="${img.id}" />
+                                <div class="preview-image">
+                                    <img th:src="@{${img.url}}" class="img-thumbnail" />
+                                </div>
+                                <button type="button" class="delete-btn" th:attr="data-id=${img.id}">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="file" class="form-control mt-2" id="environmentImages" name="environmentImages" multiple accept="image/*">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">菜單圖片</label>
+                        <div id="menuImagesDisplay" class="d-flex flex-wrap">
+                            <!-- 顯示現有菜單圖片 -->
+                            <div th:each="img : ${menuImages}" class="image-wrapper position-relative mb-3 me-3">
+                                <input type="hidden" name="existingMenuImageIds" th:value="${img.id}" />
+                                <div class="preview-image">
+                                    <img th:src="@{${img.url}}" class="img-thumbnail" />
+                                </div>
+                                <button type="button" class="delete-btn" th:attr="data-id=${img.id}">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="file" class="form-control mt-2" id="menuImages" name="menuImages" multiple accept="image/*">
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">營業與座位資訊</h5>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">營業狀態</label>
+                            <select class="form-select" id="businessStatus" name="businessStatus" required>
+                                <option value="open">營業中</option>
+                                <option value="closed">停業</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">1~2人桌數</label>
+                            <input type="number" class="form-control" id="smallTables" name="smallTables" min="0" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">3~4人桌數</label>
+                            <input type="number" class="form-control" id="mediumTables" name="mediumTables" min="0" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">5~8人桌數</label>
+                            <input type="number" class="form-control" id="largeTables" name="largeTables" min="0" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <div class="d-flex justify-content-end mt-4 mb-5">
+            <button type="button" class="btn btn-secondary me-2" onclick="history.back()">返回</button>
+            <button type="submit" form="editForm" class="btn btn-primary">儲存修改</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const districts = {
+                'taipei': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
+                'newtaipei': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區'],
+                'taoyuan': ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '大溪區', '龜山區', '龍潭區', '大園區', '觀音區', '新屋區']
+            };
+
+            $('#city').change(function() {
+                const selectedCity = $(this).val();
+                const districtSelect = $('#district');
+                districtSelect.empty().append('<option value="">選擇鄉鎮市區</option>');
+                
+                if (selectedCity && districts[selectedCity]) {
+                    districts[selectedCity].forEach(function(district) {
+                        districtSelect.append($('<option></option>')
+                            .attr('value', district)
+                            .text(district));
+                    });
+                }
+            });
+
+            function handleImagePreview(input, displayId) {
+                const files = input.files;
+                const displayDiv = $(`#${displayId}`);
+                
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
+                        const imgContainer = $('<div>').addClass('preview-image');
+                        const img = $('<img>').addClass('img-thumbnail').attr('src', e.target.result);
+                        const deleteBtn = $('<button>')
+                            .addClass('delete-btn')
+                            .html('<i class="bi bi-x"></i>')
+                            .click(() => wrapper.remove());
+
+                        imgContainer.append(img);
+                        wrapper.append(imgContainer, deleteBtn);
+                        displayDiv.append(wrapper);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            $('#environmentImages').change(function() {
+                handleImagePreview(this, 'environmentImagesDisplay');
+            });
+
+            $('#menuImages').change(function() {
+                handleImagePreview(this, 'menuImagesDisplay');
+            });
+
+            $(document).on('click', '.delete-btn', function() {
+                if (confirm('確定要刪除這張圖片嗎？')) {
+                    const wrapper = $(this).closest('.image-wrapper');
+                    const imgId = $(this).data('id');
+                    
+                    if (imgId) {
+                        const input = $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'deleteImageIds')
+                            .val(imgId);
+                        $('#editForm').append(input);
+                    }
+                    
+                    wrapper.remove();
+                }
+            });
+
+            $('#newPassword, #confirmPassword').on('input', function() {
+                const newPassword = $('#newPassword').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (newPassword || confirmPassword) {
+                    if (newPassword === confirmPassword) {
+                        $('#passwordMatch')
+                            .text('密碼符合')
+                            .removeClass('text-danger')
+                            .addClass('text-success');
+                    } else {
+                        $('#passwordMatch')
+                            .text('密碼不符合')
+                            .removeClass('text-success')
+                            .addClass('text-danger');
+                    }
+                } else {
+                    $('#passwordMatch').text('');
+                }
+            });
+
+            $('#editForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch('/api/restaurant/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('更新成功');
+                        fetchRestaurantData();
+                    } else {
+                        alert(data.message || '更新失敗');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating restaurant:', error);
+                    alert('更新失敗');
+                });
+            });
+
+            function fetchRestaurantData() {
+                fetch('/rests/getOneRest', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    $('#merchantName').val(data.merchantName);
+                    $('#phoneNumber').val(data.phoneNumber);
+                    $('#restName').val(data.restName);
+                    $('#restPhone').val(data.restPhone);
+                    $('#cuisineType').val(data.cuisineType);
+                    $('#restCity').val(data.restCity);
+                    updateDistricts(data.restCity, data.restDist);
+                    $('#restAddress').val(data.restAddress);
+                    $('#restIntro').val(data.restIntro);
+                    $('#businessStatus').val(data.businessStatus);
+                    $('#smallTables').val(data.smallTables);
+                    $('#mediumTables').val(data.mediumTables);
+                    $('#largeTables').val(data.largeTables);
+
+                    if (data.environmentImages) {
+                        displayExistingImages(data.environmentImages, 'environmentImagesDisplay');
+                    }
+                    if (data.menuImages) {
+                        displayExistingImages(data.menuImages, 'menuImagesDisplay');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching restaurant data:', error);
+                    alert('獲取餐廳資料失敗');
+                });
+            }
+
+            function displayExistingImages(images, displayId) {
+                const displayDiv = $(`#${displayId}`);
+                displayDiv.empty();
+                
+                images.forEach(img => {
+                    const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
+                    const imgContainer = $('<div>').addClass('preview-image');
+                    const imgElement = $('<img>').addClass('img-thumbnail').attr('src', img.url);
+                    const deleteBtn = $('<button>')
+                        .addClass('delete-btn')
+                        .attr('data-id', img.id)
+                        .html('<i class="bi bi-x"></i>');
+
+                    imgContainer.append(imgElement);
+                    wrapper.append(imgContainer, deleteBtn);
+                    displayDiv.append(wrapper);
+                });
+            }
+
+            function updateDistricts(selectedCity, selectedDistrict = '') {
+                const districtSelect = $('#district');
+                districtSelect.empty().append('<option value="">選擇鄉鎮市區</option>');
+                
+                if (selectedCity && districts[selectedCity]) {
+                    districts[selectedCity].forEach(function(district) {
+                        const option = $('<option></option>')
+                            .attr('value', district)
+                            .text(district);
+                        
+                        if (district === selectedDistrict) {
+                            option.prop('selected', true);
+                        }
+                        
+                        districtSelect.append(option);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

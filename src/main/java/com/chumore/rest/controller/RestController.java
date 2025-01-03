@@ -8,22 +8,29 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
 
 // @SessionAttributes(names={"rest","member"})
 
+@CrossOrigin
 @Controller
 @RequestMapping("/rests")
 public class RestController {
+	
+	@Autowired
+	HttpSession session;
 	
 	@Autowired
 	RestService restSvc;
@@ -57,16 +64,16 @@ public class RestController {
 		}
 		restSvc.updateRest(rest);
 		rest = restSvc.getOneById(Integer.valueOf(rest.getRestId()));
-		session.setAttribute("rest",rest);
 		model.addAttribute("rest", session.getAttribute("rest"));
-		return "/secure/rest/merchant_restaurant_information_modification";
+		return "n";
 	}
 	
 	// getOne - for thymeleaf
 	@GetMapping("findRest")
-	public String findRestById(@RequestParam("restId") String restId, ModelMap model) {
+	public String findRestById(@RequestParam("restId") String restId, ModelMap model,HttpSession session) {
 		RestVO rest = restSvc.getOneById(Integer.valueOf(restId));
-		model.addAttribute("rest", rest);
+		session.setAttribute("rest",rest);
+		model.addAttribute("rest", session.getAttribute("rest"));
 		return "";
 	}
 	
@@ -79,6 +86,11 @@ public class RestController {
 		return "";
 	}
 	
-	
+	@GetMapping("getOneRest")
+	@ResponseBody
+	public ResponseEntity<RestVO> getOneData(@RequestParam Integer restId){
+		RestVO rest = restSvc.getOneById(restId);
+		return ResponseEntity.ok(rest);	
+	}
 	
 }
