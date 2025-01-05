@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.chumore.orderitem.model.OrderItemRepository;
@@ -61,12 +64,11 @@ public class OrderLineItem_Service {
 		return -1;
 	}
 
-//	public List<OrderLineItemVO> getAll(){
-//		return repository.findAll();
-//	}
 
 	public List<OrderLineItemVO> getOrderLineItemByOrderItemId(Integer orderItemId) {
 		return repository.findOrderLineItemByOrderItemId(orderItemId);
 	}
+
+	
 
 }

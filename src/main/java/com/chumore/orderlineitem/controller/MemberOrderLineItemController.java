@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
-import com.chumore.orderlineitem.dto.OrderLineItemDto;
-import com.chumore.orderlineitem.dto.OrderLineItemDto.LineItemDto;
-import com.chumore.orderlineitem.dto.OrderLineItemDto.OrderItemListDto;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto.LineItemDto;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto.OrderItemListDto;
 import com.chumore.orderlineitem.model.OrderLineItemVO;
 import com.chumore.orderlineitem.model.OrderLineItem_Service;
-import com.chumore.ordermaster.model.OrderMasterService;
+import com.chumore.ordermaster.model.OrderMasterServiceImpl;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
@@ -32,7 +32,7 @@ public class MemberOrderLineItemController {
 	HttpSession session;
 	
 	@Autowired
-	OrderMasterService orderSvc;
+	OrderMasterServiceImpl orderSvc;
 	
 	
 	@Autowired
@@ -44,17 +44,17 @@ public class MemberOrderLineItemController {
 	@Autowired
 	Product_Service productSvc;
 	
-	@GetMapping("showOrderItemList")
-	public ResponseEntity<OrderLineItemDto> showOrderItemList(@RequestParam Integer orderId){
-		OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
+	@GetMapping("items")
+	public ResponseEntity<ShowOrderLineItemDto> showOrderItemList(@RequestParam Integer orderId){
+		ShowOrderLineItemDto showOrderLineItemDto = new ShowOrderLineItemDto();
 		
 		OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
-		orderLineItemDto.setSubtotalPrice(orderMaster.getSubtotalPrice());
-		orderLineItemDto.setPointUsed(orderMaster.getPointUsed());
-		orderLineItemDto.setTotalPrice(orderMaster.getTotalPrice());
+		showOrderLineItemDto.setSubtotalPrice(orderMaster.getSubtotalPrice());
+		showOrderLineItemDto.setPointUsed(orderMaster.getPointUsed());
+		showOrderLineItemDto.setTotalPrice(orderMaster.getTotalPrice());
 		
 		List<OrderItemListDto> orderItemListDto = new ArrayList<OrderItemListDto>();
-		orderLineItemDto.setOrderItemListDto(orderItemListDto);
+		showOrderLineItemDto.setOrderItemListDto(orderItemListDto);
 		
 		List<OrderItemVO> list = orderItemSvc.getOrderItemListByOrderId(orderId);
 		for(OrderItemVO orderItem : list) {
@@ -78,49 +78,8 @@ public class MemberOrderLineItemController {
 			
 		}
 		
-		return ResponseEntity.ok(orderLineItemDto);
+		return ResponseEntity.ok(showOrderLineItemDto);
 	}
-	
-	
-//	public List<LineItemDto> lineResult(List<OrderLineItemVO> list){
-//		List<LineItemDto> lineResult = new ArrayList<LineItemDto>();
-//		for(OrderLineItemVO data: list) {
-//			//productVo
-//			LineItemDto lineItem = new LineItemDto(data, product);
-//			lineResult.add(lineItem);
-//		}
-//		return lineResult;
-//		
-//	}
-	
-//	public List<OrderItemListDto> itemList(List<OrderItemVO> list){
-//		List<OrderItemListDto> itemList = new ArrayList<OrderItemListDto>();
-//		for(OrderItemVO data : list) {
-//			OrderItemListDto dto = new OrderItemListDto(data);
-//			itemList.add(dto);
-//		}
-//		
-//		return itemList;
-//	}
-	
-	
-	
-//	public List<OrderLineItemDto> orderMainList(List<OrderMasterVO> list) {
-//
-//		List<OrderLineItemDto> orderMainList = new ArrayList<OrderLineItemDto>();
-//
-//		if (list != null) {
-//			for (OrderMasterVO data : list) {
-//				OrderLineItemDto dto = new OrderLineItemDto(data);
-//				orderMainList.add(dto);
-//			}
-//		}
-//
-//		return orderMainList;
-//	}
-	
-	
-	
 	
 	
 	
