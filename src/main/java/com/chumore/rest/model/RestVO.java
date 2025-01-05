@@ -76,7 +76,7 @@ public class RestVO implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "cuisine_type_id", referencedColumnName = "cuisine_type_id")
 	@NotEmpty(message = "請輸入餐廳料理類型")
-	@JsonBackReference
+	@JsonBackReference("cuisineType-rest")
 	private CuisineTypeVO cuisineType;
 	
 	@Column(name = "rest_intro", columnDefinition = "text")

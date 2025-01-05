@@ -1,5 +1,8 @@
 package com.chumore.ordertable.model;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,8 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.rest.model.RestVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -23,7 +28,7 @@ public class OrderTableVO implements java.io.Serializable{
 	private Integer orderTableId;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "rest_Id", referencedColumnName = "rest_id")
+	@JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
 	@JsonBackReference("orderTable-rest")
 	private RestVO rest;
 	
@@ -32,6 +37,9 @@ public class OrderTableVO implements java.io.Serializable{
 	
 	@Column(name = "order_table_url")
 	private String orderTableUrl;
+	
+	@OneToMany(mappedBy = "orderTable", cascade = CascadeType.ALL)
+	private Set<OrderMasterVO> orderMasters;
 
 	public Integer getOrderTableId() {
 		return orderTableId;

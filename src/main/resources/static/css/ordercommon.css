@@ -1,0 +1,52 @@
+:root {
+    --primary: #FEA116;
+    --btn_hover: #ffc107;
+    --btn_focus: #ffc107;
+    --light: #F1F8FF;
+    --dark: #0F172B;
+    --lighten_dark: #383b3f;
+    --header_height: 62.5px;
+    --sidebar_width: 240px;
+}
+
+
+.btn{
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-group{
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn.disabled{
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-primary{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.btn-outline-primary{
+    /* background-color: var(--primary); */
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn:hover{
+    background-color: var(--btn_hover);
+    border-color: var(--btn_hover);
+    transition-duration: 0.3s;
+    color: white;
+}
+
+.btn:active{
+    background-color: var(--btn_focus) !important;
+    border-color: var(--btn_focus) !important;
+    transition-duration: 0.3s;
+    color: white;
+}

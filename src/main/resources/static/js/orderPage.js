@@ -1,22 +1,35 @@
-// let restId = 2001; // for testing
 
-// 定義元素
-// let productCateNavEle = $(".productCategoryNav");
-// let productCategoryJson = null; // line33
-// let productJson = null; // line53
-// let orderMasterJson = null;
-// let orderItemJson = null; //
-// let cartData = {}; // 預計存入local storage 的資料
-// localStorage['cartData'] = {};
+async function getOrderMaster(){
+    return new Promise(function(resolve, reject){
+        $.ajax({
+            url: "/orders/findOneFromSession",
+            method: "POST",
+            dataType: "json",
+            async: true,
+            success: function (data) {
+                console.log(data);
+                resolve(data);
+            },
+            error: function (error) {
+                reject(error);
+            }
+        });
+    })
+    
 
+}
 
-// ajax
-// function for ProductCategories and Products
+// getOrderMaster();
+let orderMaster = {};
+
 function getProductCategoriesAndProducts(){
-    let apiUrl= "http://localhost:8080/rest/productcategory/getListByRestId"
+    let apiUrl= "/rest/productcategory/getListByRestId"
+    // let restId = orderMaster.rest;
     let restData = {
-        restId: 2001
+        restId: restId,
     };
+
+    console.log(restData.restId);
 
     return new Promise((resolve, reject) =>{
         $.ajax({
@@ -118,10 +131,15 @@ function getProductCategoriesAndProducts(){
 
 /**get orderMaster */
 function getOrderMaster(){
-    let url = "http://localhost:8080/orders/findOneByOrderId";
+    // let orderId = [[${orderId}]];
+
+    let url = "/orders/findOneByOrderId";
+    // let orderId = orderMaster.orderId;
     let orderData = {
-        orderId: 1
+        orderId: orderId,
     };
+
+    console.log(orderData.orderId);
 
     $.ajax({
         url: url,
@@ -279,11 +297,11 @@ function orderInStorage(productIdText, productNameText, productPriceInt, thisIte
         if (cartData.order.length == 0){
             localStorage.removeItem("cartData");
         } else{
-            localStorage.cartData = JSON.stringify({order: cartData.order});
+            localStorage.cartData = JSON.stringify({order: cartData.order, memo: cartData.memo});
         }
 
     } else {
-        localStorage.cartData = JSON.stringify({order: [newData]})
+        localStorage.cartData = JSON.stringify({order: [newData], memo: cartData.memo});
     }
     updateCartBtn();
 }
@@ -341,6 +359,7 @@ function init(){
 
 // 初始化
 async function main(){
+    orderMaster = await getOrderMaster()
     productCountChange()
     await getProductCategoriesAndProducts();
     await init()
