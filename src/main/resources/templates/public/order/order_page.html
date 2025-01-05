@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/common.css" rel="stylesheet">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
     <style>
         body {
             padding-top: calc(20vh + 200px);
@@ -280,7 +281,8 @@
                 </div>
                 <div class="text-end">
                     <div><span>桌號：</span><span class="tableName" th:text="${orderMaster.orderTable.tableNumber}">A5</span></div>
-                    <div class="text-primary mb-2"><span>目前消費：$</span><span class="subtotal_price" th:text="${orderMaster.subtotalPrice}">300</span></div>
+                    <div th:if="${subTotalPrice != null}" class="text-primary mb-2"><span>目前消費：$</span><span class="subtotal_price" th:text="${orderMaster.subtotalPrice}">300</span></div>
+                    <div th:if="${subTotalPrice == null}" class="text-primary mb-2"><span>目前消費：$</span><span class="subtotal_price">0</span></div>
                     <!-- 搜尋欄 -->
                     <!-- <div class="input-group" style="width: 200px;">
                         <input type="text" class="form-control form-control-sm" placeholder="搜尋餐點...">
@@ -582,16 +584,24 @@
         </div>
     
         <!-- 購物車按鈕 -->
-        <div class="cart-button d-flex">
+        <form class="cart-button d-flex" th:action="@{cart}" method="post" >
             <!-- <button class="btn btn-outline-primary w-100 position-relative checkCart">
                 <div>檢視購物車 $<span>0</span></div>
             </button> -->
-            <button class="btn btn-outline-primary w-100 position-relative cart">
-                <div>確認購物車 $<span class="currentPrice">0</span></div>
-                <span class="cart-badge d-none">0</span>
-            </button>
-        </div>
-    
+            <!-- <form class="cart-button d-flex"> -->
+                <button type="submit" class="btn btn-outline-primary w-100 position-relative cart">
+                    <div>確認購物車 $<span class="currentPrice">0</span></div>
+                    <span class="cart-badge d-none">0</span>
+                </button>
+            <!-- </form> -->
+        </form>
+        
+        <script th:inline="javascript">
+            window.orderMaster = /*[[${orderMaster}]]*/{};
+            window.restId = /*[[${orderMaster.rest.restId}]]*/{};
+            window.orderId = /*[[${orderMaster.orderId}]]*/{};
+            console.log(restId);
+        </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
         <script th:src="@{/js/orderPage.js}"></script>
