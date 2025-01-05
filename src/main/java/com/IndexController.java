@@ -32,8 +32,8 @@ public class IndexController {
 		return "secure/rest/order/restCheckout";
 	}
 	
-	@GetMapping("/restDiningHistory")
+	@GetMapping("/memberDiningHistory")
 	public String restDiningHistory() {
-		return "secure/rest/dining/member-dining-history";
+		return "secure/member/dining/member_dining_history";
 	}
 }
