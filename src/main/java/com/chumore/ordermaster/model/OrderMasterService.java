@@ -3,6 +3,10 @@ package com.chumore.ordermaster.model;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 public interface OrderMasterService {
 	
 	OrderMasterVO getOneById(Integer orderId);
@@ -14,5 +18,6 @@ public interface OrderMasterService {
 	Integer deleteOrderMasterById(Integer orderId);
 	
 	List<OrderMasterVO> getByMemberId(Integer memberId);
+	Page<OrderMasterVO> findByMemberId(Integer memberId,  Pageable pageable);
 
 }

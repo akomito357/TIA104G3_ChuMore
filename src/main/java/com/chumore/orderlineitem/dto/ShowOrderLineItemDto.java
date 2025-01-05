@@ -8,17 +8,17 @@ import com.chumore.orderlineitem.model.OrderLineItemVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.product.model.ProductVO;
 
-public class OrderLineItemDto {
+public class ShowOrderLineItemDto {
 
 	private BigDecimal subtotalPrice; // orderMaster
 	private Integer pointUsed; // orderMaster
 	private BigDecimal totalPrice; // orderMaster
 	private List<OrderItemListDto> orderItemListDto;
 
-	public OrderLineItemDto() {
+	public ShowOrderLineItemDto() {
 	}
 
-	public OrderLineItemDto(OrderMasterVO data) {
+	public ShowOrderLineItemDto(OrderMasterVO data) {
 		setSubtotalPrice(data.getSubtotalPrice());
 		setPointUsed(data.getPointUsed());
 		setTotalPrice(data.getTotalPrice());

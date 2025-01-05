@@ -7,21 +7,24 @@ import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.chumore.ordermaster.compositequery.OrderMasterCompositeQuery;
+import com.chumore.ordermaster.dto.RestDiningDto;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.usepoints.model.UsePointsVO;
 
 @Service("OrderMasterService")
-public class OrderMasterServiceImpl implements OrderMasterService{
+public class OrderMasterServiceImpl implements OrderMasterService {
 
 	@Autowired
 	OrderMasterRepository repository;
-	
+
 	@Autowired
 	SessionFactory factory;
-	
+
 	@Override
 	public OrderMasterVO getOneById(Integer orderId) {
 		Optional<OrderMasterVO> optional = repository.findById(orderId);
@@ -57,24 +60,31 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 			return -1;
 		}
 	}
-	
-	public Set<UsePointsVO> getUsePointsByOrderId(Integer orderId){
+
+	public Set<UsePointsVO> getUsePointsByOrderId(Integer orderId) {
 		return getOneById(orderId).getUsePoints();
 	}
-	
+
 //	public Set<OrderItemVO> getOrderItemByOrderId(Integer orderId){
 //		return getOneById(orderId).getOrderItems();
 //	}
-	
-	public Set<ReviewVO> getReviewByOrderId(Integer orderId){
+
+	public Set<ReviewVO> getReviewByOrderId(Integer orderId) {
 		return getOneById(orderId).getReviews();
 	}
-	
-	
 
 	@Override
 	public List<OrderMasterVO> getByMemberId(Integer memberId) {
 		return repository.getByMemberId(memberId);
+	}
+
+	@Override
+	public Page<OrderMasterVO> findByMemberId(Integer memberId, Pageable pageable) {
+		return repository.findByMemberId(memberId, pageable);
+	}
+	
+	public Page<RestDiningDto>findOrderByRestId(Integer restId, Pageable pageable){
+		return repository.findOrderByRestId(restId, pageable);
 	}
 
 }
