@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.chumore.envimg.model.EnvImgVO;
+
 @Service("menuImgService")
 public class MenuImgService {
 	@Autowired
@@ -37,6 +39,9 @@ public class MenuImgService {
 	public void deleteMenuImg(Integer menuImgId) {
 		if (repository.existsById(menuImgId))
 			repository.deleteByMenuImgId(menuImgId);
+	}
+	public List<MenuImgVO> getAllByRestId(Integer restId) {
+		return repository.findByRestId(restId);
 	}
 
 	// 查詢所有環境圖片

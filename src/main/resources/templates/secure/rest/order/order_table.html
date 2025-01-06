@@ -65,6 +65,18 @@
         .delete-btn.loading span {
             visibility: hidden;
         }
+        
+        .alert {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .alert-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -90,16 +102,15 @@
                         <input type="hidden" id="editTableId">
                         <div class="mb-3">
                             <label class="form-label">桌號</label>
-                            <input type="text" class="form-control" id="editTableNumber" readonly>
+                            <input type="text" class="form-control" id="editTableNumber" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">桌位連結 URL</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="editTableUrl" required>
-                                <button class="btn btn-outline-secondary" type="button" onclick="copyUrl('editTableUrl')">
-                                    複製
-                                </button>
-                            </div>
+                            <label class="form-label">點餐連結</label>
+                            <input type="text" class="form-control" id="editTableUrl" readonly>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" 
+                                    onclick="copyUrl('editTableUrl')">
+                                複製連結
+                            </button>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">QR Code</label>
@@ -109,11 +120,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger delete-btn" onclick="deleteTable()">
-                        <span class="spinner-border spinner-border-sm"></span>
+                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                         <span>刪除桌位</span>
                     </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="saveTableChanges()">儲存變更</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTableChanges()">儲存修改</button>
                 </div>
             </div>
         </div>
@@ -169,22 +180,47 @@
         });
 
         function loadTables() {
-            tables = [
-                { id: 1, number: '001', url: 'https://example.com/table/001' },
-                { id: 2, number: '002', url: 'https://example.com/table/002' },
-                { id: 3, number: '003', url: 'https://example.com/table/003' }
-            ];
-            
-            renderTables();
+            console.log('Starting to load tables...');
+            fetch('http://localhost:8080/ordertables/getAllTables?restId=2001', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response received:', response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Parsed data:', data);
+                tables = data;
+                renderTables();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tables = [];
+                renderTables();
+            });
         }
 
         function renderTables() {
             const container = $('#tableCards');
             container.empty();
             
-            tables.forEach(table => {
-                container.append(createTableCard(table));
-            });
+            if (tables && tables.length > 0) {
+                tables.forEach(table => {
+                    container.append(createTableCard(table));
+                });
+            } else {
+                container.append(`
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            目前尚未設定任何桌位
+                        </div>
+                    </div>
+                `);
+            }
             
             container.append(`
                 <div class="col">
@@ -197,25 +233,26 @@
                 </div>
             `);
 
-            // 為每個桌位生成QR碼
-            tables.forEach(table => {
-                generateQRCode(`qr-${table.id}`, table.url);
-            });
+            if (tables && tables.length > 0) {
+                tables.forEach(table => {
+                    generateQRCode(`qr-${table.orderTableId}`, table.orderTableUrl);
+                });
+            }
         }
 
         function createTableCard(table) {
             return `
                 <div class="col">
-                    <div class="card table-card" onclick="showEditTableModal(${table.id})">
+                    <div class="card table-card" onclick="showEditTableModal(${table.orderTableId})">
                         <div class="card-body">
-                            <h3 class="table-number">桌號 #${table.number}</h3>
+                            <h3 class="table-number">桌號 #${table.tableNumber}</h3>
                             <div class="text-center mb-3">
-                                <div class="qr-code-container d-inline-block" id="qr-${table.id}"></div>
+                                <div class="qr-code-container d-inline-block" id="qr-${table.orderTableId}"></div>
                             </div>
-                            <p class="url-text mb-2">${table.url}</p>
-                            <input type="hidden" id="url-${table.id}" value="${table.url}">
+                            <p class="url-text mb-2">${table.orderTableUrl}</p>
+                            <input type="hidden" id="url-${table.orderTableId}" value="${table.orderTableUrl}">
                             <button class="btn btn-outline-primary btn-sm copy-button" 
-                                    onclick="copyUrl('url-${table.id}'); event.stopPropagation();">
+                                    onclick="copyUrl('url-${table.orderTableId}'); event.stopPropagation();">
                                 複製連結
                             </button>
                         </div>
@@ -225,16 +262,16 @@
         }
 
         function showEditTableModal(tableId) {
-            const table = tables.find(t => t.id === tableId);
+            const table = tables.find(t => t.orderTableId === tableId);
             if (!table) return;
             
-            $('#editTableId').val(table.id);
-            $('#editTableNumber').val(table.number);
-            $('#editTableUrl').val(table.url);
+            $('#editTableId').val(table.orderTableId);
+            $('#editTableNumber').val(table.tableNumber);
+            $('#editTableUrl').val(table.orderTableUrl);
             
             // 生成QR碼
             $('#editTableQrCode').empty();
-            generateQRCode('editTableQrCode', table.url);
+            generateQRCode('editTableQrCode', table.orderTableUrl);
             
             new bootstrap.Modal('#editTableModal').show();
         }
@@ -287,60 +324,118 @@
         }
 
         function saveTableChanges() {
-            const tableId = $('#editTableId').val();
+            const orderTableId = $('#editTableId').val();
+            const newTableNumber = $('#editTableNumber').val();
+
+            // 檢查是否有輸入桌號
+            if (!newTableNumber.trim()) {
+                alert('請輸入桌號！');
+                return;
+            }
+
             const updateData = {
-                url: $('#editTableUrl').val()
+                tableNumber: newTableNumber
             };
             
-            const tableIndex = tables.findIndex(t => t.id === parseInt(tableId));
-            if (tableIndex !== -1) {
-                tables[tableIndex] = { ...tables[tableIndex], ...updateData };
-                renderTables();
-                $('#editTableModal').modal('hide');
-            }
+            fetch(`http://localhost:8080/ordertables/updateTable/${orderTableId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadTables();
+                    $('#editTableModal').modal('hide');
+                    alert('更新桌位成功！');
+                } else {
+                    alert(data.message || '更新桌位失敗');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating table:', error);
+                alert('更新桌位失敗');
+            });
         }
 
         function addNewTable() {
             const tableNumber = $('#addTableNumber').val().trim();
-            const url = $('#addTableUrl').val();
             
             if (!tableNumber) {
                 alert('請輸入桌號！');
                 return;
             }
-            
-            if (tables.some(t => t.number === tableNumber)) {
-                alert('此桌號已存在！');
-                return;
-            }
 
-            const newTable = {
-                id: tables.length + 1,
-                number: tableNumber,
-                url: url || generateTableUrl(tableNumber)
+            const tableData = {
+                restID : 2001,
+                tableNumber: tableNumber
             };
             
-            tables.push(newTable);
-            renderTables();
-            $('#addTableModal').modal('hide');
+            console.log('Sending data:', JSON.stringify(tableData));
             
-            $('#addTableNumber').val('');
-            $('#addTableUrl').val('');
-            $('#addTableQrCode').empty();
+            fetch('http://localhost:8080/ordertables/addTable', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(tableData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Network response was not ok');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    loadTables();
+                    $('#addTableModal').modal('hide');
+                    $('#addTableNumber').val('');
+                    $('#addTableUrl').val('');
+                    $('#addTableQrCode').empty();
+                    alert('新增桌位成功！');
+                } else {
+                    alert(data.message || '新增桌位失敗');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding table:', error);
+                alert('新增桌位失敗: ' + error.message);
+            });
         }
 
         function deleteTable() {
-            const tableId = $('#editTableId').val();
+            const orderTableId = $('#editTableId').val();
             
             if (confirm('確定要刪除此桌位嗎？此操作無法復原。')) {
                 $('.delete-btn').addClass('loading');
                 
-                setTimeout(() => {
-                    tables = tables.filter(t => t.id !== parseInt(tableId));
-                    renderTables();
+                fetch(`http://localhost:8080/ordertables/deleteTable/${orderTableId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadTables();
+                        $('#editTableModal').modal('hide');
+                        alert('刪除桌位成功！');
+                    } else {
+                        alert(data.message || '刪除桌位失敗');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting table:', error);
+                    alert('刪除桌位失敗');
+                })
+                .finally(() => {
                     $('.delete-btn').removeClass('loading');
-                    $('#editTableModal').modal('hide');
-                }, 1000);
+                });
             }
         }
 
@@ -352,8 +447,8 @@
         }
 
         function generateTableUrl(tableNumber) {
-            const baseUrl = 'https://example.com/table/';
-            return baseUrl + tableNumber;
+            const restId = 2001; // 你的餐廳 ID
+            return `https://orders/addOrder/${restId}/${tableNumber}`;
         }
     </script>
 </body>

@@ -90,7 +90,7 @@ public class RestController {
 	@ResponseBody
 	public ResponseEntity<RestVO> getOneData(@RequestParam Integer restId){
 		RestVO rest = restSvc.getOneById(restId);
-		return ResponseEntity.ok(rest);	
+		return ResponseEntity.ok(rest);
 	}
 	
 }

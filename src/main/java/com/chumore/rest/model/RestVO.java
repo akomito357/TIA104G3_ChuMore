@@ -167,9 +167,11 @@ public class RestVO implements Serializable{
 	private Set<ReviewVO> reviews;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("envImg-rest")
 	private Set<EnvImgVO> envImgs;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("menuImg-rest")
 	private Set<MenuImgVO> menuImgs;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)

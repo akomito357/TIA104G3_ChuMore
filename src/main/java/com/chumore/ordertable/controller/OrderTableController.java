@@ -1,6 +1,9 @@
 package com.chumore.ordertable.controller;
 
+import java.awt.PageAttributes.MediaType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -8,17 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.ordertable.model.OrderTableVO;
+import com.chumore.ordertable.model.TableUpdateRequest;
+import com.chumore.rest.model.RestService;
+import com.chumore.rest.model.RestVO;
 
 
-@CrossOrigin
+@CrossOrigin(origins = {"http://127.0.0.1:5501", "http://localhost:5501"})
 @Controller
 @RequestMapping("/ordertables")
 public class OrderTableController {
@@ -28,58 +40,104 @@ public class OrderTableController {
 	@Autowired
 	HttpSession session;
 	
-    @GetMapping("/tables/add")
-    public String showAddOrderTableForm(Model model) {
-        model.addAttribute("orderTableVO", new OrderTableVO()); // 空的表單對象
-        return "/secure/rest/order/order_table"; // Thymeleaf 視圖
-    }
-    // 處理新增桌位的表單提交
-//    @PostMapping("/tables/add")
-//    public String addOrderTable(OrderTableVO orderTableVO, Model model) {
-//        orderTableSvc.addOrderTable(orderTableVO); // 保存桌位數據
-//
-//        // 獲取最新的桌位列表
-//        List<OrderTableVO> orderTableList = orderTableSvc.getAll();
-//        model.addAttribute("orderTable", orderTableList);
-//
-//        return "/secure/rest/order/order_table"; // 返回桌位管理頁面
-//    }
-
+	@Autowired
+	private RestService restSvc;
 	
-//    // 刪除桌位
-//    @PostMapping("/tables/delete")
-//    public String deleteOrderTable(@RequestParam("order_table_id") String orderTableId, Model model) {
-//        // 刪除桌位
-//        orderTableSvc.deleteOrderTable(Integer.valueOf(orderTableId));
-//
-//        // 獲取最新的桌位列表
-//        List<OrderTableVO> orderTableList = orderTableSvc.getAllByRestId(restId);
-//        model.addAttribute("orderTable", orderTableList);
-//
-//        return "/secure/rest/order/order_table"; // 返回桌位管理頁面
-//    }
     
- // 顯示修改桌位的頁面
-    @GetMapping("/tables/edit")
-    public String showEditOrderTableForm(@RequestParam("order_table_id") Integer orderTableId, Model model) {
-        OrderTableVO orderTable = orderTableSvc.getOneOrderTable(orderTableId);
-        model.addAttribute("orderTableVO", orderTable);
-        return "/secure/rest/order/order_table_edit";
+    //測試用
+    @GetMapping("testOrderTable")
+    public String testOrderTable(ModelMap model) {
+    	return "secure/rest/order/order_table";
     }
 
-    // 處理修改桌位的表單提交
-    @PostMapping("/tables/edit")
-    public String editOrderTable(OrderTableVO orderTableVO, Model model) {
-        orderTableSvc.updateOrderTable(orderTableVO); // 更新桌位數據
-
-        // 重導回桌位管理頁面
-        return "redirect:/tables";
+    
+    @PostMapping(value = "/addTable")
+    public ResponseEntity<Map<String, Object>> addTable(@RequestBody Map<String, Object> tableData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // 從 Map 中取得資料
+            Integer restId = Integer.parseInt(tableData.get("restID").toString());  // 注意：前端傳來的是 "restID"
+            String tableNumber = tableData.get("tableNumber").toString();
+            
+            // 建立 RestVO
+            RestVO rest = new RestVO();
+            rest.setRestId(restId);
+            
+            // 建立並設定 OrderTableVO
+            OrderTableVO orderTable = new OrderTableVO();
+            orderTable.setRest(rest);  // 設定關聯的 RestVO
+            orderTable.setTableNumber(tableNumber);
+            
+            // 生成 URL（如果需要在 Controller 層處理的話）
+            String orderUrl = String.format("https://orders/addOrder/%d/%s", restId, tableNumber);
+            orderTable.setOrderTableUrl(orderUrl);
+            
+            // 呼叫 Service 新增桌位
+            OrderTableVO newTable = orderTableSvc.addOrderTable(orderTable);
+            
+            response.put("success", true);
+            response.put("data", newTable);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
+    
     
     @GetMapping("getAllTables")
     public ResponseEntity<?>getRestTables(@RequestParam Integer restId){
     	List<OrderTableVO> list = orderTableSvc.getAllByRestId(restId);
     	return ResponseEntity.ok(list);
-    	
+    }
+    
+    @PutMapping("/updateTable/{orderTableId}")
+    public ResponseEntity<Map<String, Object>> updateTable(
+            @PathVariable Integer orderTableId,
+            @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String tableNumber = request.get("tableNumber");
+            
+            // 先取得原始的 OrderTableVO
+            OrderTableVO orderTable = orderTableSvc.getOrderTableById(orderTableId);
+            if (orderTable == null) {
+                throw new RuntimeException("找不到此桌位");
+            }
+            
+            // 更新桌號
+            orderTable.setTableNumber(tableNumber);
+            
+            // 更新 URL
+            String newUrl = String.format("https://orders/addOrder/%d/%s", 
+                    orderTable.getRest().getRestId(), tableNumber);
+            orderTable.setOrderTableUrl(newUrl);
+            
+            // 儲存更新
+            OrderTableVO updatedTable = orderTableSvc.updateOrderTable(orderTable);
+            
+            response.put("success", true);
+            response.put("data", updatedTable);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/deleteTable/{orderTableId}")
+    public ResponseEntity<Map<String, Object>> deleteTable(@PathVariable Integer orderTableId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            orderTableSvc.deleteOrderTable(orderTableId);
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

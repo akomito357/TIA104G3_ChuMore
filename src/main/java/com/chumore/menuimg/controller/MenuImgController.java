@@ -9,6 +9,7 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,9 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import com.chumore.envimg.model.EnvImgVO;
 import com.chumore.menuimg.model.MenuImgService;
 import com.chumore.menuimg.model.MenuImgVO;
 import com.chumore.rest.model.RestVO;
@@ -103,6 +105,12 @@ public class MenuImgController {
 			result.addError(fieldError);
 		}
 		return result;
+	}
+	@GetMapping("getAllMenuImg")
+	@ResponseBody
+	public ResponseEntity<List<MenuImgVO>> getAllEnvImage(@RequestParam Integer restId){
+			List<MenuImgVO> menuImg = menuImgSvc.getAllByRestId(restId);
+			return ResponseEntity.ok(menuImg);
 	}
 
 }
