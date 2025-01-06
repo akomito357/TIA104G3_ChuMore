@@ -25,7 +25,7 @@ public class CuisineTypeVO implements Serializable{
 	private Integer cuisineTypeId;
 	
 	@OneToMany(mappedBy = "cuisineType", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonManagedReference("cuisineType-rest")
 	private Set<RestVO> rests;
 
 	@Column(name = "cuisine_descr")

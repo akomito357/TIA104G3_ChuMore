@@ -1,7 +1,8 @@
 :root {
-    --primary: #FEA116;
+    --primary: #fea116;
     --btn_hover: #ffc107;
     --btn_focus: #ffc107;
+    --btn_disable: #f0a83d;
     --light: #F1F8FF;
     --dark: #0F172B;
     --lighten_dark: #383b3f;
@@ -24,9 +25,19 @@ main.main{
     /* margin-top: calc(var(--header_height)); */
 }
 
+/* .btn{
+    border-color: var(--primary);
+    color: var(--primary);
+} */
+
 .btn-group{
     border-color: var(--primary);
     color: var(--primary);
+}
+
+.btn-group:hover{
+    border-color: var(--btn_hover);
+    color: var(--btn_hover);
 }
 
 .btn.disabled{
@@ -46,16 +57,53 @@ main.main{
     color: var(--primary);
 }
 
-.btn:hover{
+.btn-outline-primary:hover{
     background-color: var(--btn_hover);
     border-color: var(--btn_hover);
     transition-duration: 0.3s;
     color: white;
 }
 
-.btn:active{
+.btn-outline-primary:active{
+    background-color: var(--btn_hover) !important;
+    border-color: var(--btn_hover) !important;
+    transition-duration: 0.3s;
+    color: white;
+}
+
+.btn-primary:hover{
+    background-color: var(--btn_hover);
+    border-color: var(--btn_hover);
+    transition-duration: 0.3s;
+    color: white;
+}
+
+.btn-primary:active{
     background-color: var(--btn_focus) !important;
     border-color: var(--btn_focus) !important;
     transition-duration: 0.3s;
     color: white;
 }
+
+.btn-secondary{
+    border: 1px solid #6c757d;
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover{
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: white;
+}
+
+.btn-secondary:active{
+    background-color: #545b62;
+    border-color: #4e555b;
+    color: white;
+}
+
+.btn-danger{
+    color: white;
+}
+

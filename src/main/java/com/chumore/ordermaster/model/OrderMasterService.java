@@ -3,9 +3,13 @@ package com.chumore.ordermaster.model;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import com.chumore.orderitem.dto.OrderItemForOrderDto;
 
 public interface OrderMasterService {
 	
@@ -19,5 +23,7 @@ public interface OrderMasterService {
 	
 	List<OrderMasterVO> getByMemberId(Integer memberId);
 	Page<OrderMasterVO> findByMemberId(Integer memberId,  Pageable pageable);
+	
+	void submitOrder(OrderItemForOrderDto item, HttpSession session);
 
 }

@@ -6,6 +6,8 @@
     <title>購物車</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/common.css" rel="stylesheet">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
     <style>
         .cart-header {
             position: sticky;
@@ -30,6 +32,11 @@
             display: flex;
             align-items: center;
             /* gap: 0.5rem; */
+        }
+
+        .btn.submitOrder.disabled{
+            color: white !important;
+            background-color: var(--btn_disable) !important;
         }
         
         .quantity-btn {
@@ -94,6 +101,23 @@
             height: 80px;
             font-size: 1.2rem;
         }
+
+        .btn-group{
+            background-color: white;
+        }
+
+        .btn-outline-primary:active{
+            background-color: var(--btn_hover) !important;
+            border-color: var(--btn_hover) !important;
+            transition-duration: 0.3s;
+            color: white;
+        }
+
+        .back{
+            border: 0px;
+            color: var(--lighten_dark);
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -102,9 +126,11 @@
         <div class="cart-header p-3">
             <div class="row align-items-center">
                 <div class="col-2">
-                    <button class="btn" onclick="history.back()">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
+                    <form th:action="@{order}" method="post">
+                        <button class="submit back">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </form>
                 </div>
                 <div class="col-8 text-center">
                     <h1 class="h4 mb-0">購物車</h1>
@@ -120,25 +146,37 @@
                 <span class="d-flex justify-content-center align-items-center notification">購物車內尚無餐點！</span>
             </div>
 
+            <!-- order memo -->
+            <div class="orderMemo pt-3 pb-1 px-3">
+                <h5>點餐備註</h5>
+                <textarea type="textarea" id="memo" class="memoArea col-12" placeholder="請輸入點餐備註"></textarea>
+            </div>
+
             <!-- Subtotal -->
             <div class="subtotal px-3 py-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="h5 mb-0">小計</h2>
-                    <span class="h5 mb-0" id="total-amount">$0</span>
+                    <h5 class="h5 mb-0">小計</h5>
+                    <div><span class="h5 mb-0">$</span><span class="h5 mb-0 totalPrice" id="total-amount">0</span></div>
                 </div>
             </div>
+
+            
+
         </div>
 
         <!-- Bottom Buttons -->
         <div class="bottom-buttons">
             <div class="row g-2">
                 <div class="col-6">
-                    <button class="btn btn-secondary w-100" onclick="continueShopping()">
-                        繼續點餐
-                    </button>
+                    <form th:action="@{order}" method="post">
+                        <input type="submit" class="btn btn-secondary w-100" value="繼續點餐">
+                        <!-- <button class="btn btn-secondary w-100" onclick="continueShopping()">
+                            繼續點餐
+                        </button> -->
+                    </form>
                 </div>
                 <div class="col-6">
-                    <button class="btn btn-primary w-100" onclick="submitOrder()">
+                    <button class="btn btn-primary w-100 submitOrder disabled" onclick="cartCheck()">
                         送出訂單
                     </button>
                 </div>
@@ -160,6 +198,43 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-danger" id="confirmDelete">刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal fade" id="orderConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">確認送出</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    確定要送出點餐嗎？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmOrder" data-bs-dismiss="modal" onclick="submitOrder()">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- cart empty Modal -->
+    <div class="modal fade" id="orderConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">購物車內沒有餐點</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    購物車內沒有餐點，請返回上一頁點餐！
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
                 </div>
             </div>
         </div>

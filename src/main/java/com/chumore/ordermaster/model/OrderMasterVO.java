@@ -15,7 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.orderitem.model.OrderItemVO;
@@ -36,7 +36,8 @@ public class OrderMasterVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "order_table_id", referencedColumnName = "order_table_id")
-	@NotEmpty(message = "點餐桌位：請填寫點餐桌位")
+	@NotNull(message = "點餐桌位：請填寫點餐桌位")
+	@JsonBackReference("orderTable-orderMaster")
 	private OrderTableVO orderTable;
 //	@Column(name = "order_table_id")
 	
@@ -79,6 +80,9 @@ public class OrderMasterVO implements Serializable{
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
 	private Set<ReviewVO> reviews;
+	
+	
+//	private String restId;
 	
 	public OrderMasterVO() {
 		
@@ -193,6 +197,15 @@ public class OrderMasterVO implements Serializable{
 	public void setReviews(Set<ReviewVO> reviews) {
 		this.reviews = reviews;
 	}
+	
+	
+	public Integer getRestId() {
+		return rest.getRestId();
+	}
+
+//	public void setRestName(String restName) {
+//		this.restName = restName;
+//	}
 
 	public String toString() {
 		return "[order_id = " + orderId 
