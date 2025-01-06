@@ -1,9 +1,12 @@
 package com.chumore.tabletype.model;
 import javax.persistence.*;
 
+import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "table_type")
@@ -14,6 +17,8 @@ public class TableTypeVO implements Serializable {
     @Column(name = "table_type_id",updatable = false)
     private Integer tableTypeId;
 
+    @Column(name="table_type")
+    private Integer tableType;
 
     @Column(name = "table_count")
     private Integer tableCount;
@@ -24,6 +29,12 @@ public class TableTypeVO implements Serializable {
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="rest_Id",referencedColumnName="rest_id")
     private RestVO rest;
+
+    @OneToMany(mappedBy="tableType",cascade=CascadeType.ALL)
+    @JsonManagedReference("dailyReservation-tableType")
+    private Set<DailyReservationVO> dailyReservations;
+
+
 
     public TableTypeVO(){
 
@@ -60,6 +71,22 @@ public class TableTypeVO implements Serializable {
 
     public void setReservedLimit(String reservedLimit) {
         this.reservedLimit = reservedLimit;
+    }
+
+    public Integer getTableType() {
+        return tableType;
+    }
+
+    public void setTableType(Integer tableType) {
+        this.tableType = tableType;
+    }
+
+    public Set<DailyReservationVO> getDailyReservations() {
+        return dailyReservations;
+    }
+
+    public void setDailyReservations(Set<DailyReservationVO> dailyReservations) {
+        this.dailyReservations = dailyReservations;
     }
 
     @Override

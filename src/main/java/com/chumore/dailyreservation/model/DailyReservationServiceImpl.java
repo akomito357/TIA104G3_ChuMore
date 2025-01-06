@@ -1,5 +1,6 @@
 package com.chumore.dailyreservation.model;
 
+import com.chumore.rest.model.RestService;
 import com.chumore.util.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ public class DailyReservationServiceImpl implements DailyReservationService {
 
     @Autowired
     private DailyReservationDAO dailyReservationDAO;
+
+    @Autowired
+    private RestService restService;
 
     @Override
     @Transactional(readOnly = true)
@@ -90,30 +94,67 @@ public class DailyReservationServiceImpl implements DailyReservationService {
         return dailyReservationDAO.update(dailyReservation);
     }
 
+//    @Override
+//    public DailyReservationVO addReservedLimitByCondition(DailyReservationVO dailyReservation, Map<String, String> conditions) {
+//        List<Integer> reservedLimitList = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedLimit(), 2);
+//        List<Integer> reservedTablesList = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedTables(), 2);
+//
+//        if (conditions.containsKey("startTime") && conditions.containsKey("endTime")) {
+//            Integer startTime = Integer.parseInt(conditions.get("startTime").substring(0, 2));
+//            Integer endTime = Integer.parseInt(conditions.get("endTime").substring(0, 2));
+//
+//            for (int i = startTime - 1; i < endTime; i++) {
+//                if ("increase".equals(conditions.get("operation"))) {
+//                    reservedLimitList.set(i, reservedLimitList.get(i) + Integer.parseInt(conditions.get("amount")));
+//                } else if ("decrease".equals(conditions.get("operation"))) {
+//                    int subTotal = reservedLimitList.get(i) - Integer.parseInt(conditions.get("amount"));
+//                    reservedLimitList.set(i, Math.max(subTotal, Math.max(0, reservedTablesList.get(i))));
+//                }
+//            }
+//        }
+//
+//        String reservedLimit = ConverterUtil.convertTimeListToStr(reservedLimitList, 2);
+//        dailyReservation.setReservedLimit(reservedLimit);
+//        dailyReservationDAO.update(dailyReservation);
+//        return dailyReservation;
+//    }
+
     @Override
     public DailyReservationVO addReservedLimitByCondition(DailyReservationVO dailyReservation, Map<String, String> conditions) {
+        // 取得當前餐廳的營業時間
+        Integer restId = dailyReservation.getRest().getRestId(); // 假設 DailyReservationVO 有 restId 欄位
+        List<Integer> businessHours = restService.getBusinessHours(restId);
+
+        // 轉換 reservedLimit 與 reservedTables 為時間區間列表
         List<Integer> reservedLimitList = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedLimit(), 2);
         List<Integer> reservedTablesList = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedTables(), 2);
 
+        // 驗證 conditions 是否包含起始與結束時間
         if (conditions.containsKey("startTime") && conditions.containsKey("endTime")) {
-            Integer startTime = Integer.parseInt(conditions.get("startTime").substring(0, 2));
-            Integer endTime = Integer.parseInt(conditions.get("endTime").substring(0, 2));
+            Integer startTime = Integer.parseInt(conditions.get("startTime").substring(0, 2)); // 取小時
+            Integer endTime = Integer.parseInt(conditions.get("endTime").substring(0, 2));     // 取小時
 
+            // 根據條件調整預約限制
             for (int i = startTime - 1; i < endTime; i++) {
-                if ("increase".equals(conditions.get("operation"))) {
-                    reservedLimitList.set(i, reservedLimitList.get(i) + Integer.parseInt(conditions.get("amount")));
-                } else if ("decrease".equals(conditions.get("operation"))) {
-                    int subTotal = reservedLimitList.get(i) - Integer.parseInt(conditions.get("amount"));
-                    reservedLimitList.set(i, Math.max(subTotal, Math.max(0, reservedTablesList.get(i))));
+                // 只有營業時間 (businessHours[i] == 1) 才處理
+                if (businessHours.get(i) == 1) {
+                    if ("increase".equals(conditions.get("operation"))) {
+                        reservedLimitList.set(i, reservedLimitList.get(i) + Integer.parseInt(conditions.get("adjustmentQuantities")));
+                    } else if ("decrease".equals(conditions.get("operation"))) {
+                        int subTotal = reservedLimitList.get(i) - Integer.parseInt(conditions.get("adjustmentQuantities"));
+                        reservedLimitList.set(i, Math.max(subTotal, Math.max(0, reservedTablesList.get(i))));
+                    }
                 }
             }
         }
 
+        // 更新 reservedLimit 並存入資料庫
         String reservedLimit = ConverterUtil.convertTimeListToStr(reservedLimitList, 2);
         dailyReservation.setReservedLimit(reservedLimit);
         dailyReservationDAO.update(dailyReservation);
         return dailyReservation;
     }
+
 
 
     @Override
@@ -125,4 +166,5 @@ public class DailyReservationServiceImpl implements DailyReservationService {
         }
         return dailyReservations;
     }
+
 }

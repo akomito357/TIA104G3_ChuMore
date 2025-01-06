@@ -30,12 +30,12 @@ public class DailyReservationVO implements Serializable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="table_type_id",referencedColumnName="table_type_id")
-    @JsonBackReference
+    @JsonBackReference("dailyReservation-tableType")
     private TableTypeVO tableType;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="rest_id",referencedColumnName="rest_id")
-    @JsonBackReference
+    @JsonBackReference("dailyReservation-rest")
     private RestVO rest;
 
     public DailyReservationVO(){
@@ -45,6 +45,16 @@ public class DailyReservationVO implements Serializable {
 
 
     // Getters and Setters
+    public Integer getTableTypeName(){
+        return tableType.getTableType();
+    }
+
+    public String getBusinessHours(){
+        return rest.getBusinessHours();
+    }
+
+
+
     public RestVO getRest() {
         return rest;
     }
@@ -52,6 +62,7 @@ public class DailyReservationVO implements Serializable {
     public void setRest(RestVO rest) {
         this.rest = rest;
     }
+
 
     public TableTypeVO getTableType() {
         return tableType;
