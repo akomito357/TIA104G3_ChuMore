@@ -59,6 +59,15 @@ public class ReservationVO implements Serializable{
 
     // Getters and Setters
 
+    public String getMemberName(){
+        return member.getMemberName();
+    }
+
+    public Integer getMemberGender(){
+        return member.getMemberGender();
+    }
+
+
 
     public RestVO getRest() {
         return rest;

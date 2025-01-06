@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.chumore.util.ConverterUtil;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,5 +86,18 @@ public class RestServiceImpl implements RestService{
 //	public Set<TableTypeVO> getTableTypesByRestId(Integer restId){
 //		return getOneById(restId).getTableTypes();
 //	}
+
+	@Override
+	public List<String> getFormattedBusinessHours(Integer restId){
+		Optional<RestVO> optional = repository.findById(restId);
+		List<String> formattedBusinessHours = ConverterUtil.convertStrToHours(optional.get().getBusinessHours());
+		return formattedBusinessHours;
+	}
+
+	@Override
+	public List<Integer> getBusinessHours(Integer restId) {
+		Optional<RestVO> optional = repository.findById(restId);
+		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
+	}
 
 }
