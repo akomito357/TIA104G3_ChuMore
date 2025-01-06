@@ -36,24 +36,32 @@
         .mainContent{
             /* position: absolute; */
             top: 50px;
-            width: 50%;
-            height: 60%;
-            /* min-height: 100vh; */
+            width: 70%;
+            /* height: 60%; */
+            max-height: 100vh;
             /* border: 5px solid var(--dark); */
             margin: auto;
             display: flex;
             background-color: #f5f5f5;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 60px 20px 10px;
+            padding: 55px 20px 10px;
             border-radius: 8px;
             font-family: 'Nunito', sans-serif;
             justify-content: space-between;
+            overflow: auto;
         }
 
         div.restInfo{
             flex: 2;
             /* border: 1px solid red; */
             justify-content: space-around;
+            max-width: 100%;
+        }
+
+        form.orderForm{
+            /* flex: auto; */
+            justify-content: center;
+            align-content: center;
         }
 
         #startOrderBtn{
@@ -79,15 +87,15 @@
 <body>
     <!-- <div class="main-container d-flex"> -->
         <main class="mainContent d-flex flex-column align-items-center ">
-            <div class="d-flex flex-column align-items-center col restInfo">
-                <h1 class="restName col" th:text="${orderMaster.rest.restName}">餐廳名稱</h1>
-                <div class="orderTable col" th:text="${orderMaster.orderTable.tableNumber}">桌位：<span class="tableName">A1</span></div>
-                <form class="orderForm" th:action="@{/orders/insert}" th:object="${orderMaster}" method="post">
-                    <input type="text" readonly th:field="*{orderTable}">
-                    <input type="text" readonly th:field="*{rest}">
-                    <input type="text" readonly th:field="*{orderStatus}">
-                    <input type="text" readonly th:field="*{servedDatetime}">
-                    <button type="submit" class="btn btn-primary col" id="startOrderBtn">開始點餐</button>
+            <div class="d-flex flex-column align-items-center col restInfo flex-wrap">
+                <h5 class="restName col flex-wrap" th:text="${orderMaster.rest.restName}">餐廳名稱餐廳名稱餐廳名稱</h5>
+                <div class="orderTable col">桌位：<span class="tableName" th:text="${orderMaster.orderTable.tableNumber}">A1</span></div>
+                <form class="orderForm d-flex flex-column" th:action="@{/orders/insert}" th:object="${orderMaster}" method="post">
+                    <input type="hidden" readonly th:field="*{orderTable}">
+                    <input type="hidden" readonly th:field="*{rest}">
+                    <!-- <input type="text" readonly th:field="*{orderStatus}"> -->
+                    <!-- <input type="text" readonly th:field="*{servedDatetime}"> -->
+                    <button type="submit" class="btn btn-primary col mt-3" id="startOrderBtn">開始點餐</button>
                 </form>
 
                 <!-- <form class="orderForm" th:object="${orderMaster}">
@@ -98,7 +106,7 @@
                     <button type="submit" class="btn btn-primary col" id="startOrderBtn">開始點餐</button>
                 </form> -->
             </div>
-            <h5 class="title m-0 col justify-content-end"><i class="fa fa-utensils me-3 mt-4"></i><span>ChuMore</span></h5>
+            <h5 class="title m-0 col justify-content-end "><i class="fa fa-utensils m-2 mt-4"></i><span>ChuMore</span></h5>
         </main>
     <!-- </div> -->
 

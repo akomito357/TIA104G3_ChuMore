@@ -301,7 +301,7 @@ function orderInStorage(productIdText, productNameText, productPriceInt, thisIte
         }
 
     } else {
-        localStorage.cartData = JSON.stringify({order: [newData], memo: cartData.memo});
+        localStorage.cartData = JSON.stringify({order: [newData], memo: ''});
     }
     updateCartBtn();
 }

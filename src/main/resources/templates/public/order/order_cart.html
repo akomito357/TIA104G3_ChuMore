@@ -112,6 +112,12 @@
             transition-duration: 0.3s;
             color: white;
         }
+
+        .back{
+            border: 0px;
+            color: var(--lighten_dark);
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -120,9 +126,11 @@
         <div class="cart-header p-3">
             <div class="row align-items-center">
                 <div class="col-2">
-                    <button class="btn" onclick="history.back()">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
+                    <form th:action="@{order}" method="post">
+                        <button class="submit back">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </form>
                 </div>
                 <div class="col-8 text-center">
                     <h1 class="h4 mb-0">購物車</h1>
@@ -139,9 +147,9 @@
             </div>
 
             <!-- order memo -->
-            <div class="orderMemo px-3 py-4">
-                <h5>訂單備註</h5>
-                <textarea type="textarea" id="memo" class="memoArea col" placeholder="點餐備註"></textarea>
+            <div class="orderMemo pt-3 pb-1 px-3">
+                <h5>點餐備註</h5>
+                <textarea type="textarea" id="memo" class="memoArea col-12" placeholder="請輸入點餐備註"></textarea>
             </div>
 
             <!-- Subtotal -->
@@ -208,7 +216,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="confirmOrder" onclick="submitOrder()">確認</button>
+                    <button type="button" class="btn btn-primary" id="confirmOrder" data-bs-dismiss="modal" onclick="submitOrder()">確認</button>
                 </div>
             </div>
         </div>

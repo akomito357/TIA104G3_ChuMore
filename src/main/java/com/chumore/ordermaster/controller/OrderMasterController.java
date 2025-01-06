@@ -1,5 +1,6 @@
 package com.chumore.ordermaster.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.chumore.orderlineitem.dto.OrderLineItemForOrderDto;
+import com.chumore.orderitem.dto.OrderItemForOrderDto;
 import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
@@ -96,8 +97,6 @@ public class OrderMasterController {
 			orderMaster = new OrderMasterVO();
 			orderMaster.setOrderTable(orderTable);
 			orderMaster.setRest(orderTable.getRest());
-			orderMaster.setOrderStatus(0);
-			orderMaster.setServedDatetime(LocalDateTime.now());
 		} else {
 			Integer orderId = (Integer)session.getAttribute("orderId");
 			orderMaster = orderSvc.getOneById(orderId);
@@ -119,6 +118,9 @@ public class OrderMasterController {
 		// 2. 永續層存取，新增資料
 //		System.out.println(session.getAttribute("orderId"));
 		if (session.getAttribute("orderId") == null) {
+			orderMaster.setOrderStatus(0);
+			orderMaster.setSubtotalPrice(new BigDecimal("0"));
+			orderMaster.setServedDatetime(LocalDateTime.now());
 			orderSvc.addOrderMaster(orderMaster);
 		} else {
 			orderMaster.setOrderId((Integer)session.getAttribute("orderId"));
@@ -148,11 +150,18 @@ public class OrderMasterController {
 	}
 	
 	@PostMapping("submit")
-	public String submitOrderItems(@RequestBody OrderLineItemForOrderDto lineItem) {
-//		List<OrderLineItemForOrderDto> 
-		
-		
-		return "";
+	@ResponseBody
+	public ResponseEntity<OrderMasterResponse> submitOrderItems(@RequestBody OrderItemForOrderDto item, HttpSession session) {
+//		OrderMasterResponse res = null;
+		try {
+			orderSvc.submitOrder(item, session);
+			OrderMasterResponse res = new OrderMasterResponse<>("success", 200, item);
+			return ResponseEntity.ok(res);
+		} catch (Exception e){
+			OrderMasterResponse res = new OrderMasterResponse<>("error", 400, e.getMessage());
+			return ResponseEntity.badRequest().body(res);
+		}
+			
 	}
 	
 	
