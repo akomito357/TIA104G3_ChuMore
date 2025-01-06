@@ -7,7 +7,7 @@ public class OrderLineItemForOrderDto {
 	Integer productId;
 	String productName;
 	Integer count;
-	BigDecimal originPriceForOne;
+	BigDecimal origPriceForOne;
 	
 	public OrderLineItemForOrderDto() {
 		
@@ -37,12 +37,12 @@ public class OrderLineItemForOrderDto {
 		this.count = count;
 	}
 
-	public BigDecimal getOriginPriceForOne() {
-		return originPriceForOne;
+	public BigDecimal getOrigPriceForOne() {
+		return origPriceForOne;
 	}
 
-	public void setOriginPriceForOne(BigDecimal originPriceForOne) {
-		this.originPriceForOne = originPriceForOne;
+	public void setOrigPriceForOne(BigDecimal origPriceForOne) {
+		this.origPriceForOne = origPriceForOne;
 	}
 	
 }

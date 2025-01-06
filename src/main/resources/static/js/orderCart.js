@@ -57,18 +57,21 @@ function renderCart(){
 // 更新小計
 function updateTotal(){
     let totalPrice = 0;
+    cartData = getCartData();
     try{
         cartData.order.forEach(orderLine => {
             totalPrice += parseInt(orderLine.origPriceForOne) * parseInt(orderLine.count);
         });
     
         $("span.totalPrice").text(totalPrice);
+        // console.log(totalPrice);
     
         if (totalPrice == 0){
             cartEmptyNotification();
         }
     } catch (error){
         cartEmptyNotification();
+        $("span.totalPrice").text(0);
     }
 
 }
@@ -214,6 +217,33 @@ function submitOrder(){
     console.log('submit');
 
     let cartDataForOrder = localStorage.getItem('cartData');
+
+    $.ajax({
+        url: "/orders/submit",
+        method: "POST",
+        contentType: "application/json",
+        data: cartDataForOrder,
+
+        success: function(res){
+            console.log(res);
+            console.log("submitOrder success");
+
+            let modal = new bootstrap.Modal(document.getElementById('orderConfirmModal'));
+            modal.hide();
+            localStorage.removeItem('cartData');
+            $("textarea#memo").val('');
+            $("textarea#memo").attr("disabled", true);
+            renderCart();
+            updateTotal();
+        },
+
+        error: function(err){
+            console.log("submitOrder err");
+            
+
+            console.log(err);
+        }
+    })
 
 
 }
