@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "menu_img")
@@ -30,6 +31,7 @@ public class MenuImgVO implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rest_Id", referencedColumnName = "rest_id")
+	@JsonBackReference("menuImg-rest")
 	private RestVO rest;
 
 	public RestVO getRest() {

@@ -20,26 +20,34 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "order_table")
-public class OrderTableVO implements java.io.Serializable{
-	
+public class OrderTableVO implements java.io.Serializable {
+
 	@Id
 	@Column(name = "order_table_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer orderTableId;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
 	@JsonBackReference("orderTable-rest")
 	private RestVO rest;
-	
+
 	@Column(name = "table_number")
 	private String tableNumber;
-	
+
 	@Column(name = "order_table_url")
 	private String orderTableUrl;
 	
 	@OneToMany(mappedBy = "orderTable", cascade = CascadeType.ALL)
 	private Set<OrderMasterVO> orderMasters;
+
+	public OrderTableVO() {
+	}
+
+//	public Integer getRestId() {
+//		return rest.getRestId();
+//	}
+
 
 	public Integer getOrderTableId() {
 		return orderTableId;

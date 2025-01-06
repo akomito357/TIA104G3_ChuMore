@@ -90,7 +90,7 @@ public class OrderMasterController {
 	// addOrder - for QRcode to send GET request - 導到桌位對應的開始點餐頁面
 	@GetMapping("addOrder/{orderTableId}")
 	public String addOrder(@PathVariable Integer orderTableId, ModelMap model, HttpSession session) {		
-		OrderTableVO orderTable = orderTableSvc.getOneOrderTable(orderTableId);
+		OrderTableVO orderTable = orderTableSvc.getOrderTableById(orderTableId);
 		OrderMasterVO orderMaster = null;
 		
 		if (session.getAttribute("orderId") == null) {

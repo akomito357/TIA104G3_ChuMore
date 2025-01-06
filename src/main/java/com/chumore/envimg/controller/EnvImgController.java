@@ -9,16 +9,19 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.envimg.model.EnvImgService;
@@ -27,7 +30,7 @@ import com.chumore.rest.model.RestVO;
 
 
 
-
+@CrossOrigin
 @Controller
 @RequestMapping("/envImg")
 @MultipartConfig
@@ -42,11 +45,10 @@ public class EnvImgController {
 			@RequestParam("upFiles") MultipartFile[] parts) throws IOException {
 
 		/*************************** 1.接收請求參數 - 輸入格式的錯誤處理 ************************/
-		// 去除BindingResult中upFiles欄位的FieldError紀錄 --> 見第172行
 		result = removeFieldError(envImg , result, "upFiles");
 
 		if (parts[0].isEmpty()) { // 使用者未選擇要上傳的圖片時
-			model.addAttribute("errorMessage", "員工照片: 請上傳照片");
+			model.addAttribute("errorMessage", "請上傳照片");
 		} else {
 			
 			RestVO rest = new RestVO();
@@ -64,13 +66,12 @@ public class EnvImgController {
 			}
 		}
 		if (result.hasErrors() || parts[0].isEmpty()) {
-			return "/secure/rest/resturant_registration_form";
+			return "";
 		}
 		/*************************** 3.新增完成,準備轉交(Send the Success view) **************/
 		List<EnvImgVO> envImgList = envImgSvc.getAll();
 		model.addAttribute("envImg", envImgList); // 傳遞到前端
-//		model.addAttribute("Succesful", "- (新增成功)");
-		return "/secure/rest/resturant_registration_form"; 
+		return ""; 
 	}
 	
 	@PostMapping("delete")
@@ -102,6 +103,12 @@ public class EnvImgController {
 			result.addError(fieldError);
 		}
 		return result;
+	}
+	@GetMapping("getAllEnvImg")
+	@ResponseBody
+	public ResponseEntity<List<EnvImgVO>> getAllEnvImage(@RequestParam Integer restId){
+			List<EnvImgVO> envImg = envImgSvc.getAllByRestId(restId);
+			return ResponseEntity.ok(envImg);
 	}
 
 }

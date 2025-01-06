@@ -1,7 +1,9 @@
 package com.chumore.envimg.model;
 
+import java.awt.Image;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,13 @@ public class EnvImgService {
 	}
 
 	// 查詢所有環境圖片
+	public List<EnvImgVO> getAllByRestId(Integer restId) {
+		return repository.findByRestId(restId);
+	}
+
 	public List<EnvImgVO> getAll() {
 		return repository.findAll();
 	}
+	
+
 }
