@@ -5,49 +5,109 @@ import com.chumore.emp.model.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequestMapping("/employees")  
+@Controller
+@RequestMapping("/emp")
 public class EmpController {
 
-    private final EmpService empService;
-
     @Autowired
-    public EmpController(EmpService empService) {
-        this.empService = empService;
+    private EmpService empService;
+
+    // 顯示員工列表
+    @GetMapping("/list")
+    public String listEmployees(Model model,
+                              @RequestParam(required = false) Integer status,
+                              @RequestParam(required = false) String name) {
+        List<EmpVO> employees;
+        if (status != null && name != null) {
+            employees = empService.searchByStatusAndName(status, name);
+        } else if (status != null) {
+            employees = empService.findByStatus(status);
+        } else if (name != null) {
+            employees = empService.searchByName(name);
+        } else {
+            employees = empService.findAllEmployees();
+        }
+        model.addAttribute("employees", employees);
+        return "emp/list";
     }
 
-    // 新增員工
-    @PostMapping
-    public EmpVO addEmployee(@RequestBody EmpVO empVO) {
-        return empService.addEmployee(empVO);
+    // 顯示新增員工表單
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        model.addAttribute("empVO", new EmpVO());
+        return "emp/add";
     }
 
-    // 更新員工資料
-    @PutMapping("/{empId}")
-    public EmpVO updateEmployee(@PathVariable Integer empId, @RequestBody EmpVO empVO) {
-        empVO.setEmpId(empId); // 確保更新的員工 ID 是正確的
-        return empService.updateEmployee(empVO);
+    // 處理新增員工
+    @PostMapping("/add")
+    public String addEmployee(@Valid @ModelAttribute("empVO") EmpVO empVO,
+                            BindingResult result,
+                            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "emp/add";
+        }
+        
+        try {
+            empService.addEmployee(empVO);
+            redirectAttributes.addFlashAttribute("message", "員工新增成功！");
+            return "redirect:/emp/list";
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("empAccount", "error.empVO", e.getMessage());
+            return "emp/add";
+        }
     }
 
-    // 查詢單一員工
-    @GetMapping("/{empId}")
-    public EmpVO getEmployeeById(@PathVariable Integer empId) {
-        return empService.getEmployeeById(empId);
+    // 顯示編輯員工表單
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Integer id, Model model) {
+        empService.findById(id).ifPresent(emp -> model.addAttribute("empVO", emp));
+        return "emp/edit";
     }
 
-    // 查詢所有員工
-    @GetMapping
-    public List<EmpVO> getAllEmployees() {
-        return empService.getAllEmployees();
+    // 處理編輯員工
+    @PostMapping("/edit/{id}")
+    public String updateEmployee(@PathVariable Integer id,
+                               @Valid @ModelAttribute("empVO") EmpVO empVO,
+                               BindingResult result,
+                               RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "emp/edit";
+        }
+
+        try {
+            empVO.setEmpId(id);
+            empService.updateEmployee(empVO);
+            redirectAttributes.addFlashAttribute("message", "員工資料更新成功！");
+            return "redirect:/emp/list";
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("empAccount", "error.empVO", e.getMessage());
+            return "emp/edit";
+        }
     }
 
-    // 根據姓名模糊查詢
-    @GetMapping("/search")
-    public List<EmpVO> searchEmployeesByName(@RequestParam String name) {
-        return empService.searchEmployeesByName(name);
+    // 處理停用/啟用員工
+    @PostMapping("/toggle-status/{id}")
+    public String toggleStatus(@PathVariable Integer id,
+                             @RequestParam Boolean activate,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            if (activate) {
+                empService.activateEmployee(id);
+                redirectAttributes.addFlashAttribute("message", "員工帳號已啟用！");
+            } else {
+                empService.deactivateEmployee(id);
+                redirectAttributes.addFlashAttribute("message", "員工帳號已停用！");
+            }
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/emp/list";
     }
 }
