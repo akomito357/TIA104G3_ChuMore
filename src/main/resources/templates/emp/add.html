@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>新增員工</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>新增員工</h2>
+        
+        <form th:action="@{/emp/add}" th:object="${empVO}" method="post">
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" class="form-control" th:field="*{empName}">
+                <span class="text-danger" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></span>
+            </div>
+
+            <div class="form-group">
+                <label>帳號</label>
+                <input type="text" class="form-control" th:field="*{empAccount}">
+                <span class="text-danger" th:if="${#fields.hasErrors('empAccount')}" th:errors="*{empAccount}"></span>
+            </div>
+
+            <div class="form-group">
+                <label>密碼</label>
+                <input type="password" class="form-control" th:field="*{empPassword}">
+                <span class="text-danger" th:if="${#fields.hasErrors('empPassword')}" th:errors="*{empPassword}"></span>
+            </div>
+
+            <div class="form-group">
+                <label>帳號狀態</label>
+                <select class="form-control" th:field="*{empAccountStatus}">
+                    <option value="1">啟用</option>
+                    <option value="0">停用</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('empAccountStatus')}" th:errors="*{empAccountStatus}"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">新增</button>
+            <a th:href="@{/emp/list}" class="btn btn-secondary">返回</a>
+        </form>
+    </div>
+</body>
+</html>
