@@ -215,8 +215,27 @@
                     確定要送出點餐嗎？
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-dismiss="modal" data-bs-target="#orderConfirmErrorModal"></button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="confirmOrder" data-bs-dismiss="modal" onclick="submitOrder()">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 點餐失敗顯示（交易錯誤） -->
+    <div class="modal fade" id="orderConfirmErrorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">錯誤</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    送出點餐時出現錯誤，請稍後再試。
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+                    <button type="button" class="btn btn-primary" id="confirmOrderError" data-bs-dismiss="modal" data-bs-target="#orderConfirmModal">確認</button>
                 </div>
             </div>
         </div>

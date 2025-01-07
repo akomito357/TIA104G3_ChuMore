@@ -239,9 +239,9 @@ function submitOrder(){
 
         error: function(err){
             console.log("submitOrder err");
-            
-
             console.log(err);
+
+            
         }
     })
 

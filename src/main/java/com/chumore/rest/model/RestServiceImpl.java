@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.chumore.util.ConverterUtil;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,12 @@ import com.chumore.approval.model.ApprovalVO;
 import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.discpts.model.DiscPtsVO;
 import com.chumore.envimg.model.EnvImgVO;
+import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.favrest.model.FavRestVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.reservation.model.ReservationVO;
 import com.chumore.rest.compositequery.RestCompositeQuery;
-import com.chumore.tabletype.model.TableTypeVO;
+import com.chumore.util.ConverterUtil;
 
 @Service("restService")
 public class RestServiceImpl implements RestService{
@@ -42,17 +42,32 @@ public class RestServiceImpl implements RestService{
 	@Override
 	public RestVO getOneById(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
-		return optional.orElse(null);
+		RestVO rest = optional.orElse(null);
+		if (rest == null) {
+			throw new ResourceNotFoundException("Rest with id = " + restId + "is not found.");
+		}
+		
+		return rest;
 	}
 
 	@Override
 	public List<RestVO> getAll() {
-		return repository.findAll();
+		List<RestVO> rests = repository.findAll();
+		if (rests.isEmpty()) {
+			throw new ResourceNotFoundException("No rests found.");
+		}
+			
+		return rests;
 	}
 
 	@Override
 	public List<RestVO> getAllCompos(Map<String, String[]> map) {
-		return RestCompositeQuery.getAllC(map, sessionFactory.openSession());
+		List<RestVO> rests = RestCompositeQuery.getAllC(map, sessionFactory.openSession());
+		if (rests.isEmpty()) {
+			throw new ResourceNotFoundException("No match rests found.");
+		}
+		
+		return rests;
 	}
 
 	public Set<DiscPtsVO> getDiscPtsByRestId(Integer restId){
