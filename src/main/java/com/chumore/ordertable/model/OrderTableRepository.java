@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chumore.rest.model.RestVO;
+
 @Repository
 public interface OrderTableRepository extends JpaRepository<OrderTableVO, Integer> {
 	
@@ -26,4 +28,7 @@ public interface OrderTableRepository extends JpaRepository<OrderTableVO, Intege
 
 	@Query(value = "select ot.table_name form order_table ot where ot.order_table_id =:orderTableId", nativeQuery = true)
 	String getTableNumberById(Integer orderTableId);
+	
+	@Query(value = "SELECT ot FROM OrderTableVO ot where ot.rest.restId = ?1 and ot.tableNumber = ?2")
+    OrderTableVO findByRestIdAndNumber(Integer restId, String tableNumber);
 }

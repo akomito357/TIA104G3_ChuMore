@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.chumore.exception.OrderTableNotFoundException;
 import com.chumore.orderitem.dto.OrderItemForOrderDto;
 import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
@@ -81,7 +81,7 @@ public class OrderMasterController {
 		if(result.hasErrors()) {
 			return ""; // 返回並進行錯誤顯示
 		}
-		orderSvc.updateOrderMaster(orderMaster);
+//		orderSvc.updateOrderMaster(orderMaster);
 		orderMaster = orderSvc.getOneById(Integer.valueOf(orderMaster.getOrderId()));
 		model.addAttribute("orderMaster", orderMaster);
 		return "";
@@ -89,11 +89,21 @@ public class OrderMasterController {
 	
 	
 	// addOrder - for QRcode to send GET request - 導到桌位對應的開始點餐頁面
-	@GetMapping("addOrder/{orderTableId}")
-	public String addOrder(@PathVariable Integer orderTableId, ModelMap model, HttpSession session) {		
-		OrderTableVO orderTable = orderTableSvc.getOrderTableById(orderTableId);
+	@GetMapping("addOrder/{restId}/{tableNumber}")
+	public String addOrder(@PathVariable Integer restId, @PathVariable String tableNumber, ModelMap model, HttpSession session) {		
+//		OrderTableVO orderTable = orderTableSvc.getOrderTableById(orderTableId);
+//		Set<OrderTableVO> tableSet = restSvc.getOneById(restId).getOrderTables();
 		OrderMasterVO orderMaster = null;
+		OrderTableVO orderTable = orderTableSvc.findByRestIdAndNumber(restId, tableNumber);
+		if (orderTable == null) {
+			// 當抓不到對應的桌位時
+			throw new OrderTableNotFoundException(
+					"OrderTable which restId = " + restId + " and tableNumber = " + tableNumber + " is not found.");
+		}
 		
+		session.setAttribute("restId", restId);
+		session.setAttribute("tableNumber", tableNumber);
+
 		if (session.getAttribute("orderId") == null) {
 			orderMaster = new OrderMasterVO();
 			orderMaster.setOrderTable(orderTable);
@@ -103,16 +113,16 @@ public class OrderMasterController {
 			orderMaster = orderSvc.getOneById(orderId);
 		}
 		
-//		model.addAttribute("orderTable", orderTable);
+
 		model.addAttribute("orderMaster", orderMaster);
 		return "public/order/order_start_page";
 	}
 	
 	// insertOrder - for "開始點餐"btn in order_start_page.html
 	@PostMapping("insert")
-	public String insert(@ModelAttribute("orderMaster") OrderMasterVO orderMaster, BindingResult result, ModelMap model, HttpSession session) {
-		try {
-			
+	public String insert(@ModelAttribute("orderMaster") OrderMasterVO orderMaster, 
+			BindingResult result, ModelMap model, HttpSession session) {
+		
 			orderMaster.getOrderTable().getOrderTableId();
 			// 1. 錯誤處理
 			if(result.hasErrors()) {
@@ -133,10 +143,6 @@ public class OrderMasterController {
 			session.setAttribute("orderId", orderMaster.getOrderId());
 			orderMaster = orderSvc.getOneById(orderMaster.getOrderId());
 			model.addAttribute("orderMaster", orderMaster);
-			
-		} catch (Exception e) {
-			return "public/order/order_start_page";
-		}
 		
 		return "public/order/order_page";
 	}
@@ -161,15 +167,10 @@ public class OrderMasterController {
 	@ResponseBody
 	public ResponseEntity<OrderMasterResponse> submitOrderItems(@RequestBody OrderItemForOrderDto item, HttpSession session) {
 //		OrderMasterResponse res = null;
-		try {
-			orderSvc.submitOrder(item, session);
-			OrderMasterResponse res = new OrderMasterResponse<>("success", 200, item);
-			return ResponseEntity.ok(res);
-		} catch (Exception e){
-			OrderMasterResponse res = new OrderMasterResponse<>("error", 400, e.getMessage());
-			return ResponseEntity.badRequest().body(res);
-		}
-			
+		orderSvc.submitOrder(item, session);
+		// 若上面此行有錯誤，service層會拋出DataMismatchException，由GlobalExceptionHandler處理
+		OrderMasterResponse res = new OrderMasterResponse<>("success", 200, item);
+		return ResponseEntity.ok(res);		
 	}
 	
 	
@@ -285,6 +286,12 @@ public class OrderMasterController {
 		model.addAttribute("memberOrderList", list);
 		// 3. 準備轉交
 		return "";
+	}
+	
+	@GetMapping("handleMethodEx")
+	public String handleMethodNotAllowedEx() {
+		// 找桌位
+		return "redirect:/";
 	}
 	
 }

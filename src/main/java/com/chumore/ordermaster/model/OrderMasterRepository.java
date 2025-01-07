@@ -61,4 +61,5 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 		    countQuery = "SELECT COUNT(*) FROM order_master om WHERE om.rest_id = :restId"
 		    , nativeQuery = true)
     Page<RestDiningDto> findOrderByRestId(Integer restId, Pageable pageable);
+    
 }

@@ -440,6 +440,16 @@ public class RestVO implements Serializable{
 	public void setMenuImgs(Set<MenuImgVO> menuImgs) {
 		this.menuImgs = menuImgs;
 	}
+	
+	
+
+	public Set<OrderTableVO> getOrderTables() {
+		return orderTables;
+	}
+
+	public void setOrderTables(Set<OrderTableVO> orderTables) {
+		this.orderTables = orderTables;
+	}
 
 	@Override
 	public String toString() {
