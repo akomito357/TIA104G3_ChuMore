@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chumore.exception.OrderDataMismatchException;
+import com.chumore.exception.DataMismatchException;
 import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.orderitem.dto.OrderItemForOrderDto;
 import com.chumore.orderitem.model.OrderItemVO;
@@ -132,7 +132,7 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 	
 	public void submitOrder(OrderItemForOrderDto item, HttpSession session) {
 		String memo = item.getMemo();
-		System.out.println(memo);
+//		System.out.println(memo);
 		
 		// 建立新點餐
 		OrderItemVO orderItem = new OrderItemVO();
@@ -148,18 +148,17 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		BigDecimal thisSubTotalPrice = new BigDecimal("0");
 		
 		for (OrderLineItemForOrderDto lineDto : orders) {
-			// 如果送來餐點資料的ID與餐廳ID和價格不符，拋出exception
-			
 			Integer productId = lineDto.getProductId();
 			Integer count = lineDto.getCount();
 			BigDecimal priceForOne = lineDto.getOrigPriceForOne();
 			ProductVO product = productSvc.getProductById(productId);
 			OrderMasterVO orderMaster = getOneById((Integer)session.getAttribute("orderId"));
 			
+			// 如果送來餐點資料的ID與餐廳ID和價格不符，拋出exception
 			if (!product.getRestId().equals(orderMaster.getRestId())) {
-				throw new OrderDataMismatchException("Rest Id mismatch: in product which id = " + productId.toString() + "; The received Rest Id is " + product.getRestId().toString());
+				throw new DataMismatchException("Rest Id mismatch: in product which id = " + productId.toString() + "; The received Rest Id is " + product.getRestId().toString());
 			} else if(product.getProductPrice().compareTo(priceForOne) != 0) { // 不同時
-				throw new OrderDataMismatchException("Product price mismatch: in product which id = " + productId.toString());
+				throw new DataMismatchException("Product price mismatch: in product which id = " + productId.toString());
 			}
 
 			OrderLineItemVO orderLineItem = new OrderLineItemVO();

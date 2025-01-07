@@ -241,6 +241,16 @@ function submitOrder(){
             console.log("submitOrder err");
             console.log(err);
 
+            if (err.status == 422){
+                // 處理 DataMismatchException
+                let modal = new bootstrap.Modal(document.getElementById('dataMismatchModal'));
+                modal.show();
+            } else {
+                // 其他錯誤
+                let modal = new bootstrap.Modal(document.getElementById('orderConfirmErrorModal'));
+                modal.show();
+            }
+
             
         }
     })
