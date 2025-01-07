@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.chumore.ordermaster.model.OrderMasterVO;
-import com.chumore.ordertable.model.OrderTableVO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class RestDiningDto {
 	private Integer restId;
@@ -13,26 +13,30 @@ public class RestDiningDto {
 	private String tableNumber;
 	private String memberName;
 	private BigDecimal totalPrice;
+	private Integer orderId;
 	
 	public RestDiningDto() {
 		super();
 	}
 	
-	public RestDiningDto(OrderMasterVO orderMaster, OrderTableVO orderTable) {
+	public RestDiningDto(OrderMasterVO orderMaster, String tableNumber) {
 		
 		setRestId(orderMaster.getRest().getRestId());
+		
 		LocalDateTime date = orderMaster.getServedDatetime();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String formatterDatetime = date.format(formatter);
 		setServedDatetime(formatterDatetime);
-		setTableNumber(orderTable.getTableNumber());
+		
+//		setTableNumber(orderTable.getTableNumber());
+		setTableNumber(tableNumber);
 		
 		if(orderMaster.getMember()!= null) {
 			setMemberName(orderMaster.getMember().getMemberName());
 		}
 		
 		setTotalPrice(orderMaster.getTotalPrice());
-		
+		setOrderId(orderMaster.getOrderId());
 	}
 	
 	
@@ -72,6 +76,14 @@ public class RestDiningDto {
 	}
 	public void setTotalPrice(BigDecimal totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 	
 }
