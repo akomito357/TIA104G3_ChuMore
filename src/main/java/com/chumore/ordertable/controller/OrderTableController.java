@@ -59,6 +59,16 @@ public class OrderTableController {
             Integer restId = Integer.parseInt(tableData.get("restID").toString());  // 注意：前端傳來的是 "restID"
             String tableNumber = tableData.get("tableNumber").toString();
             
+            
+           List<OrderTableVO> existingTables = orderTableSvc.getAllByRestId(restId);
+            
+           boolean isDuplicate = existingTables.stream()
+                   .anyMatch(table -> table.getTableNumber().equals(tableNumber));
+           if (isDuplicate) {
+               response.put("success", false);
+               response.put("message", "桌號已存在，無法新增。");
+               return ResponseEntity.badRequest().body(response);
+           }
             // 建立 RestVO
             RestVO rest = new RestVO();
             rest.setRestId(restId);
@@ -98,6 +108,8 @@ public class OrderTableController {
             @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         try {
+        	
+        	
             String tableNumber = request.get("tableNumber");
             
             // 先取得原始的 OrderTableVO
@@ -105,7 +117,18 @@ public class OrderTableController {
             if (orderTable == null) {
                 throw new RuntimeException("找不到此桌位");
             }
-            
+            Integer restId = orderTable.getRest().getRestId();
+
+            // 檢查是否有其他桌位使用相同的桌號
+            List<OrderTableVO> existingTables = orderTableSvc.getAllByRestId(restId);
+            boolean isDuplicate = existingTables.stream()
+                    .anyMatch(table -> !table.getOrderTableId().equals(orderTableId) 
+                                       && table.getTableNumber().equals(tableNumber));
+            if (isDuplicate) {
+                response.put("success", false);
+                response.put("message", "桌號已存在，無法更新。");
+                return ResponseEntity.badRequest().body(response);
+            }
             // 更新桌號
             orderTable.setTableNumber(tableNumber);
             
