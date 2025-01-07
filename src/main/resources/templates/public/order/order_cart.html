@@ -215,7 +215,7 @@
                     確定要送出點餐嗎？
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-dismiss="modal" data-bs-target="#orderConfirmErrorModal"></button>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="confirmOrder" data-bs-dismiss="modal" onclick="submitOrder()">確認</button>
                 </div>
@@ -235,14 +235,32 @@
                 </div>
                 <div class="modal-footer">
                     <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
-                    <button type="button" class="btn btn-primary" id="confirmOrderError" data-bs-dismiss="modal" data-bs-target="#orderConfirmModal">確認</button>
+                    <button type="button" class="btn btn-primary" id="confirmOrderError" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 點餐失敗顯示（資料對應不符合） -->
+    <div class="modal fade" id="dataMismatchModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">錯誤</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    餐點資訊出現錯誤，請將餐點重新加入購物車後再行結帳。
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+                    <button type="button" class="btn btn-primary" id="confirmDataMismatchError" data-bs-dismiss="modal" >確認</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- cart empty Modal -->
-    <div class="modal fade" id="orderConfirmModal" tabindex="-1">
+    <!-- <div class="modal fade" id="orderConfirmModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -257,7 +275,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>

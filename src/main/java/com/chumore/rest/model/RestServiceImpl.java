@@ -16,6 +16,7 @@ import com.chumore.envimg.model.EnvImgVO;
 import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.favrest.model.FavRestVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.ordertable.model.OrderTableVO;
 import com.chumore.reservation.model.ReservationVO;
 import com.chumore.rest.compositequery.RestCompositeQuery;
 import com.chumore.util.ConverterUtil;
@@ -113,6 +114,10 @@ public class RestServiceImpl implements RestService{
 	public List<Integer> getBusinessHours(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
 		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
+	}
+	
+	public Set<OrderTableVO> getOrderTablesByRestId(Integer restId){
+		return getOneById(restId).getOrderTables();
 	}
 
 }
