@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -110,26 +111,33 @@ public class OrderMasterController {
 	// insertOrder - for "開始點餐"btn in order_start_page.html
 	@PostMapping("insert")
 	public String insert(@ModelAttribute("orderMaster") OrderMasterVO orderMaster, BindingResult result, ModelMap model, HttpSession session) {
-		orderMaster.getOrderTable().getOrderTableId();
-		// 1. 錯誤處理
-		if(result.hasErrors()) {
-			return ""; // return to show error msg
-		}
-		// 2. 永續層存取，新增資料
+		try {
+			
+			orderMaster.getOrderTable().getOrderTableId();
+			// 1. 錯誤處理
+			if(result.hasErrors()) {
+				return ""; // return to show error msg
+			}
+			// 2. 永續層存取，新增資料
 //		System.out.println(session.getAttribute("orderId"));
-		if (session.getAttribute("orderId") == null) {
-			orderMaster.setOrderStatus(0);
-			orderMaster.setSubtotalPrice(new BigDecimal("0"));
-			orderMaster.setServedDatetime(LocalDateTime.now());
-			orderSvc.addOrderMaster(orderMaster);
-		} else {
-			orderMaster.setOrderId((Integer)session.getAttribute("orderId"));
+			if (session.getAttribute("orderId") == null) {
+				orderMaster.setOrderStatus(0);
+				orderMaster.setSubtotalPrice(new BigDecimal("0"));
+				orderMaster.setServedDatetime(LocalDateTime.now());
+				orderSvc.addOrderMaster(orderMaster);
+			} else {
+				orderMaster.setOrderId((Integer)session.getAttribute("orderId"));
+			}
+			
+			// 3. 準備轉交
+			session.setAttribute("orderId", orderMaster.getOrderId());
+			orderMaster = orderSvc.getOneById(orderMaster.getOrderId());
+			model.addAttribute("orderMaster", orderMaster);
+			
+		} catch (Exception e) {
+			return "public/order/order_start_page";
 		}
 		
-		// 3. 準備轉交
-		session.setAttribute("orderId", orderMaster.getOrderId());
-		orderMaster = orderSvc.getOneById(orderMaster.getOrderId());
-		model.addAttribute("orderMaster", orderMaster);
 		return "public/order/order_page";
 	}
 	

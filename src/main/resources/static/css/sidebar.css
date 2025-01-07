@@ -30,6 +30,8 @@
 }
 
 .sidebar-link {
+    display: block;
+    padding: .5rem 1rem;
     color: var(--light);
     padding: 0.5rem 1rem;
 }
@@ -38,9 +40,10 @@
     background-color: var(--lighten_dark);
     color: var(--light);
     border-radius: 8px;
+    text-decoration: none;
 }
 .sidebar-link.active{
-    color: var(--light);
+    color: var(--light) !important;
     background-color: var(--primary);
     border-radius: 8px;
 }
@@ -73,4 +76,6 @@
 .chevron.rotated {
     transform: rotate(90deg);
 }
+
+
 

@@ -22,5 +22,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT.value(),"Conflict", e.getMessage());
         return ResponseEntity.status(409).body(errorResponse);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    @ExceptionHandler(OrderDataMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleOrderDataMismatch(OrderDataMismatchException e){
+    	ErrorResponse errorResponse = new ErrorResponse(
+    			HttpStatus.UNPROCESSABLE_ENTITY.value(), "Unprocessable entity", e.getMessage());
+    	return ResponseEntity.status(422).body(errorResponse);
+    }
 
 }

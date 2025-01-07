@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chumore.exception.OrderDataMismatchException;
+import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.orderitem.dto.OrderItemForOrderDto;
 import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
@@ -24,6 +26,7 @@ import com.chumore.orderlineitem.model.OrderLineItemVO;
 import com.chumore.orderlineitem.model.OrderLineItem_Service;
 import com.chumore.ordermaster.compositequery.OrderMasterCompositeQuery;
 import com.chumore.ordermaster.dto.RestDiningDto;
+import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.usepoints.model.UsePointsVO;
@@ -51,7 +54,13 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 	@Transactional(readOnly = true)
 	public OrderMasterVO getOneById(Integer orderId) {
 		Optional<OrderMasterVO> optional = repository.findById(orderId);
-		return optional.orElse(null);
+		OrderMasterVO order = optional.orElse(null);
+		
+		if (order == null) {
+			throw new ResourceNotFoundException("No order found for orderId: " + orderId);
+		}
+		
+		return order;
 	}
 
 	@Override
@@ -136,14 +145,23 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		BigDecimal thisSubTotalPrice = new BigDecimal("0");
 		
 		for (OrderLineItemForOrderDto lineDto : orders) {
-			OrderLineItemVO orderLineItem = new OrderLineItemVO();
+			// 如果送來餐點資料的ID與餐廳ID和價格不符，拋出exception
 			
-			orderLineItem.setOrderItemId(orderItemId);
-			orderLineItem.setProduct(productSvc.getProductById(lineDto.getProductId()));
-			
+			Integer productId = lineDto.getProductId();
 			Integer count = lineDto.getCount();
 			BigDecimal priceForOne = lineDto.getOrigPriceForOne();
+			ProductVO product = productSvc.getProductById(productId);
+			OrderMasterVO orderMaster = getOneById((Integer)session.getAttribute("orderId"));
 			
+			if (!product.getRestId().equals(orderMaster.getRestId())) {
+				throw new OrderDataMismatchException("Rest Id mismatch: in product which id = " + productId.toString() + "; The received Rest Id is " + product.getRestId().toString());
+			} else if(product.getProductPrice().compareTo(priceForOne) != 0) { // 不同時
+				throw new OrderDataMismatchException("Product price mismatch: in product which id = " + productId.toString());
+			}
+
+			OrderLineItemVO orderLineItem = new OrderLineItemVO();
+			orderLineItem.setOrderItemId(orderItemId);
+			orderLineItem.setProduct(product);			
 			orderLineItem.setQuantity(count);
 			orderLineItem.setPrice(priceForOne);
 			
