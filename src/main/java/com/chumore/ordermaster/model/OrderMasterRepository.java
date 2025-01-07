@@ -64,5 +64,4 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 		    , nativeQuery = true)
     Page<RestDiningDto> findOrderByRestId(Integer restId, Pageable pageable);
     
-    
 }

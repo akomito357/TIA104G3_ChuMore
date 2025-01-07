@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chumore.rest.model.RestVO;
+
 @Repository
 public interface OrderTableRepository extends JpaRepository<OrderTableVO, Integer> {
 	
