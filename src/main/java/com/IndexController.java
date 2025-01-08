@@ -29,7 +29,7 @@ public class IndexController {
 	
 	@GetMapping("/check") // test
 	public String orderCheck() {
-		return "secure/rest/order/restCheckout";
+		return "secure/rest/order/order_manage_test";
 	}
 	
 	@GetMapping("/memberDiningHistory")

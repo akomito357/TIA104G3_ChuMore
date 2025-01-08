@@ -2,6 +2,7 @@ package com.chumore.ordermaster.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -12,12 +13,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chumore.orderitem.model.OrderItemVO;
+import com.chumore.orderitem.model.OrderItem_Service;
 import com.chumore.ordermaster.model.OrderMasterServiceImpl;
+import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
 import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.rest.model.RestVO;
@@ -34,6 +39,9 @@ public class RestOrderMasterController {
 
 	@Autowired
 	OrderTableService tablesvc;
+	
+	@Autowired
+	OrderItem_Service orderItemSvc;
 
 	@GetMapping("diningList")
 	public ResponseEntity<OrderMasterResponse<Page<Map<String, Object>>>> findOrderByRestId(
@@ -103,4 +111,16 @@ public class RestOrderMasterController {
 		return ResponseEntity.ok(response);
 
 	}
+
+	
+	@GetMapping("getOne")
+	public String getOneForCheckOut(@RequestParam Integer orderId, ModelMap model) {
+//		session.setAttribute("orderId", 1);
+		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
+		List<OrderItemVO> orderItems = orderItemSvc.getOrderItemListByOrderId(orderId);
+		model.addAttribute("orderMaster", orderMaster);
+		
+		return "";
+	} 
+	
 }
