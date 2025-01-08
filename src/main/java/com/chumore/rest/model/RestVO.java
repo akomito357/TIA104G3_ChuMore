@@ -178,12 +178,16 @@ public class RestVO implements Serializable{
 	private Set<MenuImgVO> menuImgs;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("tableType-rest")
 	private Set<TableTypeVO> tableTypes;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("favRest-rest")
 	private Set<FavRestVO> favRests;
 	
-	
+	public String getCuisineTypeName() {
+		return cuisineType.getCuisineDescr();	
+	}
 
 	public RestVO() {	
 	}

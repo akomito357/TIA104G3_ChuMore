@@ -3,6 +3,7 @@ import javax.persistence.*;
 
 import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ public class TableTypeVO implements Serializable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="rest_Id",referencedColumnName="rest_id")
+    @JsonBackReference("tableType-rest")
     private RestVO rest;
 
     @OneToMany(mappedBy="tableType",cascade=CascadeType.ALL)
