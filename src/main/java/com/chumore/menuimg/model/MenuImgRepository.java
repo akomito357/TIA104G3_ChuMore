@@ -17,7 +17,7 @@ public interface MenuImgRepository extends JpaRepository<MenuImgVO, Integer> {
 	
 	@Transactional
 	@Modifying
-	@Query(value = "delete from env_img where env_img_id =?1", nativeQuery = true)
+	@Query(value = "delete from menu_img where menu_img_id =?1", nativeQuery = true)
 	void deleteByMenuImgId(int menuImgId);
 	
 	@Query("SELECT o FROM MenuImgVO o WHERE o.rest.restId = :restId")

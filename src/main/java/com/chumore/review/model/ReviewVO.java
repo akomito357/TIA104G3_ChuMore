@@ -27,6 +27,7 @@ import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.product.model.ProductVO;
 import com.chumore.rest.model.RestVO;
 import com.chumore.reviewimg.model.ReviewImageVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "review")
@@ -44,6 +45,7 @@ public class ReviewVO implements Serializable {
 	  @ManyToOne
 	  @JoinColumn(name = "rest_id", referencedColumnName = "rest_id")
 	  @NotEmpty(message = "餐廳ID不能為空")
+	  @JsonManagedReference("review-rest")
 	  private RestVO rest;
 	  
 	  @ManyToOne
