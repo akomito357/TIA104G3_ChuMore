@@ -50,11 +50,11 @@ public class OrderMasterController {
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
 	@GetMapping("getOne")
-	public String getOneForCheckOut(HttpSession session, Model model) {
+	public String getOneForCheckOut(@RequestParam Integer orderId, Model model) {
 //		session.setAttribute("orderId", 1);
-		OrderMasterVO orderMaster = orderSvc.getOneById((Integer)session.getAttribute("orderId"));
-		model.addAttribute("orderMaster", orderMaster);		
-		return "";
+		OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
+		model.addAttribute("orderMaster", orderMaster);
+		return "secure/rest/order/rest_checkout";
 	}
 	
 	// getOneOrder (RESTful)
