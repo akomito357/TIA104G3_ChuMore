@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.*;
 import com.chumore.emp.model.EmpVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "approval")
@@ -19,6 +20,7 @@ public class ApprovalVO implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rest_id", referencedColumnName = "rest_id", nullable = false)
+	@JsonManagedReference("approval-rest")
 	private RestVO rest; // 對應餐廳ID (FK)
 
 	@ManyToOne(fetch = FetchType.EAGER)
