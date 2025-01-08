@@ -29,16 +29,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(errorResponse);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @ExceptionHandler(DataMismatchException.class)
     public ResponseEntity<ErrorResponse> handleDataMismatch(DataMismatchException e){
     	ErrorResponse errorResponse = new ErrorResponse(
