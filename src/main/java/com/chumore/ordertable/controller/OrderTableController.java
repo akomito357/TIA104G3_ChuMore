@@ -140,4 +140,21 @@ public class OrderTableController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+    
+    @GetMapping("getTableNumberById")
+    public ResponseEntity<List<Map<String, Object>>> getTableNumberById(){
+    	Object restNum = session.getAttribute("restId");
+		Integer restId = null;
+		if (restNum == null) {
+			restId = 2004;
+		} else {
+			RestVO rest = (RestVO) restNum;
+			restId = rest.getRestId();
+		}
+		
+
+    	List<Map<String, Object>> tableName = orderTableSvc.getTableNumberById(restId);
+    	return ResponseEntity.ok(tableName);
+    }
+    
 }

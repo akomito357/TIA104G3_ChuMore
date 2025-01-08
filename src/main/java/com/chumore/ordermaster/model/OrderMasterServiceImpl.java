@@ -185,10 +185,8 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		
 	}
 
-	public Page<Map<String, Object>> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
-		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
+	public Page<Map<String, Object>> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, String tableNumber, String memberName, Pageable pageable){
+		return repository.findOrderByRestId(restId, startDatetime, endDatetime, tableNumber ,memberName, pageable);
 	}
-//	public Page<RestDiningDto> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
-//		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
-//	}
+
 }

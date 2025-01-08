@@ -2,6 +2,7 @@ package com.chumore.ordertable.model;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,6 +25,6 @@ public interface OrderTableRepository extends JpaRepository<OrderTableVO, Intege
 	
 	Optional<OrderTableVO> findByRest_RestIdAndTableNumber(Integer restId, String tableNumber);
 
-	@Query(value = "select ot.table_name form order_table ot where ot.order_table_id =:orderTableId", nativeQuery = true)
-	String getTableNumberById(Integer orderTableId);
+	@Query(value = "select ot.order_table_id, ot.table_number from order_table ot where ot.rest_Id = :restId", nativeQuery = true)
+	List<Map<String, Object>> getTableNumberById(Integer restId);
 }
