@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,44 +19,37 @@ import com.chumore.rest.model.RestVO;
 public class EnvImgService {
 	@Autowired
 	EnvImgRepository repository;
-	
-	
-    
 
-	// 新增多張環境圖片
-    public List<EnvImgVO> addEnvImgs(MultipartFile[] files, Integer restId) {
-        if (files == null || files.length == 0) {
-            throw new IllegalArgumentException("Files cannot be empty");
-        }
-        if (restId == null) {
-            throw new IllegalArgumentException("Restaurant ID cannot be null");
-        }
-        
-        List<EnvImgVO> savedImages = new ArrayList<>();
-        
-        for (MultipartFile file : files) {
-            try {
-                // 檢查檔案類型
-                String contentType = file.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                    throw new IllegalArgumentException("Invalid file type for: " + file.getOriginalFilename());
-                }
-                RestVO rest = new RestVO();
-                rest.setRestId(restId);
-                // 建立新的環境圖片物件
-                EnvImgVO envImg = new EnvImgVO();
-                envImg.setImage(file.getBytes());
-                
-                // 儲存圖片
-                savedImages.add(repository.save(envImg));
-                
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to process image: " + file.getOriginalFilename(), e);
-            }
-        }
-        
-        return savedImages;
-    }
+	@Transactional
+	public List<EnvImgVO> addEnvImgs(MultipartFile[] files, Integer restId) throws IOException {
+		if (files == null || restId == null) {
+			throw new IllegalArgumentException("Files and restId cannot be null");
+		}
+
+		List<EnvImgVO> savedImages = new ArrayList<>();
+
+		RestVO rest = new RestVO();
+		rest.setRestId(restId);
+
+		for (MultipartFile file : files) {
+			try {
+				EnvImgVO envImg = new EnvImgVO();
+				envImg.setRest(rest);
+				envImg.setImage(file.getBytes());
+
+				EnvImgVO savedImg = repository.save(envImg);
+				savedImages.add(savedImg);
+
+			} catch (IOException e) {
+				// 記錄錯誤並繼續處理其他文件
+				System.err.println("Failed to process file: " + file.getOriginalFilename());
+				e.printStackTrace();
+				throw e; // 或者根據需求決定是否拋出異常
+			}
+		}
+
+		return savedImages;
+	}
 
 	// 修改環境圖片
 	public void updateEnvImg(EnvImgVO envImg) {
@@ -72,7 +67,7 @@ public class EnvImgService {
 		if (repository.existsById(envImgId))
 			repository.deleteByEnvImgId(envImgId);
 	}
-	
+
 	// 查詢所有環境圖片
 	public List<EnvImgVO> getAllByRestId(Integer restId) {
 		return repository.findByRestId(restId);
@@ -81,6 +76,5 @@ public class EnvImgService {
 	public List<EnvImgVO> getAll() {
 		return repository.findAll();
 	}
-	
 
 }

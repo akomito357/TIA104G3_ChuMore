@@ -1,12 +1,18 @@
 package com.chumore.menuimg.model;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.envimg.model.EnvImgVO;
+import com.chumore.rest.model.RestVO;
 
 @Service("menuImgService")
 public class MenuImgService {
@@ -14,15 +20,37 @@ public class MenuImgService {
 	MenuImgRepository repository;
 
 	// 新增環境圖片
-	
-	public void addMenuImg(MenuImgVO menuImg) {
-		repository.save(menuImg);
-	}
 
-	// 新增多張環境圖片
-	public void addMultipleMenuImgs(MenuImgVO menuImg) {
-		repository.save(menuImg);
-	}	
+	@Transactional
+	public List<MenuImgVO> addMenuImgs(MultipartFile[] files, Integer restId) throws IOException {
+		if (files == null || restId == null) {
+			throw new IllegalArgumentException("Files and restId cannot be null");
+		}
+
+		List<MenuImgVO> savedImages = new ArrayList<>();
+
+		RestVO rest = new RestVO();
+		rest.setRestId(restId);
+
+		for (MultipartFile file : files) {
+			try {
+				MenuImgVO menuImg = new MenuImgVO();
+				menuImg.setRest(rest);
+				menuImg.setImage(file.getBytes());
+
+				MenuImgVO savedImg = repository.save(menuImg);
+				savedImages.add(savedImg);
+
+			} catch (IOException e) {
+				// 記錄錯誤並繼續處理其他文件
+				System.err.println("Failed to process file: " + file.getOriginalFilename());
+				e.printStackTrace();
+				throw e; // 或者根據需求決定是否拋出異常
+			}
+		}
+
+		return savedImages;
+	}
 
 	// 修改環境圖片
 	public void updateMenuImg(MenuImgVO menuImg) {
@@ -40,6 +68,7 @@ public class MenuImgService {
 		if (repository.existsById(menuImgId))
 			repository.deleteByMenuImgId(menuImgId);
 	}
+
 	public List<MenuImgVO> getAllByRestId(Integer restId) {
 		return repository.findByRestId(restId);
 	}
