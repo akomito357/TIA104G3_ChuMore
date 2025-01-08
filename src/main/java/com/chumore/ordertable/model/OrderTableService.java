@@ -32,6 +32,11 @@ public class OrderTableService {
 	public List<OrderTableVO> getAllByRestId(Integer restId) {
 		return repository.findByRestId(restId);
 	}
+	
+	public String getTableNumberById(Integer orderTableId) {
+		return repository.getTableNumberById(orderTableId);
+	}
+	
 
     public OrderTableVO getOrderTableById(Integer orderTableId) {
         return repository.findById(orderTableId)

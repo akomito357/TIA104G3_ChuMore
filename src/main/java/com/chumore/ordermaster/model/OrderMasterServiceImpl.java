@@ -2,6 +2,9 @@ package com.chumore.ordermaster.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -182,4 +185,10 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		
 	}
 
+	public Page<Map<String, Object>> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
+		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
+	}
+//	public Page<RestDiningDto> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
+//		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
+//	}
 }

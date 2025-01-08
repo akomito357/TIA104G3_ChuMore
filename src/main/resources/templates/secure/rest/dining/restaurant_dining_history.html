@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐廳用餐紀錄系統</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- <head th:insert="~{/included.html}" /> -->
+
+        <head th:insert="~{/sidebar_merchant.html}" />
+
+        <head th:insert="~{/header_member.html}" />
+    <style>
+        :root {
+            --primary: #F2994A;
+            --secondary: #1A1F2C;
+            --background: #F5F6F8;
+        }
+
+        body {
+            background-color: #FBFBFB;
+        }
+
+        .control-section {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .form-label {
+            width: auto;
+            white-space: nowrap;
+            font-size: small;
+            margin-left: 5px;
+        }
+
+        input[type="date"],
+        .form-select {
+            width: auto;
+        }
+
+        .dash-symbol {
+    display: inline-block;       /* 行內塊，保持與周圍元素在一行 */
+    margin: 0 10px;              /* 控制左右間距 */
+    font-size: 1.5rem;           /* 符號大小 */
+    line-height: 1;              /* 確保沒有多餘的上下空隙 */
+    vertical-align: middle;      /* 確保垂直居中對齊 */
+    text-align: center;          /* 保持文字居中 */
+}
+
+
+
+
+
+        .btn-primary {
+            background-color: #FEA116;
+            border-color: #FEA116;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .next-btn:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .prev-btn:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .btn-light {
+            background-color: rgb(232, 232, 232);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden; */
+        }
+
+        tr,
+        th {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            text-align: center;
+
+        }
+
+
+        .table-hover tbody tr:hover {
+            background-color: #cecece6d;
+            /* 懸停時的背景顏色 */
+        }
+
+
+
+        td {
+            text-align: center;
+
+        }
+
+
+
+        .pagination-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            /* 調整按鈕間的間距 */
+            margin-top: 20%;
+        }
+
+        .pagination-btns button {
+            padding: 5px 10px;
+            background-color: #FEA116;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination-btns .page-num {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .sort-icon {
+            margin-left: 5px;
+        }
+
+        .fa-solid {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+
+        .fa-solid:hover {
+            color: var(--primary);
+        }
+
+        .form-label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-control,
+        .form-select {
+            width: 180px;
+        }
+
+        .me-3 {
+
+            margin-top: 20px;
+        }
+
+        .ms-5 {
+            margin-left: 40px;
+        }
+
+        #customerName {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="main">
+        <div class="container mt-4">
+            <!-- 調整區 -->
+            <div class="control-section mb-4">
+                <h2 class="mb-3">用餐紀錄</h2>
+                <form id="filterForm">
+                    <div class="row g-3">
+<!-- 日期範圍 -->
+<div class="d-flex align-items-center g-3 flex-row">
+    <!-- 開始日期與時間 -->
+    <div class="d-flex align-items-center me-3">
+        <div class="me-3">
+            <label for="startDate" class="form-label">開始日期</label>
+            <input type="date" class="form-control" id="startDate">
+        </div>
+        <div class="me-3">
+            <label for="startTime" class="form-label">開始時間</label>
+            <select class="form-select" id="startTime">
+                <option value="">選擇時間</option>
+                <option value="12:00">12:00</option>
+                <option value="18:00">18:00</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 時間範圍波浪符號 -->
+    <!-- <span class="fw-bold dash-symbol text-nowrap me-3"
+        style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">
+        <i class="fas fa-window-minimize"></i>
+    </span> -->
+    <div class="dash-symbol">~</div>
+    <!-- 結束日期與時間 -->
+    <div class="d-flex align-items-center me-3">
+        <div class="me-3">
+            <label for="endDate" class="form-label">結束日期</label>
+            <input type="date" class="form-control" id="endDate">
+        </div>
+        <div class="me-3">
+            <label for="endTime" class="form-label">結束時間</label>
+            <select class="form-select" id="endTime">
+                <option value="">選擇時間</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+
+                        <!-- 額外條件區 -->
+                        <div class="col-md-5 d-flex align-items-center">
+                            <div class="me-3">
+                                <label for="tableNumber" class="form-label">桌號查詢</label>
+                                <select class="form-select" id="tableNumber">
+                                    <option value="">全部桌號</option>
+                                    <option value="C1">C1</option>
+                                    <option value="A3">A3</option>
+                                    <option value="B5">B5</option>
+                                </select>
+                            </div>
+
+                            <div class="me-3">
+                                <label for="customerName" class="form-label">顧客姓名</label>
+                                <input type="text" class="form-control" id="customerName" placeholder="輸入顧客姓名">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 按鈕區 -->
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary me-2" id="searchButton">搜尋</button>
+                        <button type="button" class="btn btn-light" id="resetButton">清空條件</button>
+                    </div>
+                </form>
+
+                <div class="mt-5">
+                    <!-- 查詢區 -->
+                    <div style="overflow-x: auto; max-width: 100%;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>日期<span class="sort-icon" data-sort="amount"><i class="fas fa-sort"></i></span>
+                                    </th>
+                                    <th>時間<span class="sort-icon" data-sort="a"><i class="fas fa-sort"></i></span></th>
+                                    <th>桌號<span class="sort-icon" data-sort="amount"><i class="fas fa-sort"></i></span>
+                                    </th>
+                                    <th>消費者<span class="sort-icon" data-sort="amount"><i class="fas fa-sort"></i></span>
+                                    </th>
+                                    <th>用餐金額<span class="sort-icon" data-sort="amount"><i
+                                                class="fas fa-sort"></i></span></th>
+                                    <th>餐點明細</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultTable">
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 分頁按鈕 -->
+                    <div class="pagination-btns">
+                        <button class="prev-btn" style="background-color: #ddd;">上一頁</button>
+                        <span class="page-num"> 1 </span> <!-- 顯示當前頁數 -->
+                        <button class="next-btn">下一頁</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        const size = 10;
+        
+
+        $(document).ready(function () {
+            function loadDiningList(page, sortField, sortOrder) {
+                fetch(`rest/orderMaster/diningList?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+                    method: "GET",
+                }).then(res => res.json())
+                    .then(response => {
+                        console.log(response);
+
+                        const pageData = response.data;
+                        const diningList = pageData.content;
+                        const totalPages = pageData.totalPages;
+
+
+                        let table_body = "";
+                        diningList.forEach((orderMaster, index) => {
+                            const [date, time] = orderMaster.servedDatetime.split(" ");
+
+                            table_body += `
+                            <tr>
+                                    <td>${date}</td>
+                                    <td>${time}</td>
+                                    <td>${orderMaster.tableNumber}</td>
+                                    ${orderMaster.memberName ? `<td>${orderMaster.memberName}</td>` : `<td>未登入</td>`}
+                                    <td>${orderMaster.totalPrice}</td>
+                                    <td><a href="#"><i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a></td>
+                                </tr>
+                            
+                            `;
+
+                        });
+                        document.getElementById("resultTable").innerHTML = table_body;
+
+                        generateTimeOptions();
+
+
+                    });
+
+            }
+            loadDiningList(0, "served_datetime", "asc");
+
+            // 搜尋按鈕
+            $('#searchButton').click(function () {
+                alert('搜尋功能尚未實作');
+            });
+
+            // 清空條件按鈕
+            $('#resetButton').click(function () {
+                $('#filterForm')[0].reset();
+            });
+
+
+        });
+
+        function generateTimeOptions() {
+            const selectElement = document.getElementById('startTime');
+            const startTime = 0;
+            const endTime = 24 * 60;
+            const interval = 15;
+
+            for (let time = startTime; time < endTime; time += interval) {
+                const hours = Math.floor(time / 60).toString().padStart(2, '0');
+                const minutes = (time % 60).toString().padStart(2, '0');
+                const timeValue = `${hours}:${minutes}`;
+                const option = document.createElement('option');
+                option.value = timeValue;
+                option.textContent = timeValue;
+                selectElement.appendChild(option);
+            }
+        }
+
+        
+    </script>
+</body>
+
+</html>

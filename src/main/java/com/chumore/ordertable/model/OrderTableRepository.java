@@ -23,4 +23,7 @@ public interface OrderTableRepository extends JpaRepository<OrderTableVO, Intege
 	List<OrderTableVO> findByRestId(@Param("restId") Integer restId);
 	
 	Optional<OrderTableVO> findByRest_RestIdAndTableNumber(Integer restId, String tableNumber);
+
+	@Query(value = "select ot.table_name form order_table ot where ot.order_table_id =:orderTableId", nativeQuery = true)
+	String getTableNumberById(Integer orderTableId);
 }
