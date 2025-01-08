@@ -48,7 +48,7 @@ public class RestOrderMasterController {
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "served_datetime,asc") String sort,
 			@RequestParam(required = false) String startDatetime, @RequestParam(required = false) String endDatetime,
-			@RequestParam(required = false) Integer orderTableId, @RequestParam(required = false) String memberName) {
+			@RequestParam(required = false) String tableNumber, @RequestParam(required = false) String memberName) {
 
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
@@ -62,18 +62,13 @@ public class RestOrderMasterController {
 		LocalDateTime start = null;
 		LocalDateTime end = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-
-		if (startDatetime != null && startDatetime.matches("\\d{4}-d{2}-d{2}")) {
-			start = LocalDateTime.parse(startDatetime + "T00:00", formatter);
-		} else if (startDatetime != null && startDatetime.isEmpty()) {
-			start = LocalDateTime.parse(startDatetime, formatter);
+		
+		if (startDatetime != null && !startDatetime.isEmpty() && !"null".equals(startDatetime)) {
+		    start = LocalDateTime.parse(startDatetime, formatter);
 		}
 
-		if (endDatetime != null && endDatetime.matches("\\d{4}-d{2}-d{2}")) {
-			end = LocalDateTime.parse(endDatetime + "T23:59", formatter);
-		}
-		if (endDatetime != null && endDatetime.isEmpty()) {
-			end = LocalDateTime.parse(endDatetime, formatter);
+		if (endDatetime != null && !endDatetime.isEmpty() && !"null".equals(endDatetime)) {
+		    end = LocalDateTime.parse(endDatetime, formatter);
 		}
 
 		String[] sortParams = sort.split(",");
@@ -100,16 +95,16 @@ public class RestOrderMasterController {
 		if (sortParams != null && sortParams.length > 1) {
 		    Sort.Direction direction = sortParams[1].equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		    Sort.Order order = new Sort.Order(direction, sortParams[0]);
-		    sortBy = Sort.by(order); // 按照传入的参数创建排序规则
+		    sortBy = Sort.by(order);
 		} else {
-		    sortBy = Sort.unsorted(); // 不需要排序，使用默认的无排序
+		    sortBy = Sort.unsorted(); 
 		}
 
 		
 		Pageable pageable = PageRequest.of(page, size, sortBy);
 		
 
-		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, orderTableId, memberName, pageable);
+		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, tableNumber, memberName, pageable);
 
 		OrderMasterResponse<Page<Map<String, Object>>> response = new OrderMasterResponse<Page<Map<String, Object>>>(
 				"Success", 200, orderPage);

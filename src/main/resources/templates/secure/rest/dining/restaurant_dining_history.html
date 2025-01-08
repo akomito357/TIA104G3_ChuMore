@@ -9,9 +9,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- <head th:insert="~{/included.html}" /> -->
 
-        <head th:insert="~{/sidebar_merchant.html}" />
+    <!-- <head th:insert="~{/sidebar_merchant.html}" />
 
-        <head th:insert="~{/header_member.html}" />
+    <head th:insert="~{/header_member.html}" /> -->
     <style>
         :root {
             --primary: #F2994A;
@@ -28,7 +28,6 @@
             border-radius: 10px;
             background-color: #FFFFFF;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
             overflow: hidden;
             max-height: 200;
             display: flex;
@@ -49,17 +48,19 @@
         }
 
         .dash-symbol {
-    display: inline-block;       /* 行內塊，保持與周圍元素在一行 */
-    margin: 0 10px;              /* 控制左右間距 */
-    font-size: 1.5rem;           /* 符號大小 */
-    line-height: 1;              /* 確保沒有多餘的上下空隙 */
-    vertical-align: middle;      /* 確保垂直居中對齊 */
-    text-align: center;          /* 保持文字居中 */
-}
-
-
-
-
+            display: inline-block;
+            /* 行內塊，保持與周圍元素在一行 */
+            margin: 0 10px;
+            /* 控制左右間距 */
+            font-size: 1.5rem;
+            /* 符號大小 */
+            line-height: 1;
+            /* 確保沒有多餘的上下空隙 */
+            vertical-align: middle;
+            /* 確保垂直居中對齊 */
+            text-align: center;
+            /* 保持文字居中 */
+        }
 
         .btn-primary {
             background-color: #FEA116;
@@ -188,44 +189,44 @@
                 <h2 class="mb-3">用餐紀錄</h2>
                 <form id="filterForm">
                     <div class="row g-3">
-<!-- 日期範圍 -->
-<div class="d-flex align-items-center g-3 flex-row">
-    <!-- 開始日期與時間 -->
-    <div class="d-flex align-items-center me-3">
-        <div class="me-3">
-            <label for="startDate" class="form-label">開始日期</label>
-            <input type="date" class="form-control" id="startDate">
-        </div>
-        <div class="me-3">
-            <label for="startTime" class="form-label">開始時間</label>
-            <select class="form-select" id="startTime">
-                <option value="">選擇時間</option>
-                <option value="12:00">12:00</option>
-                <option value="18:00">18:00</option>
-            </select>
-        </div>
-    </div>
+                        <!-- 日期範圍 -->
+                        <div class="d-flex align-items-center g-3 flex-row">
+                            <!-- 開始日期與時間 -->
+                            <div class="d-flex align-items-center me-3">
+                                <div class="me-3">
+                                    <label for="startDate" class="form-label">開始日期</label>
+                                    <input type="date" class="form-control" id="startDate">
+                                </div>
+                                <div class="me-3">
+                                    <label for="startTime" class="form-label">開始時間</label>
+                                    <select class="form-select" id="startTime">
+                                        <option value="">選擇時間</option>
+                                    </select>
+                                </div>
+                            </div>
 
-    <!-- 時間範圍波浪符號 -->
-    <!-- <span class="fw-bold dash-symbol text-nowrap me-3"
-        style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">
-        <i class="fas fa-window-minimize"></i>
-    </span> -->
-    <div class="dash-symbol">~</div>
-    <!-- 結束日期與時間 -->
-    <div class="d-flex align-items-center me-3">
-        <div class="me-3">
-            <label for="endDate" class="form-label">結束日期</label>
-            <input type="date" class="form-control" id="endDate">
-        </div>
-        <div class="me-3">
-            <label for="endTime" class="form-label">結束時間</label>
-            <select class="form-select" id="endTime">
-                <option value="">選擇時間</option>
-            </select>
-        </div>
-    </div>
-</div>
+                            <!-- 時間範圍波浪符號 -->
+                            <!-- <span class="fw-bold dash-symbol text-nowrap me-3"
+                                    style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">
+                                    <i class="fas fa-window-minimize"></i>
+                                </span> -->
+                            <div class="dash-symbol"
+                                style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">~
+                            </div>
+                            <!-- 結束日期與時間 -->
+                            <div class="d-flex align-items-center me-3">
+                                <div class="me-3">
+                                    <label for="endDate" class="form-label">結束日期</label>
+                                    <input type="date" class="form-control" id="endDate">
+                                </div>
+                                <div class="me-3">
+                                    <label for="endTime" class="form-label">結束時間</label>
+                                    <select class="form-select" id="endTime">
+                                        <option value="">選擇時間</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
 
 
@@ -234,16 +235,12 @@
                             <div class="me-3">
                                 <label for="tableNumber" class="form-label">桌號查詢</label>
                                 <select class="form-select" id="tableNumber">
-                                    <option value="">全部桌號</option>
-                                    <option value="C1">C1</option>
-                                    <option value="A3">A3</option>
-                                    <option value="B5">B5</option>
                                 </select>
                             </div>
 
                             <div class="me-3">
                                 <label for="customerName" class="form-label">顧客姓名</label>
-                                <input type="text" class="form-control" id="customerName" placeholder="輸入顧客姓名">
+                                <input type="text" class="form-control" id="memberName" placeholder="輸入顧客姓名">
                             </div>
                         </div>
 
@@ -294,12 +291,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
-        const size = 10;
-        
+        function showTableOptionList() {
+            fetch(`ordertables/getTableNumberById`, {
+                method: "GET",
+            }).then(res => res.json())
+                .then(tableName => {
+                    console.log(tableName);
+
+                    let allTable = `<option value="">全部桌號</option>`;
+                    let table_number = "";
+                    tableName.forEach((tableOption, index) => {
+                        table_number += `
+                            <option value="${tableOption.table_number}">${tableOption.table_number}</option>
+                            `;
+                    })
+                    document.querySelector("#tableNumber.form-select").innerHTML = allTable + table_number;
+                })
+
+        }
 
         $(document).ready(function () {
-            function loadDiningList(page, sortField, sortOrder) {
-                fetch(`rest/orderMaster/diningList?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+            showTableOptionList();
+            const page = 0;
+            const size = 10;
+            let sortField = "served_datetime";
+            let sortOrder = "asc";
+
+            function loadDiningList(queryParam) {
+                fetch(`rest/orderMaster/diningList?${queryParam.toString()}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
@@ -309,7 +328,6 @@
                         const diningList = pageData.content;
                         const totalPages = pageData.totalPages;
 
-
                         let table_body = "";
                         diningList.forEach((orderMaster, index) => {
                             const [date, time] = orderMaster.servedDatetime.split(" ");
@@ -318,7 +336,7 @@
                             <tr>
                                     <td>${date}</td>
                                     <td>${time}</td>
-                                    <td>${orderMaster.tableNumber}</td>
+                                    <td value="${orderMaster.tableNumber}">${orderMaster.tableNumber}</td>
                                     ${orderMaster.memberName ? `<td>${orderMaster.memberName}</td>` : `<td>未登入</td>`}
                                     <td>${orderMaster.totalPrice}</td>
                                     <td><a href="#"><i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a></td>
@@ -329,45 +347,85 @@
                         });
                         document.getElementById("resultTable").innerHTML = table_body;
 
-                        generateTimeOptions();
+                        generateTimeOptions(['startTime', 'endTime']);
 
 
+                    })
+                    .catch(error => {
+                        console.log("錯誤產生", error);
                     });
-
             }
-            loadDiningList(0, "served_datetime", "asc");
 
-            // 搜尋按鈕
-            $('#searchButton').click(function () {
-                alert('搜尋功能尚未實作');
+            const queryParam = new URLSearchParams({
+                startDatetime: "",
+                endDatetime: "",
+                memberName: "",
+                tableNumber: "",
+                page: page,
+                size: size,
+                sort: `${sortField},${sortOrder}`
             });
 
-            // 清空條件按鈕
-            $('#resetButton').click(function () {
-                $('#filterForm')[0].reset();
+            loadDiningList(queryParam);
+
+            $("#searchButton").click(function () {
+
+                const startDate = $("#startDate").val();
+                const startTime = $("#startTime").val();
+                const endDate = $("#endDate").val();
+                const endTime = $("#endTime").val();
+
+                let startDatetime = startDate ? String(startDate) + (startTime ? String(startTime) : 'T00:00') : null;
+                
+                console.log(startDatetime);
+                let endDatetime = endDate ? String(endDate) + ( endTime ? String(endTime) : "T23:59") : null;
+
+                const memberName = $('#memberName').val();
+                const tableNumber = $('#tableNumber').val();
+
+                console.log(tableNumber);
+
+                const queryParam = new URLSearchParams({
+                    startDatetime: startDatetime,
+                    endDatetime: endDatetime,
+                    memberName: memberName,
+                    tableNumber: tableNumber || "",
+                    page: page,
+                    size: size,
+                    sort: `${sortField},${sortOrder}`
+                });
+
+                loadDiningList(queryParam);
+
+                // 清空條件按鈕
+                $('#resetButton').click(function () {
+                    $('#filterForm')[0].reset();
+                });
+
+
             });
-
-
         });
 
-        function generateTimeOptions() {
-            const selectElement = document.getElementById('startTime');
-            const startTime = 0;
-            const endTime = 24 * 60;
-            const interval = 15;
+        function generateTimeOptions(selectIds) {
+            const startTime = 0; // 0:00
+            const endTime = 24 * 60; // 24:00 in minutes
+            const interval = 15; // 每 15 分鐘
 
-            for (let time = startTime; time < endTime; time += interval) {
-                const hours = Math.floor(time / 60).toString().padStart(2, '0');
-                const minutes = (time % 60).toString().padStart(2, '0');
-                const timeValue = `${hours}:${minutes}`;
-                const option = document.createElement('option');
-                option.value = timeValue;
-                option.textContent = timeValue;
-                selectElement.appendChild(option);
-            }
+            selectIds.forEach((id) => {
+                const selectElement = document.getElementById(id);
+                for (let time = startTime; time < endTime; time += interval) {
+                    const hours = Math.floor(time / 60).toString().padStart(2, '0');
+                    const minutes = (time % 60).toString().padStart(2, '0');
+                    const timeValue = `${hours}:${minutes}`;
+                    const option = document.createElement('option');
+                    option.value = timeValue;
+                    option.textContent = timeValue;
+                    selectElement.appendChild(option);
+                }
+            });
         }
 
-        
+
     </script>
 </body>
 
