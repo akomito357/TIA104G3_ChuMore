@@ -158,12 +158,15 @@ public class RestVO implements Serializable{
 	private Set<ReservationVO> reservations;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("approval-rest")
 	private Set<ApprovalVO> approvals;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("dailyReservation-rest")
 	private Set<DailyReservationVO> dailyReservations;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
+	@JsonManagedReference("review-rest")
 	private Set<ReviewVO> reviews;
 	
 	@OneToMany(mappedBy = "rest", cascade = CascadeType.ALL)
