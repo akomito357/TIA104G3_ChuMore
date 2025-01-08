@@ -48,7 +48,7 @@ public class RestOrderMasterController {
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "served_datetime,asc") String sort,
 			@RequestParam(required = false) String startDatetime, @RequestParam(required = false) String endDatetime,
-			@RequestParam(required = false) Integer orderTableId, @RequestParam(required = false) String memberName) {
+			@RequestParam(required = false) String tableNumber, @RequestParam(required = false) String memberName) {
 
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
@@ -104,7 +104,7 @@ public class RestOrderMasterController {
 		Pageable pageable = PageRequest.of(page, size, sortBy);
 		
 
-		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, orderTableId, memberName, pageable);
+		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, tableNumber, memberName, pageable);
 
 		OrderMasterResponse<Page<Map<String, Object>>> response = new OrderMasterResponse<Page<Map<String, Object>>>(
 				"Success", 200, orderPage);
