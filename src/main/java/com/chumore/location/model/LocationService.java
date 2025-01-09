@@ -2,6 +2,9 @@ package com.chumore.location.model;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface LocationService {
 
 	LocationVO getOneById(Integer locationId);

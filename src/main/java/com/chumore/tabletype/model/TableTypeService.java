@@ -26,5 +26,9 @@ public class TableTypeService {
 	public List<TableTypeVO> getAll(){
 		return repository.findAll();
 	}
+	
+	public List<TableTypeVO>getAllTableTypeById(Integer restId){
+		return repository.findByRestId(restId);
+	}
 
 }

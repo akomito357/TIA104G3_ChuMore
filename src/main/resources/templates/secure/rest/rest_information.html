@@ -171,25 +171,12 @@
                         <div class="col-md-4">
                             <label class="form-label">料理類型</label>
                             <!-- 檢視模式 -->
-                            <select class="form-select view-only" id="cuisineTypeDisplay">
-                                <option value="taiwanese">台式料理</option>
-                                <option value="chinese">中式料理</option>
-                                <option value="japanese">日式料理</option>
-                                <option value="western">西式料理</option>
-                                <option value="korean">韓式料理</option>
-                                <option value="thai">泰式料理</option>
-                                <option value="vegetarian">素食料理</option>
+                            <select class="form-select view-only read-only-field" id="cuisineTypeDisplay" disabled>
+                                <!-- 選項將由 JavaScript 動態載入 -->
                             </select>
                             <!-- 編輯模式 -->
                             <select class="form-select edit-only" name="cuisineType" id="cuisineTypeEdit" required>
-                                <option value="">請選擇料理類型</option>
-                                <option value="taiwanese">台式料理</option>
-                                <option value="chinese">中式料理</option>
-                                <option value="japanese">日式料理</option>
-                                <option value="western">西式料理</option>
-                                <option value="korean">韓式料理</option>
-                                <option value="thai">泰式料理</option>
-                                <option value="vegetarian">素食料理</option>
+                                <!-- 選項將由 JavaScript 動態載入 -->
                             </select>
                         </div>
                         
@@ -201,21 +188,18 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <select class="form-select view-only" id="cityDisplay" disabled>
-                                        <option value="taipei">台北市</option>
-                                        <option value="newtaipei">新北市</option>
-                                        <option value="taoyuan">桃園市</option>
+                                        <!-- 選項將由 JavaScript 動態載入 -->
                                     </select>
                                     <select class="form-select edit-only" name="restCity" id="cityEdit" required>
-                                        <option value="">選擇縣市</option>
-                                        <option value="taipei">台北市</option>
-                                        <option value="newtaipei">新北市</option>
-                                        <option value="taoyuan">桃園市</option>
+                                        <!-- 選項將由 JavaScript 動態載入 -->
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <select class="form-select view-only" id="districtDisplay" disabled></select>
+                                    <select class="form-select view-only" id="districtDisplay" disabled>
+                                        <!-- 選項將由 JavaScript 動態載入 -->
+                                    </select>
                                     <select class="form-select edit-only" name="restDist" id="districtEdit" required>
-                                        <option value="">選擇鄉鎮市區</option>
+                                        <!-- 選項將由 JavaScript 動態載入 -->
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -277,17 +261,8 @@
                                 <option value="closed">停業</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">1~2人桌數</label>
-                            <input type="number" class="form-control" id="smallTables" name="smallTables" min="0" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">3~4人桌數</label>
-                            <input type="number" class="form-control" id="mediumTables" name="mediumTables" min="0" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">5~8人桌數</label>
-                            <input type="number" class="form-control" id="largeTables" name="largeTables" min="0" required>
+                        <div id="tablesContainer" class="col-md-8">
+                            <!-- 桌型資訊將由 JavaScript 動態載入 -->
                         </div>
                     </div>
                 </div>
@@ -310,18 +285,28 @@
             setReadOnlyMode(true);
             
             // 載入所有資料
-            // loadRestaurantData();
+            loadRestaurantData();
 
-            // 編輯按鈕點擊事件
-            $('#editButton').click(function() {
-                setReadOnlyMode(false);
-                // 同步各個顯示/編輯select的值
-                $('#businessStatusEdit').val($('#businessStatusDisplay').val());
-                $('#cuisineTypeEdit').val($('#cuisineTypeDisplay').val());
-                $('#cityEdit').val($('#cityDisplay').val());
-                updateDistricts($('#cityEdit').val(), '#districtEdit');
-                $('#districtEdit').val($('#districtDisplay').val());
-            });
+            // 修改編輯按鈕點擊事件
+$('#editButton').click(async function() {
+    setReadOnlyMode(false);
+    
+    // 保存當前值
+    const currentDistrict = $('#districtDisplay').val();
+    const currentCity = $('#cityDisplay').val();
+    
+    // 同步其他值
+    $('#businessStatusEdit').val($('#businessStatusDisplay').val());
+    $('#cuisineTypeEdit').val($('#cuisineTypeDisplay').val());
+    $('#cityEdit').val(currentCity);
+    
+    try {
+        // 等待區域更新完成
+        await updateDistricts(currentCity, '#districtEdit', currentDistrict);
+    } catch (error) {
+        console.error('Error updating districts:', error);
+    }
+});
 
             // 取消按鈕點擊事件
             $('#cancelButton').click(function() {
@@ -532,7 +517,7 @@ $(document).on('click', '.delete-btn', function() {
         // 料理類型 - 同時設置顯示和編輯模式的值
         $('#cuisineTypeDisplay, #cuisineTypeEdit').val(data.cuisineTypeName);
         
-        // 城市設置 - 同時設置顯示和編輯模式的值
+        // 城市設設置 - 同時設置顯示和編輯模式的值
         $('#cityDisplay, #cityEdit').val(data.restCity);
         
         // 先更新區域選項
@@ -552,14 +537,13 @@ $(document).on('click', '.delete-btn', function() {
         const businessStatus = data.businessStatus === 1 ? 'open' : 'closed';
         $('#businessStatusDisplay, #businessStatusEdit').val(businessStatus);
 
-        // 座位數量
-        $('#smallTables').val(data.smallTables);
-        $('#mediumTables').val(data.mediumTables);
-        $('#largeTables').val(data.largeTables);
 
+        loadTableTypes();
         // 載入圖片
         loadEnvironmentImages();
         loadMenuImages();
+        loadCuisineTypes();
+        loadCities();
     })
     .catch(error => {
         console.error('Error loading restaurant data:', error);
@@ -567,24 +551,129 @@ $(document).on('click', '.delete-btn', function() {
     });
 }
 
-// 修改 updateDistricts 函數以確保正確更新選項
-function updateDistricts(selectedCity, targetSelect) {
-    const districtSelect = $(targetSelect);
-    districtSelect.empty();
-    
-    // 為編輯模式添加預設選項
-    if (targetSelect === '#districtEdit') {
-        districtSelect.append('<option value="">選擇鄉鎮市區</option>');
-    }
-    
-    if (selectedCity && districts[selectedCity]) {
-        districts[selectedCity].forEach(function(district) {
-            districtSelect.append($('<option></option>')
-                .attr('value', district)
-                .text(district));
+// 修改 JavaScript 部分，新增以下函數到 $(document).ready() 內
+
+// 載入料理類型
+function loadCuisineTypes() {
+    fetch('/cuisineTypes/getAllCuisineType')
+        .then(response => response.json())
+        .then(data => {
+            const displaySelect = $('#cuisineTypeDisplay');
+            const editSelect = $('#cuisineTypeEdit');
+            
+            // 清空現有選項
+            displaySelect.empty();
+            editSelect.empty();
+            
+            // 為編輯模式添加預設選項
+            editSelect.append('<option value="">請選擇料理類型</option>');
+            
+            // 添加從後端獲取的料理類型
+            data.forEach(type => {
+                displaySelect.append($('<option></option>')
+                    .attr('value', type.cuisineTypeId)
+                    .text(type.cuisineDescr));
+                    
+                editSelect.append($('<option></option>')
+                    .attr('value', type.cuisineTypeId)
+                    .text(type.cuisineDescr));
+            });
+        })
+        .catch(error => {
+            console.error('Error loading cuisine types:', error);
+            alert('載入料理類型失敗');
         });
-    }
 }
+
+// 載入縣市
+function loadCities() {
+    fetch('/location/findCitys')
+        .then(response => response.json())
+        .then(response => {
+            // 檢查回應狀態
+            if (response.resCode === 200 && Array.isArray(response.data)) {
+                const cityDisplay = $('#cityDisplay');
+                const cityEdit = $('#cityEdit');
+                
+                // 清空現有選項
+                cityDisplay.empty();
+                cityEdit.empty();
+                
+                // 為編輯模式添加預設選項
+                cityEdit.append('<option value="">選擇縣市</option>');
+                
+                // 添加從後端獲取的縣市
+                response.data.forEach(city => {
+                    cityDisplay.append($('<option></option>')
+                        .attr('value', city)  // 直接使用 city 字串作為值
+                        .text(city));         // 直接使用 city 字串作為顯示文字
+                        
+                    cityEdit.append($('<option></option>')
+                        .attr('value', city)  // 直接使用 city 字串作為值
+                        .text(city));         // 直接使用 city 字串作為顯示文字
+                });
+            } else {
+                console.error('Invalid city data format:', response);
+                alert('載入縣市資料失敗');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading cities:', error);
+            alert('載入縣市資料失敗');
+        });
+}
+
+// 修改 updateDistricts 函數
+function updateDistricts(selectedCity, targetSelect, selectedDistrict = null) {
+    if (!selectedCity) {
+        const districtSelect = $(targetSelect);
+        districtSelect.empty();
+        if (targetSelect === '#districtEdit') {
+            districtSelect.append('<option value="">選擇鄉鎮市區</option>');
+        }
+        return Promise.resolve();
+    }
+
+    return fetch(`/location/findDistByCity?city=${selectedCity}`)
+        .then(response => response.json())
+        .then(response => {
+            if (response.resCode === 200 && Array.isArray(response.data)) {
+                const districtSelect = $(targetSelect);
+                districtSelect.empty();
+                
+                // 為編輯模式添加預設選項
+                if (targetSelect === '#districtEdit') {
+                    districtSelect.append('<option value="">選擇鄉鎮市區</option>');
+                }
+                
+                // 添加從後端獲取的區域
+                response.data.forEach(district => {
+                    districtSelect.append($('<option></option>')
+                        .attr('value', district)
+                        .text(district));
+                });
+
+                // 如果有提供要選擇的區域值，就設置它
+                if (selectedDistrict) {
+                    districtSelect.val(selectedDistrict);
+                }
+            } else {
+                console.error('Invalid district data format:', response);
+                throw new Error('載入區域資料失敗');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading districts:', error);
+            alert('載入區域資料失敗');
+            throw error;
+        });
+}
+
+    // 載入料理類型和縣市
+
+
+
+
             function loadEnvironmentImages() {
             const restId = 2001; // 假設這是當前餐廳ID
             
@@ -717,9 +806,116 @@ function updateDistricts(selectedCity, targetSelect) {
                     alert('更新失敗');
                 });
             });
+            // 載入桌型資訊
+function loadTableTypes() {
+    const restId = 2001; // 假設這是當前餐廳ID
+    
+    fetch(`/tableType/getTableType?restId=${restId}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = $('#tablesContainer');
+            container.empty();
+            
+            // 建立桌型顯示的行
+            const row = $('<div>').addClass('row');
+            
+            // 遍歷所有桌型
+            data.forEach(table => {
+                let tableLabel;
+                switch(table.tableType) {
+                    case 2:
+                        tableLabel = '1~2人桌數';
+                        break;
+                    case 4:
+                        tableLabel = '3~4人桌數';
+                        break;
+                    case 8:
+                        tableLabel = '5~8人桌數';
+                        break;
+                    default:
+                        tableLabel = `${table.tableType}人桌數`;
+                }
+                
+                const col = $('<div>').addClass('col');
+                const formGroup = $('<div>').addClass('mb-3');
+                const label = $('<label>').addClass('form-label').text(tableLabel);
+                const input = $('<input>')
+                    .attr({
+                        'type': 'number',
+                        'min': '0',
+                        'required': true,
+                        'name': `table${table.tableType}`,
+                        'id': `table${table.tableType}`
+                    })
+                    .addClass('form-control')
+                    .val(table.tableCount);
+                
+                formGroup.append(label, input);
+                col.append(formGroup);
+                row.append(col);
+            });
+            
+            container.append(row);
+        })
+        .catch(error => {
+            console.error('Error loading table types:', error);
+            alert('載入桌型資訊失敗');
+        });
+}
+
+// 在表單提交時收集桌型資訊
+function collectTableData() {
+    const tableData = [];
+    $('[id^="table"]').each(function() {
+        const tableType = parseInt(this.id.replace('table', ''));
+        const tableCount = parseInt($(this).val());
+        tableData.push({
+            tableType: tableType,
+            tableCount: tableCount
+        });
+    });
+    return tableData;
+}
+
+// 修改表單提交處理
+$('#restaurantForm').on('submit', function(e) {
+    e.preventDefault();
+
+    if (!this.checkValidity()) {
+        e.stopPropagation();
+        $(this).addClass('was-validated');
+        return;
+    }
+
+    // 收集表單資料
+    const formData = new FormData(this);
+    
+    // 收集桌型資訊
+    const tableData = collectTableData();
+    
+    // 將桌型資訊添加到表單資料
+    formData.append('tableCounts', JSON.stringify(tableData));
+
+    // 發送更新請求
+    fetch('/rests/updateRest', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('更新成功');
+            setReadOnlyMode(true);
             loadRestaurantData();
-            // loadEnvironmentImages();
-            // loadMenuImages();
+        } else {
+            alert(data.message || '更新失敗');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating restaurant:', error);
+        alert('更新失敗');
+    });
+});
         });
         
     </script>
