@@ -50,6 +50,9 @@ $(document).ready(function() {
 				orderList.forEach((orderMaster, index) => {
 
 					const [date, time] = orderMaster.servedDatetime.split(" ");
+					const formAction = orderMaster.reviewId ? "/reviews/getReview" : "/reviews/addReview";
+					const btnClass = orderMaster.reviewId ? "btn btn-outline-secondary btn-sm check-review" : "btn btn-primary btn-sm add-review";
+					const btnText = orderMaster.reviewId ? "查看評論" : "進行評論"
 
 					table_body += `
 	                    <tr>
@@ -66,8 +69,10 @@ $(document).ready(function() {
 	                        </td>
 	                    	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
 	                    	<td class="px-4 py-3">
-	                        	${orderMaster.reviewId ? `<button class="btn btn-outline-secondary btn-sm">查看評論</button>` :
-							`<button class="btn btn-primary btn-sm">進行評論</button>`}
+								<form action="${formAction}" method="post">
+									<input type="hidden" value="${orderMaster.orderId}" name="orderId">
+									<button class="${btnClass}" type="submit">${btnText}</button>
+								</form>
 	                    	</td>
 	                    </tr>`;
 				});
@@ -293,7 +298,7 @@ const reviews = [
 		averageCost: '400-800',
 		recommendedDish: '麥克雞塊牛堡',
 		reviewContent: '就是麥當勞，環境整潔，服務親切，餐點出餐速度快。雖然價格比以前貴了不少，但還是會想來吃。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 2,
@@ -303,7 +308,7 @@ const reviews = [
 		averageCost: '800-1200',
 		recommendedDish: '小籠包、蝦仁燒賣',
 		reviewContent: '不愧是米其林推薦餐廳，小籠包的湯汁很多，皮薄餡多，蝦仁燒賣也很新鮮。服務人員訓練有素，環境整潔明亮。雖然要排隊但值得一等。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 3,
@@ -313,7 +318,7 @@ const reviews = [
 		averageCost: '1500-2500',
 		recommendedDish: '生魚片、烤物套餐',
 		reviewContent: '食材新鮮度極高，主廚發揮的很好，每道菜都很精緻。服務細心，用餐環境安靜舒適。適合商務約會或節慶慶祝。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 4,
@@ -323,7 +328,7 @@ const reviews = [
 		averageCost: '200-400',
 		recommendedDish: '珍珠奶茶、蔥油餅',
 		reviewContent: '珍奶還是一樣好喝，但服務品質不太穩定，這次等了很久才上餐。餐點份量還可以，價格偏高。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 5,
@@ -333,7 +338,7 @@ const reviews = [
 		averageCost: '100-200',
 		recommendedDish: '魯肉飯、貢丸湯',
 		reviewContent: '傳統的好味道，魯肉香而不膩，飯粒分明。價格實惠，服務快速。用餐環境普通，建議避開用餐尖峰時間。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 6,
@@ -343,7 +348,7 @@ const reviews = [
 		averageCost: '800-1200',
 		recommendedDish: '麻辣鍋底、手工丸子',
 		reviewContent: '湯底香辣夠味，食材新鮮，服務很好。環境乾淨，通風良好。適合朋友聚餐。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 7,
@@ -353,7 +358,7 @@ const reviews = [
 		averageCost: '400-600',
 		recommendedDish: '叉燒包、蝦餃',
 		reviewContent: '港式點心的好選擇，價格合理，品質穩定。服務算快，但用餐環境較擁擠吵雜。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 8,
@@ -363,7 +368,7 @@ const reviews = [
 		averageCost: '2000-3000',
 		recommendedDish: 'A5和牛、醃製牛舌',
 		reviewContent: '肉質極好，服務優質，座位間隔寬敞舒適。價格偏高但物有所值，適合重要場合。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 9,
@@ -373,7 +378,7 @@ const reviews = [
 		averageCost: '600-800',
 		recommendedDish: '打拋豬、泰式奶茶',
 		reviewContent: '味道普通，份量足夠，服務一般。餐廳有點吵雜，建議改善通風。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 10,
@@ -383,7 +388,7 @@ const reviews = [
 		averageCost: '200-400',
 		recommendedDish: '華堡、薯條',
 		reviewContent: '一般連鎖速食店的水準，服務快速但不夠親切。環境還好，座位有點擁擠。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 11,
@@ -393,7 +398,7 @@ const reviews = [
 		averageCost: '400-600',
 		recommendedDish: '海鮮豆腐煲、韓式炸雞',
 		reviewContent: '豆腐煲很好吃，份量充足，服務態度佳。餐廳裝潢有特色，氣氛不錯。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	},
 	{
 		id: 12,
@@ -403,7 +408,7 @@ const reviews = [
 		averageCost: '200-400',
 		recommendedDish: '豚骨拉麵、炸豬排',
 		reviewContent: '湯頭濃郁，麵條彈牙，配料新鮮。服務快速，環境乾淨。',
-		restaurantImageUrl: '/api/placeholder/100/100'
+		restaurantImageUrl: 'https://placehold.co/100x100'
 	}
 ];
 

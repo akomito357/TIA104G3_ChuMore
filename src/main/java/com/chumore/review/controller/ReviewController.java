@@ -3,10 +3,13 @@ package com.chumore.review.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,16 +18,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.member.model.MemberService;
+import com.chumore.ordermaster.model.OrderMasterService;
+import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.review.model.ReviewService;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.reviewimg.model.ReviewImageService;
 import com.chumore.reviewimg.model.ReviewImageVO;
 
-@RestController
+@Controller
 @RequestMapping("/reviews")
 public class ReviewController {
 
@@ -36,12 +41,16 @@ public class ReviewController {
     
     @Autowired
     private MemberService memberService;
+    
+    @Autowired
+    private OrderMasterService orderSvc;
 
     /**
      * 獲取訂單資訊用於評論頁面初始化
      * 對應前端：用餐資訊區域的自動填充
      */
     @GetMapping("/order/{orderId}")
+    @ResponseBody
     public ResponseEntity<?> getOrderForReview(@PathVariable Integer orderId) {
         try {
             Map<String, Object> orderInfo = new HashMap<>();
@@ -62,6 +71,7 @@ public class ReviewController {
      * 處理：星級評分、文字評論、推薦料理、平均消費
      */
     @PostMapping("/create")
+    @ResponseBody
     public ResponseEntity<?> createReview(
             @RequestHeader("Member-Id") Integer memberId,
             @Valid @RequestBody ReviewVO review,
@@ -88,6 +98,7 @@ public class ReviewController {
      * 對應前端：進入評論頁面時的檢查
      */
     @GetMapping("/check/{orderId}")
+    @ResponseBody
     public ResponseEntity<?> checkReviewExists(@PathVariable Integer orderId) {
         try {
             boolean exists = reviewService.existsByOrderId(orderId);
@@ -102,6 +113,7 @@ public class ReviewController {
      * 對應前端：推薦料理下拉選單
      */
     @GetMapping("/restaurant/{restId}/dishes")
+    @ResponseBody
     public ResponseEntity<?> getRestaurantDishes(@PathVariable Integer restId) {
         try {
             // 需要與Restaurant服務整合，獲取菜品列表
@@ -116,6 +128,7 @@ public class ReviewController {
      * 對應前端：照片上傳區的即時上傳
      */
     @PostMapping("/{reviewId}/upload-image")
+    @ResponseBody
     public ResponseEntity<?> uploadImage(
             @PathVariable Integer reviewId,
             @RequestParam("file") MultipartFile file,
@@ -144,6 +157,7 @@ public class ReviewController {
      * 對應前端：照片預覽區的刪除功能
      */
     @DeleteMapping("/images/{imageId}")
+    @ResponseBody
     public ResponseEntity<?> deleteImage(
             @PathVariable Integer imageId,
             @RequestHeader("Member-Id") Integer memberId) {
@@ -154,4 +168,28 @@ public class ReviewController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    // 準備新增評論 - thymeleaf
+    @PostMapping("addReview")
+    public String addReview(ModelMap model, HttpSession session, @RequestParam Integer orderId) {
+//    	Integer memberId = (Integer)session.getAttribute("memberId");
+    	Integer memberId = 1001;
+    	OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
+    	ReviewVO review = new ReviewVO();
+    	model.addAttribute("orderMaster", orderMaster);
+    	model.addAttribute("review", review);
+    	return "secure/member/review/member_review_page";
+    }
+    
+    // 顯示單筆評論 - thymeleaf
+    @PostMapping("getReview")
+    public String getOneReview(@RequestParam String orderId, ModelMap model) {
+    	ReviewVO review = reviewService.getReviewByOrderId(Integer.valueOf(orderId));
+    	OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
+    	model.addAttribute("review", review);
+    	model.addAttribute("orderMaster", orderMaster);
+    	return "secure/member/review/member_review_show_page";
+    }
+    
+    
 }

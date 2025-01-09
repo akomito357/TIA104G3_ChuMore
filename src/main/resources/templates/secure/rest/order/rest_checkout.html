@@ -9,13 +9,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     
     <head th:insert="~{/included.html}"></head>
-    <head th:insert="~{/header_merchant.html}"></head>
-    <head th:insert="~{/sidebar_merchant.html}"></head>
+    <!-- <head th:insert="~{/header_merchant.html}"></head> -->
+    <!-- <head th:insert="~{/sidebar_merchent.html}"></head> -->
     <link href="/static/css/restCheckout.css" rel="stylesheet">
     <link th:href="@{/css/restCheckout.css}" rel="stylesheet">
 </head>
 <body>
-    <main class="main">
+    <!-- <main class="main"> -->
         <div class="checkout-container">
             <!-- Order Info -->
             <div class="order-info">
@@ -26,109 +26,56 @@
                     </div>
                     <div class="col-6">
                         <i class="fas fa-clock me-2"></i>
-                        <span>入座時間：</span><span th:text="${orderMaster.servedDatetime}">2024/11/06 17:00</span>
+                        <span>入座時間：</span><span th:text="${#temporals.format(orderMaster.servedDatetime, 'yyyy/MM/dd HH:mm')}">2024/11/06 17:00</span>
                     </div>
                 </div>
             </div>
 
             <th:block th:each="orderItemVO : ${orderMaster.orderItems}">
-                <tr>
-                    <td>第<span th:text="${orderItemVOStat.count}"></span>次點餐  
-                        <span th:text="${orderItemVO.formatCreatedDatetime}"></span></td>
-                    
-                </tr>
+                <div class="p-4">
+                    <div class="order-time">
+                        第<span th:text="${orderItemVOStat.count}">一</span>次點餐　<span th:text="${orderItemVO.formatCreatedDatetime}">17:03</span>
+                    </div>
 
+                    <!-- Table Headers -->
+                    <div class="row table-header">
+                        <div class="col-6">品項</div>
+                        <div class="col-2 text-end">單價</div>
+                        <div class="col-2 text-end">數量</div>
+                        <div class="col-2 text-end">小計</div>
+                    </div>
+
+                    <th:block th:each="orderLineItemVO : ${orderItemVO.orderLineItem}">
+                        <div class="order_line_item">
+                            <div class="row">
+                                <div class="col-6" th:text="${orderLineItemVO.product.productName}">
+                                    起司牛肉堡
+                                </div>
+                                <div class="col-2 text-end">$<span th:text="${#numbers.formatDecimal(orderLineItemVO.price, 1, 0)}">200</span></div>
+                                <div class="col-2 text-end" th:text="${orderLineItemVO.quantity}">2</div>
+                                <div class="col-2 text-end" th:text="'$' + ${#numbers.formatDecimal(orderLineItemVO.price * orderLineItemVO.quantity, 1, 0)}">$400</div>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <div class="order_item_options" th:switch="${#strings.isEmpty(orderItemVO.memo)}">
+                        備註：
+                        <span th:case="${false}" th:text="${orderItemVO.memo}"></span>
+                        <span th:case="${true}">無</span>
+                    </div>
+                </div>
             </th:block>
-
-
-            <!-- Order Items -->
-            <div class="p-4 order_item">
-                <div class="order-time">
-                    第一次點餐 <span>17:03</span>
-                </div>
-                
-                <!-- Table Headers -->
-                <div class="row table-header">
-                    <div class="col-6">品項</div>
-                    <div class="col-2 text-end">單價</div>
-                    <div class="col-2 text-end">數量</div>
-                    <div class="col-2 text-end">小計</div>
-                </div>
-
-                <!-- Order Line Items -->
-                <div class="order_line_item">
-                    <div class="row">
-                        <div class="col-6">
-                            <div>起司牛肉堡</div>
-                            
-                        </div>
-                        <div class="col-2 text-end">$200</div>
-                        <div class="col-2 text-end">2</div>
-                        <div class="col-2 text-end">$400</div>
-                    </div>
-                </div>
-
-                <div class="order_line_item">
-                    <div class="row">
-                        <div class="col-6">薯條(中)</div>
-                        <div class="col-2 text-end">$200</div>
-                        <div class="col-2 text-end">2</div>
-                        <div class="col-2 text-end">$400</div>
-                    </div>
-                </div>
-                <div class="order_item_options">
-                    - 餐點備註
-                </div>
-            </div>
-            <div class="p-4 order_item">
-                <div class="order-time">
-                    第一次點餐 17:03
-                </div>
-                
-                <!-- Table Headers -->
-                <div class="row table-header">
-                    <div class="col-6">品項</div>
-                    <div class="col-2 text-end">單價</div>
-                    <div class="col-2 text-end">數量</div>
-                    <div class="col-2 text-end">小計</div>
-                </div>
-
-                <!-- Order Line Items -->
-                <div class="order_line_item">
-                    <div class="row">
-                        <div class="col-6">
-                            <div>起司牛肉堡</div>
-                            
-                        </div>
-                        <div class="col-2 text-end">$200</div>
-                        <div class="col-2 text-end">2</div>
-                        <div class="col-2 text-end">$400</div>
-                    </div>
-                </div>
-
-                <div class="order_line_item">
-                    <div class="row">
-                        <div class="col-6">薯條(中)</div>
-                        <div class="col-2 text-end">$200</div>
-                        <div class="col-2 text-end">2</div>
-                        <div class="col-2 text-end">$400</div>
-                    </div>
-                </div>
-                <div class="order_item_options">
-                    - 餐點備註
-                </div>
-            </div>
 
 
             <!-- Member Verification Section -->
             <div class="discount-section">
-                <div class="member-section justify-content-end">
+                <form class="member-section justify-content-end" id="memberPhoneForm">
+                    <div id="memberStatus" class="member-status"></div>
                     <label class="mb-0">會員驗證：</label>
                     <input type="tel" class="form-control" style="max-width: 200px;" 
-                        placeholder="請輸入手機號碼" id="phoneNumber">
-                    <button class="btn btn-primary" id="verifyMember">驗證</button>
-                    <div id="memberStatus" class="member-status"></div>
-                </div>
+                        placeholder="請輸入手機號碼" id="memberPhoneNumber" name="memberPhoneNumber">
+                    <button type="button" class="btn btn-primary" id="verifyPhoneNumberBtn">驗證</button>
+                </form>
             </div>
 
             <!-- Total Section -->
@@ -152,7 +99,7 @@
                 $ 1,000 結帳
             </button>
         </div>
-    </main>
+    <!-- </main> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script> -->
     <script th:inline="javascript">
