@@ -75,7 +75,6 @@ document.getElementById("memberPhoneForm").addEventListener("submit", function (
 });
 
 
-
 async function main(){
     await getOrderMaster();
 }
