@@ -169,7 +169,7 @@ public class OrderTableController {
     	Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2004;
+			restId = 2001;
 		} else {
 			RestVO rest = (RestVO) restNum;
 			restId = rest.getRestId();

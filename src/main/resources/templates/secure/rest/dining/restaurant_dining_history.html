@@ -302,7 +302,7 @@
                     let table_number = "";
                     tableName.forEach((tableOption, index) => {
                         table_number += `
-                            <option value="${tableOption.table_number}">${tableOption.table_number}</option>
+                            <option value="${tableOption.order_table_id}">${tableOption.table_number}</option>
                             `;
                     })
                     document.querySelector("#tableNumber.form-select").innerHTML = allTable + table_number;
@@ -336,7 +336,7 @@
                             <tr>
                                     <td>${date}</td>
                                     <td>${time}</td>
-                                    <td value="${orderMaster.tableNumber}">${orderMaster.tableNumber}</td>
+                                    <td value="${orderMaster.orderTableId}">${orderMaster.tableNumber}</td>
                                     ${orderMaster.memberName ? `<td>${orderMaster.memberName}</td>` : `<td>未登入</td>`}
                                     <td>${orderMaster.totalPrice}</td>
                                     <td><a href="#"><i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a></td>
@@ -360,7 +360,7 @@
                 startDatetime: "",
                 endDatetime: "",
                 memberName: "",
-                tableNumber: "",
+                orderTableId: "",
                 page: page,
                 size: size,
                 sort: `${sortField},${sortOrder}`
@@ -381,7 +381,7 @@
                 let endDatetime = endDate ? String(endDate) + ( endTime ? String(endTime) : "T23:59") : null;
 
                 const memberName = $('#memberName').val();
-                const tableNumber = $('#tableNumber').val();
+                const orderTableId = $('#tableNumber').val();
 
                 console.log(tableNumber);
 
@@ -389,7 +389,7 @@
                     startDatetime: startDatetime,
                     endDatetime: endDatetime,
                     memberName: memberName,
-                    tableNumber: tableNumber || "",
+                    orderTableId: orderTableId || "",
                     page: page,
                     size: size,
                     sort: `${sortField},${sortOrder}`

@@ -42,18 +42,18 @@ public class RestOrderMasterController {
 	
 	@Autowired
 	OrderItem_Service orderItemSvc;
-
+	
 	@GetMapping("diningList")
 	public ResponseEntity<OrderMasterResponse<Page<Map<String, Object>>>> findOrderByRestId(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "served_datetime,asc") String sort,
 			@RequestParam(required = false) String startDatetime, @RequestParam(required = false) String endDatetime,
-			@RequestParam(required = false) String tableNumber, @RequestParam(required = false) String memberName) {
+			@RequestParam(required = false) Integer orderTableId, @RequestParam(required = false) String memberName) {
 
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2004;
+			restId = 2001;
 		} else {
 			RestVO rest = (RestVO) restNum;
 			restId = rest.getRestId();
@@ -104,7 +104,7 @@ public class RestOrderMasterController {
 		Pageable pageable = PageRequest.of(page, size, sortBy);
 		
 
-		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, tableNumber, memberName, pageable);
+		Page<Map<String, Object>> orderPage = ordersvc.findOrderByRestId(restId, start, end, orderTableId, memberName, pageable);
 
 		OrderMasterResponse<Page<Map<String, Object>>> response = new OrderMasterResponse<Page<Map<String, Object>>>(
 				"Success", 200, orderPage);
