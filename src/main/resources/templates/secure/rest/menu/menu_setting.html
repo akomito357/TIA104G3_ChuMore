@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜單設定</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <style>
+        :root {
+            --primary: #F2994A;
+            --secondary: #0F172B;
+            --background: #F5F6F8;
+
+        }
+
+        .content-wrapper {
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            /* min-height: 300px; */
+            width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            /* 讓子元素可以絕對定位 */
+        }
+
+        .content-wrapper h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--secondary);
+        }
+
+        /* 父層樣式 */
+        .nav-tabs .nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            /* 控制標籤內部間距 */
+            background-color: #f9f6f6ef;
+            /* 預設灰色背景 */
+            color: #555;
+            /* 預設文字顏色 */
+            border-radius: 8px 8px 0 0;
+            /* 只讓上角圓角 */
+            font-size: 1rem;
+            /* 字體大小 */
+            font-weight: 500;
+            /* 字體粗細 */
+            cursor: pointer;
+            /* 鼠標懸停效果 */
+            text-decoration: none;
+            /* 移除下劃線 */
+            transition: all 0.3s ease;
+            /* 平滑過渡效果 */
+            border: 1px solid #cfcfcf;
+            /* 預設邊框 */
+            border-bottom: none;
+            /* 隱藏底部邊框 */
+            z-index: 1;
+            /* 保持標籤在上方 */
+
+
+        }
+
+        /* 懸停效果 */
+        .nav-tabs .nav-link:hover {
+            background-color: #f5f5f5;
+            /* 略亮的背景色 */
+            color: #333;
+            /* 略深的文字顏色 */
+        }
+
+        /* 點選標籤的樣式 */
+        .nav-tabs .nav-link.active {
+            background-color: #ffffff;
+            /* 變為白色 */
+            color: var(--secondary)
+                /* 文字變為黑色 */
+                /* border-bottom: 1px solid #ffffff; */
+                /* 與內容區無縫銜接 */
+                /* z-index: 2; */
+                /* 提升選中標籤層級 */
+        }
+
+        /* 內容區樣式 */
+        .tab-content {
+            background-color: #ffffff;
+            /* 白色背景 */
+            padding: 20px;
+            /* 增加內距 */
+            border-radius: 0 0 8px 8px;
+            /* 底部圓角 */
+            margin-top: 10px;
+            /* 避免與標籤之間出現空隙 */
+            animation: fadeIn 0.3s ease;
+            /* 淡入動畫 */
+        }
+
+        /* 淡入動畫 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-item {
+            margin-bottom: 20px;
+            /* 每個項目之間留空 */
+            border-radius: 8px;
+            /* 保留圓角 */
+        }
+
+
+
+        /* 輸入框樣式 */
+        .tab-input {
+            border: none;
+            background: transparent;
+            color: inherit;
+            /* 繼承父層顏色 */
+            font-size: 14px;
+            outline: none;
+            /* 聚焦時移除外框 */
+            flex-grow: 1;
+            /* 輸入框占據剩餘空間 */
+            transition: width 0.3s;
+            white-space: nowrap;
+            /* 防止文字換行 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* 預防溢出文字的顯示問題 */
+        }
+
+        /* 垃圾桶圖示樣式 */
+        .nav-link .delete-category {
+            margin-right: 10px;
+            cursor: pointer;
+            flex-shrink: 0;
+            /* 防止圖示縮小 */
+        }
+
+        .nav-tabs .single-upload-tab {
+            color: var(--secondary);
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-tabs .batch-upload-tab {
+            color: var(--secondary);
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.5rem 1rem;
+        }
+
+        /* 單品上傳頁籤選中樣式 */
+        .nav-tabs .single-upload-tab.active {
+
+            color: var(--primary);
+            background: none;
+            border-bottom: 2px solid var(--primary);
+
+        }
+
+        /* 批量上傳頁籤選中樣式 */
+        .nav-tabs .batch-upload-tab.active {
+            color: var(--primary);
+            background: none;
+            border-bottom: 2px solid var(--primary);
+        }
+
+
+        .upload-area {
+            border: 2px dashed var(--primary);
+            background-color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background-color: rgba(242, 153, 74, 0.1);
+        }
+
+        .menu-item img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .menu-item input[type="text"],
+        .menu-item input[type="number"] {
+            width: 120px;
+        }
+
+        .menu-item textarea {
+            flex-grow: 1;
+            resize: none;
+            height: 60px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--background);
+        }
+
+        .nav-item .d-flex {
+            margin-left: 3px;
+        }
+
+        .buttons-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            /* 按鈕之間的間距 */
+        }
+
+        .buttons-container .btn {
+            width: 120px;
+            /* 設定按鈕寬度 */
+        }
+
+        .btn-info {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--background);
+        }
+
+        .btn-info:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--background);
+        }
+
+        .btn-success:hover {
+            background-color: #084a1b;
+            border-color: #084a1b;
+        }
+
+        hr {
+            color: #989797;
+        }
+
+        .newbtn {
+            width: 850px;
+            text-align: center;
+            padding: 10px;
+            margin-right: 10px;
+            justify-items: center;
+            /* 將內容水平垂直置中 */
+        }
+
+        .btn-outline-primary {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            width: 30px;
+            /* 固定按鈕寬度 */
+            height: 30px;
+            /* 固定按鈕高度 */
+            display: flex;
+            position: relative;
+            left: 0px;
+            bottom: -5px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            /* 移除內部間距，確保內容居中 */
+            font-size: 16px;
+            /* 確保文字大小統一 */
+        }
+
+        .btn-outline-primary:hover{
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <div class="content-wrapper">
+            <!-- Header -->
+            <h2>菜單設定</h2>
+
+            <div class="container mt-4" style="margin-bottom: 200px;">
+                <!-- Tab navigation -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link single-upload-tab active" data-bs-toggle="tab" href="#single-upload">單品上傳</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link batch-upload-tab" data-bs-toggle="tab" href="#batch-upload">批量上傳</a>
+                    </li>
+                </ul>
+
+                <!-- Tab content -->
+                <div class="tab-content mt-3">
+                    <!-- 單品上傳 -->
+                    <div class="tab-pane fade show active" id="single-upload">
+                        <div class="menu-settings">
+                            <ul class="nav nav-tabs" id="category-tabs">
+                                <li class="nav-item d-flex align-items-center">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#category1">
+                                        <input type="text" value="分類1" class="tab-input" placeholder="分類一">
+                                        <i class="bi bi-trash3 text-danger delete-category"></i>
+                                    </a>
+
+
+                                </li>
+                                <!-- <li class="nav-item d-flex align-items-center">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#category2">分類2 <i
+                                            class="bi bi-pencil-square" style="cursor: pointer; margin-left: 5px;"
+                                            onclick="editCategoryName(this)"></i> </a>
+
+                                </li> -->
+
+                                <li class="nav-item">
+                                    <button class="btn btn-sm btn-outline-primary ms-2">+</button>
+                                </li>
+                            </ul>
+
+                            <!-- 分類一的內容 -->
+                            <div class="tab-content mt-3">
+                                <div class="tab-pane fade show active" id="category1">
+                                    <div class="menu-item mb-3 d-flex align-items-start">
+                                        <label class="me-3">
+                                            <img src="https://via.placeholder.com/150" alt="餐點圖片"
+                                                id="image-upload-preview">
+                                            <input type="file" accept="image/*" class="d-none" id="image-upload">
+                                        </label>
+                                        <div>
+                                            <input type="text" class="form-control mb-2" style="width: 200px;"
+                                                placeholder="品項名稱">
+                                            <input type="number" class="form-control mb-2" style="width: 200px;"
+                                                placeholder="價格">
+                                            <textarea class="form-control mb-2" style="width: 500px;"
+                                                placeholder="描述"></textarea>
+                                        </div>
+                                        <button class="btn btn-danger" style=" margin-left: 100px">刪除</button>
+                                    </div>
+                                    <hr>
+                                    <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 批量上傳 -->
+                    <div class="tab-pane fade" id="batch-upload">
+                        <div class="upload-area text-center p-5">
+                            <button class="btn btn-primary mb-3">下載模板</button>
+                            <input type="file" id="file-upload" accept=".csv" hidden>
+                            <label for="file-upload" class="d-block">
+                                <div class="d-flex flex-column align-items-center">
+                                    <i class="bi bi-cloud-arrow-up mb-3"
+                                        style="font-size: 50px; color: var(--primary);"></i>
+                                    <p>拖曳檔案至此或點擊上傳</p>
+                                    <small class="text-muted">支持 .csv 格式</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons-container">
+                <button class="btn btn-success" id="save-menu-btn">儲存菜單</button>
+                <button class="btn btn-info" id="preview-menu-btn">預覽菜單</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+
+            function loadRestProduct(){
+                fetch(`rest/productcategory/getListByRestId`,{
+                    method: "GET",
+                })
+                .then(res => res.json())
+                .then(response=>{
+
+                })
+
+            }
+
+
+
+
+
+
+            $("#file-upload").on("change", function(e){
+                const file = e.target.files[0];
+                const formData = new FormData();
+                formData.append("file", file);
+                console.log(file);
+                
+                fetch("rest/productcategory/csvFile",{
+                    method: "Post",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(response => {
+                    console.log(response);
+
+                    if(response.code==200){
+                        alert("上傳成功！");
+                    }else{
+                        alert("上傳失敗");
+
+                    }
+                })
+                .catch(error => console.error("上傳錯誤：", response.msg));
+            })
+
+
+            function loadBatchDataToSingleUpload(menuItem){
+                const categoryTabs = $("#category-tabs");
+                const tabContents = $(".tab-content");
+                categoryTabs.innerHtml = "";
+                tabContents.innerHtml
+                
+            }
+
+
+
+
+            // 動態調整輸入框寬度
+            function adjustWidth(input) {
+                const parent = input.parentElement; // 父層元素
+                const baseWidth = 100; // 初始寬度
+                const maxWidth = 200; // 最大寬度
+                const buffer = 10; // 留些空間避免文字貼邊
+
+                // 創建隱藏的測量容器
+                const temp = document.createElement('span');
+                temp.style.visibility = 'hidden';
+                temp.style.whiteSpace = 'nowrap';
+                temp.style.font = window.getComputedStyle(input).font;
+                temp.textContent = input.value || input.placeholder;
+                document.body.appendChild(temp);
+
+                // 計算內容所需寬度
+                const contentWidth = Math.min(
+                    Math.max(temp.offsetWidth + buffer, baseWidth),
+                    maxWidth
+                );
+
+                // 移除臨時測量容器
+                document.body.removeChild(temp);
+
+                // 設置父層和輸入框寬度
+                parent.style.width = `${contentWidth}px`;
+                input.style.width = `${contentWidth - 30}px`; // 減去垃圾桶圖示的寬度
+            }
+
+            // 初始化所有分頁標籤輸入框的寬度
+            $('.tab-input').each(function () {
+                adjustWidth(this);
+                $(this).on('input', function () {
+                    adjustWidth(this);
+                });
+            });
+
+            // 動態新增分類
+            $('.btn-outline-primary').click(function () {
+                const categoryCount = $('#category-tabs .nav-item').length;
+                const newCategoryId = `category${categoryCount}`;
+
+                const newCategoryTab = `
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#${newCategoryId}">
+                        <input type="text" value="分類${categoryCount}" class="tab-input">
+                        <i class="bi bi-trash3 text-danger delete-category"></i>
+                    </a>
+                </li>
+                `;
+
+                const newCategoryContent = `
+                <div class="tab-pane fade" id="${newCategoryId}">
+                    <div class="menu-item mb-3 d-flex align-items-start">
+                        <label class="me-3">
+                            <img src="https://via.placeholder.com/150" alt="餐點圖片" class="image-upload-preview">
+                            <input type="file" accept="image/*" class="d-none image-upload">
+                        </label>
+                        <div>
+                            <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                            <input type="number" class="form-control mb-2" style="width: 200px;" placeholder="價格">
+                            <textarea class="form-control mb-2" style="width: 500px;" placeholder="描述"></textarea>
+                        </div>
+                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                    </div>
+                    <hr>
+                    <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
+
+                </div>
+                `;
+
+                // 插入新分類標籤和內容
+                $('#category-tabs').append(newCategoryTab);
+                $('.tab-content').append(newCategoryContent);
+
+                // 初始化新標籤的輸入框寬度
+                const newInput = $(`#category-tabs .nav-item:last-child .tab-input`);
+                adjustWidth(newInput[0]);
+                newInput.on('input', function () {
+                    adjustWidth(this);
+                });
+
+                // 把 "+" 按鈕移動到新分類右邊
+                $('.btn-outline-primary').appendTo('#category-tabs');
+            });
+            let objBiiger = {}
+            objBiiger.data = [];
+            let obj = {};
+            obj.product_cat_id = 1
+            obj["product_list"] = []
+            let product = {
+                "productNmae":"ddd"
+            }
+            obj["product_list"].push(product)
+            objBiiger.data.push(obj)
+            console.log(objBiiger)
+            
+
+            // 刪除分類
+            $(document).on('click', '.delete-category', function () {
+                const tabId = $(this).closest('.nav-link').attr('href');
+                $(tabId).remove(); // 刪除內容
+                $(this).closest('.nav-item').remove(); // 刪除標籤
+            });
+
+            // 動態新增餐點
+            $(document).on('click', '.btn-primary', function () {
+                const newItem = `
+                <div class="menu-item mb-3 d-flex align-items-start">
+                    <label class="me-3">
+                        <img src="https://via.placeholder.com/150" alt="餐點圖片" class="image-upload-preview">
+                        <input type="file" accept="image/*" class="d-none image-upload">
+                    </label>
+                    <div>
+                        <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                        <input type="number" class="form-control mb-2" style="width: 200px;" placeholder="價格">
+                        <textarea class="form-control mb-2" style="width: 500px;" placeholder="描述"></textarea>
+                    </div>
+                    <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                </div>
+                <hr>
+                `;
+                $(this).before(newItem);
+            });
+
+            // 刪除單筆品項和分隔線
+            $(document).on('click', '.btn-danger', function () {
+                const item = $(this).closest('.menu-item');
+                const nextHr = item.next('hr');
+                item.remove(); // 刪除項目
+                nextHr.remove(); // 刪除分隔線
+            });
+
+            // 圖片上傳預覽
+            $(document).on('change', '.image-upload', function (event) {
+                const reader = new FileReader();
+                const previewImage = $(this).siblings('img');
+
+                reader.onload = function (e) {
+                    previewImage.attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(event.target.files[0]);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
