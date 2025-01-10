@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.chumore.rest.model.RestVO;
 
+@Service
 public class CuisineTypeServiceImpl implements CuisineTypeService{
 
 	@Autowired

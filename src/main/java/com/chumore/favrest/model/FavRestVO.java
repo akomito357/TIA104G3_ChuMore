@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "fav_rest")
@@ -30,6 +32,7 @@ public class FavRestVO {
 	
 	@ManyToOne
 	@JoinColumn(name = "rest_id")
+	@JsonBackReference("favRest-rest")
 	private RestVO rest;
 	
 	@Column(name = "saved_datetime", columnDefinition = "DATETIME CURRENT TIMESTAMP")
