@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChuMore 餐廳註冊系統 - 餐廳資訊">
+    <title>ChuMore - 餐廳註冊 - 步驟二</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #F2994A;
+            --primary-dark: #e58b3d;
+            --primary-light: rgba(242, 153, 74, 0.1);
+            --secondary: #092C4C;
+            --error: #EB5757;
+            --success: #27AE60;
+            --gray-1: #333333;
+            --gray-2: #4F4F4F;
+            --gray-3: #828282;
+            --gray-4: #BDBDBD;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            color: var(--gray-2);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .form-container {
+            max-width: 640px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress {
+            height: 4px;
+            background-color: var(--gray-4);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            background-color: var(--primary);
+            transition: width 0.6s ease;
+        }
+
+        .step-title {
+            color: var(--gray-1);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-4);
+        }
+
+        .form-label {
+            color: var(--gray-2);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--gray-4);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--gray-3);
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            padding: 0.875rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(242, 153, 74, 0.2);
+        }
+
+        .btn-outline-secondary {
+            color: var(--gray-2);
+            border-color: var(--gray-4);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--gray-4);
+            border-color: var(--gray-4);
+            color: var(--gray-1);
+        }
+
+        .address-group {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">ChuMore</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 100%" 
+                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+
+            <h2 class="step-title">步驟 2：餐廳資訊</h2>
+
+            <!-- Alert Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <form th:action="@{/auth/register/restaurant/step2}" 
+                  method="post" 
+                  th:object="${restaurantRequest}" 
+                  class="needs-validation" 
+                  novalidate>
+
+                <div class="mb-3">
+                    <label for="restaurantName" class="form-label">餐廳名稱</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="restaurantName"
+                           th:field="*{restaurantName}"
+                           required
+                           placeholder="請輸入餐廳名稱">
+                    <div class="invalid-feedback">請輸入餐廳名稱</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="businessNumber" class="form-label">營業字號</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="businessNumber"
+                           th:field="*{businessNumber}"
+                           required
+                           pattern="^[0-9A-Z]{10}$"
+                           placeholder="請輸入營業字號">
+                    <div class="form-text">請輸入10碼營業字號</div>
+                    <div class="invalid-feedback">請輸入有效的營業字號</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="taxId" class="form-label">統一編號</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="taxId"
+                           th:field="*{taxId}"
+                           required
+                           pattern="^[0-9]{8}$"
+                           placeholder="請輸入統一編號">
+                    <div class="form-text">請輸入8碼統一編號</div>
+                    <div class="invalid-feedback">請輸入有效的統一編號</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">餐廳地址</label>
+                    <div class="row g-2 address-group">
+                        <div class="col-md-6">
+                            <select class="form-select" 
+                                    id="city" 
+                                    th:field="*{city}" 
+                                    required>
+                                <option value="">選擇縣市</option>
+                            </select>
+                            <div class="invalid-feedback">請選擇縣市</div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" 
+                                    id="district" 
+                                    th:field="*{district}" 
+                                    required>
+                                <option value="">選擇地區</option>
+                            </select>
+                            <div class="invalid-feedback">請選擇地區</div>
+                        </div>
+                    </div>
+                    <input type="text" 
+                           class="form-control" 
+                           id="address"
+                           th:field="*{address}"
+                           required
+                           placeholder="請輸入詳細地址">
+                    <div class="invalid-feedback">請輸入完整地址</div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="restaurantType" class="form-label">餐廳類型</label>
+                    <select class="form-select" 
+                            id="restaurantType"
+                            th:field="*{restaurantType}"
+                            required>
+                        <option value="">請選擇餐廳類型</option>
+                        <option value="CHINESE">中式餐廳</option>
+                        <option value="WESTERN">西式餐廳</option>
+                        <option value="JAPANESE">日式餐廳</option>
+                        <option value="KOREAN">韓式餐廳</option>
+                        <option value="THAI">泰式餐廳</option>
+                        <option value="CAFE">咖啡廳</option>
+                        <option value="OTHER">其他</option>
+                    </select>
+                    <div class="invalid-feedback">請選擇餐廳類型</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        完成註冊
+                    </button>
+                    <button type="button" 
+                            class="btn btn-outline-secondary"
+                            onclick="window.history.back()">
+                        返回上一步
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // City and District Data
+        const cityDistricts = {
+            '臺北市': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', 
+                      '士林區', '北投區', '內湖區', '南港區', '文山區'],
+            '新北市': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區', 
+                      '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區']
+            // Add more cities and districts as needed
+        };
+
+        // Initialize Form Validation
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        // Initialize Location Selectors
+        function initializeLocationSelectors() {
+            const citySelect = document.getElementById('city');
+            const districtSelect = document.getElementById('district');
+
+            // Populate Cities
+            Object.keys(cityDistricts).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            // Handle City Selection
+            citySelect.addEventListener('change', function() {
+                const selectedCity = this.value;
+                
+                districtSelect.innerHTML = '<option value="">選擇地區</option>';
+                
+                if (selectedCity && cityDistricts[selectedCity]) {
+                    cityDistricts[selectedCity].forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        districtSelect.appendChild(option);
+                    });
+                    districtSelect.disabled = false;
+                } else {
+                    districtSelect.disabled = true;
+                }
+            });
+        }
+
+        // Initialize on Page Load
+        document.addEventListener('DOMContentLoaded', initializeLocationSelectors);
+
+        // Tax ID Validation
+        document.getElementById('taxId').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (!/^\d{8}$/.test(value)) {
+                e.target.setCustomValidity('統一編號必須為8位數字');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+
+        // Business Number Validation
+        document.getElementById('businessNumber').addEventListener('input', function(e) {
+            const value = e.target.value;
+            if (!/^[0-9A-Z]{10}$/.test(value)) {
+                e.target.setCustomValidity('營業字號必須為10碼英數字');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
