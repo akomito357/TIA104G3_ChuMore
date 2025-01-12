@@ -72,6 +72,7 @@ public class ProductCategoryController {
 	@GetMapping("getListByRestId")
 	public ResponseEntity<ProductCategoryResponse> getListByRestId(@RequestParam Integer restId) {
 //		Integer restId = request.get("restId");
+		
 		List<ProductCategoryVO> vo = productCategorySvc.getAllCategoryByRest(restId);
 		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>(
 				"Success", 200, vo);

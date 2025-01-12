@@ -46,7 +46,6 @@ $(document).ready(function() {
 				const totalPages = pageData.totalPages;
 				const newParams = `${sortField},${sortOrder}`;
 
-
 				let table_body = "";
 				orderList.forEach((orderMaster, index) => {
 
