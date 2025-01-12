@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">ChuMore Restaurant</title>
+    <!-- Bootstrap 4.5.2 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+
+<body>
+    <!-- 導航欄 -->
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">ChuMore 後台管理</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/emp/profile}">個人資料</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a class="nav-link" th:href="@{/emp/admin/list}">員工管理</a>
+                    </li>
+                </ul>
+                <!-- 顯示登入者資訊和登出按鈕 -->
+                <div class="navbar-text mr-3" sec:authorize="isAuthenticated()">
+                    歡迎, <span sec:authentication="name"></span>
+                </div>
+                <form th:action="@{/logout}" method="post" class="form-inline" sec:authorize="isAuthenticated()">
+                    <button class="btn btn-outline-light" type="submit">登出</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 頁面內容 -->
+    <div th:fragment="content">
+        <th:block th:replace="${content}">
+            <!-- 各頁面的內容會被插入到這裡 -->
+        </th:block>
+    </div>
+
+    <!-- 頁腳 -->
+    <footer th:fragment="footer" class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">© 2025 ChuMore Restaurant. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <div th:fragment="scripts">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </div>
+</body>
+</html>

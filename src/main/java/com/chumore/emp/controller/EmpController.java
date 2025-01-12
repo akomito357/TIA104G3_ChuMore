@@ -1,8 +1,12 @@
 package com.chumore.emp.controller;
 
+import com.chumore.emp.dto.EmpBasicUpdateDTO;
+import com.chumore.emp.dto.EmpBasicViewDTO;
+import com.chumore.emp.dto.EmpFullDTO;
 import com.chumore.emp.model.EmpVO;
 import com.chumore.emp.model.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,98 +20,129 @@ import java.util.List;
 @RequestMapping("/emp")
 public class EmpController {
 
-    @Autowired
-    private EmpService empService;
+	@Autowired
+	private EmpService empService;
 
-    // 顯示員工列表
-    @GetMapping("/list")
-    public String listEmployees(Model model,
-                              @RequestParam(required = false) Integer status,
-                              @RequestParam(required = false) String name) {
-        List<EmpVO> employees;
-        if (status != null && name != null) {
-            employees = empService.searchByStatusAndName(status, name);
-        } else if (status != null) {
-            employees = empService.findByStatus(status);
-        } else if (name != null) {
-            employees = empService.searchByName(name);
-        } else {
-            employees = empService.findAllEmployees();
-        }
-        model.addAttribute("employees", employees);
-        return "emp/list";
-    }
 
-    // 顯示新增員工表單
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("empVO", new EmpVO());
-        return "emp/add";
-    }
+	// ========== 一般員工功能 ==========
+	// 查看個人資料
+	@GetMapping("/profile")
+	public String getProfile(Model model, Authentication auth) {
+		String account = auth.getName();
+		EmpVO emp = empService.getEmpByAccount(account);
+		EmpBasicViewDTO empInfo = empService.getOwnBasicInfo(emp.getEmpId());
 
-    // 處理新增員工
-    @PostMapping("/add")
-    public String addEmployee(@Valid @ModelAttribute("empVO") EmpVO empVO,
-                            BindingResult result,
-                            RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "emp/add";
-        }
-        
-        try {
-            empService.addEmployee(empVO);
-            redirectAttributes.addFlashAttribute("message", "員工新增成功！");
-            return "redirect:/emp/list";
-        } catch (IllegalArgumentException e) {
-            result.rejectValue("empAccount", "error.empVO", e.getMessage());
-            return "emp/add";
-        }
-    }
+		model.addAttribute("empInfo", empInfo);
+		return "emp/profile";
+	}
 
-    // 顯示編輯員工表單
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Integer id, Model model) {
-        empService.findById(id).ifPresent(emp -> model.addAttribute("empVO", emp));
-        return "emp/edit";
-    }
+	// 前往編輯個人資料頁面
+	@GetMapping("/edit")
+	public String getEditForm(Model model, Authentication auth) {
+		String account = auth.getName();
+		EmpVO emp = empService.getEmpByAccount(account);
+		EmpBasicViewDTO empInfo = empService.getOwnBasicInfo(emp.getEmpId());
 
-    // 處理編輯員工
-    @PostMapping("/edit/{id}")
-    public String updateEmployee(@PathVariable Integer id,
-                               @Valid @ModelAttribute("empVO") EmpVO empVO,
-                               BindingResult result,
-                               RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "emp/edit";
-        }
+		model.addAttribute("empInfo", empInfo);
+		return "emp/edit";
+	}
 
-        try {
-            empVO.setEmpId(id);
-            empService.updateEmployee(empVO);
-            redirectAttributes.addFlashAttribute("message", "員工資料更新成功！");
-            return "redirect:/emp/list";
-        } catch (IllegalArgumentException e) {
-            result.rejectValue("empAccount", "error.empVO", e.getMessage());
-            return "emp/edit";
-        }
-    }
+	// 更新個人資料
+	@PostMapping("/edit")
+	public String updateProfile(@Valid EmpBasicUpdateDTO dto, BindingResult result, 
+	        Authentication auth, Model model, RedirectAttributes redirectAttr) {
+	    if (result.hasErrors()) {
+	        // 添加這行來回顯數據
+	        model.addAttribute("empInfo", dto);
+	        return "emp/edit";
+	    }
 
-    // 處理停用/啟用員工
-    @PostMapping("/toggle-status/{id}")
-    public String toggleStatus(@PathVariable Integer id,
-                             @RequestParam Boolean activate,
-                             RedirectAttributes redirectAttributes) {
-        try {
-            if (activate) {
-                empService.activateEmployee(id);
-                redirectAttributes.addFlashAttribute("message", "員工帳號已啟用！");
-            } else {
-                empService.deactivateEmployee(id);
-                redirectAttributes.addFlashAttribute("message", "員工帳號已停用！");
-            }
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/emp/list";
-    }
+	    try {
+	        String account = auth.getName();
+	        EmpVO emp = empService.getEmpByAccount(account);
+	        empService.updateOwnBasicInfo(emp.getEmpId(), dto);
+	        redirectAttr.addFlashAttribute("message", "資料更新成功！");
+	        return "emp/profile";
+	    } catch (IllegalArgumentException e) {
+	        redirectAttr.addFlashAttribute("error", e.getMessage());
+	        return "redirect:/emp/edit";
+	    }
+	}
+
+	// ========== 管理員功能 ==========
+	// 顯示所有員工列表
+	@GetMapping("/admin/list")
+	public String listAll(Model model) {
+		List<EmpFullDTO> emps = empService.getAllEmpsFullInfo();
+		model.addAttribute("emps", emps);
+		return "emp/admin/list";
+	}
+
+	// 前往新增員工頁面
+	@GetMapping("/admin/add")
+	public String showAddForm(Model model) {
+		model.addAttribute("empDTO", new EmpFullDTO());
+		return "emp/admin/add";
+	}
+	// 修改密碼
+	@PostMapping("/admin/reset-password/{id}")
+	public String resetPassword(@PathVariable("id") Integer empId, RedirectAttributes redirectAttr) {
+	    try {
+	        String tempPassword = empService.resetPassword(empId);
+	        redirectAttr.addFlashAttribute("message", "密碼重置成功，暫時密碼為：" + tempPassword);
+	    } catch (Exception e) {
+	        redirectAttr.addFlashAttribute("error", "密碼重置失敗：" + e.getMessage());
+	    }
+	    return "redirect:/emp/admin/list";
+	}
+	// 新增員工
+	@PostMapping("/admin/add")
+	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, BindingResult result,
+			RedirectAttributes redirectAttr) {
+		if (result.hasErrors()) {
+			return "emp/admin/add";
+		}
+
+		try {
+			empService.addEmp(dto);
+			redirectAttr.addFlashAttribute("message", "員工新增成功！");
+			return "redirect:/emp/admin/list";
+		} catch (IllegalArgumentException e) {
+			redirectAttr.addFlashAttribute("error", e.getMessage());
+			return "redirect:/emp/admin/add";
+		}
+	}
+
+	// 前往編輯員工頁面
+	@GetMapping("/admin/edit/{id}")
+	public String showEditForm(@PathVariable("id") Integer empId, Model model) {
+		EmpFullDTO emp = empService.getEmpById(empId);
+		model.addAttribute("empDTO", emp);
+		return "emp/admin/edit";
+	}
+
+	// 更新員工資料
+	@PostMapping("/admin/edit/{id}")
+	public String updateEmp(@PathVariable("id") Integer empId, @Valid @ModelAttribute("empDTO") EmpFullDTO dto,
+			BindingResult result, RedirectAttributes redirectAttr) {
+		if (result.hasErrors()) {
+			return "emp/admin/edit";
+		}
+
+		try {
+			empService.updateEmp(empId, dto);
+			redirectAttr.addFlashAttribute("message", "員工資料更新成功！");
+			return "redirect:/emp/admin/list";
+		} catch (IllegalArgumentException e) {
+			redirectAttr.addFlashAttribute("error", e.getMessage());
+			return "redirect:/emp/admin/edit/" + empId;
+		}
+	}
+
+	// 處理例外
+	@ExceptionHandler(Exception.class)
+	public String handleError(Exception e, RedirectAttributes redirectAttr) {
+		redirectAttr.addFlashAttribute("error", "發生錯誤：" + e.getMessage());
+		return "redirect:/emp/error";
+	}
 }

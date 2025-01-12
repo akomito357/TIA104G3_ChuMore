@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout :: head('個人資料')">
+</head>
+<body>
+    <nav th:replace="layout :: navbar"></nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">個人資料</h4>
+                        <a th:href="@{/emp/edit}" class="btn btn-outline-light btn-sm">編輯資料</a>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- 成功訊息提示 -->
+                        <div th:if="${message}" class="alert alert-success" role="alert">
+                            <span th:text="${message}"></span>
+                        </div>
+                        
+                        <table class="table table-borderless">
+                            <tr>
+                                <th style="width: 30%">姓名：</th>
+                                <td th:text="${empInfo.empName}"></td>
+                            </tr>
+                            <tr>
+                                <th>帳號：</th>
+                                <td th:text="${empInfo.empAccount}"></td>
+                            </tr>
+                            <tr>
+                                <th>手機：</th>
+                                <td th:text="${empInfo.empPhone}"></td>
+                            </tr>
+                            <tr>
+                                <th>Email：</th>
+                                <td th:text="${empInfo.empEmail}"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+    <div th:replace="layout :: scripts"></div>
+</body>
+</html>
