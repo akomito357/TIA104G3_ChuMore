@@ -46,7 +46,6 @@ $(document).ready(function() {
 				const totalPages = pageData.totalPages;
 				const newParams = `${sortField},${sortOrder}`;
 
-
 				let table_body = "";
 				orderList.forEach((orderMaster, index) => {
 
@@ -94,7 +93,6 @@ $(document).ready(function() {
 	loadOrderData(0, currentSort.field, currentSort.order);
 
 	// 排序功能
-
 	$('.sort-icon').click(function() {
 		const sortField = $(this).data('sort');
 		//                 console.log(sortField);
@@ -140,6 +138,9 @@ $(document).ready(function() {
 			nextButton.prop("disabled", currentPage === totalPages - 1);
 		}
 	}
+
+
+	//評論的分頁功能
 
 	// const reviewPrevButton = $("#reviewPreBtn.prev-btn");
 	// const reviewNextButton = $("#reviewNextBtn.next-btn");

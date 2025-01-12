@@ -30,7 +30,7 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
             , nativeQuery = true)
     Page<OrderMasterVO> findByMemberId(Integer memberId, Pageable pageable);
     
-    @Query(value= "SELECT DATE_FORMAT(om.served_datetime, '%Y-%m-%d %H:%i') as servedDatetime, ot.table_number as tableNumber, "+ 
+    @Query(value= "SELECT DATE_FORMAT(om.served_datetime, '%Y-%m-%d %H:%i') as servedDatetime, ot.table_number as tableNumber, ot.order_table_id as orderTableId, "+ 
 					"m.member_name as memberName, om.total_price as totalPrice, om.order_id as orderId "+
 					"FROM order_master om "+
 					"LEFT JOIN order_table ot on om.order_table_id = ot.order_table_id "+
@@ -38,16 +38,18 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 					"WHERE om.rest_id = :restId "+
 					"AND(:startDatetime IS NULL OR om.served_datetime >= :startDatetime) "+
 					"AND(:endDatetime IS NULL OR om.served_datetime <= :endDatetime) "+
-					"AND(:orderTableId IS NULL OR ot.order_table_id  = :orderTableId) "+
-					"AND(:memberName IS NULL OR m.member_name like CONCAT('%',:memberName,'%')) ", 
+					"AND(:orderTableId IS NULL OR om.order_table_id = :orderTableId) "+
+					"AND (IFNULL(m.member_name,'') LIKE CONCAT('%', :memberName, '%')) "+
+					"AND om.order_status = 0 ",
 		    countQuery = "SELECT COUNT(*) FROM order_master om "+
 		    		"LEFT JOIN order_table ot on om.order_table_id = ot.order_table_id "+
 					"LEFT JOIN member m on om.member_id = m.member_id "+
 		    		"WHERE om.rest_id = :restId "+
 		    		"AND(:startDatetime IS NULL OR om.served_datetime >= :startDatetime) "+
 					"AND(:endDatetime IS NULL OR om.served_datetime <= :endDatetime) "+
-					"AND(:orderTableId IS NULL OR ot.order_table_id  = :orderTableId) "+
-					"AND(:memberName IS NULL OR m.member_name like CONCAT('%',:memberName,'%'))",
+					"AND(:orderTableId IS NULL OR om.order_table_id = :orderTableId) "+
+					"AND (IFNULL(m.member_name,'') LIKE CONCAT('%', :memberName, '%')) "+
+					"AND om.order_status = 0 ",
 			nativeQuery = true)
     Page<Map<String, Object>> findOrderByRestId(Integer restId, LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable);
 
@@ -61,5 +63,6 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 		    countQuery = "SELECT COUNT(*) FROM order_master om WHERE om.rest_id = :restId"
 		    , nativeQuery = true)
     Page<RestDiningDto> findOrderByRestId(Integer restId, Pageable pageable);
+    
     
 }

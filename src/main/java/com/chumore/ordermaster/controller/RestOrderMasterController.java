@@ -42,7 +42,7 @@ public class RestOrderMasterController {
 	
 	@Autowired
 	OrderItem_Service orderItemSvc;
-
+	
 	@GetMapping("diningList")
 	public ResponseEntity<OrderMasterResponse<Page<Map<String, Object>>>> findOrderByRestId(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
@@ -53,7 +53,7 @@ public class RestOrderMasterController {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2004;
+			restId = 2001;
 		} else {
 			RestVO rest = (RestVO) restNum;
 			restId = rest.getRestId();
@@ -62,18 +62,13 @@ public class RestOrderMasterController {
 		LocalDateTime start = null;
 		LocalDateTime end = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-
-		if (startDatetime != null && startDatetime.matches("\\d{4}-d{2}-d{2}")) {
-			start = LocalDateTime.parse(startDatetime + "T00:00", formatter);
-		} else if (startDatetime != null && startDatetime.isEmpty()) {
-			start = LocalDateTime.parse(startDatetime, formatter);
+		
+		if (startDatetime != null && !startDatetime.isEmpty() && !"null".equals(startDatetime)) {
+		    start = LocalDateTime.parse(startDatetime, formatter);
 		}
 
-		if (endDatetime != null && endDatetime.matches("\\d{4}-d{2}-d{2}")) {
-			end = LocalDateTime.parse(endDatetime + "T23:59", formatter);
-		}
-		if (endDatetime != null && endDatetime.isEmpty()) {
-			end = LocalDateTime.parse(endDatetime, formatter);
+		if (endDatetime != null && !endDatetime.isEmpty() && !"null".equals(endDatetime)) {
+		    end = LocalDateTime.parse(endDatetime, formatter);
 		}
 
 		String[] sortParams = sort.split(",");
@@ -100,9 +95,9 @@ public class RestOrderMasterController {
 		if (sortParams != null && sortParams.length > 1) {
 		    Sort.Direction direction = sortParams[1].equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		    Sort.Order order = new Sort.Order(direction, sortParams[0]);
-		    sortBy = Sort.by(order); // 按照传入的参数创建排序规则
+		    sortBy = Sort.by(order);
 		} else {
-		    sortBy = Sort.unsorted(); // 不需要排序，使用默认的无排序
+		    sortBy = Sort.unsorted(); 
 		}
 
 		
