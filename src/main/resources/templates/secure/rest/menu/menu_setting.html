@@ -229,6 +229,16 @@
             border-color: var(--background);
         }
 
+        .btn-confirm {
+            background-color: #12a53b;
+            color: #fcfcfc;
+        }
+
+        .btn-confirm:hover {
+            background-color: #0b7429;
+            color: #fcfcfc;
+        }
+
         .nav-item .d-flex {
             margin-left: 3px;
         }
@@ -277,31 +287,34 @@
             /* 將內容水平垂直置中 */
         }
 
+        #category-tabs {
+        /* display: flex; */
+        /* align-items: center; */
+        /* 讓內容垂直置中 */
+        position: relative;
+        /* 使其成為定位的基準容器 */
+        }
+
         .btn-outline-primary {
             border-color: var(--secondary);
             color: var(--secondary);
             width: 30px;
-            /* 固定按鈕寬度 */
             height: 30px;
-            /* 固定按鈕高度 */
             display: flex;
             position: relative;
             left: 0px;
             bottom: -5px;
             align-items: center;
+            display: block;
             justify-content: center;
             padding: 0;
-            /* 移除內部間距，確保內容居中 */
             font-size: 16px;
-            /* 確保文字大小統一 */
         }
 
-        .btn-outline-primary:hover{
+        .btn-outline-primary:hover {
             background-color: var(--secondary);
             border-color: var(--secondary);
         }
-        
-
     </style>
 </head>
 
@@ -329,12 +342,10 @@
                         <div class="menu-settings">
                             <ul class="nav nav-tabs" id="category-tabs">
                                 <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link active" data-bs-toggle="tab" href="#category1">
+                                    <!-- <a class="nav-link active" data-bs-toggle="tab" href="#category1">
                                         <input type="text" value="分類1" class="tab-input" placeholder="分類一">
                                         <i class="bi bi-trash3 text-danger delete-category"></i>
-                                    </a>
-
-
+                                    </a> -->
                                 </li>
                                 <!-- <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link" data-bs-toggle="tab" href="#category2">分類2 <i
@@ -343,14 +354,14 @@
 
                                 </li> -->
 
-                                <li class="nav-item">
+                                <li class="add-category-btn">
                                     <button class="btn btn-sm btn-outline-primary ms-2">+</button>
                                 </li>
                             </ul>
 
                             <!-- 分類一的內容 -->
-                            <div class="tab-content mt-3">
-                                <div class="tab-pane fade show active" id="category1">
+                            <div class="tab-content mt-3" id="product-tab-content">
+                                <!-- <div class="tab-pane fade show active" id="category1">
                                     <div class="menu-item mb-3 d-flex align-items-start">
                                         <label class="me-3">
                                             <img src="https://via.placeholder.com/150" alt="餐點圖片"
@@ -358,20 +369,29 @@
                                             <input type="file" accept="image/*" class="d-none" id="image-upload">
                                         </label>
                                         <div>
-                                            <input type="text" class="form-control mb-2" style="width: 200px;"
-                                                placeholder="品項名稱">
+                                            <div class="d-flex align-items-center" style="gap: 210px;">
+                                                <input type="text" class="form-control mb-2" style="width: 200px;"
+                                                    placeholder="品項名稱">
+                                                <select class="form-control mb-2" style="width: 90px;">
+                                                    <option value="available">供應中</option>
+                                                    <option value="sold-out">已售完</option>
+                                                    <option value="discontinued">停售</option>
+                                                </select>
+                                            </div>
+
                                             <input type="number" class="form-control mb-2" style="width: 200px;"
                                                 placeholder="價格">
                                             <textarea class="form-control mb-2" style="width: 500px;"
                                                 placeholder="描述"></textarea>
+
                                         </div>
                                         <button class="btn btn-danger" style=" margin-left: 100px">刪除</button>
                                     </div>
                                     <hr>
-                                    <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
-                                </div>
+                                </div> -->
                                 
                             </div>
+                            <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
 
                         </div>
                     </div>
@@ -380,7 +400,7 @@
                     <div class="tab-pane fade" id="batch-upload">
                         <div class="upload-area text-center p-5">
                             <button class="btn btn-primary mb-3">下載模板</button>
-                            <input type="file" id="file-upload" accept=".csv" hidden>
+                            <input type="file" class="file-input" id="file-upload" accept=".csv" hidden>
                             <label for="file-upload" class="d-block">
                                 <div class="d-flex flex-column align-items-center">
                                     <i class="bi bi-cloud-arrow-up mb-3"
@@ -389,13 +409,19 @@
                                     <small class="text-muted">支持 .csv 格式</small>
                                 </div>
                             </label>
+                            <div id="upload-status" class="text-success mt-3 d-none"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="buttons-container">
-                <button class="btn btn-success" id="save-menu-btn">儲存菜單</button>
-                <button class="btn btn-info" id="preview-menu-btn">預覽菜單</button>
+                <!-- 單品上傳頁面按鈕 -->
+                <button class="btn btn-success d-none single-upload-btn">儲存菜單</button>
+                <button class="btn btn-secondary d-none single-upload-btn">取消修改</button>
+
+                <!-- 批量上傳頁面按鈕 -->
+                <button class="btn btn-confirm d-none batch-upload-btn">確認上傳</button>
+                <button class="btn btn-danger d-none batch-upload-btn">清空檔案</button>
             </div>
         </div>
     </div>
@@ -409,58 +435,120 @@
     <script>
         $(document).ready(function () {
 
+            document.querySelectorAll('.single-upload-btn').forEach(button => button.classList.remove('d-none'));
 
-            function loadRestProduct(){
-                fetch(`rest/productcategory/getListByRestId`,{
+            function loadRestProduct() {
+
+                fetch(`rest/productcategory/getListByRestId?restId=2001`, {
                     method: "GET",
                 })
-                .then(res => res.json())
-                .then(response=>{
+                    .then(res => res.json())
+                    .then(response => {
+                        console.log(response);
+                        const productCatData = response.data;
+                        console.log(productCatData);
 
-                })
+                        let category_tabName = "";
+                        let category_content = "";
+
+                        productCatData.forEach((productCategory, index) => {
+                            category_tabName += `
+                                <li class="nav-item">
+                                    <a class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#${productCategory.productCategoryId}">
+                                        <input type="text" value="${productCategory.categoryName}" class="tab-input">
+                                        <i class="bi bi-trash3 text-danger delete-category"></i>
+                                    </a>
+                                </li>
+                            `;
+
+                            let product_item = "";
+
+                            productCategory.productList.forEach((product, index) => {
+                                // console.log(product);
+                                product_item += `
+                                    <div class="menu-item mb-3 d-flex align-items-start">
+                                        <label class="me-3">
+                                            <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
+                                            <input type="file" accept="image/*" class="d-none image-upload">
+                                        </label>
+                                        <div>
+                                            <div class="d-flex align-items-center" style="gap: 210px;">
+                                                <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱" value="${product.productName}">
+                                                <select class="form-control mb-2" style="width: 90px;">
+                                                    <option value="0"${product.supplyStatus === 0 ? 'selected' : ''}>供應中</option>
+                                                    <option value="1"${product.supplyStatus === 1 ? 'selected' : ''}>已售完</option>
+                                                    <option value="2"${product.supplyStatus === 2 ? 'selected' : ''}>停售</option>
+                                                </select>
+                                            </div>
+
+                                            <input type="number" class="form-control mb-2" style="width: 200px;"
+                                                placeholder="價格" value="${product.productPrice}">
+                                            <textarea class="form-control mb-2" style="width: 500px;"
+                                                placeholder="描述">${product.productDescription}</textarea>
+                                        </div>
+                                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                                    </div>
+                                    <hr>
+                                `;
+
+                            });
+                            category_content += `
+                        <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" id="${productCategory.productCategoryId}">
+                            ${product_item}
+                        </div>
+                    `;
+                        });
+
+                        $('#category-tabs').append(category_tabName);
+                        $('#product-tab-content').append(category_content);
+
+                        $('.btn-outline-primary').insertAfter(`#category-tabs .nav-item:last-child`);
+
+                        // 确保按钮显示
+                        $('.btn-outline-primary').show();
+
+                        $('.tab-input').each(function () {
+                            adjustWidth(this);
+                            $(this).on('input', function () {
+                                adjustWidth(this);
+                            });
+                        });
+
+
+                    })
+                    .catch(error => console.log('Error fetching data:', error));
 
             }
 
-
-
-
-
-
-            $("#file-upload").on("change", function(e){
-                const file = e.target.files[0];
+            loadRestProduct();
+            $(".btn-confirm").on("click", function () {
+                const file = $("#file-upload")[0].files[0];
+                if (!file) {
+                    alert("請選擇檔案！");
+                    return;
+                }
                 const formData = new FormData();
                 formData.append("file", file);
-                console.log(file);
-                
-                fetch("rest/productcategory/csvFile",{
+                // console.log(file);
+
+                fetch("rest/productcategory/csvFile", {
                     method: "Post",
                     body: formData
                 })
-                .then(res => res.json())
-                .then(response => {
-                    console.log(response);
+                    .then(res => res.json())
+                    .then(response => {
+                        // console.log(response);
 
-                    if(response.code==200){
-                        alert("上傳成功！");
-                    }else{
-                        alert("上傳失敗");
+                        if (response.code == 200) {
+                            alert("上傳成功！");
+                            window.location.reload();
+                        } else {
+                            alert("上傳失敗");
 
-                    }
-                })
-                .catch(error => console.error("上傳錯誤：", response.msg));
+                        }
+                    })
+                    .catch(error => console.error("上傳錯誤：", response.msg));
             })
-
-
-            function loadBatchDataToSingleUpload(menuItem){
-                const categoryTabs = $("#category-tabs");
-                const tabContents = $(".tab-content");
-                categoryTabs.innerHtml = "";
-                tabContents.innerHtml
-                
-            }
-
-
-
 
             // 動態調整輸入框寬度
             function adjustWidth(input) {
@@ -499,8 +587,38 @@
                 });
             });
 
+
+            // 切換按鈕顯示（單品/批量上傳）
+            $('.single-upload-tab').on('click', function () {
+                $('.single-upload-btn').removeClass('d-none');
+                $('.batch-upload-btn').addClass('d-none');
+            });
+
+            $('.batch-upload-tab').on('click', function () {
+                $('.batch-upload-btn').removeClass('d-none');
+                $('.single-upload-btn').addClass('d-none');
+            });
+
+            // 批量上傳文件變更樣式
+            $('#file-upload').on('change', function (e) {
+                const fileName = e.target.files[0]?.name || '';
+                if (fileName) {
+                    $('#upload-status').removeClass('d-none').text(`已上傳: ${fileName}`);
+                    $('.upload-area').addClass('bg-light border-success').removeClass('bg-white');
+                }
+            });
+
+            // 清空檔案
+            $('.batch-upload-btn.btn-danger').on('click', function () {
+                $('#file-upload').val(''); // 清空文件
+                $('#upload-status').addClass('d-none').text('');
+                $('.upload-area').removeClass('bg-light border-success').addClass('bg-white');
+            });
+
+
+
             // 動態新增分類
-            $('.btn-outline-primary').click(function () {
+            $('.add-category-btn .btn-outline-primary').click(function () {
                 const categoryCount = $('#category-tabs .nav-item').length;
                 const newCategoryId = `category${categoryCount}`;
 
@@ -517,25 +635,35 @@
                 <div class="tab-pane fade" id="${newCategoryId}">
                     <div class="menu-item mb-3 d-flex align-items-start">
                         <label class="me-3">
-                            <img src="https://via.placeholder.com/150" alt="餐點圖片" class="image-upload-preview">
+                            <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
                             <input type="file" accept="image/*" class="d-none image-upload">
                         </label>
                         <div>
-                            <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
-                            <input type="number" class="form-control mb-2" style="width: 200px;" placeholder="價格">
-                            <textarea class="form-control mb-2" style="width: 500px;" placeholder="描述"></textarea>
+                            <div class="d-flex align-items-center" style="gap: 210px;">
+                                <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <select class="form-control mb-2" style="width: 90px;">
+                                    <option value="available">供應中</option>
+                                    <option value="sold-out">已售完</option>
+                                    <option value="discontinued">停售</option>
+                                </select>
+                            </div>
+                            
+                            <input type="number" class="form-control mb-2" style="width: 200px;"
+                                placeholder="價格">
+                            <textarea class="form-control mb-2" style="width: 500px;"
+                                placeholder="描述"></textarea>
+
                         </div>
                         <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
                     </div>
                     <hr>
-                    <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
-
+                    
                 </div>
                 `;
 
                 // 插入新分類標籤和內容
                 $('#category-tabs').append(newCategoryTab);
-                $('.tab-content').append(newCategoryContent);
+                $('#product-tab-content').append(newCategoryContent);
 
                 // 初始化新標籤的輸入框寬度
                 const newInput = $(`#category-tabs .nav-item:last-child .tab-input`);
@@ -553,12 +681,12 @@
             obj.product_cat_id = 1
             obj["product_list"] = []
             let product = {
-                "productNmae":"ddd"
+                "productNmae": "ddd"
             }
             obj["product_list"].push(product)
             objBiiger.data.push(obj)
-            console.log(objBiiger)
-            
+            // console.log(objBiiger)
+
 
             // 刪除分類
             $(document).on('click', '.delete-category', function () {
@@ -572,13 +700,24 @@
                 const newItem = `
                 <div class="menu-item mb-3 d-flex align-items-start">
                     <label class="me-3">
-                        <img src="https://via.placeholder.com/150" alt="餐點圖片" class="image-upload-preview">
+                        <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
                         <input type="file" accept="image/*" class="d-none image-upload">
                     </label>
                     <div>
-                        <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
-                        <input type="number" class="form-control mb-2" style="width: 200px;" placeholder="價格">
-                        <textarea class="form-control mb-2" style="width: 500px;" placeholder="描述"></textarea>
+                        <div class="d-flex align-items-center" style="gap: 210px;">
+                            <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                            <select class="form-control mb-2" style="width: 90px;">
+                                <option value="available">供應中</option>
+                                <option value="sold-out">已售完</option>
+                                <option value="discontinued">停售</option>
+                            </select>
+                        </div>
+                        
+                        <input type="number" class="form-control mb-2" style="width: 200px;"
+                            placeholder="價格">
+                        <textarea class="form-control mb-2" style="width: 500px;"
+                            placeholder="描述"></textarea>
+
                     </div>
                     <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
                 </div>
