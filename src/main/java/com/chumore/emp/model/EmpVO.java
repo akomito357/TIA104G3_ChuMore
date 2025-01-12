@@ -1,5 +1,7 @@
 package com.chumore.emp.model;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -7,134 +9,206 @@ import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "emp")
-public class EmpVO implements java.io.Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "emp_id", nullable = false)
-    private Integer empId;
+public class EmpVO implements Serializable {
+   private static final long serialVersionUID = 1L;
 
-    @Column(name = "emp_name", nullable = false, length = 255)
-    @NotEmpty(message = "員工姓名: 請勿空白")
-    @Size(min = 2, max = 255, message = "員工姓名: 長度需要在2到255個字元之間")
-    @Pattern(regexp = "^[\\u4e00-\\u9fa5a-zA-Z\\s]+$", message = "員工姓名: 只能包含中文、英文字母和空格")
-    private String empName;
+   @Id //PK
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "emp_id")
+   private Integer empId;
+   
+   //員工姓名，不可為空，長度限制50
+   @Column(name = "emp_name", nullable = false, length = 50)
+   @NotEmpty(message = "員工姓名: 請勿空白")
+   @Pattern(regexp = "^[\\u4e00-\\u9fa5]{2,50}$", message = "員工姓名: 只能是中文字且長度必需在2到50之間")
+   private String empName;
 
-    @Column(name = "emp_account", nullable = false, length = 50, unique = true)
-    @NotEmpty(message = "帳號: 請勿空白")
-    @Size(min = 6, max = 50, message = "帳號: 長度需要在6到50個字元之間")
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "帳號: 只能包含英文字母、數字、點、底線和連字號")
-    private String empAccount;
+   //員工帳號，不可為空，長度限制50，不可與他人重複
+   @Column(name = "emp_account", nullable = false, length = 50, unique = true)
+   @NotEmpty(message = "帳號: 請勿空白")
+   @Pattern(regexp = "^[a-zA-Z0-9]{6,50}$", message = "帳號: 只能是英文字母和數字的組合，且長度必需在6到50之間")
+   private String empAccount;
+   
+   //員工密碼，不可為空，長度限制60
+   @Column(name = "emp_password", nullable = false, length = 60)
+   @NotEmpty(message = "密碼: 請勿空白")
+   @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "密碼: 至少8個字符，至少包含一個字母和一個數字")
+   private String empPassword;
+   
+   //員工手機，不可為空，長度20，不可與他人重複
+   @Column(name = "emp_phone", nullable = false, length = 20, unique = true)
+   @NotEmpty(message = "手機號碼: 請勿空白")
+   @Pattern(regexp = "^09\\d{8}$", message = "手機號碼: 請輸入正確的台灣手機號碼格式")
+   private String empPhone;
+   
+   //員工信箱，不可為空，長度100，不可與他人重複
+   @Column(name = "emp_email", nullable = false, length = 100, unique = true)
+   @NotEmpty(message = "Email: 請勿空白")
+   @Email(message = "Email: 請輸入正確的email格式")
+   private String empEmail;
+   
+   //員工帳號狀態，不可為空，型別為TINYINT，0為停用，1為啟用，預設為1
+   @Column(name = "emp_account_status", nullable = false, columnDefinition = "TINYINT")
+   @NotNull(message = "帳號狀態: 請勿空白")
+   @Min(value = 0, message = "帳號狀態: 必須為0或1")
+   @Max(value = 1, message = "帳號狀態: 必須為0或1")
+   private Integer empAccountStatus;
+   
+   //員工權限角色，不可為空，型別為TINYINT，0為一般員工，1為管理員，預設為0
+   @Column(name = "emp_role", nullable = false, columnDefinition = "TINYINT")
+   @NotNull(message = "權限角色: 請勿空白")
+   @Min(value = 0, message = "權限角色: 必須為0或1")
+   @Max(value = 1, message = "權限角色: 必須為0或1")
+   private Integer empRole;
+   
+   //員工到職日，不可為空
+   @Column(name = "emp_hire_date", nullable = false)
+   @NotNull(message = "到職日: 請勿空白")
+   @Past(message = "到職日: 不能是未來日期")
+   private LocalDate empHireDate;
+   
+   //員工離職日，可為空
+   @Column(name = "emp_resign_date")
+   private LocalDate empResignDate;
+   
+   //帳號建立時間，不可為空，不可修改
+   @Column(name = "emp_create_time", nullable = false, updatable = false)
+   private LocalDateTime empCreateTime;
+   
+   //帳號建立時間，不可為空
+   @Column(name = "emp_update_time", nullable = false)
+   private LocalDateTime empUpdateTime;
 
-    @Column(name = "emp_password", nullable = false, length = 50)
-    @NotEmpty(message = "密碼: 請勿空白")
-    @Size(min = 8, max = 50, message = "密碼: 長度需要在8到50個字元之間")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]+$", 
-            message = "密碼: 必須包含至少一個字母和一個數字")
-    private String empPassword;
+   //無參數建構子
+   public EmpVO() {
+   }
 
-    @Column(name = "emp_account_status", nullable = false, columnDefinition = "TINYINT")
-    @NotNull(message = "帳號狀態: 請勿空白")
-    @Min(value = 0, message = "帳號狀態: 必須為0或1")
-    @Max(value = 1, message = "帳號狀態: 必須為0或1")
-    private Integer empAccountStatus;
+   // 在資料新增前執行
+   @PrePersist
+   protected void onCreate() {
+       empCreateTime = LocalDateTime.now();
+       empUpdateTime = LocalDateTime.now();
+   }
 
-    @Column(name = "emp_create_time", nullable = false, updatable = false)
-    @NotNull(message = "建立時間: 請勿空白")
-    @Past(message = "建立時間: 不能是未來時間")
-    private LocalDateTime empCreateTime;
+   // 在資料更新前執行
+   @PreUpdate
+   protected void onUpdate() {
+       empUpdateTime = LocalDateTime.now();
+   }
 
-    @Column(name = "emp_update_time", nullable = false)
-    @NotNull(message = "更新時間: 請勿空白")
-    private LocalDateTime empUpdateTime;
-    // 無參數建構子
-    public EmpVO() {
-    }
+   // Getters and Setters
+   public Integer getEmpId() {
+       return empId;
+   }
 
-    // 全參數建構子
-    public EmpVO(Integer empId, String empName, String empAccount, String empPassword, Integer empAccountStatus,
-                 LocalDateTime empCreateTime, LocalDateTime empUpdateTime) {
-        this.empId = empId;
-        this.empName = empName;
-        this.empAccount = empAccount;
-        this.empPassword = empPassword;
-        this.empAccountStatus = empAccountStatus;
-        this.empCreateTime = empCreateTime;
-        this.empUpdateTime = empUpdateTime;
-    }
+   public void setEmpId(Integer empId) {
+       this.empId = empId;
+   }
 
-    // Getter跟Setter
-    public Integer getEmpId() {
-        return empId;
-    }
+   public String getEmpName() {
+       return empName;
+   }
 
-    public void setEmpId(Integer empId) {
-        this.empId = empId;
-    }
+   public void setEmpName(String empName) {
+       this.empName = empName;
+   }
 
-    public String getEmpName() {
-        return empName;
-    }
+   public String getEmpAccount() {
+       return empAccount;
+   }
 
-    public void setEmpName(String empName) {
-        this.empName = empName;
-    }
+   public void setEmpAccount(String empAccount) {
+       this.empAccount = empAccount;
+   }
 
-    public String getEmpAccount() {
-        return empAccount;
-    }
+   public String getEmpPassword() {
+       return empPassword;
+   }
 
-    public void setEmpAccount(String empAccount) {
-        this.empAccount = empAccount;
-    }
+   public void setEmpPassword(String empPassword) {
+       this.empPassword = empPassword;
+   }
 
-    public String getEmpPassword() {
-        return empPassword;
-    }
+   public String getEmpPhone() {
+       return empPhone;
+   }
 
-    public void setEmpPassword(String empPassword) {
-        this.empPassword = empPassword;
-    }
+   public void setEmpPhone(String empPhone) {
+       this.empPhone = empPhone;
+   }
 
-    public Integer getEmpAccountStatus() {
-        return empAccountStatus;
-    }
+   public String getEmpEmail() {
+       return empEmail;
+   }
 
-    public void setEmpAccountStatus(Integer empAccountStatus) {
-        this.empAccountStatus = empAccountStatus;
-    }
+   public void setEmpEmail(String empEmail) {
+       this.empEmail = empEmail;
+   }
 
-    public LocalDateTime getEmpCreateTime() {
-        return empCreateTime;
-    }
+   public Integer getEmpAccountStatus() {
+       return empAccountStatus;
+   }
 
-    public void setEmpCreateTime(LocalDateTime empCreateTime) {
-        this.empCreateTime = empCreateTime;
-    }
+   public void setEmpAccountStatus(Integer empAccountStatus) {
+       this.empAccountStatus = empAccountStatus;
+   }
 
-    public LocalDateTime getEmpUpdateTime() {
-        return empUpdateTime;
-    }
+   public Integer getEmpRole() {
+       return empRole;
+   }
 
-    public void setEmpUpdateTime(LocalDateTime empUpdateTime) {
-        this.empUpdateTime = empUpdateTime;
-    }
+   public void setEmpRole(Integer empRole) {
+       this.empRole = empRole;
+   }
 
-    // 每次更新時自動設置 empUpdateTime 為當前時間
-    @PreUpdate
-    public void onUpdate() {
-        this.empUpdateTime = LocalDateTime.now();
-    }
+   public LocalDate getEmpHireDate() {
+       return empHireDate;
+   }
 
-    @Override
-    public String toString() {
-        return "EmpVO{" +
-                "empId=" + empId +
-                ", empName='" + empName + '\'' +
-                ", empAccount='" + empAccount + '\'' +
-                ", empPassword='" + empPassword + '\'' +
-                ", empAccountStatus=" + empAccountStatus +
-                ", empCreateTime=" + empCreateTime +
-                ", empUpdateTime=" + empUpdateTime +
-                '}';
-    }
+   public void setEmpHireDate(LocalDate empHireDate) {
+       this.empHireDate = empHireDate;
+   }
+
+   public LocalDate getEmpResignDate() {
+       return empResignDate;
+   }
+
+   public void setEmpResignDate(LocalDate empResignDate) {
+       this.empResignDate = empResignDate;
+   }
+
+   public LocalDateTime getEmpCreateTime() {
+       return empCreateTime;
+   }
+
+   public void setEmpCreateTime(LocalDateTime empCreateTime) {
+       this.empCreateTime = empCreateTime;
+   }
+
+   public LocalDateTime getEmpUpdateTime() {
+       return empUpdateTime;
+   }
+
+   public void setEmpUpdateTime(LocalDateTime empUpdateTime) {
+       this.empUpdateTime = empUpdateTime;
+   }
+
+   // toString 方法
+   @Override
+   public String toString() {
+       return "EmpVO{" +
+               "empId=" + empId +
+               ", empName='" + empName + '\'' +
+               ", empAccount='" + empAccount + '\'' +
+               ", empPassword='" + empPassword + '\'' +
+               ", empPhone='" + empPhone + '\'' +
+               ", empEmail='" + empEmail + '\'' +
+               ", empAccountStatus=" + empAccountStatus +
+               ", empRole=" + empRole +
+               ", empHireDate=" + empHireDate +
+               ", empResignDate=" + empResignDate +
+               ", empCreateTime=" + empCreateTime +
+               ", empUpdateTime=" + empUpdateTime +
+               '}';
+   }
 }

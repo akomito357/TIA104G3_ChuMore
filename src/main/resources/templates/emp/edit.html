@@ -1,45 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>編輯員工</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<head th:replace="layout :: head('編輯個人資料')">
 </head>
 <body>
+    <nav th:replace="layout :: navbar"></nav>
+
     <div class="container mt-4">
-        <h2>編輯員工</h2>
-        
-        <form th:action="@{/emp/edit/{id}(id=${empVO.empId})}" th:object="${empVO}" method="post">
-            <input type="hidden" th:field="*{empId}">
-            
-            <div class="form-group">
-                <label>姓名</label>
-                <input type="text" class="form-control" th:field="*{empName}">
-                <span class="text-danger" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></span>
-            </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">編輯個人資料</h4>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- 錯誤訊息提示 -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                            <span th:text="${error}"></span>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
 
-            <div class="form-group">
-                <label>帳號</label>
-                <input type="text" class="form-control" th:field="*{empAccount}" readonly>
-                <span class="text-danger" th:if="${#fields.hasErrors('empAccount')}" th:errors="*{empAccount}"></span>
-            </div>
+                      
+                        <form th:action="${#request.contextPath} + '/emp/edit'" method="post">
+                        <!-- 因為目前禁用CSRF 所以先註解起來
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        -->
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">姓名：</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control-plaintext" 
+                                           th:value="${empInfo.empName}" readonly>
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label>密碼（留空表示不修改）</label>
-                <input type="password" class="form-control" name="newPassword">
-            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">帳號：</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control-plaintext" 
+                                           th:value="${empInfo.empAccount}" readonly>
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label>帳號狀態</label>
-                <select class="form-control" th:field="*{empAccountStatus}">
-                    <option value="1">啟用</option>
-                    <option value="0">停用</option>
-                </select>
-                <span class="text-danger" th:if="${#fields.hasErrors('empAccountStatus')}" th:errors="*{empAccountStatus}"></span>
-            </div>
+                            <div class="form-group row">
+                                <label for="empPhone" class="col-sm-3 col-form-label">手機：</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="empPhone" 
+                                           name="empPhone" th:value="${empInfo.empPhone}" required>
+                                </div>
+                            </div>
 
-            <button type="submit" class="btn btn-primary">更新</button>
-            <a th:href="@{/emp/list}" class="btn btn-secondary">返回</a>
-        </form>
+                            <div class="form-group row">
+                                <label for="empEmail" class="col-sm-3 col-form-label">Email：</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" id="empEmail" 
+                                           name="empEmail" th:value="${empInfo.empEmail}" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mt-4">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-primary">儲存變更</button>
+                                    <a th:href="@{/emp/profile}" class="btn btn-secondary ml-2">取消</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div th:replace="layout :: footer"></div>
+    <div th:replace="layout :: scripts"></div>
 </body>
 </html>

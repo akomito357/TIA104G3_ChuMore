@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('員工列表管理')">
+</head>
+<body>
+    <nav th:replace="layout :: navbar"></nav>
+
+    <div class="container mt-4">
+        <!-- 頁面標題和新增按鈕 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>員工列表管理</h2>
+            <a th:href="@{/emp/admin/add}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> 新增員工
+            </a>
+        </div>
+
+        <!-- 成功訊息提示 -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${message}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <!-- 員工列表表格 -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>帳號</th>
+                        <th>手機</th>
+                        <th>Email</th>
+                        <th>帳號狀態</th>
+                        <th>權限角色</th>
+                        <th>到職日期</th>
+                        <th>離職日期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="emp : ${emps}">
+                        <td th:text="${emp.empId}"></td>
+                        <td th:text="${emp.empName}"></td>
+                        <td th:text="${emp.empAccount}"></td>
+                        <td th:text="${emp.empPhone}"></td>
+                        <td th:text="${emp.empEmail}"></td>
+                        <td>
+                            <span th:if="${emp.empAccountStatus == 1}" class="badge badge-success">啟用</span>
+                            <span th:if="${emp.empAccountStatus == 0}" class="badge badge-danger">停用</span>
+                        </td>
+                        <td>
+                            <span th:if="${emp.empRole == 1}" class="badge badge-primary">管理員</span>
+                            <span th:if="${emp.empRole == 0}" class="badge badge-info">一般員工</span>
+                        </td>
+                        <td th:text="${#temporals.format(emp.empHireDate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${emp.empResignDate != null ? #temporals.format(emp.empResignDate, 'yyyy-MM-dd') : '-'}"></td>
+                        <td>
+                            <a th:href="@{/emp/admin/edit/{id}(id=${emp.empId})}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> 編輯
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+    <div th:replace="layout :: scripts"></div>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>
