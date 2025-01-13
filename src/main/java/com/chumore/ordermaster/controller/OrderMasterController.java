@@ -104,6 +104,7 @@ public class OrderMasterController {
 		
 		session.setAttribute("restId", restId);
 		session.setAttribute("tableNumber", tableNumber);
+		
 
 
 		if (session.getAttribute("orderId") == null) {
