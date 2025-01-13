@@ -1,9 +1,12 @@
 package com.chumore.rest.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +38,37 @@ public class RestServiceImpl implements RestService{
 		repository.save(rest);
 	}
 
-	@Override
-	public void updateRest(RestVO rest) {
-		repository.save(rest);
-	}
+	 @Override
+	    @Transactional
+	    public void updateRest(RestVO rest) {
+	        try {
+	            // 獲取原有資料
+	            RestVO existingRest = repository.findById(rest.getRestId())
+	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
+
+	            // 設置不可修改的欄位
+	            rest.setMerchantPassword(existingRest.getMerchantPassword());
+	            rest.setMerchantIdNumber(existingRest.getMerchantIdNumber());
+	            rest.setRegisterDatetime(existingRest.getRegisterDatetime());
+	            rest.setCreatedDatetime(existingRest.getCreatedDatetime());
+	            rest.setWeeklyBizDays(existingRest.getWeeklyBizDays());
+	            rest.setBusinessHours(existingRest.getBusinessHours());
+	            rest.setOrderTableCount(existingRest.getOrderTableCount());
+	            rest.setRestStars(existingRest.getRestStars());
+	            rest.setRestReviewers(existingRest.getRestReviewers());
+	            rest.setApprovalStatus(existingRest.getApprovalStatus());
+
+	            // 設置更新時間
+	            rest.setUpdatedDatetime(LocalDateTime.now());
+
+	            // 保存更新
+	            repository.saveAndFlush(rest);
+
+	        } catch (Exception e) {
+	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
+	        }
+	    }
+	    
 
 	@Override
 	public RestVO getOneById(Integer restId) {
