@@ -4,7 +4,6 @@ console.log(orderMaster);
 let memberPhoneVerify = {};
 
 
-
 async function getOrderMaster(){
     let url = "http://localhost:8080/orders/findOneByOrderId";
     // let order = {
@@ -76,9 +75,11 @@ document.getElementById("memberPhoneForm").addEventListener("submit", function (
 });
 
 
+
 async function main(){
     await getOrderMaster();
 }
 
 verifyPhoneNumber();
+
 main();
