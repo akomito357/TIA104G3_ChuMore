@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
+import com.chumore.productcategory.model.MenuUploadReq;
 import com.chumore.productcategory.model.ProductCategoryVO;
 import com.chumore.productcategory.model.ProductCategory_Service;
 import com.chumore.productcategory.res.ProductCategoryResponse;
@@ -169,6 +170,40 @@ public class ProductCategoryController {
 			response.setMsg("檔案處理失敗: " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
+	}
+	
+	@PostMapping("modifyProduct")
+	public ResponseEntity<ProductCategoryResponse> modifyProduct(@RequestBody MenuUploadReq req){
+		Object restNum = session.getAttribute("restId");
+		Integer restId = null;
+		if (restNum == null) {
+			restId = 2001;
+		} else {
+			RestVO rest = (RestVO) restNum;
+			restId = rest.getRestId();
+		}
+		
+		for(ProductCategoryVO category : req.getProductCatList()) {
+			if(category.getProductCategoryId()==null) {
+				productCategorySvc.addProductCategory(category);
+			}else {
+				productCategorySvc.updateProductCategory(category);
+			}
+//			for(ProductVO product : category.getProductList()) {
+//				if(product.getProductId()==null) {
+//					productCategorySvc.addProductCategory(category);
+//				}
+//				else {
+//					productCategorySvc.updateProductCategory(category);
+//				}
+//			}
+		}
+		ProductCategoryResponse response = new ProductCategoryResponse();
+		response.setCode(200);
+		response.setMsg("success");
+		return ResponseEntity.ok(response);
+		
+		
 	}
 
 }
