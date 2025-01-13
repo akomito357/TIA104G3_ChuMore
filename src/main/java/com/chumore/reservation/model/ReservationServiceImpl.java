@@ -20,6 +20,17 @@ public class ReservationServiceImpl implements ReservationService{
     @Autowired
     private ReservationDAO reservationDAO;
 
+
+    @Transactional(readOnly = true)
+    @Override
+    public ReservationVO findReservationById(int reservationId){
+        try{
+            return reservationDAO.findById(reservationId);
+        }catch(ResourceNotFoundException e){
+            throw e;
+        }
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<ReservationVO> findReservationsByCompositeQuery(Map<String, String> params) {
@@ -91,11 +102,20 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
+    public ReservationVO recoverReservation(int reservationId) {
+        ReservationVO reservation = reservationDAO.findById(reservationId);
+        reservation.setReservationStatus(1);
+        return reservationDAO.updateReservation(reservation);
+    }
+
+    @Override
     public ReservationVO processCheckIn(int reservationId) {
         ReservationVO reservation = reservationDAO.findById(reservationId);
         reservation.setReservationStatus(2); // 更新狀態為已報到
         return reservationDAO.updateReservation(reservation);
     }
+
+
 
     @Override
     public ReservationVO addReservation(ReservationVO reservation) {
@@ -108,6 +128,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         return reservation;
     }
+
 
 
 
