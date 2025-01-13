@@ -1,7 +1,9 @@
 package com.chumore.review.model;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,8 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.reviewimg.model.ReviewImageService;
+import com.chumore.reviewimg.model.ReviewImageVO;
 
 @Service
 public class ReviewService {
@@ -24,10 +29,41 @@ public class ReviewService {
 
     @Transactional
     public ReviewVO createReview(ReviewVO review) {
-        validateNewReview(review);
+//        validateNewReview(review);
+    	
         review.setReviewDatetime(new Timestamp(System.currentTimeMillis()));
         return reviewRepository.save(review);
     }
+    
+    @Transactional
+    public ReviewVO createReviewWithImg(ReviewVO review, MultipartFile... reviewImgs) throws IOException {
+//    	review.setReviewDatetime(new Timestamp(System.currentTimeMillis()));
+    	review = createReview(review);
+    	System.out.println("creat with img:" + review);
+    	
+    	if (reviewImgs.length != 0) {
+    		System.out.println("reviewImgs" + reviewImgs);
+    		List<ReviewImageVO> imgList = new ArrayList<>();
+    		for (MultipartFile mutipartFile : reviewImgs) {
+    			if(!mutipartFile.isEmpty()) {    				
+    				byte[] buf = mutipartFile.getBytes();
+    				System.out.println("buf" + buf);
+    				
+    				ReviewImageVO img = new ReviewImageVO();
+    				img.setReviewImage(buf);
+    				img.setReview(review);
+    				
+    				reviewImageService.addImg(img);
+    				imgList.add(img);
+    			}
+    		}
+    		
+    		review.setReviewImages(imgList);
+    	}
+    	
+        return review;
+    }
+    
 
     @Transactional
     public ReviewVO updateReview(Integer reviewId, ReviewVO updateRequest, Integer memberId) {
@@ -66,7 +102,8 @@ public class ReviewService {
         }
         
         reviewImageService.deleteAllByReviewId(reviewId);
-        reviewRepository.deleteById(reviewId);
+//      reviewRepository.deleteById(reviewId);
+        reviewRepository.deleteByReviewId(reviewId);
     }
 
     public Page<ReviewVO> getRestaurantReviews(Integer restId, Pageable pageable) {
@@ -78,7 +115,7 @@ public class ReviewService {
 
     public List<ReviewVO> getMemberReviews(Integer memberId) {
         if (memberId == null) {
-            throw new RuntimeException("會員ID不能為空");
+            throw new ResourceNotFoundException("會員ID不能為空");
         }
         return reviewRepository.findByMemberIdOrderByReviewDatetimeDesc(memberId);
     }
@@ -137,5 +174,13 @@ public class ReviewService {
     
     public ReviewVO getReviewByOrderId(Integer orderId) {
     	return reviewRepository.getReviewByOrderId(orderId);
+    }
+    
+    public ReviewVO getReviewById(Integer reviewId) {
+    	ReviewVO review = reviewRepository.findById(reviewId).orElse(null);
+    	if (review == null) {
+    		throw new ResourceNotFoundException("review id = " + reviewId + "not found.");
+    	}
+    	return review;
     }
 }

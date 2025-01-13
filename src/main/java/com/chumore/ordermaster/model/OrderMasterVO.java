@@ -3,6 +3,7 @@ package com.chumore.ordermaster.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -24,10 +25,14 @@ import com.chumore.rest.model.RestVO;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.usepoints.model.UsePointsVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "order_master")
 public class OrderMasterVO implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,6 +84,7 @@ public class OrderMasterVO implements Serializable{
 	private Set<OrderItemVO> orderItems;
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+	@JsonManagedReference("order-review")
 	private Set<ReviewVO> reviews;
 	
 	
@@ -201,6 +207,10 @@ public class OrderMasterVO implements Serializable{
 	
 	public Integer getRestId() {
 		return rest.getRestId();
+	}
+	
+	public String getFormattedServedDatetime() {
+		return getServedDatetime().format(FORMATTER);
 	}
 
 //	public void setRestName(String restName) {

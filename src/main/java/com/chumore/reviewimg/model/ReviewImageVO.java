@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.chumore.review.model.ReviewVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "review_image")
@@ -37,6 +38,7 @@ public class ReviewImageVO implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "review_id")
+    @JsonBackReference("review-reviewImg")
     private ReviewVO review;
 
     // Getters and Setters

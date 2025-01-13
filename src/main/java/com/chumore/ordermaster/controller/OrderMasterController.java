@@ -100,9 +100,11 @@ public class OrderMasterController {
 			throw new OrderTableNotFoundException(
 					"OrderTable which restId = " + restId + " and tableNumber = " + tableNumber + " is not found.");
 		}
+
 		
 		session.setAttribute("restId", restId);
 		session.setAttribute("tableNumber", tableNumber);
+
 
 		if (session.getAttribute("orderId") == null) {
 			orderMaster = new OrderMasterVO();
