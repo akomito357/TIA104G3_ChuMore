@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新增評論</title>
+    <title>修改評論</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -136,7 +136,7 @@
             height: 100%;
             flex: 0 1 auto;
         }
-        button#submitReview{
+        button#updateReview{
             background-color: #feaf39;
             color: whitesmoke;
         }
@@ -168,7 +168,7 @@
                 </button>
             </div>
             <div class="page-title">
-                <h2 class="mb-4">新增評論</h2>
+                <h2 class="mb-4">修改評論</h2>
             </div>
 
             <!-- 餐廳資訊區 -->
@@ -178,8 +178,8 @@
                 </div>
                 
                 <div class="restaurant-text-info">
-                    <h2 th:text="${orderMaster.rest.restName}">阿美餐廳</h2>
-                    <p class="text-muted"><span th:text="${orderMaster.rest.restCity}">台北市</span><span th:text="${orderMaster.rest.restDist}">大安區</span><span th:text="${orderMaster.rest.restAddress}">信義路上</span></p>
+                    <h2 th:text="${review.rest.restName}">阿美餐廳</h2>
+                    <p class="text-muted"><span th:text="${review.rest.restCity}">台北市</span><span th:text="${review.rest.restDist}">大安區</span><span th:text="${review.rest.restAddress}">信義路上</span></p>
                 </div>
             </div>
 
@@ -188,27 +188,27 @@
                 <p>
                     <i class="fas fa-calendar-alt info-icon"></i>
                     <span class="info-label">用餐日期：</span>
-                    <span th:text="${#temporals.format(orderMaster.servedDatetime, 'yyyy/MM/dd HH:mm')}">2024/01/15 17:00</span>
+                    <span th:text="${#temporals.format(review.orderMaster.servedDatetime, 'yyyy/MM/dd HH:mm')}">2024/01/15 17:00</span>
                 </p>
                 <p>
                     <i class="fas fa-dollar-sign info-icon"></i>
                     <span class="info-label">用餐金額：</span>
-                    <span th:text="'$' + ${#numbers.formatDecimal(orderMaster.totalPrice, 1, 0)}">$2,000</span>
+                    <span th:text="'$' + ${#numbers.formatDecimal(review.orderMaster.totalPrice, 1, 0)}">$2,000</span>
                 </p>
             </div>
 
-            <form id="reviewAddForm" th:object="${review}" th:action="@{insert}" method="post" enctype="multipart/form-data">
+            <form th:object="${review}" th:action="@{update}" method="post" enctype="multipart/form-data">
                 <!-- 評分區 -->
                 <div class="mb-4">
                     <label class="form-label">您的整體評分：</label>
                     <span class="error" id="ratingError" th:if="${#fields.hasErrors('reviewRating')}" th:errors="*{reviewRating}"></span>
-                    <input readonly type="hidden" th:field="*{reviewRating}" class="rating">
+                    <input readonly type="text" th:field="*{reviewRating}" class="rating">
                     <div class="star-rating-container">
-                        <span class="star-rating" data-rating="1"><i class="far fa-star"></i></span>
-                        <span class="star-rating" data-rating="2"><i class="far fa-star"></i></span>
-                        <span class="star-rating" data-rating="3"><i class="far fa-star"></i></span>
-                        <span class="star-rating" data-rating="4"><i class="far fa-star"></i></span>
-                        <span class="star-rating" data-rating="5"><i class="far fa-star"></i></span>
+                        <span class="star-rating" data-rating="1" th:classappend="${review.reviewRating >= 1} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 1} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="2" th:classappend="${review.reviewRating >= 2} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 2} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="3" th:classappend="${review.reviewRating >= 3} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 3} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="4" th:classappend="${review.reviewRating >= 4} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 4} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="5" th:classappend="${review.reviewRating >= 5} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 5} ? 'fas' : 'far'"></i></span>
                     </div>
                 </div>
 
@@ -236,9 +236,14 @@
                         </label>
                     </div>
                     <div id="photoViewGrid" class="review-img-grid mt-3 photo-preview-grid">
-                        <!-- <th:block th:each="img : ${reviewImgs}" th:if="${not #lists.isEmpty(reviewImgs)}">
-                            <img th:src="img">
-                        </th:block> -->
+                        <th:block th:if="${review.reviewImages} != null" th:each="img : ${review.reviewImages}">
+                            <div class="photo-preview-item">
+                                <img th:src="@{/DBGifReader/review} + '?reviewImgId=' + ${img.reviewImgId}" alt="預覽圖" currentUpdated="false">
+                                <button class="photo-delete-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </th:block>
                     </div>
                     <!-- <small class="form-text text-muted">
                         支援 JPG、PNG 格式，單檔限制 5MB
@@ -251,8 +256,7 @@
                         請選擇您最喜歡的一道料理
                     </label><br>
                     <select class="form-select" th:field="*{product}">
-                        <!-- <option value='0'>請選擇您最喜歡的一道料理</option> -->
-                        <option th:each="productVO : ${productListData}" th:value="${productVO.productId}" th:text="${productVO.productName}"></option>
+                        <option th:each="productVO : ${productListData}" th:value="${productVO.productId}" th:text="${productVO.productName}" th:select="${productVO.productId == review.product.productId}"></option>
                     </select>
                 </div>
 
@@ -277,7 +281,7 @@
 
                 <!-- 送出評論按鈕 -->
                 <div class="text-center">
-                    <button id="submitReview" class="btn btn-warning btn-lg w-75" type="submit">
+                    <button id="updateReview" class="btn btn-warning btn-lg w-75" type="submit">
                         送出評論
                     </button>
                 </div>
@@ -289,12 +293,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:src="@{/js/memberReviewAdd.js}"></script>
-    <script src="/static/js/memberReviewAdd.js"></script>
+    <script th:src="@{/js/memberReviewUpdate.js}"></script>
+    <script src="/static/js/memberReviewUpdate.js"></script>
     <script th:inline="javascript">
-        populateImageGrid(/*[[${orderMaster.rest.restId}]]*/);
-        // console.log(/*[[${productListData}]]*/);
-        // console.log(/*[[${orderMaster.rest.restId}]]*/);
+        
 
         
     </script>

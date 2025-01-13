@@ -163,7 +163,7 @@
                 </button>
             </div>
             <div class="page-title">
-                <h2 class="mb-4">查看評論</h2>
+                <h2 class="mb-4">查看評論</h2><input type="hidden" value="${review.reviewId}">
             </div>
 
             <!-- 餐廳資訊區 -->
@@ -213,8 +213,8 @@
 
             <!-- 照片上傳區 -->
             <div class="mb-4">
-                <label class="form-label">新增照片</label>
-                <div id="photoUploadContainer" class="photo-upload-container">
+                <label class="form-label">評論圖片</label>
+                <!-- <div id="photoUploadContainer" class="photo-upload-container">
                     <input 
                         type="file" 
                         id="photoUpload" 
@@ -225,11 +225,11 @@
                     <label for="photoUpload" class="btn btn-outline-secondary">
                         <i class="fas fa-cloud-upload-alt me-2"></i>點擊或拖曳上傳照片
                     </label>
-                </div>
-                <div id="photoPreviewGrid" class="photo-preview-grid mt-3"></div>
-                <small class="form-text text-muted">
+                </div> -->
+                <div id="photoViewGrid" class="review-img-grid mt-3 photo-preview-grid"></div>
+                <!-- <small class="form-text text-muted">
                     支援 JPG、PNG 格式，單檔限制 5MB
-                </small>
+                </small> -->
             </div>
 
             <!-- 推薦料理選擇區 -->
@@ -271,139 +271,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- <script>
-        $(document).ready(function() {
-            // 初始化 CKEditor
-            ClassicEditor
-                .create(document.querySelector('#editor'), {
-                    toolbar: ['heading', '|', 'bold', 'italic', 'underline', 'link', '|', 
-                             'bulletedList', 'numberedList', '|', 'undo', 'redo'],
-                    placeholder: '描述菜色、服務或環境...',
-                    language: 'zh'
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
-            // 星級評分互動
-            let selectedRating = 0;
-            $('.star-rating').hover(
-                function() {
-                    const rating = $(this).data('rating');
-                    $('.star-rating').find('i').removeClass('fas').addClass('far');
-                    $('.star-rating').removeClass('active');
-                    $('.star-rating').each(function() {
-                        if ($(this).data('rating') <= rating) {
-                            $(this).find('i').removeClass('far').addClass('fas');
-                            $(this).addClass('active');
-                        }
-                    });
-                },
-                function() {
-                    if (selectedRating > 0) {
-                        $('.star-rating').find('i').removeClass('fas').addClass('far');
-                        $('.star-rating').removeClass('active');
-                        $('.star-rating').each(function() {
-                            if ($(this).data('rating') <= selectedRating) {
-                                $(this).find('i').removeClass('far').addClass('fas');
-                                $(this).addClass('selected');
-                            }
-                        });
-                    } else {
-                        $('.star-rating').find('i').removeClass('fas').addClass('far');
-                        $('.star-rating').removeClass('active selected');
-                    }
-                }
-            ).click(function() {
-                selectedRating = $(this).data('rating');
-                $('.star-rating').removeClass('selected');
-                $(this).addClass('selected');
-            });
-
-            // 照片上傳功能
-            const photoUploadContainer = $('#photoUploadContainer');
-            const photoUploadInput = $('#photoUpload');
-            const photoPreviewGrid = $('#photoPreviewGrid');
-            let uploadedFiles = [];
-
-            // 拖放事件
-            photoUploadContainer[0].addEventListener('dragover', (e) => {
-                e.preventDefault();
-                photoUploadContainer.addClass('dragover');
-            });
-
-            photoUploadContainer[0].addEventListener('dragleave', () => {
-                photoUploadContainer.removeClass('dragover');
-            });
-
-            photoUploadContainer[0].addEventListener('drop', (e) => {
-                e.preventDefault();
-                photoUploadContainer.removeClass('dragover');
-                handleFileUpload(e.dataTransfer.files);
-            });
-
-            photoUploadInput.on('change', function(e) {
-                handleFileUpload(e.target.files);
-            });
-
-            function handleFileUpload(files) {
-                for (let file of files) {
-                    if (file.type.match('image.*')) {
-                        if (file.size > 5 * 1024 * 1024) {
-                            alert('檔案不可超過 5MB');
-                            continue;
-                        }
-
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const previewItem = $(`
-                                <div class="photo-preview-item">
-                                    <img src="${e.target.result}" alt="預覽圖">
-                                    <button class="photo-delete-btn">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            `);
-                            
-                            previewItem.find('.photo-delete-btn').click(function() {
-                                $(this).closest('.photo-preview-item').remove();
-                            });
-
-                            photoPreviewGrid.append(previewItem);
-                            uploadedFiles.push(file);
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                }
-            }
-
-            // 送出評論驗證
-            $('#submitReview').click(function() {
-                let isValid = true;
-                const requiredFields = [
-                    '#avgCost', 
-                    '#dishSelect'
-                ];
-
-                requiredFields.forEach(field => {
-                    if (!$(field).val()) {
-                        $(field).addClass('is-invalid');
-                        isValid = false;
-                    } else {
-                        $(field).removeClass('is-invalid');
-                    }
-                });
-
-                if (isValid) {
-                    const confirmModal = confirm('確定要送出評論嗎？');
-                    if (confirmModal) {
-                        alert('評論已成功送出！');
-                    }
-                } else {
-                    alert('請確認所有必填欄位！');
-                }
-            });
-        });
-    </script> -->
+    <script th:src="@{/js/memberReviewShow.js}"></script>
+    <script src="/static/js/memberReviewShow.js"></script>
+    <script th:inline="javascript">
+        populateImageGrid(/*[[${review.rest.restId}]]*/);
+        populateRevImageGrid(/*[[${review.reviewId}]]*/);
+        console.log(/*[[${review.reviewId}]]*/);
+    </script>
 </body>
 </html>

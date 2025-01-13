@@ -50,7 +50,7 @@ $(document).ready(function() {
 				orderList.forEach((orderMaster, index) => {
 
 					const [date, time] = orderMaster.servedDatetime.split(" ");
-					const formAction = orderMaster.reviewId ? "/reviews/getReview" : "/reviews/addReview";
+					const formAction = orderMaster.reviewId ? "/member/reviews/getReview" : "/member/reviews/addReview";
 					const btnClass = orderMaster.reviewId ? "btn btn-outline-secondary btn-sm check-review" : "btn btn-primary btn-sm add-review";
 					const btnText = orderMaster.reviewId ? "查看評論" : "進行評論"
 
@@ -540,17 +540,17 @@ function setupEventHandlers() {
 	});
 
 	// Delete button
-	$(document).on('click', '.delete-btn', function() {
-		const reviewId = $(this).closest('.review-card').data('id');
-		showDeleteConfirm(reviewId);
-	});
+	// $(document).on('click', '.delete-btn', function() {
+	// 	const reviewId = $(this).closest('.review-card').data('id');
+	// 	// showDeleteConfirm(reviewId);
+	// });
 
 	// Confirm delete
-	$('#confirmDelete').on('click', function() {
-		const reviewId = $(this).data('reviewId');
-		deleteReview(reviewId);
-		$('#deleteConfirmModal').modal('hide');
-	});
+	// $('#confirmDelete').on('click', function() {
+	// 	const reviewId = $(this).data('reviewId');
+	// 	deleteReview(reviewId);
+	// 	$('#deleteConfirmModal').modal('hide');
+	// });
 }
 
 // Show delete confirmation

@@ -23,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.reservation.model.ReservationVO;
+import com.chumore.review.model.ReviewVO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -73,6 +74,10 @@ public class MemberVO implements Serializable {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonManagedReference("orderMaster-member")
     private Set<OrderMasterVO> orderMasters;
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonManagedReference("member-review")
+    private Set<ReviewVO> reviews;
 
     // Getters and Setters
     public Integer getMemberId() {
@@ -146,4 +151,21 @@ public class MemberVO implements Serializable {
     public void setReservations(Set<ReservationVO> reservations) {
         this.reservations = reservations;
     }
+
+	public Set<OrderMasterVO> getOrderMasters() {
+		return orderMasters;
+	}
+
+	public void setOrderMasters(Set<OrderMasterVO> orderMasters) {
+		this.orderMasters = orderMasters;
+	}
+
+	public Set<ReviewVO> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(Set<ReviewVO> reviews) {
+		this.reviews = reviews;
+	}
+    
 }

@@ -11,13 +11,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chumore.member.model.MemberService;
 import com.chumore.member.model.MemberVO;
 import com.chumore.ordermaster.dto.OrderMasterDto;
 import com.chumore.ordermaster.model.OrderMasterServiceImpl;
@@ -39,6 +39,9 @@ public class MemberOrderMasterController {
 
 	@Autowired
 	ReviewService reviewService;
+	
+	@Autowired
+	MemberService memberSvc;
 
 	@GetMapping("orders")
 	public ResponseEntity<OrderMasterResponse<Page<OrderMasterDto>>> findByMemberId(
@@ -49,7 +52,7 @@ public class MemberOrderMasterController {
 		if (memId == null) {
 			memberId = 1002;
 		} else {
-			MemberVO member = (MemberVO) memId;
+			MemberVO member = (MemberVO) memberSvc.getOneMember((Integer)memId).orElse(null);
 			memberId = member.getMemberId();
 		}
 
