@@ -32,10 +32,10 @@ public class IndexController {
 		return "secure/rest/order/order_manage_test";
 	}
 	
-	@GetMapping("/memberDiningHistory")
-	public String memberDiningHistory() {
-		return "secure/member/dining/member_dining_history";
-	}
+//	@GetMapping("/memberDiningHistory")
+//	public String memberDiningHistory() {
+//		return "secure/member/dining/member_dining_history";
+//	}
 	
 	@GetMapping("/restDiningHistory")
 	public String restDiningHistory() {
