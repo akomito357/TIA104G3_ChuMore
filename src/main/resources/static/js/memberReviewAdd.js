@@ -48,6 +48,7 @@ async function populateImageGrid(restId){
 
 // 星星評分_
 function starRating(){
+    let currentStarRate = 0;
     // let selectedRating = 0;
     // $(".star-rating").hover(function(){
     //     const rating = $(this).data("rating");
@@ -88,7 +89,11 @@ function starRating(){
     })
 
     $(".star-rating-container").mouseleave(function(){
-        let currentStarRate = rating;
+        if ($("#reviewRating").val() == ""){
+            currentStarRate = rating;
+        } else{
+            currentStarRate = $("#reviewRating").val();
+        }
         $(".star-rating-container").find(".star-rating").each(function(index, element){
             if (parseInt($(this).attr("data-rating")) <= currentStarRate){
                 $(this).addClass("selected").removeClass("active");
@@ -163,8 +168,17 @@ function addShowFileUpload(file){
             // console.log(file);
             // console.log(photoPreviewGrid);
             // photoPreviewGrid.innerHTML = "";
+            let index = 0;
+            Array.from(dataTransfer.files).forEach((dataTransferfile, dataTransferindex) => {
+                // console.log(`Index: ${index}, File: ${dataTransferfile.name}`);
+                if (file === dataTransferfile){
+                    index = dataTransferindex
+                }
+
+            });
+
             const previewImg = `<div class="photoPreviewItem photo-preview-item">
-                                    <img src="${e.target.result}" alt="preview" index="${imgIndex++}">
+                                    <img src="${e.target.result}" alt="preview" index="${index}">
                                     <button class="photo-delete-btn">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -198,6 +212,14 @@ $(document).on('click', '.photo-delete-btn', function(e){
     uploadedFiles.splice(currentImgIndex, 1);
     $(this).parent('.photoPreviewItem').remove();
     console.log('uploadedFiles =' + uploadedFiles);
+
+    // update indexs
+    document.querySelectorAll('.photoPreviewItem img').forEach((item, index) => {
+        if (item.getAttribute('index') > currentImgIndex){
+            item.setAttribute('index', index);
+        }
+    })
+    imgIndex --;
     
     for (let i = 0; i < uploadedFiles.length; i++){
         newDataTransfer.items.add(uploadedFiles[i]);
@@ -221,16 +243,8 @@ addReviewForm.submit(function(e){
     photoUploadInput[0].files = dataTransfer.files;
 });
 
-
-
-// function removeFileFromFilelist(e){
-//     e.preventDefault();
-//     console.log(document.querySelector("#upfiles").value);
-// }
-
-
-
 $(document).ready(function(){
     starRating();
+    $(".star-rating-container").mouseleave(); // 讓驗證錯誤時星星的顯示也能讀回來
 })
 

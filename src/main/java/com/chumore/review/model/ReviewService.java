@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.exception.ResourceNotFoundException;
+import com.chumore.member.model.MemberVO;
+import com.chumore.ordermaster.model.OrderMasterVO;
+import com.chumore.rest.model.RestVO;
 import com.chumore.reviewimg.model.ReviewImageService;
 import com.chumore.reviewimg.model.ReviewImageVO;
 
@@ -62,6 +65,41 @@ public class ReviewService {
     	}
     	
         return review;
+    }
+    
+    @Transactional
+    public ReviewVO updateReviewWithImgs(ReviewVO review, MultipartFile... newReviewImgs) throws IOException {
+    	review.setReviewDatetime(new Timestamp(System.currentTimeMillis()));
+    	
+    	if (newReviewImgs.length != 0) {
+    		System.out.println("reviewImgs" + newReviewImgs);
+    		List<ReviewImageVO> imgList = review.getReviewImages();
+    		Boolean newImgList = false;
+    		if (imgList == null) {
+    			imgList = new ArrayList<>();
+    			newImgList = true;
+    		}
+    		
+    		for (MultipartFile mutipartFile : newReviewImgs) {
+    			if(!mutipartFile.isEmpty()) {    				
+    				byte[] buf = mutipartFile.getBytes();
+    				System.out.println("buf" + buf);
+    				
+    				ReviewImageVO img = new ReviewImageVO();
+    				img.setReviewImage(buf);
+    				img.setReview(review);
+    				
+    				reviewImageService.addImg(img);
+    				
+    				imgList.add(img);
+    			}
+    		}
+    		if (newImgList) {
+    			review.setReviewImages(imgList);
+    		}
+    	}
+    	
+    	return reviewRepository.save(review);
     }
     
 
@@ -181,6 +219,14 @@ public class ReviewService {
     	if (review == null) {
     		throw new ResourceNotFoundException("review id = " + reviewId + "not found.");
     	}
+    	return review;
+    }
+    
+    public ReviewVO setReviewBasicData(ReviewVO review, MemberVO member, RestVO rest, OrderMasterVO orderMaster) {
+    	review.setMember(member);
+    	review.setRest(rest);
+    	review.setOrderMaster(orderMaster);
+    	
     	return review;
     }
 }

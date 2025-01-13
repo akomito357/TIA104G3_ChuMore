@@ -25,4 +25,9 @@ public interface ReviewImageRepository extends JpaRepository<ReviewImageVO, Inte
     
     @Query("SELECT ri.reviewImgId FROM ReviewImageVO ri WHERE ri.review.reviewId = :reviewId")
     List<Integer> findImgIdByReview(@Param("reviewId") Integer reviewId);
+    
+    @Transactional
+	@Modifying
+    @Query(value = "DELETE FROM review_image ri WHERE review_img_id = ?1", nativeQuery = true)
+    void deleteByReviewImgId(@Param("reviewImgId") Integer reviewImgId);
 }

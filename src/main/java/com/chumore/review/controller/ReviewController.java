@@ -1,7 +1,6 @@
 package com.chumore.review.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
+import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
 import com.chumore.review.model.ReviewService;
 import com.chumore.review.model.ReviewVO;
@@ -62,6 +62,8 @@ public class ReviewController {
     @Autowired
     private Product_Service productSvc;
     
+    @Autowired
+    private RestService restSvc;
 
     /**
      * 獲取訂單資訊用於評論頁面初始化
@@ -174,14 +176,12 @@ public class ReviewController {
      * 刪除評論圖片
      * 對應前端：照片預覽區的刪除功能
      */
-    @DeleteMapping("/images/{imageId}")
+    @DeleteMapping("/images/delete/{reivewImgId}")
     @ResponseBody
-    public ResponseEntity<?> deleteImage(
-            @PathVariable Integer imageId,
-            @RequestHeader("Member-Id") Integer memberId) {
+    public ResponseEntity<?> deleteImage(@PathVariable Integer reivewImgId) {
         try {
-            reviewImageService.deleteImage(imageId, memberId);
-            return ResponseEntity.ok("圖片已成功刪除");
+            reviewImageService.deleteImage(reivewImgId);
+            return ResponseEntity.ok("圖片已成功刪除, id = " + reivewImgId);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -189,9 +189,13 @@ public class ReviewController {
     
     // 準備新增評論 - thymeleaf
     @PostMapping("addReview")
-    public String addReview(ModelMap model, HttpSession session, @RequestParam Integer orderId, HttpServletRequest req) {
-//    	Integer memberId = (Integer)session.getAttribute("memberId");
-    	Integer memberId = 1002;
+    public String addReview(ModelMap model, HttpSession session, @RequestParam Integer orderId) {
+    	Integer memberId = (Integer)session.getAttribute("memberId");
+    	
+    	if ((Integer)session.getAttribute("memberId") == null) {    		
+    		memberId = 1002;
+    	} 
+    	
     	OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
     	
     	ReviewVO review = new ReviewVO();
@@ -203,7 +207,7 @@ public class ReviewController {
     	session.setAttribute("reviewedRest", orderMaster.getRest());
     	session.setAttribute("reviewedOrder", orderMaster);
     	
-    	req.setAttribute("orderMaster", orderMaster);
+    	model.addAttribute("orderMaster", orderMaster);
     	model.addAttribute("review", review);
     	model.addAttribute("productListData", 
     			productSvc.getAllProductByActiveStatus(orderMaster.getRest().getRestId()));
@@ -245,29 +249,6 @@ public class ReviewController {
 //    	System.out.println("review = " + review);    	   		
     	review = reviewService.createReviewWithImg(review, reviewImgs);
     	
-//    	reviewService.createReview(review);
-//    	review = reviewService.getReviewById(review.getReviewId());
-    	
-//    	if (reviewImgs.length != 0) {
-//    		System.out.println("reviewImgs" + reviewImgs);
-//    		List<ReviewImageVO> imgList = new ArrayList<>();
-//    		for (MultipartFile mutipartFile : reviewImgs) {
-//    			if(!mutipartFile.isEmpty()) {    				
-//    				byte[] buf = mutipartFile.getBytes();
-////    				System.out.println("buf" + buf);
-//    				
-//    				ReviewImageVO img = new ReviewImageVO();
-//    				img.setReviewImage(buf);
-//    				img.setReview(review);
-//    				
-//    				reviewImageService.addImg(img);
-//    				imgList.add(img);
-//    			}
-//    		}
-//    		
-//    		review.setReviewImages(imgList);
-//    	}
-    	
     	return "redirect:/memberDiningHistory";
     }
     
@@ -301,22 +282,38 @@ public class ReviewController {
 		return "secure/member/review/member_review_update_page";
 	}
 	
-//	public String update(@Valid @ModelAttribute("review") ReviewVO review, BindingResult result, 
-//			ModelMap model, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs) {
-//		
-//		if (result.hasErrors()) {
-//    		System.out.println("Errors: " + result.getFieldErrors());
+	@PostMapping("confirmUpdate")
+	public String update(@Valid @ModelAttribute("review") ReviewVO review, BindingResult result, 
+			ModelMap model, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs) throws IOException {
+		
+		result = removeFieldError(review, result, "member");
+    	result = removeFieldError(review, result, "rest");
+    	result = removeFieldError(review, result, "orderMaster");
+    	
+    	review.setOrderMaster(orderSvc.getOneById(review.getOrderMaster().getOrderId()));
+    	review.setMember(memberService.getOneMember(review.getMember().getMemberId()).orElse(null));
+    	review.setRest(restSvc.getOneById(review.getRest().getRestId()));
+    	
+    	System.out.println(review);
+    	
+		if (result.hasErrors()) {
+    		System.out.println("Errors: " + result.getFieldErrors());
+    		List<ReviewImageVO> imgList = reviewImageService.getReviewImages(review.getReviewId());
+    		review.setReviewImages(imgList);
+        	List<ProductVO> availableProduct = 
+    				productSvc.getAllProductByActiveStatusAndSelected(review.getRest().getRestId(), review.getProduct());
 //    		model.addAttribute("orderMaster", reviewedOrder);
-//        	model.addAttribute("review", review);
-//        	model.addAttribute("productListData", 
-//        			productSvc.getAllProductByActiveStatus(reviewedOrder.getRest().getRestId()));
-//        	
-//    		return "secure/member/review/member_review_adding_page";
-//    	}
+        	model.addAttribute("review", review);
+        	model.addAttribute("reviewImgs", imgList);
+    		model.addAttribute("productListData", availableProduct);
+        	
+    		return "secure/member/review/member_review_update_page";
+    	}
 		
+		reviewService.updateReviewWithImgs(review, reviewImgs);
 		
-//		return "redirect:/memberDiningHistory";
-//	}
+		return "redirect:/memberDiningHistory";
+	}
     
     // 顯示單筆評論 - thymeleaf
     @PostMapping("getReview")
@@ -349,7 +346,7 @@ public class ReviewController {
 	public ResponseEntity<ResponseUtil> getMemberReview(HttpSession session){
 		Integer memberId = (Integer)session.getAttribute("memberId");
 		if (memberId == null) {
-			memberId = 1001;
+			memberId = 1002;
 		}
 		
 		List<ReviewVO> list = reviewService.getMemberReviews(memberId);
