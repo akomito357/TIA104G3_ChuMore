@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂位成功</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .success-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+        .success-icon i {
+            color: white;
+            font-size: 50px;
+        }
+        .action-button {
+            width: 70%;
+            margin: 0.5rem auto;
+            padding: 0.8rem;
+            display: block;
+            font-size: 1.1rem;
+        }
+        .caption-text {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .success-title {
+            animation: fadeIn 0.5s ease-out 0.3s both;
+        }
+        .success-subtitle {
+            animation: fadeIn 0.5s ease-out 0.5s both;
+        }
+        .action-buttons {
+            animation: fadeIn 0.5s ease-out 0.7s both;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="success-container text-center">
+    <!-- 大勾勾 ICON 區 -->
+    <div class="success-icon">
+        <i class="fas fa-check"></i>
+    </div>
+
+    <!-- 標題與副標題區 -->
+    <h2 class="success-title mb-3">訂位成功！</h2>
+    <p class="success-subtitle text-muted mb-5">訂位確認信已發送至您的電子信箱</p>
+
+    <!-- 功能按鈕區 -->
+    <div class="action-buttons">
+        <p class="caption-text">沒收到確認信嗎？</p>
+        <button id="resendBtn" class="btn btn-primary action-button">
+            重寄訂位確認信
+        </button>
+        <button id="homeBtn" class="btn btn-secondary action-button mt-3">
+            回首頁
+        </button>
+    </div>
+</div>
+
+<!-- Toast 通知元件 -->
+<div class="toast-container">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                確認信已重新發送！
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // 初始化 Toast
+        const successToast = new bootstrap.Toast(document.getElementById('successToast'), {
+            delay: 3000
+        });
+
+        // 重寄確認信按鈕
+        $('#resendBtn').click(function() {
+            $(this).prop('disabled', true);
+            setTimeout(() => {
+                successToast.show();
+                $(this).prop('disabled', false);
+            }, 1000);
+        });
+
+        // 回首頁按鈕
+        $('#homeBtn').click(function() {
+            window.location.href = '/';
+        });
+    });
+</script>
+</body>
+</html>
