@@ -71,94 +71,63 @@
             <div class="discount-section">
                 <form class="member-section justify-content-end" id="memberPhoneForm">
                     <div id="memberStatus" class="member-status"></div>
-                    <label class="mb-0">會員驗證：</label>
+                    <label class="mb-0">會員手機驗證：</label>
                     <input type="tel" class="form-control" style="max-width: 200px;" 
                         placeholder="請輸入手機號碼" id="memberPhoneNumber" name="memberPhoneNumber">
                     <button type="button" class="btn btn-primary" id="verifyPhoneNumberBtn">驗證</button>
                 </form>
+
+                <div class="discpts-use">
+                    <div id="showMemberPoints" class="member-points"></div>
+                    <!-- 優惠點數花費填寫 -->
+                    <form class="member-section justify-content-end mt-3" id="pointUseForm">
+                        <div id="memberDiscPtsStatus" class="member-discpts-status"></div>
+                        <label class="mb-0">請輸入欲使用的點數：</label>
+                        <input type="number" min="0" class="form-control" style="max-width: 200px;" 
+                            placeholder="請輸入使用點數數量" id="usePoints" name="usePoints">
+                        <input type="hidden" name="memberId" readonly>
+                        <input type="hidden" th:value="${orderMaster.orderId}" name="orderId" readonly>
+                        <button type="button" class="btn btn-primary" id="verifyDiscPtsUse">確認</button>
+                    </form>
+                </div>
             </div>
+
+            
+            
 
             <!-- Total Section -->
             <div class="total-section">
                 <div class="total-row">
                     <span>小計</span>
-                    <span>$ 1,000</span>
+                    <span class="subtotal" th:text="'$ ' + ${#numbers.formatDecimal(orderMaster.subtotalPrice, 1, 0)}">1,000</span>
                 </div>
                 <div class="total-row">
                     <span>會員折扣</span>
-                    <span id="discountAmount">$ 0</span>
+                    <span id="discountAmount" class="discount-amount">$ 0</span>
                 </div>
                 <div class="total-row">
                     <span><strong>總金額</strong></span>
-                    <span><strong id="finalTotal">$ 1,000</strong></span>
+                    <span><strong id="totalPrice" th:text="'$ ' + ${#numbers.formatDecimal(orderMaster.subtotalPrice, 1, 0)}">1,000</strong></span>
                 </div>
             </div>
 
             <!-- Checkout Button -->
-            <button class="checkout-btn btn">
-                $ 1,000 結帳
-            </button>
+            <form id="checkoutSubmitForm" th:action="@{/rest/orderMaster/checkout}" method="post">
+                <button class="checkout-btn btn">
+                    結帳
+                </button>
+            </form>
         </div>
     <!-- </main> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script> -->
     <script th:inline="javascript">
         window.orderMaster = /*[[${orderMaster}]]*/ {};
+        window.restId = /*[[${session.restId}]]*/ {};
         // console.log(orderMaster);
     </script>
     <script th:src="@{/js/restOrderCheckout.js}"></script>
     <script src="/static/js/restOrderCheckout.js"></script>
-    <script>
-        // $(document).ready(function() {
-        //      // 模擬會員資料庫
-        //      const members = {
-        //          '0912345678': { name: '王小明', discount: 50 },
-        //          '0923456789': { name: '李小華', discount: 100 }
-        //      };
-           
-        //      $('#verifyMember').click(function() {
-        //          const phone = $('#phoneNumber').val();
-        //          const statusDiv = $('#memberStatus');
-                
-        //          // 清除之前的狀態
-        //          statusDiv.removeClass('success error');
-                
-        //          // 驗證手機號碼格式
-        //          if (!/^09\d{8}$/.test(phone)) {
-        //              statusDiv.text('請輸入有效的手機號碼').addClass('error');
-        //              resetDiscount();
-        //              return;
-        //          }
-                
-        //          // 檢查是否為會員
-        //          const member = members[phone];
-        //          if (member) {
-        //              statusDiv.text(`會員驗證成功：${member.name}`).addClass('success');
-        //              updateDiscount(member.discount);
-        //          } else {
-        //              statusDiv.text('查無會員資料').addClass('error');
-        //              resetDiscount();
-        //          }
-        //      });
-            
-        //      function updateDiscount(discount) {
-        //          const subtotal = 1000;
-        //          const total = subtotal - discount;
-                
-        //          $('#discountAmount').text('$ ' + discount);
-        //          $('#finalTotal').text('$ ' + total);
-        //          $('.checkout-btn').text('$ ' + total + ' 結帳');
-        //      }
-            
-        //      function resetDiscount() {
-        //          updateDiscount(0);
-        //      }
-
-        //      // 結帳按鈕點擊事件
-        //      $('.checkout-btn').click(function() {
-        //          alert('處理結帳...');
-        //      });
-        //  });
-    </script>
+    
 </body>
 </html>

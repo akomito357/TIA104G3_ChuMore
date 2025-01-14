@@ -112,9 +112,9 @@ public class ReviewService {
         }
         
         ReviewVO existingReview = existingReviewOpt.get();
-        if (!existingReview.getMember().getMemberId().equals(memberId)) {
-            throw new RuntimeException("無權限修改此評論");
-        }
+//        if (!existingReview.getMember().getMemberId().equals(memberId)) {
+//            throw new RuntimeException("無權限修改此評論");
+//        }
 
         validateReviewUpdate(existingReview);
         
@@ -130,14 +130,14 @@ public class ReviewService {
     public void deleteReview(Integer reviewId, Integer memberId) {
         Optional<ReviewVO> reviewOpt = reviewRepository.findById(reviewId);
         
-        if (reviewOpt.isEmpty()) {
-            throw new RuntimeException("評論不存在");
-        }
+//        if (reviewOpt.isEmpty()) {
+//            throw new RuntimeException("評論不存在");
+//        }
         
-        ReviewVO review = reviewOpt.get();
-        if (!review.getMember().getMemberId().equals(memberId)) {
-            throw new RuntimeException("無權限刪除此評論");
-        }
+//        ReviewVO review = reviewOpt.get();
+//        if (!review.getMember().getMemberId().equals(memberId)) {
+//            throw new RuntimeException("無權限刪除此評論");
+//        }
         
         reviewImageService.deleteAllByReviewId(reviewId);
 //      reviewRepository.deleteById(reviewId);

@@ -48,14 +48,18 @@ public class OrderMasterController {
 	@Autowired
 	RestService restSvc;
 
-	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
-	@GetMapping("getOne")
-	public String getOneForCheckOut(@RequestParam Integer orderId, Model model) {
-//		session.setAttribute("orderId", 1);
-		OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
-		model.addAttribute("orderMaster", orderMaster);
-		return "secure/rest/order/rest_checkout";
-	}
+//	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
+//	@GetMapping("getOne")
+//	public String getOneForCheckOut(@RequestParam Integer orderId, Model model, HttpSession session) {
+////		session.setAttribute("orderId", 1);
+//		if (session.getAttribute("restId") == null) {
+//			session.setAttribute("restId", 2001);
+//		}
+//		
+//		OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
+//		model.addAttribute("orderMaster", orderMaster);
+//		return "secure/rest/order/rest_checkout";
+//	}
 	
 	// getOneOrder (RESTful)
 	@GetMapping("findOneByOrderId")
