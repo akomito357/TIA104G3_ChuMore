@@ -85,15 +85,7 @@ public class RestController {
 		model.addAttribute("rest", session.getAttribute("rest"));
 		return "";
 	}
-	
-	// getBy...
-	@GetMapping("findRestBy")
-	public String findRestBy(HttpServletRequest req, ModelMap model) {
-		Map<String, String[]> map = req.getParameterMap();
-		List<RestVO> list = restSvc.getAllCompos(map);
-		model.addAttribute("rests", list);
-		return "";
-	}
+
 	
 	@GetMapping("getOneRest")
 	@ResponseBody
