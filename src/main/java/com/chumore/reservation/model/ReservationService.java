@@ -29,7 +29,7 @@ public interface ReservationService {
 
     ReservationVO processCheckIn(int reservationId);
 
-    ReservationVO recoverReservation(int reservationId);
+    ReservationVO restoreReservation(int reservationId);
 
     ReservationVO addReservation(ReservationVO reservation);
 

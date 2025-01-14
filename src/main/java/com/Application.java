@@ -1,5 +1,7 @@
 package com;
 
+import com.chumore.search.model.LuceneIndexService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -36,5 +38,17 @@ public class Application {
             }
         });
         app.run(args);
+    }
+
+    // 應用程式啟動後，重建索引
+    @Autowired
+    public void initialize(LuceneIndexService luceneIndexService) {
+        try{
+            luceneIndexService.rebuildIndex();
+            System.out.println("Lucene索引建立成功");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.err.println("Lucene索引建立失敗:"+e.getMessage());
+        }
     }
 }

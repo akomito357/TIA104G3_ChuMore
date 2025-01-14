@@ -102,7 +102,7 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public ReservationVO recoverReservation(int reservationId) {
+    public ReservationVO restoreReservation(int reservationId) {
         ReservationVO reservation = reservationDAO.findById(reservationId);
         reservation.setReservationStatus(1);
         return reservationDAO.updateReservation(reservation);
