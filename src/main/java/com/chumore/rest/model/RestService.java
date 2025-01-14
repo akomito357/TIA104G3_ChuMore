@@ -9,10 +9,10 @@ public interface RestService {
 	void updateRest(RestVO rest);
 	RestVO getOneById(Integer restId);
 	List<RestVO> getAll();
-	List<RestVO> getAllCompos(Map<String, String[]> map);
 	List<String> getFormattedBusinessHours(Integer restId);
 	List<Integer> getBusinessHours(Integer restId);
-	
-	
+	List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId);
+
+
 
 }
