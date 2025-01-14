@@ -36,6 +36,10 @@ public class IndexController {
 	public String memberDiningHistory() {
 		return "secure/member/dining/member_dining_history";
 	}
+//	@GetMapping("/memberDiningHistory")
+//	public String memberDiningHistory() {
+//		return "secure/member/dining/member_dining_history";
+//	}
 	
 	@GetMapping("/restDiningHistory")
 	public String restDiningHistory() {

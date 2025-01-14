@@ -9,7 +9,6 @@ $(document).ready(function() {
 	const content = $(".tab-content");
 
 
-
 	const diningPrevButton = $("#diningPreBtn.prev-btn");
 	const diningNextButton = $("#diningNextBtn.next-btn");
 	$(diningPrevButton).on("click", function() {
@@ -35,7 +34,7 @@ $(document).ready(function() {
 
 	//for dining
 	function loadOrderData(page, sortField, sortOrder) {
-		fetch(`member/orderMaster/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+		fetch(`/member/orderMaster/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
 			method: "GET",
 		}).then(res => res.json())
 			.then(response => {

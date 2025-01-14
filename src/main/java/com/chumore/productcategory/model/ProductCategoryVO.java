@@ -20,7 +20,7 @@ public class ProductCategoryVO {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "product_category_id")
+	@Column(name = "product_category_id", updatable = false)
 	private Integer productCategoryId;
 
 //	@ManyToOne

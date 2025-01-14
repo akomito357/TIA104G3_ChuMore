@@ -288,11 +288,11 @@
         }
 
         #category-tabs {
-        /* display: flex; */
-        /* align-items: center; */
-        /* 讓內容垂直置中 */
-        position: relative;
-        /* 使其成為定位的基準容器 */
+            /* display: flex; */
+            /* align-items: center; */
+            /* 讓內容垂直置中 */
+            position: relative;
+            /* 使其成為定位的基準容器 */
         }
 
         .btn-outline-primary {
@@ -389,7 +389,7 @@
                                     </div>
                                     <hr>
                                 </div> -->
-                                
+
                             </div>
                             <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
 
@@ -444,18 +444,19 @@
                 })
                     .then(res => res.json())
                     .then(response => {
-                        console.log(response);
+                        // console.log(response);
                         const productCatData = response.data;
-                        console.log(productCatData);
+                        // console.log(productCatData);
 
                         let category_tabName = "";
                         let category_content = "";
 
                         productCatData.forEach((productCategory, index) => {
                             category_tabName += `
-                                <li class="nav-item">
+                                <li class="nav-item cat">
                                     <a class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#${productCategory.productCategoryId}">
-                                        <input type="text" value="${productCategory.categoryName}" class="tab-input">
+                                        <input name="productCategoryId" value="${productCategory.productCategoryId}" hidden>
+                                        <input name="categoryName" type="text" value="${productCategory.categoryName}" class="tab-input">
                                         <i class="bi bi-trash3 text-danger delete-category"></i>
                                     </a>
                                 </li>
@@ -469,21 +470,22 @@
                                     <div class="menu-item mb-3 d-flex align-items-start">
                                         <label class="me-3">
                                             <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
-                                            <input type="file" accept="image/*" class="d-none image-upload">
+                                            <input name="image" type="file" accept="image/*" class="d-none image-upload">
                                         </label>
                                         <div>
-                                            <div class="d-flex align-items-center" style="gap: 210px;">
-                                                <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱" value="${product.productName}">
-                                                <select class="form-control mb-2" style="width: 90px;">
+                                          <div class="d-flex align-items-center product" style="gap: 210px;">
+                                                <input type="hidden" name="productId" value="${product.productId}">
+                                                <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱" value="${product.productName}">
+                                                <select name="status" class="form-control mb-2" style="width: 90px;">
                                                     <option value="0"${product.supplyStatus === 0 ? 'selected' : ''}>供應中</option>
                                                     <option value="1"${product.supplyStatus === 1 ? 'selected' : ''}>已售完</option>
                                                     <option value="2"${product.supplyStatus === 2 ? 'selected' : ''}>停售</option>
                                                 </select>
                                             </div>
 
-                                            <input type="number" class="form-control mb-2" style="width: 200px;"
+                                            <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
                                                 placeholder="價格" value="${product.productPrice}">
-                                            <textarea class="form-control mb-2" style="width: 500px;"
+                                            <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
                                                 placeholder="描述">${product.productDescription}</textarea>
                                         </div>
                                         <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
@@ -504,7 +506,6 @@
 
                         $('.btn-outline-primary').insertAfter(`#category-tabs .nav-item:last-child`);
 
-                        // 确保按钮显示
                         $('.btn-outline-primary').show();
 
                         $('.tab-input').each(function () {
@@ -548,7 +549,86 @@
                         }
                     })
                     .catch(error => console.error("上傳錯誤：", response.msg));
-            })
+            });
+
+            function colletAllItem() {
+                let categoryList = [];
+
+                $(`li.cat`).each(function () {
+                    const productCategoryId = $(this).find('input[name="productCategoryId"]').val();
+                    // console.log(productCategoryId);
+                    const productCatName = $(this).find('input[name="categoryName"]').val();
+                    // console.log(productCatName);
+
+                    let productList = [];
+                    let productBlock = $(`.tab-pane#${productCategoryId}`);
+                    // console.log(productBlock);
+
+                    let productContentList = $(productBlock).find(".menu-item");
+                    // console.log(productContentList);
+                    $(productContentList).each(function () {
+                        const productId = $(this).find('input[name="productId"]').val();
+                        const productName = $(this).find('input[name="productName"]').val();
+                        const supplyStatus = $(this).find('select[name="status"]').val();
+                        const productPrice = $(this).find('input[name="productPrice"]').val();
+                        const productDescription = $(this).find('textarea[name="productDescription"]').val();
+                        // console.log(productDescription);
+
+                        productList.push({
+                            productId: productId ? productId : null,
+                            productName: productName,
+                            supplyStatus: supplyStatus,
+                            productPrice: productPrice,
+                            productDescription: productDescription
+                        });
+
+                    })
+                    categoryList.push({
+                        productCategoryId: productCategoryId ? productCategoryId : null,
+                        categoryName: productCatName,
+                        productList: productList,
+                    });
+                    // console.log(categoryList);
+                });
+                return categoryList;
+
+            }
+
+            function submitData() {
+                const categoryList = colletAllItem();
+                const payload = {
+                    productCatList: categoryList
+                };
+                console.log(payload);
+
+                fetch("rest/productcategory/modifyProduct", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => res.json())
+                    .then(response => {
+
+                        console.log(response);
+                        if (code === 200) {
+                            alert("保存成功");
+                            window.location.reload();
+                        } else {
+                            alert(`保存失敗: ${response.msg}`);
+                        }
+                    })
+                    .catch(error => console.error('提交失敗：', error));
+            }
+
+
+
+            $("button.btn-success").on("click", function () {
+                submitData();
+            });
+
+
 
             // 動態調整輸入框寬度
             function adjustWidth(input) {
@@ -623,34 +703,36 @@
                 const newCategoryId = `category${categoryCount}`;
 
                 const newCategoryTab = `
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#${newCategoryId}">
-                        <input type="text" value="分類${categoryCount}" class="tab-input">
+                <li class="nav-item cat">
+                    <a class="nav-link" data-bs-toggle="tab" href="#new${newCategoryId}">
+                        <input type="hidden" name="productId" value=null>
+                        <input type="text" name="categoryName" value="分類${categoryCount}" class="tab-input">
                         <i class="bi bi-trash3 text-danger delete-category"></i>
                     </a>
                 </li>
                 `;
 
                 const newCategoryContent = `
-                <div class="tab-pane fade" id="${newCategoryId}">
+                <div class="tab-pane fade" id="new${newCategoryId}">
                     <div class="menu-item mb-3 d-flex align-items-start">
                         <label class="me-3">
                             <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
-                            <input type="file" accept="image/*" class="d-none image-upload">
+                            <input name="image"type="file" accept="image/*" class="d-none image-upload">
                         </label>
                         <div>
                             <div class="d-flex align-items-center" style="gap: 210px;">
-                                <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
-                                <select class="form-control mb-2" style="width: 90px;">
-                                    <option value="available">供應中</option>
-                                    <option value="sold-out">已售完</option>
-                                    <option value="discontinued">停售</option>
+                                <input type="hidden" name="productId" value=null>
+                                <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <select name="status" class="form-control mb-2" style="width: 90px;">
+                                    <option value="0">供應中</option>
+                                    <option value="1">已售完</option>
+                                    <option value="2">停售</option>
                                 </select>
                             </div>
                             
-                            <input type="number" class="form-control mb-2" style="width: 200px;"
+                            <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
                                 placeholder="價格">
-                            <textarea class="form-control mb-2" style="width: 500px;"
+                            <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
                                 placeholder="描述"></textarea>
 
                         </div>
@@ -699,31 +781,39 @@
             $(document).on('click', '.btn-primary', function () {
                 const newItem = `
                 <div class="menu-item mb-3 d-flex align-items-start">
-                    <label class="me-3">
-                        <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
-                        <input type="file" accept="image/*" class="d-none image-upload">
-                    </label>
-                    <div>
-                        <div class="d-flex align-items-center" style="gap: 210px;">
-                            <input type="text" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
-                            <select class="form-control mb-2" style="width: 90px;">
-                                <option value="available">供應中</option>
-                                <option value="sold-out">已售完</option>
-                                <option value="discontinued">停售</option>
-                            </select>
-                        </div>
-                        
-                        <input type="number" class="form-control mb-2" style="width: 200px;"
-                            placeholder="價格">
-                        <textarea class="form-control mb-2" style="width: 500px;"
-                            placeholder="描述"></textarea>
+                        <label class="me-3">
+                            <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
+                            <input name="image" type="file" accept="image/*" class="d-none image-upload">
+                        </label>
+                        <div>
+                            <div class="d-flex align-items-center" style="gap: 210px;">
+                                <input type="hidden" name="productId" value=null>
+                                <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <select name="status" class="form-control mb-2" style="width: 90px;">
+                                    <option value="0">供應中</option>
+                                    <option value="1">已售完</option>
+                                    <option value="2">停售</option>
+                                </select>
+                            </div>
+                            
+                            <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
+                                placeholder="價格">
+                            <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
+                                placeholder="描述"></textarea>
 
+                        </div>
+                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
                     </div>
-                    <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
-                </div>
-                <hr>
+                    <hr>
                 `;
-                $(this).before(newItem);
+                const activeTabId = $('#product-tab-content .tab-pane.active').attr('id');
+
+                if (activeTabId) {
+                    // 在對應的分頁容器內新增餐點
+                    $(`#${activeTabId}`).append(newItem);
+                } else {
+                    console.error("找不到活躍的分頁！");
+                }
             });
 
             // 刪除單筆品項和分隔線
