@@ -260,6 +260,49 @@
 		    <version>2.10.1</version>
 		</dependency>
 
+
+		<!--lucene-->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>8.11.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>8.11.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-smartcn -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-smartcn</artifactId>
+			<version>8.11.4</version>
+		</dependency>
+
+		<!-- IK 中文分詞器 -->
+<!--		<dependency>-->
+<!--			<groupId>com.jianggujin</groupId>-->
+<!--			<artifactId>IKAnalyzer-lucene</artifactId>-->
+<!--			<version>8.0.0</version>-->
+<!--		</dependency>-->
+
+		<!-- jieba 中文分詞器 -->
+		<!-- https://mvnrepository.com/artifact/com.huaban/jieba-analysis -->
+		<dependency>
+			<groupId>com.huaban</groupId>
+			<artifactId>jieba-analysis</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>8.11.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

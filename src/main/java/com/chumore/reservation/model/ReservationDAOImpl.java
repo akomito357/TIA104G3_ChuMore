@@ -148,10 +148,28 @@ public class ReservationDAOImpl implements ReservationDAO{
     @Override
     public ReservationVO updateReservation(ReservationVO reservationVO) {
         ReservationVO existingReservation = entityManager.find(ReservationVO.class, reservationVO.getReservationId());
+
         if (existingReservation == null) {
             throw new ResourceNotFoundException("Reservation not found for ID: " + reservationVO.getReservationId());
         }
-        return entityManager.merge(reservationVO);
+
+        ReservationVO updatedReservation = existingReservation;
+
+        try{
+            updatedReservation = entityManager.merge(reservationVO);
+        }catch(PersistenceException e){
+            Throwable cause = e.getCause();
+            // 捕捉來自 SQL 的錯誤
+            if (cause != null && cause.getCause() != null) {
+                String message = cause.getCause().getMessage();
+                if(message.contains("預訂數量超過可用桌數。")){
+                    throw new BookingConflictException("訂位數量超過可用桌數。");
+                }else if(message.contains("已預訂桌數為負值，資料異常")){
+                    throw new BookingConflictException("已訂位桌數為負值，請重新確認訂位資訊");
+                }
+            }
+        }
+        return updatedReservation;
     }
 
     @Override
