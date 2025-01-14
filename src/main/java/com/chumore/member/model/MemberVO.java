@@ -48,7 +48,7 @@ public class MemberVO implements Serializable {
     
     @NotBlank(message = "密碼不能為空")
     @Size(min = 6, message = "密碼長度至少為6個字符")
-    @Column(name = "member_password", nullable = false)
+    @Column(name = "member_password", nullable = false, length = 60)
     private String memberPassword;
     
     @Pattern(regexp = "^09\\d{8}$", message = "請輸入有效的手機號碼")

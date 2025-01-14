@@ -1,6 +1,11 @@
 package com.chumore.auth.service;
 
 import java.util.Optional;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.validation.ValidationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +13,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chumore.auth.constant.AuthConstants;
-import com.chumore.auth.dto.*;
-import com.chumore.auth.exception.*;
+import com.chumore.auth.dto.AuthenticatedUser;
+import com.chumore.auth.dto.LoginRequest;
+import com.chumore.auth.dto.RegisterRequest;
+import com.chumore.auth.dto.RestaurantRegisterRequest;
+import com.chumore.auth.exception.AuthenticationException;
+import com.chumore.auth.exception.DuplicateEmailException;
+import com.chumore.auth.exception.DuplicatePhoneNumberException;
+import com.chumore.auth.exception.DuplicateRegistrationNumberException;
+import com.chumore.cuisinetype.model.CuisineTypeRepository;
+import com.chumore.cuisinetype.model.CuisineTypeVO;
 import com.chumore.member.model.MemberRepository;
 import com.chumore.member.model.MemberVO;
 import com.chumore.rest.model.RestRepository;
@@ -19,260 +31,296 @@ import com.chumore.rest.model.RestVO;
 @Service
 @Transactional
 public class AuthServiceImpl implements AuthService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-    @Autowired
-    private MemberRepository memberRepository;
-    
-    @Autowired
-    private RestRepository restRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-    @Override
-    public LoginResponse login(LoginRequest request) {
-        logger.info("開始處理登入請求，使用者信箱: {}", request.getEmail());
+	private final MemberRepository memberRepository;
+	private final RestRepository restRepository;
+	private final CuisineTypeRepository cuisineTypeRepository;
+	private final PasswordEncoder passwordEncoder;
 
-        try {
-            Optional<MemberVO> memberOpt = memberRepository.findByMemberEmail(request.getEmail());
-            if (memberOpt.isPresent()) {
-                MemberVO member = memberOpt.get();
-                if (passwordEncoder.matches(request.getPassword(), member.getMemberPassword())) {
-                    logger.info("一般會員登入成功: {}", request.getEmail());
-                    return createMemberLoginResponse(member);
-                }
-            }
-            
-            Optional<RestVO> restOpt = restRepository.findByMerchantEmail(request.getEmail());
-            if (restOpt.isPresent()) {
-                RestVO rest = restOpt.get();
-                if (passwordEncoder.matches(request.getPassword(), rest.getMerchantPassword())) {
-                    logger.info("餐廳會員登入成功: {}", request.getEmail());
-                    return createRestaurantLoginResponse(rest);
-                }
-            }
-            
-            logger.warn("登入失敗 - 帳號或密碼錯誤: {}", request.getEmail());
-            throw new AuthenticationException("帳號或密碼錯誤");
+	@Autowired
+	public AuthServiceImpl(MemberRepository memberRepository, RestRepository restRepository,
+			CuisineTypeRepository cuisineTypeRepository, PasswordEncoder passwordEncoder) {
+		this.memberRepository = memberRepository;
+		this.restRepository = restRepository;
+		this.cuisineTypeRepository = cuisineTypeRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 
-        } catch (AuthenticationException e) {
-            logger.error("認證失敗: {}", request.getEmail());
-            throw e;
-        } catch (Exception e) {
-            logger.error("登入過程發生未預期錯誤: {}", request.getEmail(), e);
-            throw new AuthenticationException("系統發生錯誤，請稍後再試");
-        }
-    }
+	@Override
+	public Integer registerMember(RegisterRequest request) {
+		logger.info("處理會員註冊請求: {}", request.getEmail());
+		validateRegistrationData(request.getEmail(), request.getPhone());
+		MemberVO member = createMemberFromRequest(request);
+		MemberVO savedMember = memberRepository.save(member);
+		logger.info("會員註冊成功: {}", request.getEmail());
+		return savedMember.getMemberId();
+	}
 
-    @Override
-    public LoginResponse register(RegisterRequest request) {
-        logger.info("開始處理會員註冊請求: {}", request.getMemberEmail());
-        validateRegistrationData(request);
+	@Override
+	public Integer registerRestaurant(RestaurantRegisterRequest request) {
+		logger.info("處理餐廳註冊請求: {}", request.getEmail());
+		validateRestaurantRegistrationData(request);
+		RestVO restaurant = createRestaurantFromRequest(request);
+		RestVO savedRestaurant = restRepository.save(restaurant);
+		logger.info("餐廳註冊成功: {}", request.getEmail());
+		return savedRestaurant.getRestId();
+	}
 
-        try {
-            MemberVO member = createMemberFromRequest(request);
-            MemberVO savedMember = memberRepository.save(member);
-            logger.info("會員註冊成功: {}", request.getMemberEmail());
-            return createMemberLoginResponse(savedMember);
-        } catch (Exception e) {
-            logger.error("會員註冊過程發生錯誤: {}", request.getMemberEmail(), e);
-            throw new AuthenticationException("註冊過程發生錯誤，請稍後再試");
-        }
-    }
-
-    @Override
-    public LoginResponse registerRestaurantBasic(RestRegisterRequest request) {
-        logger.info("開始處理餐廳基本資料註冊: {}", request.getMerchantEmail());
+	@Override
+    public AuthenticatedUser authenticateAndGetUser(LoginRequest request) throws AuthenticationException {
+        logger.info("開始處理登入請求: {}", request.getEmail());
+        validateLoginRequest(request);
         
-        if (isEmailExist(request.getMerchantEmail())) {
-            logger.warn("餐廳註冊失敗 - 電子信箱已存在: {}", request.getMerchantEmail());
-            throw new DuplicateEmailException("此電子信箱已被註冊");
+        // 嘗試會員登入
+        AuthenticatedUser memberUser = authenticateMemberUser(request);
+        if (memberUser != null) {
+            return memberUser;
+        }
+        
+        // 嘗試餐廳會員登入
+        AuthenticatedUser restaurantUser = authenticateRestaurantUser(request);
+        if (restaurantUser != null) {
+            return restaurantUser;
+        }
+        
+        logger.warn("登入驗證失敗: {}", request.getEmail());
+        throw new AuthenticationException("帳號或密碼錯誤");
+    }
+
+    private void validateLoginRequest(LoginRequest request) throws AuthenticationException {
+        if (request == null || request.getEmail() == null || request.getPassword() == null) {
+            logger.error("登入請求資料不完整");
+            throw new AuthenticationException("請輸入完整的登入資訊");
         }
 
-        try {
-            RestVO restaurant = createRestaurantFromRequest(request);
-            RestVO savedRestaurant = restRepository.save(restaurant);
-            logger.info("餐廳基本資料註冊成功: {}", request.getMerchantEmail());
-            return createRestaurantLoginResponse(savedRestaurant);
-        } catch (Exception e) {
-            logger.error("餐廳基本資料註冊過程發生錯誤: {}", request.getMerchantEmail(), e);
-            throw new AuthenticationException("註冊過程發生錯誤，請稍後再試");
+        String email = request.getEmail().trim().toLowerCase();
+        if (!isValidEmailFormat(email)) {
+            logger.error("無效的電子郵件格式: {}", email);
+            throw new AuthenticationException("請輸入有效的電子郵件");
+        }
+
+        String password = request.getPassword();
+        if (password.length() < 8 || password.length() > 20) {
+            logger.error("密碼長度不符合要求");
+            throw new AuthenticationException("密碼格式不正確");
         }
     }
 
-    @Override
-    public LoginResponse registerRestaurantComplete(RestRegisterRequest stepOneData, 
-            RestaurantDetailsRequest detailsRequest) {
-        logger.info("開始處理餐廳完整註冊流程: {}", stepOneData.getMerchantEmail());
+    private AuthenticatedUser authenticateMemberUser(LoginRequest request) {
+        return memberRepository.findByMemberEmail(request.getEmail())
+            .filter(member -> {
+                boolean matches = passwordEncoder.matches(request.getPassword(), 
+                                                        member.getMemberPassword());
+                if (!matches) {
+                    logger.warn("會員密碼驗證失敗: {}", request.getEmail());
+                }
+                return matches;
+            })
+            .map(member -> {
+                logger.info("會員登入成功: {}", request.getEmail());
+                return AuthenticatedUser.builder()
+                    .userId(member.getMemberId())
+                    .email(member.getMemberEmail())
+                    .userType("MEMBER")
+                    .name(member.getMemberName())
+                    .build();
+            })
+            .orElse(null);
+    }
 
-        try {
-            RestVO restaurant = createRestaurantFromRequest(stepOneData);
-            updateRestaurantWithDetails(restaurant, detailsRequest);
-            
-            RestVO savedRestaurant = restRepository.save(restaurant);
-            logger.info("餐廳完整註冊成功: {}", stepOneData.getMerchantEmail());
-            
-            return createRestaurantLoginResponse(savedRestaurant);
-        } catch (Exception e) {
-            logger.error("餐廳完整註冊過程發生錯誤: {}", stepOneData.getMerchantEmail(), e);
-            throw new AuthenticationException("註冊過程發生錯誤，請稍後再試");
+    private AuthenticatedUser authenticateRestaurantUser(LoginRequest request) {
+        logger.info("開始驗證餐廳會員身份: {}", request.getEmail());
+
+        Optional<RestVO> restaurantOptional = restRepository.findByMerchantEmail(request.getEmail());
+        
+        if (!restaurantOptional.isPresent()) {
+            logger.debug("未找到對應的餐廳會員帳號: {}", request.getEmail());
+            return null;
         }
-    }
-    
-    private void updateRestaurantWithDetails(RestVO restaurant, RestaurantDetailsRequest details) {
-        restaurant.setBusinessHours(details.getBusinessHours());
-        restaurant.setBusinessStatus(details.getBusinessStatus());
-       
+
+        RestVO restaurant = restaurantOptional.get();
+        logger.debug("找到餐廳會員帳號: restId={}", restaurant.getRestId());
+
+        // 驗證密碼
+        if (!passwordEncoder.matches(request.getPassword(), restaurant.getMerchantPassword())) {
+            logger.warn("餐廳會員密碼驗證失敗: email={}, restId={}", 
+                request.getEmail(), restaurant.getRestId());
+            return null;
+        }
+
+        // 驗證審核狀態
+        if (restaurant.getApprovalStatus() != 1) {
+            logger.warn("餐廳帳號尚未通過審核: email={}, restId={}, approvalStatus={}", 
+                request.getEmail(), restaurant.getRestId(), restaurant.getApprovalStatus());
+            throw new AuthenticationException("您的帳號尚未通過審核，請耐心等候");
+        }
+
+        // 建立認證用戶
+        AuthenticatedUser authenticatedUser = AuthenticatedUser.builder()
+                .userId(restaurant.getRestId())
+                .email(restaurant.getMerchantEmail())
+                .userType("RESTAURANT")
+                .name(restaurant.getRestName())
+                .approvalStatus(restaurant.getApprovalStatus())
+                .businessStatus(restaurant.getBusinessStatus())
+                .build();
+
+        logger.info("餐廳會員登入成功: email={}, restId={}", 
+            request.getEmail(), restaurant.getRestId());
+        
+        return authenticatedUser;
     }
 
-    private MemberVO createMemberFromRequest(RegisterRequest request) {
-        MemberVO member = new MemberVO();
-        member.setMemberName(request.getMemberName());
-        member.setMemberEmail(request.getMemberEmail());
-        member.setMemberPassword(passwordEncoder.encode(request.getMemberPassword()));
-        member.setMemberPhoneNumber(request.getMemberPhoneNumber());
-        member.setMemberGender(request.getMemberGender());
-        member.setMemberBirthdate(request.getMemberBirthdate());
-        member.setMemberAddress(request.getMemberAddress());
-        return member;
-    }
-
-    private RestVO createRestaurantFromRequest(RestRegisterRequest request) {
-        RestVO restaurant = new RestVO();
-        restaurant.setMerchantName(request.getMerchantName());
-        restaurant.setMerchantEmail(request.getMerchantEmail());
-        restaurant.setMerchantPassword(passwordEncoder.encode(request.getMerchantPassword()));
-        restaurant.setMerchantIdNumber(request.getMerchantIdNumber());
-        restaurant.setPhoneNumber(request.getPhoneNumber());
-        restaurant.setRestName(request.getRestName());
-        restaurant.setRestCity(request.getRestCity());
-        restaurant.setRestDist(request.getRestDist());
-        restaurant.setRestAddress(request.getRestAddress());
-        restaurant.setRestRegist(request.getRestRegist());
-        restaurant.setRestPhone(request.getRestPhone());
-        restaurant.setBusinessStatus(0);
-        restaurant.setApprovalStatus(0);
-        return restaurant;
-    }
-
-    private LoginResponse createMemberLoginResponse(MemberVO member) {
-        LoginResponse response = new LoginResponse();
-        response.setUserType(AuthConstants.USER_TYPE_MEMBER);
-        response.setMemberVO(member);
-        return response;
-    }
-
-    private LoginResponse createRestaurantLoginResponse(RestVO restaurant) {
-        LoginResponse response = new LoginResponse();
-        response.setUserType(AuthConstants.USER_TYPE_RESTAURANT);
-        response.setRestVO(restaurant);
-        return response;
-    }
-    
-    @Override
-    public boolean isEmailExist(String email) {
-        logger.info("檢查電子郵件是否已存在: {}", email);
-
-        if (email == null || email.trim().isEmpty()) {
-            logger.debug("收到空的電子郵件地址，返回 false");
+    private boolean isValidEmailFormat(String email) {
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             return false;
         }
-
         try {
-            boolean memberExists = memberRepository.existsByMemberEmail(email.trim());
-            boolean restaurantExists = restRepository.existsByMerchantEmail(email.trim());
-
-            if (memberExists || restaurantExists) {
-                logger.debug("電子郵件已存在於系統中: {}", email);
-                return true;
-            }
-
+            InternetAddress emailAddr = new InternetAddress(email);
+            emailAddr.validate();
+            return true;
+        } catch (AddressException e) {
+            logger.debug("電子郵件格式驗證失敗: {}", email);
             return false;
-        } catch (Exception e) {
-            logger.error("檢查電子郵件時發生錯誤: {}", email, e);
-            throw new RuntimeException("檢查電子郵件時發生系統錯誤");
         }
     }
-    
-    @Override
-    public void validateRestaurantData(RegisterRequest merchantRequest, RestRegisterRequest restRequest) 
-            throws DuplicateEmailException, DuplicatePhoneNumberException {
-        
-        logger.info("開始驗證餐廳註冊資料，負責人信箱: {}", merchantRequest.getMemberEmail());
 
-        try {
-            // 驗證電子信箱一致性
-            if (!merchantRequest.getMemberEmail().equals(restRequest.getMerchantEmail())) {
-                logger.warn("餐廳註冊驗證失敗 - 負責人電子信箱與餐廳資料不符: {} vs {}", 
-                        merchantRequest.getMemberEmail(), restRequest.getMerchantEmail());
-                throw new AuthenticationException("負責人電子信箱與餐廳資料不符");
-            }
+	@Override
+	public void validateRegistrationData(String email, String phone) {
+		validateEmail(email);
+		validatePhone(phone);
+	}
 
-            // 驗證手機號碼一致性
-            if (!merchantRequest.getMemberPhoneNumber().equals(restRequest.getPhoneNumber())) {
-                logger.warn("餐廳註冊驗證失敗 - 負責人手機號碼與餐廳資料不符: {} vs {}", 
-                        merchantRequest.getMemberPhoneNumber(), restRequest.getPhoneNumber());
-                throw new AuthenticationException("負責人手機號碼與餐廳資料不符");
-            }
+	private void validateRestaurantRegistrationData(RestaurantRegisterRequest request) {
+		validateRegistrationData(request.getEmail(), request.getPhone());
+		validateRegistrationNumber(request.getRegistrationNumber());
+	}
 
-            // 檢查電子信箱是否已被註冊
-            if (isEmailExist(restRequest.getMerchantEmail())) {
-                logger.warn("餐廳註冊驗證失敗 - 電子信箱已被使用: {}", restRequest.getMerchantEmail());
-                throw new DuplicateEmailException("此電子信箱已被註冊");
-            }
+	private void validateEmail(String email) {
+		if (memberRepository.existsByMemberEmail(email) || restRepository.existsByMerchantEmail(email)) {
+			logger.warn("電子信箱已被註冊: {}", email);
+			throw new DuplicateEmailException("此電子信箱已被註冊");
+		}
+	}
 
-            // 檢查手機號碼是否已被註冊
-            if (memberRepository.existsByMemberPhoneNumber(restRequest.getPhoneNumber()) ||
-                restRepository.existsByPhoneNumber(restRequest.getPhoneNumber())) {
-                logger.warn("餐廳註冊驗證失敗 - 手機號碼已被使用: {}", restRequest.getPhoneNumber());
-                throw new DuplicatePhoneNumberException("此手機號碼已被註冊");
-            }
+	private void validatePhone(String phone) {
+		if (memberRepository.existsByMemberPhoneNumber(phone) || restRepository.existsByPhoneNumber(phone)) {
+			logger.warn("電話號碼已被註冊: {}", phone);
+			throw new DuplicatePhoneNumberException("此電話號碼已被註冊");
+		}
+	}
 
-            logger.info("餐廳註冊資料驗證成功");
+	private void validateRegistrationNumber(String registrationNumber) {
+		if (restRepository.existsByRestRegist(registrationNumber)) {
+			logger.warn("食品業者登錄字號已被註冊: {}", registrationNumber);
+			throw new DuplicateRegistrationNumberException("此食品業者登錄字號已被註冊");
+		}
+	}
 
-        } catch (AuthenticationException | DuplicateEmailException | DuplicatePhoneNumberException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error("餐廳資料驗證過程發生未預期錯誤", e);
-            throw new AuthenticationException("資料驗證過程發生錯誤，請稍後再試");
-        }
-    }
-    
-    @Override
-    public void validateRegistrationData(RegisterRequest request) 
-            throws DuplicateEmailException, DuplicatePhoneNumberException {
-        
-        logger.info("開始驗證會員註冊資料，電子信箱: {}", request.getMemberEmail());
+	private void validateAndSetMerchantName(RestaurantRegisterRequest request, RestVO restVO) {
+		String name = request.getName();
+		if (name == null || name.trim().isEmpty()) {
+			throw new ValidationException("負責人姓名不能為空");
+		}
+		if (!name.matches("^[\u4e00-\u9fa5A-Za-z0-9_]+$")) {
+			throw new ValidationException("負責人姓名只能包含中文、英文字母、數字和底線");
+		}
+		restVO.setMerchantName(name.trim());
+	}
 
-        try {
-            // 電子信箱驗證
-            if (isEmailExist(request.getMemberEmail())) {
-                logger.warn("會員註冊驗證失敗 - 電子信箱已被使用: {}", request.getMemberEmail());
-                throw new DuplicateEmailException("此電子信箱已被註冊");
-            }
+	private MemberVO createMemberFromRequest(RegisterRequest request) {
+		MemberVO member = new MemberVO();
+		member.setMemberName(request.getName());
+		member.setMemberEmail(request.getEmail());
+		member.setMemberPassword(passwordEncoder.encode(request.getPassword()));
+		member.setMemberPhoneNumber(request.getPhone());
+		member.setMemberGender(request.getGender());
+		member.setMemberBirthdate(request.getBirthdate());
+		member.setMemberAddress(request.getAddress());
+		return member;
+	}
 
-            // 手機號碼驗證
-            if (memberRepository.existsByMemberPhoneNumber(request.getMemberPhoneNumber())) {
-                logger.warn("會員註冊驗證失敗 - 手機號碼已被會員使用: {}", 
-                        request.getMemberPhoneNumber());
-                throw new DuplicatePhoneNumberException("此手機號碼已被會員註冊");
-            }
+	private RestVO createRestaurantFromRequest(RestaurantRegisterRequest request) {
+		RestVO restaurant = new RestVO();
 
-            if (restRepository.existsByPhoneNumber(request.getMemberPhoneNumber())) {
-                logger.warn("會員註冊驗證失敗 - 手機號碼已被餐廳使用: {}", 
-                        request.getMemberPhoneNumber());
-                throw new DuplicatePhoneNumberException("此手機號碼已被餐廳會員註冊");
-            }
+		validateAndSetMerchantName(request, restaurant);
+		restaurant.setMerchantEmail(request.getEmail());
+		restaurant.setMerchantPassword(passwordEncoder.encode(request.getPassword()));
+		restaurant.setPhoneNumber(request.getPhoneNumber());
 
-            logger.info("會員註冊資料驗證成功: {}", request.getMemberEmail());
+		// 基本商家資訊
+		restaurant.setMerchantName(request.getName());
+		restaurant.setMerchantEmail(request.getEmail());
+		restaurant.setMerchantPassword(passwordEncoder.encode(request.getPassword()));
+		restaurant.setPhoneNumber(request.getPhone());
 
-        } catch (DuplicateEmailException | DuplicatePhoneNumberException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error("會員資料驗證過程發生未預期錯誤", e);
-            throw new AuthenticationException("資料驗證過程發生錯誤，請稍後再試");
-        }
-    }
+		// 手動設置 merchantIdNumber 和 phoneNumber 並驗證
+		validateAndSetMerchantIdNumber(request, restaurant);
+		validateAndSetPhoneNumber(request, restaurant);
+
+		// 設置預設值
+		restaurant.setBusinessStatus(1);
+		restaurant.setApprovalStatus(0);
+		restaurant.setOrderTableCount(10);
+		restaurant.setRestStars(0.0);
+		restaurant.setRestReviewers(0);
+
+		// 設置營業時間和週期
+		restaurant.setWeeklyBizDays("1111111"); // 代表每週7天營業
+		restaurant.setBusinessHours("000000011111111111110000"); // 代表 00:00 - 24:00 營業
+
+		// 餐廳特定資訊
+		restaurant.setRestName(request.getRestaurantName());
+		restaurant.setRestPhone(request.getBusinessPhone());
+		restaurant.setRestRegist(request.getRegistrationNumber());
+
+		// 料理類型處理
+		try {
+			int cuisineTypeId = Integer.parseInt(request.getCuisineType());
+			if (cuisineTypeId < 1 || cuisineTypeId > 10) {
+				throw new IllegalArgumentException("無效的餐廳類型代碼");
+			}
+			CuisineTypeVO cuisineType = cuisineTypeRepository.findById(cuisineTypeId)
+					.orElseThrow(() -> new IllegalArgumentException("無效的餐廳類型代碼: " + cuisineTypeId));
+			restaurant.setCuisineType(cuisineType);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("餐廳類型格式錯誤: " + request.getCuisineType());
+		}
+
+		// 地址資訊
+		restaurant.setRestCity(request.getCity());
+		restaurant.setRestDist(request.getDistrict());
+		restaurant.setRestAddress(request.getAddressDetail());
+
+		// 狀態設定
+		restaurant.setBusinessStatus(1);
+		restaurant.setApprovalStatus(0);
+
+		return restaurant;
+	}
+
+	private void validateAndSetMerchantIdNumber(RestaurantRegisterRequest request, RestVO restVO) {
+		String merchantIdNumber = request.getMerchantIdNumber();
+		if (merchantIdNumber == null || merchantIdNumber.trim().isEmpty()) {
+			throw new ValidationException("請輸入負責人身分證字號");
+		}
+		if (!merchantIdNumber.matches("^[A-Z][1-2][0-9]{8}$")) {
+			throw new ValidationException("負責人身分證字號格式錯誤");
+		}
+		restVO.setMerchantIdNumber(merchantIdNumber.trim());
+	}
+
+	private void validateAndSetPhoneNumber(RestaurantRegisterRequest request, RestVO restVO) {
+		String phoneNumber = request.getPhoneNumber();
+		if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+			throw new ValidationException("請輸入負責人手機號碼");
+		}
+		if (!phoneNumber.matches("^09[0-9]{8}$")) {
+			throw new ValidationException("負責人手機號碼格式錯誤");
+		}
+		restVO.setPhoneNumber(phoneNumber.trim());
+	}
+
 }

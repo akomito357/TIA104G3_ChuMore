@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
+<head>
+<
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChuMore - 餐廳註冊</title>
+
+<!-- Bootstrap CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+	crossorigin="anonymous">
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<style>
+:root {
+	--primary: #FEA116;
+	--primary-hover: #e89214;
+}
+
+body {
+	background-color: #f8f9fa;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		sans-serif;
+}
+
+.register-container {
+	max-width: 800px;
+	margin: 2rem auto;
+	padding: 2.5rem;
+	background-color: #ffffff;
+	border-radius: 16px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-section {
+	border-bottom: 1px solid #dee2e6;
+	margin-bottom: 2rem;
+	padding-bottom: 1rem;
+}
+
+.section-title {
+	color: var(--primary);
+	margin-bottom: 1.5rem;
+}
+
+.required::after {
+	content: "*";
+	color: #dc3545;
+	margin-left: 4px;
+}
+
+.address-group {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.address-group select {
+	flex: 1;
+}
+
+/* 針對小螢幕的響應式設計 */
+@media ( max-width : 768px) {
+	.address-group {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="register-container">
+			<h1 class="text-center h3 mb-4">餐廳會員註冊</h1>
+
+			<form th:action="@{/auth/register/restaurant}" method="post"
+				th:object="${restaurantRegisterRequest}" class="needs-validation"
+				novalidate>
+				<!-- 負責人資訊 -->
+				<div class="form-section">
+					<div class="col-md-6 mb-3">
+						<label class="form-label required">負責人姓名</label> <input
+							type="text" class="form-control" th:field="*{name}"
+							maxlength="50" required>
+						<div class="invalid-feedback">請輸入姓名</div>
+					</div>
+
+					<div class="col-md-6 mb-3">
+						<label class="form-label required">負責人手機號碼</label> <input
+							type="tel" class="form-control" th:field="*{phoneNumber}"
+							pattern="^09[0-9]{8}$" required>
+						<div class="invalid-feedback">請輸入有效的手機號碼格式</div>
+						<div class="form-text">請輸入09開頭的10位數手機號碼</div>
+					</div>
+
+					<div class="col-md-6 mb-3">
+						<label class="form-label required">身分證字號</label> <input
+							type="text" class="form-control" th:field="*{merchantIdNumber}"
+							pattern="^[A-Z][12][0-9]{8}$" required>
+						<div class="form-text">請輸入有效的身分證字號（第一位為大寫英文字母）</div>
+						<div class="invalid-feedback">請輸入有效的身分證字號格式</div>
+					</div>
+
+					<div class="col-md-6 mb-3">
+						<label class="form-label required">電子信箱</label> <input
+							type="email" class="form-control" th:field="*{email}"
+							maxlength="100" required>
+						<div class="invalid-feedback">請輸入有效的電子信箱</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label class="form-label required">密碼</label>
+							<div class="input-group">
+								<input type="password" class="form-control"
+									th:field="*{password}" minlength="8" maxlength="60" required>
+								<button class="btn btn-outline-secondary" type="button"
+									id="togglePassword">
+									<i class="bi bi-eye"></i>
+								</button>
+							</div>
+							<div class="form-text">密碼長度必須在8到50個字元之間</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<label class="form-label required">確認密碼</label> <input
+								type="password" class="form-control"
+								th:field="*{confirmPassword}" required>
+							<div class="invalid-feedback">密碼與確認密碼不符</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 餐廳資訊 -->
+				<div class="form-section">
+					<h2 class="h5 section-title">餐廳資訊</h2>
+
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label class="form-label required">餐廳名稱</label> <input
+								type="text" class="form-control" th:field="*{restaurantName}"
+								maxlength="100" required>
+							<div class="invalid-feedback">請輸入餐廳名稱</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<label class="form-label required">營業電話</label> <input type="tel"
+								class="form-control" th:field="*{businessPhone}"
+								pattern="^0[0-9]{8,9}$" required>
+							<div class="invalid-feedback">請輸入有效的營業電話</div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label required">食品業者登錄字號</label> <input
+							type="text" class="form-control" th:field="*{registrationNumber}"
+							pattern="^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$" required>
+						<div class="form-text">請輸入食品業者登錄字號（格式：B-123456789-12345-1）</div>
+						<div class="invalid-feedback">請輸入有效的食品業者登錄字號</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label required">餐廳類型</label> <select
+							class="form-select" th:field="*{cuisineType}" required>
+							<option value="">請選擇餐廳類型</option>
+							<option value="1">火鍋</option>
+							<option value="2">美式料理</option>
+							<option value="3">義大利麵</option>
+							<option value="4">下午茶</option>
+							<option value="5">壽司</option>
+							<option value="6">燒肉</option>
+							<option value="7">韓式料理</option>
+							<option value="8">素食餐廳</option>
+							<option value="9">泰式料理</option>
+							<option value="10">早午餐</option>
+						</select>
+						<div class="invalid-feedback">請選擇餐廳類型</div>
+					</div>
+
+					<!-- 地址資訊 -->
+					<div class="form-section">
+						<h2 class="h5 section-title">餐廳地址</h2>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<label class="form-label required">縣市</label> <select
+									class="form-select" id="city" name="city" th:field="*{city}"
+									required>
+									<option value="">請選擇縣市</option>
+								</select>
+								<div class="invalid-feedback">請選擇縣市</div>
+							</div>
+							<div class="col-md-6">
+								<label class="form-label required">地區</label> <select
+									class="form-select" id="district" name="district"
+									th:field="*{district}" required>
+									<option value="">請選擇地區</option>
+								</select>
+								<div class="invalid-feedback">請選擇地區</div>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label required">詳細地址</label> <input
+								type="text" class="form-control" name="addressDetail"
+								th:field="*{addressDetail}" placeholder="請輸入街道門牌"
+								maxlength="100" required>
+							<div class="invalid-feedback">請輸入詳細地址</div>
+						</div>
+					</div>
+
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-primary">註冊</button>
+						<a th:href="@{/auth/login}"
+							class="btn btn-link text-decoration-none">已有帳號？返回登入</a>
+					</div>
+				</div>
+			</form>
+
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+
+			<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    console.log('DOM 載入完成，開始初始化表單...');
+	    
+	    try {
+	        // 初始化所有功能
+	        initializeFormValidation();
+	        initializePasswordToggle();
+	        initializeLocationSelectors();  // 確保這個函數被呼叫
+	        initializeRegistrationValidation();
+	        
+	        console.log('表單初始化完成');
+	    } catch (error) {
+	        console.error('初始化過程發生錯誤:', error);
+	    }
+	});
+	    // 城市與地區資料
+	    const cityDistricts = {
+	        '臺北市': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區',
+	                  '士林區', '北投區', '內湖區', '南港區', '文山區'],
+	        '新北市': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區',
+	                  '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區'],
+	        '桃園市': ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '龜山區',
+	                  '龍潭區', '大溪區', '大園區', '觀音區', '新屋區', '復興區'],
+	        '臺中市': ['中區', '東區', '南區', '西區', '北區', '北屯區', '西屯區', '南屯區'],
+	        '臺南市': ['中西區', '東區', '南區', '北區', '安平區', '安南區'],
+	        '高雄市': ['楠梓區', '左營區', '鼓山區', '三民區', '苓雅區', '前鎮區', '新興區']
+	    };
+
+	    // 初始化所有功能
+	    initializeFormValidation();
+	    initializePasswordToggle();
+	    initializeLocationSelectors();
+	    initializeRegistrationValidation();
+	    
+	    // 表單驗證初始化
+	    function initializeFormValidation() {
+	        const forms = document.querySelectorAll('.needs-validation');
+	        Array.from(forms).forEach(form => {
+	            form.addEventListener('submit', event => {
+	                if (!form.checkValidity() || !validatePassword()) {
+	                    event.preventDefault();
+	                    event.stopPropagation();
+	                }
+	                form.classList.add('was-validated');
+	            }, false);
+	        });
+	    }
+
+        // 密碼驗證
+        function validatePassword() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            const requirements = [
+                { test: /[A-Z]/, message: '需要至少一個大寫字母' },
+                { test: /[a-z]/, message: '需要至少一個小寫字母' },
+                { test: /\d/, message: '需要至少一個數字' },
+                { test: /.{8,}/, message: '長度至少為 8 個字元' }
+            ];
+
+            // 檢查密碼格式
+            for (const req of requirements) {
+                if (!req.test.test(password.value)) {
+                    password.setCustomValidity(req.message);
+                    return false;
+                }
+            }
+            password.setCustomValidity('');
+
+            // 檢查密碼確認
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('密碼與確認密碼不符');
+                return false;
+            }
+            confirmPassword.setCustomValidity('');
+
+            return true;
+        }
+
+     // 密碼顯示切換
+        function initializePasswordToggle() {
+            const toggleButton = document.getElementById('togglePassword');
+            const passwordInput = document.querySelector('input[type="password"]');
+            
+            if (toggleButton && passwordInput) {
+                toggleButton.addEventListener('click', () => {
+                    const type = passwordInput.type === 'password' ? 'text' : 'password';
+                    passwordInput.type = type;
+                    toggleButton.querySelector('i').classList.toggle('bi-eye');
+                    toggleButton.querySelector('i').classList.toggle('bi-eye-slash');
+                });
+            }
+        }
+
+        function initializeLocationSelectors() {
+            // 取得選擇器元素
+            const citySelect = document.getElementById('city');
+            const districtSelect = document.getElementById('district');
+
+            // 檢查元素是否存在
+            if (!citySelect || !districtSelect) {
+                console.error('找不到城市或地區選擇器元素');
+                return;
+            }
+
+            // 清空現有選項
+            citySelect.innerHTML = '<option value="">請選擇縣市</option>';
+            districtSelect.innerHTML = '<option value="">請選擇地區</option>';
+            districtSelect.disabled = true;
+
+            // 添加城市選項
+            for (const city in cityDistricts) {
+                const option = new Option(city, city);
+                citySelect.add(option);
+            }
+
+            // 綁定城市變更事件
+            citySelect.addEventListener('change', function() {
+                const selectedCity = this.value;
+                updateDistricts(selectedCity, districtSelect);
+            });
+        }
+
+        function updateDistricts(selectedCity, districtSelect) {
+            // 清空並重置地區選擇器
+            districtSelect.innerHTML = '<option value="">請選擇地區</option>';
+            
+            if (selectedCity && cityDistricts[selectedCity]) {
+                // 啟用地區選擇器
+                districtSelect.disabled = false;
+                
+                // 添加地區選項
+                cityDistricts[selectedCity].forEach(district => {
+                    const option = new Option(district, district);
+                    districtSelect.add(option);
+                });
+            } else {
+                // 如果沒有選擇城市，停用地區選擇器
+                districtSelect.disabled = true;
+            }
+        }
+            // 填入城市選項
+            Object.keys(cityDistricts).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            // 處理城市選擇變更事件
+            citySelect.addEventListener('change', function() {
+                const selectedCity = this.value;
+                districtSelect.innerHTML = '<option value="">請選擇地區</option>';
+                
+                if (selectedCity && cityDistricts[selectedCity]) {
+                    cityDistricts[selectedCity].forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        districtSelect.appendChild(option);
+                    });
+                    districtSelect.disabled = false;
+                } else {
+                    districtSelect.disabled = true;
+                }
+            });
+
+     // 食品業者登錄字號驗證
+        function initializeRegistrationValidation() {
+            const registrationInput = document.getElementById('registrationNumber');
+            if (registrationInput) {
+                registrationInput.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    const pattern = /^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$/;
+                    if (!pattern.test(value)) {
+                        e.target.setCustomValidity('請輸入正確格式的食品業者登錄字號（例：B-123456789-12345-1）');
+                    } else {
+                        e.target.setCustomValidity('');
+                    }
+                });
+            }
+        }
+	
+	
+
+    </script>
+</body>
+</html>
