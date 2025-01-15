@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>營業時間設定</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <style>
+        .btn-primary {
+            background-color: #FF8B4D;
+            border-color: #FF8B4D;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background-color: #FF7A33;
+            border-color: #FF7A33;
+            color: #ffffff;
+        }
+        .btn-primary:focus, .btn-primary:active {
+            background-color: #FF6919 !important;
+            border-color: #FF6919 !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 139, 77, 0.5) !important;
+            color: #ffffff;
+        }
+
+        .form-check-input:checked {
+            background-color: #FF8B4D !important;
+            border-color: #FF8B4D !important;
+        }
+        
+        .form-check-input:focus {
+            border-color: #FF8B4D;
+            box-shadow: 0 0 0 0.25rem rgba(255, 139, 77, 0.25);
+        }
+
+        .time-slot {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .status-preview {
+            font-size: 0.9rem;
+        }
+
+        .status-hour {
+            padding: 4px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .status-open {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-closed {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .special-date-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">營業時間設定</h2>
+        
+        <!-- 營業時間卡片 -->
+        <div class="card mb-4" id="businessHoursCard">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">營業時間</h5>
+            </div>
+            <div class="card-body">
+                <div id="timeSlots">
+                    <!-- 時段會在這裡動態生成 -->
+                </div>
+                <button class="btn btn-secondary mb-3" id="addTimeSlot">新增時段</button>
+                <div id="statusPreview" class="mt-3">
+                    <!-- 狀態預覽會在這裡動態生成 -->
+                </div>
+                <div class="text-end mt-3">
+                    <button class="btn btn-primary" id="saveBusinessHours">儲存營業時間</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 每週營業日卡片 -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">每週營業日</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="monday" checked>
+                            <label class="form-check-label">星期一</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="tuesday" checked>
+                            <label class="form-check-label">星期二</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="wednesday" checked>
+                            <label class="form-check-label">星期三</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="thursday" checked>
+                            <label class="form-check-label">星期四</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="friday" checked>
+                            <label class="form-check-label">星期五</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="saturday" checked>
+                            <label class="form-check-label">星期六</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="sunday" checked>
+                            <label class="form-check-label">星期日</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <button class="btn btn-primary" id="saveWeeklyBusinessDays">儲存每週營業日</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 特定公休日卡片 -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">特定公休日</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="specialDate" placeholder="選擇日期">
+                            <button class="btn btn-primary" type="button" id="addSpecialDate">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="specialDatesList" class="mt-3">
+                    <!-- 特定公休日列表會在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 初始化時間選項
+            function initializeTimeOptions() {
+                const times = [];
+                for (let i = 0; i <= 24; i++) {
+                    const hour = i.toString().padStart(2, '0');
+                    times.push(`${hour}:00`);
+                }
+                
+                $('.time-select').each(function() {
+                    const select = $(this);
+                    select.empty().append('<option value="">請選擇</option>');
+                    times.forEach(time => {
+                        select.append(`<option value="${time}">${time}</option>`);
+                    });
+                });
+            }
+
+            // 新增時段區塊的HTML模板
+            function getTimeSlotHTML(index) {
+                return `
+                    <div class="time-slot">
+                        <div class="row align-items-end">
+                            <div class="col-md-5">
+                                <label class="form-label">開始時間</label>
+                                <select class="form-select time-select start-time">
+                                    <option value="">請選擇</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">結束時間</label>
+                                <select class="form-select time-select end-time">
+                                    <option value="">請選擇</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                ${index > 0 ? '<button class="btn btn-danger w-100 remove-slot">移除</button>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 將時間轉換為24小時格式的陣列
+            function convertToStatusArray(timeSlots) {
+                const statusArray = new Array(24).fill(0);
+                
+                timeSlots.forEach(slot => {
+                    const startHour = parseInt(slot.startTime.split(':')[0]);
+                    let endHour = parseInt(slot.endTime.split(':')[0]);
+                    
+                    if (!isNaN(startHour) && !isNaN(endHour)) {
+                        if (endHour === 24) {
+                            endHour = 24;
+                        }
+                        
+                        if (endHour === 0 || endHour === 24) {
+                            for (let i = startHour; i < 24; i++) {
+                                statusArray[i] = 1;
+                            }
+                        } else if (endHour <= startHour) {
+                            for (let i = startHour; i < 24; i++) {
+                                statusArray[i] = 1;
+                            }
+                            for (let i = 0; i < endHour; i++) {
+                                statusArray[i] = 1;
+                            }
+                        } else {
+                            for (let i = startHour; i < endHour; i++) {
+                                statusArray[i] = 1;
+                            }
+                        }
+                    }
+                });
+                
+                return statusArray;
+            }
+
+            // 更新時間狀態預覽
+            function updateStatusPreview(timeSlots) {
+                const statusArray = convertToStatusArray(timeSlots);
+                let previewHTML = '<h6 class="mb-3">營業狀態預覽：</h6><div class="row g-2">';
+                
+                // 分兩行顯示，每行12小時
+                for (let row = 0; row < 2; row++) {
+                    previewHTML += '<div class="col-12"><div class="d-flex justify-content-between">';
+                    for (let i = row * 12; i < (row + 1) * 12; i++) {
+                        const status = statusArray[i];
+                        previewHTML += `
+                            <div class="status-hour ${status ? 'status-open' : 'status-closed'}">
+                                <small>${i.toString().padStart(2, '0')}:00</small>
+                            </div>
+                        `;
+                    }
+                    previewHTML += '</div></div>';
+                }
+                previewHTML += '</div>';
+                
+                $('#statusPreview').html(previewHTML);
+            }
+
+            // 收集所有時段並更新預覽
+            function collectAndUpdatePreview() {
+                const timeSlots = [];
+                $('.time-slot').each(function() {
+                    const startTime = $(this).find('.start-time').val();
+                    const endTime = $(this).find('.end-time').val();
+                    if (startTime && endTime) {
+                        timeSlots.push({ startTime, endTime });
+                    }
+                });
+                updateStatusPreview(timeSlots);
+            }
+
+            // 初始化營業時間區域
+            function initializeBusinessHours() {
+                $('#timeSlots').append(getTimeSlotHTML(0));
+                initializeTimeOptions();
+                updateStatusPreview([]);
+            }
+
+            // 初始化日期選擇器
+            function initializeDatepicker() {
+                $('#specialDate').datepicker({
+                    format: 'yyyy-mm-dd',
+                    language: 'zh-TW',
+                    autoclose: true,
+                    todayHighlight: true
+                });
+            }
+
+            // 新增特定公休日到列表
+            function addSpecialDateToList(date) {
+                const dateItem = `
+                    <div class="special-date-item" data-date="${date}">
+                        <span>${date}</span>
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-date">移除</button>
+                    </div>
+                `;
+                $('#specialDatesList').append(dateItem);
+            }
+
+           // 事件綁定
+$('#addTimeSlot').click(function() {
+    // 先收集當前所有時段的值
+    const currentTimeSlots = [];
+    $('.time-slot').each(function() {
+        currentTimeSlots.push({
+            startTime: $(this).find('.start-time').val(),
+            endTime: $(this).find('.end-time').val()
+        });
+    });
+
+    // 新增時段
+    const newSlot = $(getTimeSlotHTML($('.time-slot').length));
+    $('#timeSlots').append(newSlot);
+    
+    // 重新初始化所有時段的選項
+    initializeTimeOptions();
+
+    // 還原之前的選擇值
+    $('.time-slot').each(function(index) {
+        if (index < currentTimeSlots.length) {
+            $(this).find('.start-time').val(currentTimeSlots[index].startTime);
+            $(this).find('.end-time').val(currentTimeSlots[index].endTime);
+        }
+    });
+
+    // 更新預覽
+    collectAndUpdatePreview();
+});
+
+            $('#timeSlots').on('change', '.time-select', collectAndUpdatePreview);
+
+            $('#addSpecialDate').click(function() {
+                const date = $('#specialDate').val();
+                if (date) {
+                    addSpecialDateToList(date);
+                    $('#specialDate').val('');
+                }
+            });
+            $(document).on('click', '.remove-slot', function() {
+                $(this).closest('.time-slot').remove();
+                collectAndUpdatePreview();
+            });
+
+            $('#specialDatesList').on('click', '.remove-date', function() {
+                $(this).closest('.special-date-item').remove();
+            });
+
+            // 儲存按鈕事件
+            $('#saveBusinessHours').click(function() {
+                const timeSlots = [];
+                $('.time-slot').each(function() {
+                    const startTime = $(this).find('.start-time').val();
+                    const endTime = $(this).find('.end-time').val();
+                    if (startTime && endTime) {
+                        timeSlots.push({ startTime, endTime });
+                    }
+                });
+
+                const businessHours = convertToStatusArray(timeSlots);
+
+                // API 呼叫
+                fetch('/api/business-hours', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ businessHours })
+                })
+                .then(response => response.json())
+                .then(() => {
+                    alert('營業時間已儲存！');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('儲存失敗，請稍後再試。');
+                });
+            });
+
+            $('#saveWeeklyBusinessDays').click(function() {
+                const weeklyBusinessDays = {
+                    monday: $('#monday').prop('checked'),
+                    tuesday: $('#tuesday').prop('checked'),
+                    wednesday: $('#wednesday').prop('checked'),
+                    thursday: $('#thursday').prop('checked'),
+                    friday: $('#friday').prop('checked'),
+                    saturday: $('#saturday').prop('checked'),
+                    sunday: $('#sunday').prop('checked')
+                };
+
+                // API 呼叫
+                fetch('/api/weekly-business-days', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(weeklyBusinessDays)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    alert('每週營業日已儲存！');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('儲存失敗，請稍後再試。');
+                });
+            });
+
+            // 載入既有資料
+            function loadExistingData() {
+                // 載入營業時間
+                fetch('/rests/business-hours')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (Array.isArray(data.businessHours)) {
+                            let startHour = null;
+                            const timeSlots = [];
+                            
+                            // 將狀態陣列轉換為時段
+                            for (let i = 0; i <= data.businessHours.length; i++) {
+                                const status = i < data.businessHours.length ? data.businessHours[i] : 0;
+                                
+                                if (status === 1 && startHour === null) {
+                                    startHour = i;
+                                } else if (status === 0 && startHour !== null) {
+                                    timeSlots.push({
+                                        startTime: `${startHour.toString().padStart(2, '0')}:00`,
+                                        endTime: `${i.toString().padStart(2, '0')}:00`
+                                    });
+                                    startHour = null;
+                                }
+                            }
+                            // 處理最後一個時段
+                            if (startHour !== null) {
+                                timeSlots.push({
+                                    startTime: `${startHour.toString().padStart(2, '0')}:00`,
+                                    endTime: '24:00'
+                                });
+                            }
+                            // 清空現有時段
+                            $('#timeSlots').empty();                           
+                            // 添加載入的時段
+                            timeSlots.forEach((slot, index) => {
+                                const newSlot = $(getTimeSlotHTML(index));
+                                $('#timeSlots').append(newSlot);
+                                initializeTimeOptions();
+                                newSlot.find('.start-time').val(slot.startTime);
+                                newSlot.find('.end-time').val(slot.endTime);
+                            });                        
+                            // 如果沒有時段，添加一個空的
+                            if (timeSlots.length === 0) {
+                                $('#timeSlots').append(getTimeSlotHTML(0));
+                                initializeTimeOptions();
+                            }
+                            
+                            // 更新預覽
+                            collectAndUpdatePreview();
+                        }
+                    })
+                    .catch(error => console.error('Error loading business hours:', error));
+
+                // 載入每週營業日
+                fetch('/api/weekly-business-days')
+                    .then(response => response.json())
+                    .then(data => {
+                        Object.entries(data).forEach(([day, checked]) => {
+                            $(`#${day}`).prop('checked', checked);
+                        });
+                    })
+                    .catch(error => console.error('Error loading weekly business days:', error));
+
+                // 載入特定公休日
+                fetch('/api/special-closed-dates')
+                    .then(response => response.json())
+                    .then(dates => {
+                        $('#specialDatesList').empty();
+                        dates.forEach(date => {
+                            addSpecialDateToList(date);
+                        });
+                    })
+                    .catch(error => console.error('Error loading special dates:', error));
+            }
+
+            // 初始化頁面
+            initializeBusinessHours();
+            initializeDatepicker();
+            loadExistingData();
+        });
+    </script>
+</body>
+</html>

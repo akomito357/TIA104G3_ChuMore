@@ -13,4 +13,9 @@ public class RestInfoTestController {
 	public String test() {
 		return "secure/rest/rest_information";
 	}
+	
+	@GetMapping("reservation_setting")
+	public String test2() {
+		return "secure/rest/reservation_setting";
+	}
 }

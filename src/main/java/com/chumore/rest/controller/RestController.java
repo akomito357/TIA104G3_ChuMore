@@ -110,7 +110,6 @@ public class RestController {
 	            return ResponseEntity.ok(response);
 	        }
 
-	        // 獲取 CuisineType
 	        CuisineTypeVO cuisineType = cuisineTypeSvc.getOneCuisineType(cuisineTypeId);
 	        if (cuisineType == null) {
 	            response.put("success", false);
@@ -118,7 +117,6 @@ public class RestController {
 	            return ResponseEntity.ok(response);
 	        }
 
-	        // 更新餐廳資料
 	        existingRest.setMerchantName((String) requestData.get("merchantName"));
 	        existingRest.setPhoneNumber((String) requestData.get("phoneNumber"));
 	        existingRest.setRestName((String) requestData.get("restName"));
@@ -130,8 +128,7 @@ public class RestController {
 	        existingRest.setRestIntro((String) requestData.get("restIntro"));
 	        existingRest.setCuisineType(cuisineType);
 	        existingRest.setBusinessStatus(Integer.parseInt(requestData.get("businessStatus").toString()));
-	        
-	        // 保存更新
+
 	        restSvc.updateRest(existingRest);
 	        
 	        response.put("success", true);
@@ -144,7 +141,18 @@ public class RestController {
 	        return ResponseEntity.ok(response);
 	    }
 	}
-
+	@GetMapping
+	public ResponseEntity<?> getBusinessHoursToUpdate(@RequestParam Integer restId){
+		try {
+			List<Integer>bussinessHours =restSvc.getBusinessHours(restId);
+			
+		}catch(Exception e){
+			
+		};
+		
+		return ResponseEntity.ok(null);
+		}
+	
 	// 獲取根本原因的輔助方法
 	private Throwable getRootCause(Throwable e) {
 	    Throwable cause = e;
