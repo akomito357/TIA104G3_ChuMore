@@ -197,12 +197,16 @@
                 </p>
             </div>
 
-            <form th:object="${review}" th:action="@{update}" method="post" enctype="multipart/form-data">
+            <form th:object="${review}" th:action="@{confirmUpdate}" method="post" enctype="multipart/form-data" id="update_review_form">
+                <input type="hidden" th:field="*{reviewId}">
+                <input type="hidden" th:field="*{rest.restId}">
+                <input type="hidden" th:field="*{orderMaster.orderId}">
+                <input type="hidden" th:field="*{member.memberId}">
                 <!-- 評分區 -->
                 <div class="mb-4">
                     <label class="form-label">您的整體評分：</label>
                     <span class="error" id="ratingError" th:if="${#fields.hasErrors('reviewRating')}" th:errors="*{reviewRating}"></span>
-                    <input readonly type="text" th:field="*{reviewRating}" class="rating">
+                    <input readonly type="hidden" th:field="*{reviewRating}" class="rating">
                     <div class="star-rating-container">
                         <span class="star-rating" data-rating="1" th:classappend="${review.reviewRating >= 1} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 1} ? 'fas' : 'far'"></i></span>
                         <span class="star-rating" data-rating="2" th:classappend="${review.reviewRating >= 2} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 2} ? 'fas' : 'far'"></i></span>
@@ -237,8 +241,8 @@
                     </div>
                     <div id="photoViewGrid" class="review-img-grid mt-3 photo-preview-grid">
                         <th:block th:if="${review.reviewImages} != null" th:each="img : ${review.reviewImages}">
-                            <div class="photo-preview-item">
-                                <img th:src="@{/DBGifReader/review} + '?reviewImgId=' + ${img.reviewImgId}" alt="預覽圖" currentUpdated="false">
+                            <div class="photo-preview-item photoPreviewItem">
+                                <img th:src="@{/DBGifReader/review} + '?reviewImgId=' + ${img.reviewImgId}" alt="預覽圖">
                                 <button class="photo-delete-btn">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -296,7 +300,7 @@
     <script th:src="@{/js/memberReviewUpdate.js}"></script>
     <script src="/static/js/memberReviewUpdate.js"></script>
     <script th:inline="javascript">
-        
+        populateImageGrid(/*[[${review.rest.restId}]]*/);
 
         
     </script>

@@ -1,13 +1,15 @@
 package com.chumore.discpts.model;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.chumore.discpts.dto.DiscPtsAvailableDTO;
 import com.chumore.discpts.dto.DiscPtsSummaryDTO;
-import java.util.List;
-
-
 
 @Repository
 public interface DiscPtsRepository extends JpaRepository<DiscPtsVO, Integer> {
@@ -39,4 +41,18 @@ public interface DiscPtsRepository extends JpaRepository<DiscPtsVO, Integer> {
     List<DiscPtsSummaryDTO> findPointsSummaryByMember(
         @Param("memberId") Integer memberId
     );
+
+    @Query("SELECT new com.chumore.discpts.dto.DiscPtsAvailableDTO "
+    		+ "(dp.member.memberId, dp.rest.restId, SUM(dp.discPtsQty) AS availablePoints)"
+    		+ " FROM DiscPtsVO dp " 
+    		+ "WHERE expDate >= CURRENT_DATE() AND dp.rest.restId = :restId " 
+    		+ "GROUP BY dp.member.memberId HAVING dp.member.memberId = :memberId")
+    DiscPtsAvailableDTO findAvailablePointsByMemberAndRest(@Param("memberId") Integer memberId, @Param("restId") Integer restId);
+    
+    @Query("FROM DiscPtsVO dp WHERE expDate >= CURRENT_DATE() AND dp.rest.restId = :restId AND dp.member.memberId = :memberId ORDER BY dp.expDate ASC")
+    List<DiscPtsVO> findAvailablePointsListByMemberAndRest(@Param("memberId") Integer memberId, @Param("restId") Integer restId);
+    
+    @Query("FROM DiscPtsVO dp WHERE expDate = :expDate AND dp.rest.restId = :restId AND dp.member.memberId = :memberId")
+    List<DiscPtsVO> findRecentPointsByMemberAndRest(@Param("memberId") Integer memberId, @Param("restId") Integer restId, @Param("expDate") LocalDate expDate);
+
 }

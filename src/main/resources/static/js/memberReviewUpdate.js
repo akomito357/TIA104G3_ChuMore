@@ -38,11 +38,13 @@ async function populateImageGrid(restId){
     const EnvImgGrid = document.querySelector('.restaurant-image-container');
     EnvImgGrid.innerHTML = "";
 
-    if (images.environment.length === 0){
+    if (images.environment.length === 0 ){
         console.log('no images');
         EnvImgGrid.innerHTML = `<img src="https://placehold.co/200x150" alt="餐廳照片" class="restaurant-image">`
     } else {
-        EnvImgGrid.innerHTML = `<img src=${images.environment[0]} alt="餐廳照片" class="restaurant-image">`
+        console.log(images.environment.length);
+        console.log(images.environment);
+        EnvImgGrid.innerHTML = `<img src=${images.environment[0]} alt="已設置餐廳照片" class="restaurant-image">`
     }
 }
 
@@ -108,7 +110,7 @@ function starRating(){
 const photoUploadContainer = $('#photoUploadContainer');
 const photoUploadInput = $('#upfiles');
 const photoPreviewGrid = $('#photoViewGrid');
-const addReviewForm = $('#reviewAddForm');
+const updateReviewForm = $('#update_review_form');
 let uploadedFiles = [];
 let dataTransfer = new DataTransfer();
 let imgIndex = 0;
@@ -133,6 +135,7 @@ let imgIndex = 0;
 
 function showFileUpload() {
     const files = dataTransfer.files;
+    // document.querySelectorAll(".newPreview").remove();
 
     for (let file of dataTransfer.files) {
         if (file.type.match('image.*')){
@@ -142,8 +145,8 @@ function showFileUpload() {
                 // console.log(file);
                 // console.log(photoPreviewGrid);
                 photoPreviewGrid.innerHTML = "";
-                const previewImg = `<div class="photoPreviewItem photo-preview-item">
-                                        <img src="${e.target.result}" alt="preview" index="${imgIndex++}">
+                const previewImg = `<div class="photoPreviewItem photo-preview-item newPreview">
+                                        <img src="${e.target.result}" alt="preview" index="${imgIndex++}" class="newImg">
                                         <button class="photo-delete-btn">
                                             <i class="fas fa-times"></i>
                                         </button>
@@ -154,6 +157,7 @@ function showFileUpload() {
             reader.readAsDataURL(file);
         }
     }
+    imgIndex = 0;
 }
 
 function addShowFileUpload(file){
@@ -164,8 +168,17 @@ function addShowFileUpload(file){
             // console.log(file);
             // console.log(photoPreviewGrid);
             // photoPreviewGrid.innerHTML = "";
-            const previewImg = `<div class="photoPreviewItem photo-preview-item">
-                                    <img src="${e.target.result}" alt="preview" index="${imgIndex++}">
+            let index = 0;
+            Array.from(dataTransfer.files).forEach((dataTransferfile, dataTransferindex) => {
+                // console.log(`Index: ${index}, File: ${dataTransferfile.name}`);
+                if (file === dataTransferfile){
+                    index = dataTransferindex
+                }
+
+            });
+
+            const previewImg = `<div class="photoPreviewItem photo-preview-item newPreview">
+                                    <img src="${e.target.result}" alt="preview" index="${index}" class="newImg">
                                     <button class="photo-delete-btn">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -176,6 +189,7 @@ function addShowFileUpload(file){
         reader.readAsDataURL(file);
     }
 }
+
 
 photoUploadInput.on('change', function(e) {
     for (let file of e.target.files){
@@ -191,22 +205,46 @@ photoUploadInput.on('change', function(e) {
 
 $(document).on('click', '.photo-delete-btn', function(e){
     e.preventDefault();
-    let newDataTransfer = new DataTransfer();
+    const imgEle = $(this).parent('.photoPreviewItem').find('img');
 
-    let currentImgIndex = $(this).parent('.photoPreviewItem').find('img').attr('index');
-    // console.log(document.querySelector("#upfiles").value);
-    console.log('currentImgIndex = ' + currentImgIndex);
-    uploadedFiles.splice(currentImgIndex, 1);
-    $(this).parent('.photoPreviewItem').remove();
-    console.log('uploadedFiles =' + uploadedFiles);
+    if(imgEle.attr('index') === undefined){
+        // console.log('oldUpdated');
+        // console.log(imgEle.attr('src'));
+        let reviewImgId = imgEle.attr('src').split('=').pop();
+        // console.log(reviewImgId);
+        deleteOldImgFetch(reviewImgId);
+        imgEle.parent('.photoPreviewItem').remove();
+    } else {
+        let newDataTransfer = new DataTransfer();
+        let currentImgIndex = imgEle.attr('index');
+        console.log(document.querySelector("#upfiles").value);
+        console.log('currentImgIndex = ' + currentImgIndex);
+        uploadedFiles.splice(currentImgIndex, 1);
+        $(this).parent('.photoPreviewItem').remove();
+        console.log('uploadedFiles =' + uploadedFiles);
+
+        // update indexs
+        document.querySelectorAll('img.newImg').forEach((item, index) => {
+            if (item.getAttribute('index') > currentImgIndex){
+                currentIndex = item.getAttribute('index');
+                item.setAttribute('index', currentIndex - 1);
+                // console.log("change index = ", index);
+            }
+        })
+        // imgIndex --;
+        
+        for (let i = 0; i < uploadedFiles.length; i++){
+            newDataTransfer.items.add(uploadedFiles[i]);
+        }
     
-    for (let i = 0; i < uploadedFiles.length; i++){
-        newDataTransfer.items.add(uploadedFiles[i]);
+        // console.log('uploadedFiles =' + uploadedFiles);
+        dataTransfer = newDataTransfer;
+        Array.from(dataTransfer.files).forEach((file, index) => {
+            console.log(`Index: ${index}, File: ${file.name}`);
+        });
+        // showFileUpload();
     }
 
-    // console.log('uploadedFiles =' + uploadedFiles);
-    dataTransfer = newDataTransfer;
-    // showFileUpload();
 })
 
 
@@ -217,17 +255,32 @@ document.querySelector("#avgCost").addEventListener("keydown", function(e) {
     }
 })
 
-addReviewForm.submit(function(e){
+updateReviewForm.submit(function(e){
     // console.log('addReviewForm submit');
     photoUploadInput[0].files = dataTransfer.files;
 });
 
 
+async function deleteOldImgFetch(reviewImgId){
+    const url = "/member/reviews/images/delete/" + reviewImgId;
+    try {
+        console.log(url);
+        let res = await fetch(url, {
+            method: 'DELETE',
+            
+        })
+        if (!res.ok){
+            throw new Error('deleteOldImgFetch error with id = ' + reviewImgId);
+        }
+        // let resJson = await res.json();
+        console.log(res);
+        return res;
+    } catch(error){
+        console.log(error);
+        return [];
+    }
 
-// function removeFileFromFilelist(e){
-//     e.preventDefault();
-//     console.log(document.querySelector("#upfiles").value);
-// }
+}
 
 
 

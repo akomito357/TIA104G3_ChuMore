@@ -39,4 +39,26 @@ public class Product_Service {
 	public ProductVO getProductById(Integer productId) {
 		return repository.findById(productId).orElse(null);
 	}
+	
+	public List<ProductVO> getAllProductByActiveStatusAndSelected(Integer restId, 
+			ProductVO selectedProduct){
+		// for review showing
+		
+		List<ProductVO> availableProduct = getAllProductByActiveStatus(restId);
+		Boolean isAvailable = false;
+		
+		if (availableProduct != null) {
+			for (ProductVO product: availableProduct) {
+				if (product.getProductId().equals(selectedProduct.getProductId())) {
+					isAvailable = true;
+					break;
+				}
+			}
+		}
+		if (!isAvailable || availableProduct.isEmpty()) {
+			availableProduct.add(selectedProduct);
+		}
+		
+		return availableProduct;
+	}
 }
