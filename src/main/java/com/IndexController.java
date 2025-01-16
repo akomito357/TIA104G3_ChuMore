@@ -50,4 +50,14 @@ public class IndexController {
 	public String restMenuSetting() {
 		return "secure/rest/menu/menu_setting";
 	}
+	
+	@GetMapping("/testServiceBellOrder")
+	public String testOrderServiceBell(){
+		return "/testOrderServiceBell";
+	}
+	
+	@GetMapping("/testRestNotifyServiceBell")
+	public String testRestNotifyServiceBell(){
+		return "/testRestNotifyServiceBell";
+	}
 }

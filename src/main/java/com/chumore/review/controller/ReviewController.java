@@ -253,8 +253,8 @@ public class ReviewController {
     }
     
 	@PostMapping("update") // getOneForUpdate
-	public String getOneForUpdate(@RequestParam String reviewId, ModelMap model) {
-		ReviewVO review = reviewService.getReviewById(Integer.valueOf(reviewId));
+	public String getOneForUpdate(@RequestParam String reviewId, ModelMap model, HttpSession session) {
+		ReviewVO review = reviewService.getReviewById(Integer.valueOf(reviewId), session);
 		List<ReviewImageVO> imgList = reviewImageService.getReviewImages(Integer.valueOf(reviewId));
 		model.addAttribute("review", review);
 		model.addAttribute("reviewImgs", imgList);
@@ -284,7 +284,7 @@ public class ReviewController {
 	
 	@PostMapping("confirmUpdate")
 	public String update(@Valid @ModelAttribute("review") ReviewVO review, BindingResult result, 
-			ModelMap model, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs) throws IOException {
+			ModelMap model, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs, HttpSession session) throws IOException {
 		
 		result = removeFieldError(review, result, "member");
     	result = removeFieldError(review, result, "rest");
@@ -294,7 +294,7 @@ public class ReviewController {
     	review.setMember(memberService.getOneMember(review.getMember().getMemberId()).orElse(null));
     	review.setRest(restSvc.getOneById(review.getRest().getRestId()));
     	
-    	System.out.println(review);
+//    	System.out.println(review);
     	
 		if (result.hasErrors()) {
     		System.out.println("Errors: " + result.getFieldErrors());
@@ -310,7 +310,7 @@ public class ReviewController {
     		return "secure/member/review/member_review_update_page";
     	}
 		
-		reviewService.updateReviewWithImgs(review, reviewImgs);
+		reviewService.updateReviewWithImgs(review, session, reviewImgs);
 		
 		return "redirect:/memberDiningHistory";
 	}
@@ -322,7 +322,7 @@ public class ReviewController {
     	OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
     	model.addAttribute("review", review);
     	model.addAttribute("orderMaster", orderMaster);
-    	System.out.println(session.getAttribute("order"));
+//    	System.out.println(session.getAttribute("order"));
     	return "secure/member/review/member_review_show_page";
     }
     
@@ -337,7 +337,7 @@ public class ReviewController {
 	@ResponseBody
 	public ResponseEntity<byte[]> getOneRevImg(@PathVariable Integer reviewImgId) {
 		ReviewImageVO reviewImage = reviewImageService.getOneRevImg(reviewImgId);
-		System.out.println(reviewImage.getReviewImage());
+//		System.out.println(reviewImage.getReviewImage());
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(reviewImage.getReviewImage());
 	}
 	
