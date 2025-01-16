@@ -9,4 +9,5 @@ bin/
 .DS_Store
 db.properties
 application-secret.properties
+data/lucene/index/
 
