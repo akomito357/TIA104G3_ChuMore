@@ -12,7 +12,6 @@ public interface RestService {
 	List<String> getFormattedBusinessHours(Integer restId);
 	List<Integer> getBusinessHours(Integer restId);
 	List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId);
-
-
-
+	List<Integer[]> getBusinessHoursFor(Integer restId);
+	String getBusinessDays(Integer restId);
 }
