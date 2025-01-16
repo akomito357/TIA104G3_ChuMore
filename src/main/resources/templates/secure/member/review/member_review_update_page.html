@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改評論</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- CKEditor -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <head th:insert="~{/included.html}"></head>
+    <head th:insert="~{/header_member.html}"></head>
+    <head th:insert="~{/sidebar_member.html}"></head>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .review-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .restaurant-info-row {
+            display: flex;
+            /* align-items: stretch; */
+            background-color: #f1f3f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .restaurant-image-container {
+            /* flex: 0 0 50%; */
+            padding-right: 20px;
+        }
+        .restaurant-image {
+            width: 100%;
+            /* height: 350px; */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .restaurant-text-info {
+            flex: 0 0 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dining-info {
+            background-color: #f5f5f5;
+            /* color: var(--dark); */
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .dining-info p {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        .info-label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+        }
+        .info-icon {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        .star-rating {
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s;
+            font-size: 2rem;
+        }
+        .star-rating.selected, 
+        .star-rating.active {
+            color: #ffc107;
+        }
+        /* .photo-upload-container {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .photo-upload-container.dragover {
+            background-color: #f1f3f5;
+        } */
+        .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .photo-preview-item {
+            position: relative;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
+        .ck.ck-editor {
+            margin-bottom: 20px;
+        }
+        div.restaurant-image-container{
+            height: 150px;
+        }
+        div.restaurant-image-container img{
+            height: 100%;
+            flex: 0 1 auto;
+        }
+        button#updateReview{
+            background-color: #feaf39;
+            color: whitesmoke;
+        }
+        .back{
+            border: 0dvi;
+            color: var(--lighten_dark);
+            background-color: white;
+        }
+        .back:hover{
+            border: 0dvi;
+            color: #6c757d;
+            background-color: white;
+        }
+        .error{
+            color: red;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <main class="main">
+    <div class="container">
+        <div class="review-container">
+            <!-- 頁面標題 -->
+            <div class="mb-3">
+                <button class="submit back" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i><span> 回上一頁</span>
+                </button>
+            </div>
+            <div class="page-title">
+                <h2 class="mb-4">修改評論</h2>
+            </div>
+
+            <!-- 餐廳資訊區 -->
+            <div class="restaurant-info-row">
+                <div class="restaurant-image-container">
+                    <img src="https://placehold.co/200x150" alt="餐廳照片" class="restaurant-image">
+                </div>
+                
+                <div class="restaurant-text-info">
+                    <h2 th:text="${review.rest.restName}">阿美餐廳</h2>
+                    <p class="text-muted"><span th:text="${review.rest.restCity}">台北市</span><span th:text="${review.rest.restDist}">大安區</span><span th:text="${review.rest.restAddress}">信義路上</span></p>
+                </div>
+            </div>
+
+            <!-- 用餐資訊 -->
+            <div class="dining-info">
+                <p>
+                    <i class="fas fa-calendar-alt info-icon"></i>
+                    <span class="info-label">用餐日期：</span>
+                    <span th:text="${#temporals.format(review.orderMaster.servedDatetime, 'yyyy/MM/dd HH:mm')}">2024/01/15 17:00</span>
+                </p>
+                <p>
+                    <i class="fas fa-dollar-sign info-icon"></i>
+                    <span class="info-label">用餐金額：</span>
+                    <span th:text="'$' + ${#numbers.formatDecimal(review.orderMaster.totalPrice, 1, 0)}">$2,000</span>
+                </p>
+            </div>
+
+            <form th:object="${review}" th:action="@{confirmUpdate}" method="post" enctype="multipart/form-data" id="update_review_form">
+                <input type="hidden" th:field="*{reviewId}">
+                <input type="hidden" th:field="*{rest.restId}">
+                <input type="hidden" th:field="*{orderMaster.orderId}">
+                <input type="hidden" th:field="*{member.memberId}">
+                <!-- 評分區 -->
+                <div class="mb-4">
+                    <label class="form-label">您的整體評分：</label>
+                    <span class="error" id="ratingError" th:if="${#fields.hasErrors('reviewRating')}" th:errors="*{reviewRating}"></span>
+                    <input readonly type="hidden" th:field="*{reviewRating}" class="rating">
+                    <div class="star-rating-container">
+                        <span class="star-rating" data-rating="1" th:classappend="${review.reviewRating >= 1} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 1} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="2" th:classappend="${review.reviewRating >= 2} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 2} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="3" th:classappend="${review.reviewRating >= 3} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 3} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="4" th:classappend="${review.reviewRating >= 4} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 4} ? 'fas' : 'far'"></i></span>
+                        <span class="star-rating" data-rating="5" th:classappend="${review.reviewRating >= 5} ? 'selected' : ''"><i class="far fa-star" th:classappend="${review.reviewRating >= 5} ? 'fas' : 'far'"></i></span>
+                    </div>
+                </div>
+
+                <!-- 用餐體驗文字輸入區 -->
+                <div class="mb-4">
+                    <label class="form-label">請描述您的用餐體驗</label>
+                    <!-- <div id="editor"></div> -->
+                    <textarea class="col-12 pl-1" th:field="*{reviewText}"></textarea>
+                </div>
+
+                <!-- 照片上傳區 -->
+                <div class="mb-4">
+                    <label class="form-label">評論圖片</label>
+                    <div id="photoUploadContainer" class="photo-upload-container">
+                        <input 
+                            type="file" 
+                            id="upfiles" 
+                            accept="image/jpeg,image/png" 
+                            multiple 
+                            style="display:none;"
+                            name="upfiles"
+                        >
+                        <label for="upfiles" class="btn btn-outline-secondary">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>點擊上傳照片
+                        </label>
+                    </div>
+                    <div id="photoViewGrid" class="review-img-grid mt-3 photo-preview-grid">
+                        <th:block th:if="${review.reviewImages} != null" th:each="img : ${review.reviewImages}">
+                            <div class="photo-preview-item photoPreviewItem">
+                                <img th:src="@{/DBGifReader/review} + '?reviewImgId=' + ${img.reviewImgId}" alt="預覽圖">
+                                <button class="photo-delete-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </th:block>
+                    </div>
+                    <!-- <small class="form-text text-muted">
+                        支援 JPG、PNG 格式，單檔限制 5MB
+                    </small> -->
+                </div>
+
+                <!-- 推薦料理選擇區 -->
+                <div class="mb-4">
+                    <label for="dishSelect" class="form-label">
+                        請選擇您最喜歡的一道料理
+                    </label><br>
+                    <select class="form-select" th:field="*{product}">
+                        <option th:each="productVO : ${productListData}" th:value="${productVO.productId}" th:text="${productVO.productName}" th:select="${productVO.productId == review.product.productId}"></option>
+                    </select>
+                </div>
+
+                <!-- 平均每人花費區 -->
+                <div class="mb-4">
+                    <label for="avgCost" class="form-label">
+                        請輸入每人的平均消費金額
+                    </label>
+                    <span th:if="${#fields.hasErrors('avgCost')}" th:errors="*{avgCost}" class="error" id="avgCostError"></span>
+                    <div class="input-group">
+                        <span class="input-group-text">NT$</span>
+                        <input 
+                            type="number" 
+                            id="avgCost" 
+                            class="form-control" 
+                            placeholder="輸入金額"
+                            min="0"
+                            th:field="*{avgCost}"
+                        >
+                    </div>
+                </div>
+
+                <!-- 送出評論按鈕 -->
+                <div class="text-center">
+                    <button id="updateReview" class="btn btn-warning btn-lg w-75" type="submit">
+                        送出評論
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/js/memberReviewUpdate.js}"></script>
+    <script src="/static/js/memberReviewUpdate.js"></script>
+    <script th:inline="javascript">
+        populateImageGrid(/*[[${review.rest.restId}]]*/);
+
+        
+    </script>
+
+
+    <!-- <script>
+        $(document).ready(function() {
+            // 初始化 CKEditor
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'underline', 'link', '|', 
+                             'bulletedList', 'numberedList', '|', 'undo', 'redo'],
+                    placeholder: '描述菜色、服務或環境...',
+                    language: 'zh'
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            // 星級評分互動
+            let selectedRating = 0;
+            $('.star-rating').hover(
+                function() {
+                    const rating = $(this).data('rating');
+                    $('.star-rating').find('i').removeClass('fas').addClass('far');
+                    $('.star-rating').removeClass('active');
+                    $('.star-rating').each(function() {
+                        if ($(this).data('rating') <= rating) {
+                            $(this).find('i').removeClass('far').addClass('fas');
+                            $(this).addClass('active');
+                        }
+                    });
+                },
+                function() {
+                    if (selectedRating > 0) {
+                        $('.star-rating').find('i').removeClass('fas').addClass('far');
+                        $('.star-rating').removeClass('active');
+                        $('.star-rating').each(function() {
+                            if ($(this).data('rating') <= selectedRating) {
+                                $(this).find('i').removeClass('far').addClass('fas');
+                                $(this).addClass('selected');
+                            }
+                        });
+                    } else {
+                        $('.star-rating').find('i').removeClass('fas').addClass('far');
+                        $('.star-rating').removeClass('active selected');
+                    }
+                }
+            ).click(function() {
+                selectedRating = $(this).data('rating');
+                $('.star-rating').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            // 照片上傳功能
+            const photoUploadContainer = $('#photoUploadContainer');
+            const photoUploadInput = $('#photoUpload');
+            const photoPreviewGrid = $('#photoPreviewGrid');
+            let uploadedFiles = [];
+
+            // 拖放事件
+            photoUploadContainer[0].addEventListener('dragover', (e) => {
+                e.preventDefault();
+                photoUploadContainer.addClass('dragover');
+            });
+
+            photoUploadContainer[0].addEventListener('dragleave', () => {
+                photoUploadContainer.removeClass('dragover');
+            });
+
+            photoUploadContainer[0].addEventListener('drop', (e) => {
+                e.preventDefault();
+                photoUploadContainer.removeClass('dragover');
+                handleFileUpload(e.dataTransfer.files);
+            });
+
+            photoUploadInput.on('change', function(e) {
+                handleFileUpload(e.target.files);
+            });
+
+            function handleFileUpload(files) {
+                for (let file of files) {
+                    if (file.type.match('image.*')) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('檔案不可超過 5MB');
+                            continue;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
+                                <div class="photo-preview-item">
+                                    <img src="${e.target.result}" alt="預覽圖">
+                                    <button class="photo-delete-btn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `);
+                            
+                            previewItem.find('.photo-delete-btn').click(function() {
+                                $(this).closest('.photo-preview-item').remove();
+                            });
+
+                            photoPreviewGrid.append(previewItem);
+                            uploadedFiles.push(file);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+
+            // 送出評論驗證
+            $('#submitReview').click(function() {
+                let isValid = true;
+                const requiredFields = [
+                    '#avgCost', 
+                    '#dishSelect'
+                ];
+
+                requiredFields.forEach(field => {
+                    if (!$(field).val()) {
+                        $(field).addClass('is-invalid');
+                        isValid = false;
+                    } else {
+                        $(field).removeClass('is-invalid');
+                    }
+                });
+
+                if (isValid) {
+                    const confirmModal = confirm('確定要送出評論嗎？');
+                    if (confirmModal) {
+                        alert('評論已成功送出！');
+                    }
+                } else {
+                    alert('請確認所有必填欄位！');
+                }
+            });
+        });
+    </script> -->
+</body>
+</html>

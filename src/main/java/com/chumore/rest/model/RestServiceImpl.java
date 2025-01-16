@@ -1,12 +1,17 @@
 package com.chumore.rest.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
+import com.chumore.event.RestChangedEvent;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.chumore.approval.model.ApprovalVO;
@@ -26,19 +31,38 @@ public class RestServiceImpl implements RestService{
 	
 	@Autowired
 	RestRepository repository;
-	
+
+
 	@Autowired
-	SessionFactory sessionFactory;
+	private ApplicationEventPublisher publisher;
 
 	@Override
 	public void addRest(RestVO rest) {
 		repository.save(rest);
+		publisher.publishEvent(new RestChangedEvent(this,rest, "ADD"));
 	}
 
-	@Override
-	public void updateRest(RestVO rest) {
-		repository.save(rest);
-	}
+	 @Override
+	    @Transactional
+	    public void updateRest(RestVO rest) {
+	        try {
+	            // 獲取原有資料
+	            RestVO existingRest = repository.findById(rest.getRestId())
+	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
+
+	            // 保存更新
+	            repository.saveAndFlush(rest);
+
+				// 發布更新索引事件
+				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
+
+	        } catch (Exception e) {
+	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
+	        }
+	    }
+
+
+
 
 	@Override
 	public RestVO getOneById(Integer restId) {
@@ -61,15 +85,6 @@ public class RestServiceImpl implements RestService{
 		return rests;
 	}
 
-	@Override
-	public List<RestVO> getAllCompos(Map<String, String[]> map) {
-		List<RestVO> rests = RestCompositeQuery.getAllC(map, sessionFactory.openSession());
-		if (rests.isEmpty()) {
-			throw new ResourceNotFoundException("No match rests found.");
-		}
-		
-		return rests;
-	}
 
 	public Set<DiscPtsVO> getDiscPtsByRestId(Integer restId){
 		return getOneById(restId).getDiscPts();
@@ -114,6 +129,11 @@ public class RestServiceImpl implements RestService{
 	public List<Integer> getBusinessHours(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
 		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
+	}
+
+	@Override
+	public List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId) {
+		return repository.findRestIdsByOptionalFields(city, district, cuisineTypeId);
 	}
 	
 	public Set<OrderTableVO> getOrderTablesByRestId(Integer restId){

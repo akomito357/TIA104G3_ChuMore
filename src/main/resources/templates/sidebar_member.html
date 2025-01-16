@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<head th:insert="~{included}"></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management System</title>
+    <!-- Bootstrap CSS include有
+    <link th:href="@{/css/bootstrapcss/bootstrap.min.css}" rel="stylesheet">
+    Bootstrap Icons
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}" rel="stylesheet"> -->
+    <!-- <link th:href="@{/css/common.css}" rel="stylesheet"> -->
+    <link th:href="@{/css/sidebar.css}" rel="stylesheet">
+    <link href="/static/css/sidebar.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- <div class="sidebar"> -->
+        <div>
+            <nav class="nav flex-column sidebar">
+                <!-- 商店管理 -->
+                <div class="nav-item sidebar-item">
+                    <!-- <a class="nav-link d-flex align-items-center sidebar-link" href="#storeManagement" data-bs-toggle="collapse" role="button"> -->
+                    <a class="nav-link sidebar-link" href="#">
+                        <i class="bi bi-person-circle menu-icon"></i>
+                        帳號資訊
+                        <!-- <i class="bi bi-chevron-right chevron ms-auto"></i> -->
+                    </a>
+                    <!-- <div class="collapse show sidebar-collapse" id="storeManagement">
+                        <div class="submenu">
+                            <a class="nav-link sidebar-link" href="#/store/create">上架餐廳</a>
+                            <a class="nav-link sidebar-link" href="#/store/tables">桌號設定</a>
+                            <a class="nav-link sidebar-link" href="#/store/menu">菜單設定</a>
+                            <a class="nav-link sidebar-link" href="#/store/hours">營業/用餐時間設定</a>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="nav-item sidebar-item">
+                    <a class="nav-link sidebar-link" href="#">
+                        <i class="bi bi-star-fill menu-icon"></i>
+                        用餐評價紀錄
+                    </a>
+                </div>
+
+                <div class="nav-item sidebar-item">
+                    <a class="nav-link sidebar-link" href="#">
+                        <i class="bi bi-calendar-check menu-icon"></i>
+                        餐廳預約紀錄
+                    </a>
+                </div>
+
+                <div class="nav-item sidebar-item">
+                    <a class="nav-link sidebar-link" href="#">
+                        <i class="bi bi-heart-fill menu-icon"></i>
+                        收藏清單
+                    </a>
+                </div>
+
+                <div class="nav-item sidebar-item">
+                    <a class="nav-link sidebar-link" href="#">
+                        <i class="bi bi-coin menu-icon"></i>
+                        我的點數
+                    </a>
+                </div>
+
+                <!-- 訂位管理 -->
+                <!-- <div class="nav-item sidebar-item">
+                    <a class="nav-link d-flex align-items-center sidebar-link" href="#reservationManagement" data-bs-toggle="collapse" role="button">
+                        <i class="bi bi-calendar menu-icon"></i>
+                        訂位管理
+                        <i class="bi bi-chevron-right chevron ms-auto"></i>
+                    </a>
+                    <div class="collapse show sidebar-collapse" id="reservationManagement">
+                        <div class="submenu">
+                            <a class="nav-link sidebar-link" href="#/reservation/history">訂位紀錄</a>
+                            <a class="nav-link sidebar-link" href="#/reservation/settings">定位設定</a>
+                        </div>
+                    </div>
+                </div> -->
+            </nav>
+        </div>
+    <!-- </div> -->
+
+    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script> -->
+    <script>
+        $(document).ready(function() {
+            // 處理選單展開/收合時的箭頭旋轉
+            $('.sidebar-link[data-bs-toggle="collapse"]').on('click', function() {
+                const chevron = $(this).find('.chevron');
+                chevron.toggleClass('rotated');
+            });
+
+            // 標記當前選中的選單項目
+            $('.sidebar-link').click(function() {
+                $('.sidebar-link').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // 初始化所有子選單為展開狀態
+            $('.sidebar-collapse').addClass('show');
+            $('.chevron').addClass('rotated');
+        });
+    </script>
+</body>
+</html>

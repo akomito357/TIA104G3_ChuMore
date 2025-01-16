@@ -1,6 +1,8 @@
 package com.chumore.ordertable.model;
 
 import java.util.List;
+import java.util.Map;
+
 
 import javax.servlet.http.HttpSession;
 
@@ -35,8 +37,8 @@ public class OrderTableService {
 		return repository.findByRestId(restId);
 	}
 	
-	public String getTableNumberById(Integer orderTableId) {
-		return repository.getTableNumberById(orderTableId);
+	public List<Map<String, Object>> getTableNumberById(Integer restId) {
+		return repository.getTableNumberById(restId);
 	}
 	
 

@@ -5,6 +5,7 @@
 
 .sidebar {
     background-color: var(--dark);
+    background: linear-gradient(180deg, var(--dark), #454580f5);
     width: var(--sidebar_width);
     min-height: 100vh;
     border-right: 1px solid #dee2e6;
@@ -13,6 +14,7 @@
     overflow-y: auto;
     position: fixed;
     left: 0;
+    
 }
 
 @media(max-width: 991.98px){
@@ -21,7 +23,7 @@
         width: var(--sidebar_width);
         min-height: 100vh;
         border-right: 1px solid #dee2e6;
-        top: 80px;
+        /* top: 80px; */
         height: calc(100% - 80px);
         overflow-y: auto;
         position: fixed;
@@ -47,10 +49,10 @@
     background-color: var(--primary);
     border-radius: 8px;
 }
-.sidebar-item > .sidebar-link.active{
+.sidebar-item > .sidebar-parent.active{
     background-color: var(--dark);
 }
-.sidebar-item > .sidebar-link.active:hover{
+.sidebar-item > .sidebar-parent.active:hover{
     background-color: var(--lightenDark);
 }
 

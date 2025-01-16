@@ -260,10 +260,11 @@
         }
 
         .restaurant-image {
-            width: 100px;
-            height: 100px;
+            width: 130px;
+            height: auto;
             object-fit: cover;
             border-radius: 4px;
+            overflow: hidden;
         }
 
         .star-rating {
@@ -314,6 +315,13 @@
             margin-top: 2rem;
             margin-bottom: 2rem;
         }
+        .modal-content-reviewdelete{
+            min-height: auto;
+        }
+        .modal-footer-reviewdelete{
+            display: flex;
+            justify-content: right;
+        }
     </style>
 </head>
 
@@ -323,7 +331,7 @@
             <div class="content-wrapper">
                 <!-- 頁面標題 -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0">用餐紀錄</h2>
+                    <h2 class="mb-0">用餐評價紀錄</h2>
                 </div>
 
                 <!-- 分頁標籤 -->
@@ -410,6 +418,26 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content modal-content-reviewdelete">
+                            <div class="modal-header">
+                                <h5 class="modal-title modal-title-reviewdelete">確認刪除</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body modal-body-reviewdelete">
+                                確定要刪除這則評論嗎？
+                            </div>
+                            <div class="modal-footer modal-footer-reviewdelete">
+                                <button type="button" class="btn btn-secondary cancel-reviewdelete-btn" id="cancelReviewdeleteBtn" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteReview">刪除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         </div>
@@ -419,6 +447,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 <!--     <script src="/static/js/memberOrderHistory.js"></script> -->
     <script th:src="@{/js/memberOrderHistory.js}"></script>
+    <script th:src="@{/js/memberOrderHistoryRev.js}"></script>
 
 
 </body>

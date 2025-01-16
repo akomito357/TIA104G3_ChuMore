@@ -1,14 +1,16 @@
 package com.chumore.review.model;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewVO, Integer> {
@@ -30,6 +32,11 @@ public interface ReviewRepository extends JpaRepository<ReviewVO, Integer> {
     
     @Query("SELECT r FROM ReviewVO r WHERE r.orderMaster.orderId = :orderId")
     ReviewVO getReviewByOrderId(@Param("orderId") Integer orderId);
+    
+    @Transactional
+	@Modifying
+    @Query(value = "DELETE FROM review WHERE review_id = ?1", nativeQuery = true)
+    void deleteByReviewId(Integer reviewId);
 
 
 }

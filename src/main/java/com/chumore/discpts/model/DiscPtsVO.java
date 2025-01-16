@@ -30,6 +30,7 @@ public class DiscPtsVO implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id", nullable = false)
+    @JsonBackReference("member-discPts")
     private MemberVO member; // 對應消費者ID (FK)
 
     @ManyToOne(fetch = FetchType.EAGER)

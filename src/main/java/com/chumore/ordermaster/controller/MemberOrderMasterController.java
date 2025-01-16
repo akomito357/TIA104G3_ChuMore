@@ -11,13 +11,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
+import com.chumore.member.model.MemberService;
 import com.chumore.member.model.MemberVO;
 import com.chumore.ordermaster.dto.OrderMasterDto;
 import com.chumore.ordermaster.model.OrderMasterServiceImpl;
@@ -26,8 +26,8 @@ import com.chumore.ordermaster.res.OrderMasterResponse;
 import com.chumore.review.model.ReviewService;
 import com.chumore.review.model.ReviewVO;
 
-//@Controller
-@RestController
+@Controller
+//@RestController
 @RequestMapping("/member/orderMaster")
 public class MemberOrderMasterController {
 
@@ -39,6 +39,9 @@ public class MemberOrderMasterController {
 
 	@Autowired
 	ReviewService reviewService;
+	
+	@Autowired
+	MemberService memberSvc;
 
 	@GetMapping("orders")
 	public ResponseEntity<OrderMasterResponse<Page<OrderMasterDto>>> findByMemberId(
@@ -47,9 +50,9 @@ public class MemberOrderMasterController {
 		Object memId = session.getAttribute("memberId");
 		Integer memberId = null;
 		if (memId == null) {
-			memberId = 1002;
+			memberId = 1004;
 		} else {
-			MemberVO member = (MemberVO) memId;
+			MemberVO member = (MemberVO) memberSvc.getOneMember((Integer)memId).orElse(null);
 			memberId = member.getMemberId();
 		}
 
@@ -92,4 +95,8 @@ public class MemberOrderMasterController {
 		return ResponseEntity.ok(response);
 	}
 
+//	@GetMapping("dining/history")
+//	public String memberDiningHistory() {
+//		return "secure/member/dining/member_dining_history";
+//	}
 }
