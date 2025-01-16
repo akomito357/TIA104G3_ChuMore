@@ -54,7 +54,7 @@ public class RestOrderMasterController {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+			restId = 2003;
 		} else {
 			RestVO rest = (RestVO) restNum;
 			restId = rest.getRestId();

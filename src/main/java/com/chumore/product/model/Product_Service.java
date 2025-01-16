@@ -20,12 +20,8 @@ public class Product_Service {
 		return repository.save(product);
 	}
 	
-	public Integer deleteProduct(Integer productId) {
-		if(repository.existsById(productId)) {
-			repository.deleteById(productId);
-			return 1;
-		}
-		return -1;
+	public void deleteProductsByIds(List<Integer> productIds) {
+	    repository.deleteAllById(productIds);
 	}
 	
 	public List<ProductVO> getAllProductByRestId(Integer restId) {
@@ -60,5 +56,13 @@ public class Product_Service {
 		}
 		
 		return availableProduct;
+	}
+		
+	public List<ProductVO> getProductByProductCatId(Integer productCategoryId) {
+		return repository.getProductByProductCatId(productCategoryId);
+	}
+	
+	public void deleteProduct(Integer productId) {
+	    repository.deleteProduct(productId);
 	}
 }

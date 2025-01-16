@@ -14,6 +14,9 @@ import javax.persistence.Table;
 
 import com.chumore.product.model.ProductVO;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "product_category")
 public class ProductCategoryVO {
@@ -33,9 +36,12 @@ public class ProductCategoryVO {
 	@Column(name = "category_name")
 	private String categoryName;
 
-	@OneToMany(cascade = CascadeType.REMOVE)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "product_category_id", referencedColumnName = "product_category_id")
 	private List<ProductVO> productList;
+	
+	@Column(name = "enable_status", columnDefinition = "TINYINT")
+	private Integer enableStatus ;
 
 	public Integer getProductCategoryId() {
 		return productCategoryId;

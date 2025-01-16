@@ -375,10 +375,10 @@
                 const endDate = $("#endDate").val();
                 const endTime = $("#endTime").val();
 
-                let startDatetime = startDate ? String(startDate) + (startTime ? String(startTime) : 'T00:00') : null;
+                let startDatetime = startDate ? String(startDate) + (startTime ? "T"+startTime : 'T00:00') : null;
                 
                 console.log(startDatetime);
-                let endDatetime = endDate ? String(endDate) + ( endTime ? String(endTime) : "T23:59") : null;
+                let endDatetime = endDate ? String(endDate) + ( endTime ? "T"+endTime : "T23:59") : null;
 
                 const memberName = $('#memberName').val();
                 const orderTableId = $('#tableNumber').val();
