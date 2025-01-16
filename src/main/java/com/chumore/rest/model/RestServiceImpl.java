@@ -50,21 +50,6 @@ public class RestServiceImpl implements RestService{
 	            RestVO existingRest = repository.findById(rest.getRestId())
 	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
 
-	            // 設置不可修改的欄位
-	            rest.setMerchantPassword(existingRest.getMerchantPassword());
-	            rest.setMerchantIdNumber(existingRest.getMerchantIdNumber());
-	            rest.setRegisterDatetime(existingRest.getRegisterDatetime());
-	            rest.setCreatedDatetime(existingRest.getCreatedDatetime());
-	            rest.setWeeklyBizDays(existingRest.getWeeklyBizDays());
-	            rest.setBusinessHours(existingRest.getBusinessHours());
-	            rest.setOrderTableCount(existingRest.getOrderTableCount());
-	            rest.setRestStars(existingRest.getRestStars());
-	            rest.setRestReviewers(existingRest.getRestReviewers());
-	            rest.setApprovalStatus(existingRest.getApprovalStatus());
-
-	            // 設置更新時間
-	            rest.setUpdatedDatetime(LocalDateTime.now());
-
 	            // 保存更新
 	            repository.saveAndFlush(rest);
 

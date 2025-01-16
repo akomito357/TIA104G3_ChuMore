@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test service bell (ordering)</title>
+</head>
+<body>
+    <h1>按下服務鈴</h1>
+    <label>餐廳編號：</label>
+    <input type="text" id="restId" placeholder="請輸入餐廳編號如: 2001"><br>
+    <label>桌位編號：</label>
+    <input type="text" id="tableName" placeholder="請輸入桌位如: A1"><br><br>
+    <button id="pressBtn">按下服務鈴</button>
+
+    <div id="response" style="margin-top:20px; color:green;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#pressBtn").click(function () {
+            const restId = $("#restId").val();
+            const tableName = $("#tableName").val();
+
+            if(!restId || !tableName) {
+                alert("請輸入餐廳與桌位編號！");
+                return;
+            }
+
+            $.ajax({
+                url: "/serviceBell/pressBell",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ restId, tableName }),
+                success: function (res) {
+                    $("#response").text(res);
+                },
+                error: function (err) {
+                    console.error(err);
+                    alert("呼叫服務失敗！");
+                }
+            });
+        });
+    });
+    </script>
+
+    
+</body>
+</html>
