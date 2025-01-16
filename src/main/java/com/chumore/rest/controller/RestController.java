@@ -1,6 +1,7 @@
 package com.chumore.rest.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ import com.chumore.dailyreservation.model.DailyReservationVO;
 import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
+import com.chumore.rest.model.SpecificHolidayService;
+import com.chumore.rest.model.SpecificHolidayVO;
 import com.chumore.tabletype.model.TableTypeService;
 import com.chumore.tabletype.model.TableTypeVO;
 
@@ -56,6 +59,10 @@ public class RestController {
 	
 	@Autowired
 	DailyReservationService dailyReservationSvc;
+	
+	@Autowired
+	SpecificHolidayService specificHolidaySvc;
+	
 	// add
 	@GetMapping("addRest")
 	public String addRest(ModelMap model) {
@@ -258,7 +265,7 @@ public class RestController {
 	                        newDailyReservation.setTableType(tableType);
 	                        newDailyReservation.setReservedDate(date);
 	                        newDailyReservation.setReservedLimit(reservedLimit.toString());
-	                        newDailyReservation.setReservedTables("0".repeat(48));
+	                        
 	                        dailyReservationSvc.addDailyReservation(newDailyReservation);
 	                    }
 	                }
@@ -288,43 +295,149 @@ public class RestController {
 		return ResponseEntity.ok(businessDays);
 	}
 	
-    @PostMapping("updateWeeklyBusinessDays")
-    public ResponseEntity<Map<String, Object>> updateWeeklyBusinessDays(@RequestBody Map<String, Object> requestData) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Integer restId = Integer.parseInt(requestData.get("restId").toString());
-            String weeklyStatus = (String) requestData.get("weeklyStatus");
-            
-            // 驗證格式是否正確
-            if (weeklyStatus == null || weeklyStatus.length() != 7 || !weeklyStatus.matches("[01]+")) {
-                response.put("success", false);
-                response.put("message", "營業日格式不正確，請確認是否為7位的0/1字串");
-                return ResponseEntity.ok(response);
-            }
+	// RestController.java 的 updateWeeklyBusinessDays 方法
+	@PostMapping("updateWeeklyBusinessDays")
+	public ResponseEntity<Map<String, Object>> updateWeeklyBusinessDays(@RequestBody Map<String, Object> requestData) {
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        Integer restId = Integer.parseInt(requestData.get("restId").toString());
+	        String weeklyStatus = (String) requestData.get("weeklyStatus");
+	        
+	        // 驗證格式是否正確
+	        if (weeklyStatus == null || weeklyStatus.length() != 7 || !weeklyStatus.matches("[01]+")) {
+	            response.put("success", false);
+	            response.put("message", "營業日格式不正確，請確認是否為7位的0/1字串");
+	            return ResponseEntity.ok(response);
+	        }
 
-            RestVO existingRest = restSvc.getOneById(restId);
-            if (existingRest == null) {
-                response.put("success", false);
-                response.put("message", "找不到餐廳資料");
-                return ResponseEntity.ok(response);
-            }
+	        // 獲取餐廳資訊
+	        RestVO existingRest = restSvc.getOneById(restId);
+	        if (existingRest == null) {
+	            response.put("success", false);
+	            response.put("message", "找不到餐廳資料");
+	            return ResponseEntity.ok(response);
+	        }
 
-            existingRest.setWeeklyBizDays(weeklyStatus);
-            restSvc.updateRest(existingRest);
-            
-            response.put("success", true);
-            response.put("message", "每週營業日更新成功");
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("success", false);
-            response.put("message", "更新失敗：" + e.getMessage());
-            return ResponseEntity.ok(response);
-        }
-    }
+	        // 取得原本的營業日設定
+	        String originalWeeklyStatus = existingRest.getWeeklyBizDays();
 
+	        // 更新每週營業日
+	        existingRest.setWeeklyBizDays(weeklyStatus);
+	        restSvc.updateRest(existingRest);
 
+	        // 獲取特定公休日清單
+	        List<SpecificHolidayVO> specificHolidays = specificHolidaySvc.getHolidaysByRestId(restId);
+	        List<LocalDate> holidayDates = specificHolidays.stream()
+	            .map(SpecificHolidayVO::getDay)
+	            .collect(Collectors.toList());
+
+	        // 計算未來 60 天中需要更新的日期
+	        LocalDate startDate = LocalDate.now();
+	        LocalDate endDate = startDate.plusDays(60);
+	        List<LocalDate> nonBusinessDates = new ArrayList<>();    // 新的休息日
+	        List<LocalDate> newBusinessDates = new ArrayList<>();    // 新的營業日
+
+	        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+	            // 如果是特定公休日，跳過處理
+	            if (holidayDates.contains(date)) {
+	                continue;
+	            }
+
+	            int dayOfWeek = date.getDayOfWeek().getValue() - 1; // 0 = Monday, 6 = Sunday
+	            
+	            // 比較新舊設定，確定狀態是否改變
+	            char oldStatus = originalWeeklyStatus != null ? 
+	                originalWeeklyStatus.charAt(dayOfWeek) : '1';
+	            char newStatus = weeklyStatus.charAt(dayOfWeek);
+	            
+	            if (oldStatus == '1' && newStatus == '0') {
+	                // 由營業改為不營業
+	                nonBusinessDates.add(date);
+	            } else if (oldStatus == '0' && newStatus == '1') {
+	                // 由不營業改為營業
+	                newBusinessDates.add(date);
+	            }
+	        }
+
+	        // 處理新的休息日
+	        for (LocalDate date : nonBusinessDates) {
+	            try {
+	                List<DailyReservationVO> dailyReservations = 
+	                    dailyReservationSvc.findDailyReservationsByDate(restId, date);
+	                
+	                for (DailyReservationVO dailyReservation : dailyReservations) {
+	                    dailyReservation.setReservedLimit("0".repeat(48));
+	                    dailyReservation.setReservedTables("0".repeat(48));
+	                    dailyReservationSvc.updateDailyReservation(dailyReservation);
+	                }
+	            } catch (ResourceNotFoundException e) {
+	                // 如果找不到記錄，建立新的休息日記錄
+	                List<TableTypeVO> tableTypes = tableTypeSvc.getAllTableTypeById(restId);
+	                for (TableTypeVO tableType : tableTypes) {
+	                    DailyReservationVO newDailyReservation = new DailyReservationVO();
+	                    newDailyReservation.setRest(existingRest);
+	                    newDailyReservation.setTableType(tableType);
+	                    newDailyReservation.setReservedDate(date);
+	                    newDailyReservation.setReservedLimit("0".repeat(48));
+	                    newDailyReservation.setReservedTables("0".repeat(48));
+	                    dailyReservationSvc.addDailyReservation(newDailyReservation);
+	                }
+	            }
+	        }
+
+	        // 處理新的營業日
+	        for (LocalDate date : newBusinessDates) {
+	            // 如果是特定公休日，跳過處理
+	            if (holidayDates.contains(date)) {
+	                continue;
+	            }
+
+	            try {
+	                // 獲取所有桌型
+	                List<TableTypeVO> tableTypes = tableTypeSvc.getAllTableTypeById(restId);
+	                
+	                // 對每種桌型處理
+	                for (TableTypeVO tableType : tableTypes) {
+	                    try {
+	                        // 嘗試更新現有記錄
+	                        DailyReservationVO dailyReservation = 
+	                            dailyReservationSvc.findDailyReservationByDate(restId, date, tableType.getTableType());
+	                        
+	                        // 直接使用對應 TableType 的 reservedLimit
+	                        dailyReservation.setReservedLimit(tableType.getReservedLimit());
+	                        dailyReservationSvc.updateDailyReservation(dailyReservation);
+	                    } catch (ResourceNotFoundException e) {
+	                        // 建立新記錄
+	                        DailyReservationVO newDailyReservation = new DailyReservationVO();
+	                        newDailyReservation.setRest(existingRest);
+	                        newDailyReservation.setTableType(tableType);
+	                        newDailyReservation.setReservedDate(date);
+	                        newDailyReservation.setReservedLimit(tableType.getReservedLimit());
+	                        
+	                        dailyReservationSvc.addDailyReservation(newDailyReservation);
+	                    }
+	                }
+	            } catch (Exception e) {
+	                // 記錄錯誤但繼續處理其他日期
+	                e.printStackTrace();
+	            }
+	        }
+	        
+	        response.put("success", true);
+	        response.put("message", "每週營業日和預約限制更新成功");
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (NumberFormatException e) {
+	        response.put("success", false);
+	        response.put("message", "餐廳ID格式錯誤");
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("success", false);
+	        response.put("message", "更新失敗：" + e.getMessage());
+	        return ResponseEntity.ok(response);
+	    }
+	}
 	// 獲取根本原因的輔助方法
 	private Throwable getRootCause(Throwable e) {
 	    Throwable cause = e;
