@@ -315,6 +315,15 @@
             background-color: var(--secondary);
             border-color: var(--secondary);
         }
+
+        .error-message {
+            font-size: 1rem;
+            color: #dc3545;
+            margin-top: -10px;
+            /* 確保錯誤訊息有足夠的空間顯示 */
+            display: none;
+            /* 預設隱藏 */
+        }
     </style>
 </head>
 
@@ -361,34 +370,6 @@
 
                             <!-- 分類一的內容 -->
                             <div class="tab-content mt-3" id="product-tab-content">
-                                <!-- <div class="tab-pane fade show active" id="category1">
-                                    <div class="menu-item mb-3 d-flex align-items-start">
-                                        <label class="me-3">
-                                            <img src="https://via.placeholder.com/150" alt="餐點圖片"
-                                                id="image-upload-preview">
-                                            <input type="file" accept="image/*" class="d-none" id="image-upload">
-                                        </label>
-                                        <div>
-                                            <div class="d-flex align-items-center" style="gap: 210px;">
-                                                <input type="text" class="form-control mb-2" style="width: 200px;"
-                                                    placeholder="品項名稱">
-                                                <select class="form-control mb-2" style="width: 90px;">
-                                                    <option value="available">供應中</option>
-                                                    <option value="sold-out">已售完</option>
-                                                    <option value="discontinued">停售</option>
-                                                </select>
-                                            </div>
-
-                                            <input type="number" class="form-control mb-2" style="width: 200px;"
-                                                placeholder="價格">
-                                            <textarea class="form-control mb-2" style="width: 500px;"
-                                                placeholder="描述"></textarea>
-
-                                        </div>
-                                        <button class="btn btn-danger" style=" margin-left: 100px">刪除</button>
-                                    </div>
-                                    <hr>
-                                </div> -->
 
                             </div>
                             <button class="btn btn-primary newbtn"><i class="fas fa-plus"></i> 新增品項</button>
@@ -439,14 +420,14 @@
 
             function loadRestProduct() {
 
-                fetch(`rest/productcategory/getListByRestId?restId=2001`, {
+                fetch(`rest/productcategory/getActiveListByRestId`, {
                     method: "GET",
                 })
                     .then(res => res.json())
                     .then(response => {
                         // console.log(response);
                         const productCatData = response.data;
-                        // console.log(productCatData);
+                        console.log(productCatData);
 
                         let category_tabName = "";
                         let category_content = "";
@@ -466,29 +447,62 @@
 
                             productCategory.productList.forEach((product, index) => {
                                 // console.log(product);
+
+                                let imageUrl = "";
+                                let currentImage = product.productImage || null;
+
+                                const commonImageTypes = ["image/jpeg", "image/png", "image/gif"];
+                                let imageType = "";
+
+                                for (const type of commonImageTypes) {
+                                    try {
+                                        const blob = new Blob([new Uint8Array(product.productImage)], { type: type });
+                                        imageType = type;
+                                        break;
+                                    } catch (e) {
+                                        console.log(`${type} 失敗`, e);
+                                    }
+                                }
+
+                                if (imageType && product.productImage) {
+                                    imageUrl = `data:${imageType};base64,${product.productImage}`;
+                                } else {
+                                    imageUrl = "https://placehold.co/150";
+                                }
+
                                 product_item += `
                                     <div class="menu-item mb-3 d-flex align-items-start">
                                         <label class="me-3">
-                                            <img src="https://placehold.co/150" alt="餐點圖片" class="image-upload-preview">
+                                            <img src="${imageUrl}" alt="餐點圖片" class="image-upload-preview">
                                             <input name="image" type="file" accept="image/*" class="d-none image-upload">
+                                            <input type="hidden" name="existingImage" value="${currentImage}">
                                         </label>
                                         <div>
-                                          <div class="d-flex align-items-center product" style="gap: 210px;">
-                                                <input type="hidden" name="productId" value="${product.productId}">
-                                                <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱" value="${product.productName}">
-                                                <select name="status" class="form-control mb-2" style="width: 90px;">
-                                                    <option value="0"${product.supplyStatus === 0 ? 'selected' : ''}>供應中</option>
-                                                    <option value="1"${product.supplyStatus === 1 ? 'selected' : ''}>已售完</option>
-                                                    <option value="2"${product.supplyStatus === 2 ? 'selected' : ''}>停售</option>
-                                                </select>
-                                            </div>
+                                            <div class="d-flex align-items-start" style="gap: 210px;">
+                                                <div class="d-flex flex-column" style="gap: 5px;">
+                                                    <input type="hidden" name="productId" value="${product.productId}">
+                                                    <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱" value="${product.productName}">
+                                                <div class="error-message text-danger" style="display: none;"></div>
+                                        </div>
+
+                                        <div class="d-flex flex-column" style="gap: 30px;">
+                                            <select name="status" class="form-control mb-2" style="width: 90px;">
+                                                <option value="0"${product.supplyStatus === 0 ? 'selected' : ''}>供應中</option>
+                                                <option value="1"${product.supplyStatus === 1 ? 'selected' : ''}>已售完</option>
+                                                <option value="2"${product.supplyStatus === 2 ? 'selected' : ''}>停售</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
 
                                             <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
                                                 placeholder="價格" value="${product.productPrice}">
+                                                 <div class="error-message text-danger" style="display: none;"></div>
                                             <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
                                                 placeholder="描述">${product.productDescription}</textarea>
+                                                <div class="error-message text-danger" style="display: none;"></div>
                                         </div>
-                                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                                        <button class="btn btn-danger del-product" style="margin-left: 100px;">刪除</button>
                                     </div>
                                     <hr>
                                 `;
@@ -551,53 +565,133 @@
                     .catch(error => console.error("上傳錯誤：", response.msg));
             });
 
-            function colletAllItem() {
-                let categoryList = [];
+            function processImage(imageFile) {
+                return new Promise((resolve) => {
+                    if (imageFile) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const arrayBuffer = e.target.result;
+                            productImage = Array.from(new Uint8Array(arrayBuffer));
+                            resolve(productImage);
+                        };
+                        reader.readAsArrayBuffer(imageFile);
+                    } else {
+                        resolve(null);
+                    }
+                });
+            }
 
-                $(`li.cat`).each(function () {
-                    const productCategoryId = $(this).find('input[name="productCategoryId"]').val();
+            let deleteProducts = [];
+            let deleteProductCategorys = [];
+
+             async function colletAllItem() {
+                let categoryList = [];
+                let isValid = true;
+
+                for (let category of $(`li.cat`)) {
+                    let $category = $(category);
+                    let productCategoryId = $category.find('input[name="productCategoryId"]').val();
                     // console.log(productCategoryId);
-                    const productCatName = $(this).find('input[name="categoryName"]').val();
+                    const productCatName = $category.find('input[name="categoryName"]').val();
                     // console.log(productCatName);
 
-                    let productList = [];
-                    let productBlock = $(`.tab-pane#${productCategoryId}`);
-                    // console.log(productBlock);
+                    if (!productCategoryId || productCategoryId.startsWith("new")) {
+                        productCategoryId = null;
+                    }
+                    let productBlockId = $category.find('a').attr('href').replace('#', '');
+                    let productBlock = $(`#${productBlockId}`);
 
+                    let productList = [];
+                    // let productBlock = $(`.tab-pane#${productCategoryId}`);
+                    // console.log(productBlock);
                     let productContentList = $(productBlock).find(".menu-item");
                     // console.log(productContentList);
-                    $(productContentList).each(function () {
-                        const productId = $(this).find('input[name="productId"]').val();
-                        const productName = $(this).find('input[name="productName"]').val();
-                        const supplyStatus = $(this).find('select[name="status"]').val();
-                        const productPrice = $(this).find('input[name="productPrice"]').val();
-                        const productDescription = $(this).find('textarea[name="productDescription"]').val();
-                        // console.log(productDescription);
+                    for (let product of productContentList) {
+                        const $product = $(product);
+                        const productId = $product.find('input[name="productId"]').val();
+                        const productName = $product.find('input[name="productName"]').val();
+                        const supplyStatus = $product.find('select[name="status"]').val();
+                        const productPrice = $product.find('input[name="productPrice"]').val();
+                        const productDescription = $product.find('textarea[name="productDescription"]').val();
+                        const imageFile = $product.find('input[name="image"]')[0]?.files[0];
+
+
+                        let isValidProduct = true;
+
+                        const nameError = $product.find('input[name="productName"]').next('.error-message');
+                        if (!productName || !productName.trim()) {
+                            isValid = false;
+                            isValidProduct = false;
+                            nameError.text('名稱為必填項目').show();
+                        } else {
+                            nameError.hide();
+                        }
+
+                        // 驗證價格
+                        const priceError = $product.find('input[name="productPrice"]').next('.error-message');
+                        if (!productPrice || isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0) {
+                            isValid = false;
+                            isValidProduct = false;
+                            priceError.text('價格必須是有效數字且大於 0').show();
+                        } else {
+                            priceError.hide();
+                        }
+
+                        // 驗證描述
+                        const descriptionError = $product.find('textarea[name="productDescription"]').next('.error-message');
+                        if (!productDescription.trim()) {
+                            isValid = false;
+                            isValidProduct = false;
+                            descriptionError.text('描述為必填項目').show();
+                        } else {
+                            descriptionError.hide();
+                        }
+
+                        // 如果該產品有錯誤，跳過資料收集
+                        if (!isValidProduct) {
+                            continue;
+                        }
+
+                        const productImage = await processImage(imageFile);
+                        // console.log(productImage);
 
                         productList.push({
-                            productId: productId ? productId : null,
+                            productId: productId && productId !== "null" ? productId : null,
                             productName: productName,
                             supplyStatus: supplyStatus,
                             productPrice: productPrice,
-                            productDescription: productDescription
+                            productDescription: productDescription,
+                            productImage: productImage,
+                            // productCategoryId: productCategoryId,
                         });
 
-                    })
+
+                    }
                     categoryList.push({
-                        productCategoryId: productCategoryId ? productCategoryId : null,
+                        productCategoryId: productCategoryId && productCategoryId !== "null" ? productCategoryId : null,
                         categoryName: productCatName,
+                        enableStatus: 1,
                         productList: productList,
                     });
                     // console.log(categoryList);
-                });
+                }
+
+                if (!isValid) {
+                    alert("請修正所有錯誤後再保存");
+                    return null;
+                }
                 return categoryList;
 
             }
 
-            function submitData() {
-                const categoryList = colletAllItem();
+            async function submitData() {
+                // await deleteBatch();
+
+                const categoryList = await colletAllItem();
                 const payload = {
-                    productCatList: categoryList
+                    productCatList: categoryList,
+                    deleteProductList: deleteProducts,
+                    deleteCatList: deleteProductCategorys
                 };
                 console.log(payload);
 
@@ -612,11 +706,11 @@
                     .then(response => {
 
                         console.log(response);
-                        if (code === 200) {
+                        if (response.code == 200) {
                             alert("保存成功");
                             window.location.reload();
                         } else {
-                            alert(`保存失敗: ${response.msg}`);
+                            alert("保存失敗");
                         }
                     })
                     .catch(error => console.error('提交失敗：', error));
@@ -721,22 +815,28 @@
                         </label>
                         <div>
                             <div class="d-flex align-items-center" style="gap: 210px;">
+                                <div class="d-flex flex-column" style="gap: 5px;">
                                 <input type="hidden" name="productId" value=null>
                                 <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <div class="error-message text-danger"></div>
+                            </div>
+                            <div class="d-flex flex-column" style="gap: 30px;">
                                 <select name="status" class="form-control mb-2" style="width: 90px;">
                                     <option value="0">供應中</option>
                                     <option value="1">已售完</option>
                                     <option value="2">停售</option>
                                 </select>
                             </div>
-                            
+                        </div>
                             <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
                                 placeholder="價格">
+                                <div class="error-message text-danger"></div>
                             <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
                                 placeholder="描述"></textarea>
+                               <div class="error-message text-danger"></div>
 
                         </div>
-                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                        <button class="btn btn-danger del-product" style="margin-left: 100px;">刪除</button>
                     </div>
                     <hr>
                     
@@ -757,22 +857,19 @@
                 // 把 "+" 按鈕移動到新分類右邊
                 $('.btn-outline-primary').appendTo('#category-tabs');
             });
-            let objBiiger = {}
-            objBiiger.data = [];
-            let obj = {};
-            obj.product_cat_id = 1
-            obj["product_list"] = []
-            let product = {
-                "productNmae": "ddd"
-            }
-            obj["product_list"].push(product)
-            objBiiger.data.push(obj)
-            // console.log(objBiiger)
 
 
             // 刪除分類
             $(document).on('click', '.delete-category', function () {
                 const tabId = $(this).closest('.nav-link').attr('href');
+                const cat = $(this).closest('.nav-link')
+                const productCategoryId = cat.find('input[name="productCategoryId"]').val();
+
+                if (productCategoryId) {
+                    deleteProductCategorys.push(parseInt(productCategoryId));
+                    // console.log(deleteProductCategorys);
+                }
+
                 $(tabId).remove(); // 刪除內容
                 $(this).closest('.nav-item').remove(); // 刪除標籤
             });
@@ -787,22 +884,29 @@
                         </label>
                         <div>
                             <div class="d-flex align-items-center" style="gap: 210px;">
-                                <input type="hidden" name="productId" value=null>
-                                <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <div class="d-flex flex-column" style="gap: 5px;">
+                                    <input type="hidden" name="productId" value=null>
+                                    <input type="text" name="productName" class="form-control mb-2" style="width: 200px;" placeholder="品項名稱">
+                                <div class="error-message text-danger"></div>
+                            </div>
+
+                            <div class="d-flex flex-column" style="gap: 30px;">
                                 <select name="status" class="form-control mb-2" style="width: 90px;">
                                     <option value="0">供應中</option>
                                     <option value="1">已售完</option>
                                     <option value="2">停售</option>
                                 </select>
                             </div>
-                            
+                        </div>
                             <input type="number" name="productPrice" class="form-control mb-2" style="width: 200px;"
                                 placeholder="價格">
+                                <div class="error-message text-danger"></div>
                             <textarea name="productDescription" class="form-control mb-2" style="width: 500px;"
                                 placeholder="描述"></textarea>
+                                <div class="error-message text-danger"></div>
 
                         </div>
-                        <button class="btn btn-danger" style="margin-left: 100px;">刪除</button>
+                        <button class="btn btn-danger del-product" style="margin-left: 100px;">刪除</button>
                     </div>
                     <hr>
                 `;
@@ -817,9 +921,16 @@
             });
 
             // 刪除單筆品項和分隔線
-            $(document).on('click', '.btn-danger', function () {
+            $(document).on('click', '.btn-danger.del-product', function () {
                 const item = $(this).closest('.menu-item');
                 const nextHr = item.next('hr');
+                const productId = item.find('input[name="productId"]').val();
+                // console.log(productId)
+                if (productId) {
+                    deleteProducts.push(parseInt(productId));
+                    console.log(deleteProducts);
+                }
+
                 item.remove(); // 刪除項目
                 nextHr.remove(); // 刪除分隔線
             });
