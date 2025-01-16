@@ -71,16 +71,29 @@ public class CustomUserDetailsService implements UserDetailsService {
      * 尋找餐廳會員
      */
     private UserDetails findRestaurantByEmail(String email) {
-        RestVO restaurant = restRepository.findByMerchantEmail(email)
-                .filter(rest -> rest.getApprovalStatus() == 1 && rest.getBusinessStatus() == 1)
-                .orElse(null);
+        logger.debug("尋找餐廳會員，Email: {}", email);
+        
+        RestVO restaurant = restRepository.findByMerchantEmail(email).orElse(null);
+        
         if (restaurant != null) {
-            return createUserDetails(
-                    restaurant.getMerchantEmail(),
-                    restaurant.getMerchantPassword(),
-                    "ROLE_RESTAURANT"
-            );
+            logger.debug("找到餐廳會員，狀態：approvalStatus={}, businessStatus={}", 
+                        restaurant.getApprovalStatus(), 
+                        restaurant.getBusinessStatus());
+            
+            // 只檢查營業狀態
+            if (restaurant.getBusinessStatus() == 1) {
+                return createUserDetails(
+                        restaurant.getMerchantEmail(),
+                        restaurant.getMerchantPassword(),
+                        "ROLE_RESTAURANT"
+                );
+            } else {
+                logger.warn("餐廳帳號未啟用: {}", email);
+                throw new UsernameNotFoundException("餐廳帳號未啟用");
+            }
         }
+        
+        logger.debug("未找到餐廳會員: {}", email);
         return null;
     }
 

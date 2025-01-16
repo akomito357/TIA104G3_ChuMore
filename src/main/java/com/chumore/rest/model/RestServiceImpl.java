@@ -149,5 +149,10 @@ public class RestServiceImpl implements RestService{
 	public Set<OrderTableVO> getOrderTablesByRestId(Integer restId){
 		return getOneById(restId).getOrderTables();
 	}
+	
+	@Override
+	public RestVO getOneByEmail(String email) {
+	    return repository.findByMerchantEmail(email).orElse(null);
+	}
 
 }

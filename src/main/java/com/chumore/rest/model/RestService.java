@@ -12,6 +12,7 @@ public interface RestService {
 	List<RestVO> getAllCompos(Map<String, String[]> map);
 	List<String> getFormattedBusinessHours(Integer restId);
 	List<Integer> getBusinessHours(Integer restId);
+	RestVO getOneByEmail(String email);
 	
 	
 
