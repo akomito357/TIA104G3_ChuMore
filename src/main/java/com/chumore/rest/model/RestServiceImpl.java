@@ -1,6 +1,8 @@
 package com.chumore.rest.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,9 +44,9 @@ public class RestServiceImpl implements RestService{
 		publisher.publishEvent(new RestChangedEvent(this,rest, "ADD"));
 	}
 
-	 @Override
-	    @Transactional
-	    public void updateRest(RestVO rest) {
+	@Override
+	@Transactional
+	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
 	            RestVO existingRest = repository.findById(rest.getRestId())
@@ -61,9 +63,6 @@ public class RestServiceImpl implements RestService{
 	        }
 	    }
 
-
-
-
 	@Override
 	public RestVO getOneById(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
@@ -71,7 +70,6 @@ public class RestServiceImpl implements RestService{
 		if (rest == null) {
 			throw new ResourceNotFoundException("Rest with id = " + restId + "is not found.");
 		}
-		
 		return rest;
 	}
 
@@ -81,7 +79,6 @@ public class RestServiceImpl implements RestService{
 		if (rests.isEmpty()) {
 			throw new ResourceNotFoundException("No rests found.");
 		}
-			
 		return rests;
 	}
 
@@ -130,7 +127,48 @@ public class RestServiceImpl implements RestService{
 		Optional<RestVO> optional = repository.findById(restId);
 		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
 	}
-
+	
+	public List<Integer[]> getBusinessHoursFor(Integer restId){
+		
+		Optional<RestVO> optional = repository.findById(restId);
+		String businessHours = optional.get().getBusinessHours();
+		
+		char[] hours = businessHours.toCharArray();
+		List<Integer[]> result = new ArrayList<>();
+		
+		Integer[] currentSegment = new Integer[24];
+        Arrays.fill(currentSegment, 0);
+        
+        boolean inSegment = false;//如果不是1，則不營業
+        
+        for (int i = 0; i < hours.length; i++) {
+            if (hours[i] == '1') {
+                // 如果是營業時間，標記為 1
+                currentSegment[i] = 1;
+                inSegment = true;
+            } else if (hours[i] == '0' && inSegment) {
+                // 遇到非營業時間且在營業段中，保存當前段並重置
+                result.add(currentSegment);
+                currentSegment = new Integer[24];
+                Arrays.fill(currentSegment, 0);
+                inSegment = false;
+            }
+        }
+        // 如果最後一段是營業時間段，將其加入結果
+        if (inSegment) {
+            result.add(currentSegment);
+        }
+		return result;
+	}
+	
+	
+	@Override
+	public String getBusinessDays(Integer restId) {
+		Optional<RestVO> optional = repository.findById(restId);
+		String weeklyBusinessDays = optional.get().getWeeklyBizDays();
+		return weeklyBusinessDays;
+	}
+	
 	@Override
 	public List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId) {
 		return repository.findRestIdsByOptionalFields(city, district, cuisineTypeId);
@@ -140,4 +178,5 @@ public class RestServiceImpl implements RestService{
 		return getOneById(restId).getOrderTables();
 	}
 
+	
 }

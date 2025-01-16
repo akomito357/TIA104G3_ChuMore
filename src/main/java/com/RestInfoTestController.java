@@ -18,4 +18,5 @@ public class RestInfoTestController {
 	public String test2() {
 		return "secure/rest/reservation_setting";
 	}
+	
 }

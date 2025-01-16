@@ -1,13 +1,12 @@
 package com.chumore.rest.controller;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +22,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.chumore.cuisinetype.model.CuisineTypeService;
 import com.chumore.cuisinetype.model.CuisineTypeVO;
+import com.chumore.dailyreservation.model.DailyReservationService;
+import com.chumore.dailyreservation.model.DailyReservationVO;
+import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
+import com.chumore.tabletype.model.TableTypeService;
+import com.chumore.tabletype.model.TableTypeVO;
 
 // @SessionAttributes(names={"rest","member"})
 
 @CrossOrigin
 @Controller
 @RequestMapping("/rests")
+//@SessionAttribute
 public class RestController {
 	
 	@Autowired
@@ -44,6 +50,12 @@ public class RestController {
 
 	@Autowired 
 	CuisineTypeService cuisineTypeSvc;
+	
+	@Autowired
+	TableTypeService tableTypeSvc;
+	
+	@Autowired
+	DailyReservationService dailyReservationSvc;
 	// add
 	@GetMapping("addRest")
 	public String addRest(ModelMap model) {
@@ -141,18 +153,178 @@ public class RestController {
 	        return ResponseEntity.ok(response);
 	    }
 	}
-	@GetMapping
-	public ResponseEntity<?> getBusinessHoursToUpdate(@RequestParam Integer restId){
-		try {
-			List<Integer>bussinessHours =restSvc.getBusinessHours(restId);
-			
-		}catch(Exception e){
-			
-		};
-		
-		return ResponseEntity.ok(null);
-		}
 	
+	@GetMapping("getBusinessHours")
+	public ResponseEntity<?> getBusinessHoursTo(@RequestParam Integer restId){
+			List<Integer[]> businessHours =restSvc.getBusinessHoursFor(restId);
+		return ResponseEntity.ok(businessHours);
+	}
+	
+	@PostMapping("updateBusinessHours")
+	public ResponseEntity<Map<String, Object>> updateBusinessHours(@RequestBody Map<String, Object> requestData) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        // 從請求中獲取必要資料
+	        Integer restId = Integer.parseInt(requestData.get("restId").toString());
+	        List<List<Integer>> businessHours = (List<List<Integer>>) requestData.get("businessHours");
+	        
+	        // 驗證資料
+	        if (restId == null || businessHours == null) {
+	            response.put("success", false);
+	            response.put("message", "缺少必要資料");
+	            return ResponseEntity.ok(response);
+	        }
+
+	        // 獲取餐廳資訊
+	        RestVO existingRest = restSvc.getOneById(restId);
+	        if (existingRest == null) {
+	            response.put("success", false);
+	            response.put("message", "找不到餐廳資料");
+	            return ResponseEntity.ok(response);
+	        }
+
+	        // 將多個營業時段轉換為單一24小時營業狀態字串
+	        StringBuilder businessHoursStr = new StringBuilder("0".repeat(24));
+	        for (List<Integer> hourArray : businessHours) {
+	            if (hourArray.size() != 24) {
+	                response.put("success", false);
+	                response.put("message", "營業時間格式錯誤");
+	                return ResponseEntity.ok(response);
+	            }
+	            
+	            // 更新營業狀態字串
+	            for (int i = 0; i < 24; i++) {
+	                if (hourArray.get(i) == 1 && businessHoursStr.charAt(i) == '0') {
+	                    businessHoursStr.setCharAt(i, '1');
+	                }
+	            }
+	        }
+
+	        // 更新餐廳營業時間
+	        existingRest.setBusinessHours(businessHoursStr.toString());
+	        restSvc.updateRest(existingRest);
+
+	        // 更新所有桌型的預約限制
+	        List<TableTypeVO> tableTypes = tableTypeSvc.getAllTableTypeById(restId);
+	        for (TableTypeVO tableType : tableTypes) {
+	            StringBuilder reservedLimit = new StringBuilder();
+	            String tableCount = String.format("%02d", tableType.getTableCount());
+	            
+	            // 根據營業時間設定每個時段的可訂位數
+	            for (int i = 0; i < 24; i++) {
+	                if (businessHoursStr.charAt(i) == '1') {
+	                    reservedLimit.append(tableCount);
+	                } else {
+	                    reservedLimit.append("00");
+	                }
+	            }
+	            
+	            tableType.setReservedLimit(reservedLimit.toString());
+	            tableTypeSvc.updateTableType(tableType);
+
+	            // 更新該桌型所有日期的 DailyReservation
+	            try {
+	                for (LocalDate date = LocalDate.now(); 
+	                     date.isBefore(LocalDate.now().plusDays(60)); // 更新未來 60 天的資料
+	                     date = date.plusDays(1)) {
+	                    try {
+	                        DailyReservationVO dailyReservation = dailyReservationSvc.findDailyReservationByDate(
+	                            restId, date, tableType.getTableType());
+
+	                        // 更新 reservedLimit
+	                        dailyReservation.setReservedLimit(reservedLimit.toString());
+	                        
+	                        // 確保已預約的桌數不超過新的限制
+	                        String reservedTables = dailyReservation.getReservedTables();
+	                        if (reservedTables != null) {
+	                            StringBuilder newReservedTables = new StringBuilder();
+	                            for (int i = 0; i < 24; i++) {
+	                                String currentReserved = reservedTables.substring(i * 2, (i + 1) * 2);
+	                                int reservedCount = Integer.parseInt(currentReserved);
+	                                int limitCount = businessHoursStr.charAt(i) == '1' ? 
+	                                    tableType.getTableCount() : 0;
+	                                
+	                                newReservedTables.append(String.format("%02d", 
+	                                    Math.min(reservedCount, limitCount)));
+	                            }
+	                            dailyReservation.setReservedTables(newReservedTables.toString());
+	                        }	                        
+	                        dailyReservationSvc.updateDailyReservation(dailyReservation);
+	                    } catch (ResourceNotFoundException e) {
+	                        // 如果找不到特定日期的記錄，建立新的
+	                        DailyReservationVO newDailyReservation = new DailyReservationVO();
+	                        newDailyReservation.setRest(existingRest);
+	                        newDailyReservation.setTableType(tableType);
+	                        newDailyReservation.setReservedDate(date);
+	                        newDailyReservation.setReservedLimit(reservedLimit.toString());
+	                        newDailyReservation.setReservedTables("0".repeat(48));
+	                        dailyReservationSvc.addDailyReservation(newDailyReservation);
+	                    }
+	                }
+	            } catch (Exception e) {
+	                // 記錄錯誤但繼續處理其他桌型
+	                e.printStackTrace();
+	            }
+	        }
+	        
+	        response.put("success", true);
+	        response.put("message", "營業時間、預約限制和每日預約資料更新成功");
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("success", false);
+	        response.put("message", "更新失敗：" + e.getMessage());
+	        return ResponseEntity.ok(response);
+	    }
+	}
+	
+	@GetMapping("getWeeklyBusinessDays")
+	public ResponseEntity <List<Boolean>> getWeeklyBusinessDays(@RequestParam Integer restId){
+		
+		String weeklyDays = restSvc.getBusinessDays(restId);
+		List <Boolean> businessDays = weeklyDays.chars().mapToObj(ch -> ch == '1').collect(Collectors.toList());
+		return ResponseEntity.ok(businessDays);
+	}
+	
+    @PostMapping("updateWeeklyBusinessDays")
+    public ResponseEntity<Map<String, Object>> updateWeeklyBusinessDays(@RequestBody Map<String, Object> requestData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Integer restId = Integer.parseInt(requestData.get("restId").toString());
+            String weeklyStatus = (String) requestData.get("weeklyStatus");
+            
+            // 驗證格式是否正確
+            if (weeklyStatus == null || weeklyStatus.length() != 7 || !weeklyStatus.matches("[01]+")) {
+                response.put("success", false);
+                response.put("message", "營業日格式不正確，請確認是否為7位的0/1字串");
+                return ResponseEntity.ok(response);
+            }
+
+            RestVO existingRest = restSvc.getOneById(restId);
+            if (existingRest == null) {
+                response.put("success", false);
+                response.put("message", "找不到餐廳資料");
+                return ResponseEntity.ok(response);
+            }
+
+            existingRest.setWeeklyBizDays(weeklyStatus);
+            restSvc.updateRest(existingRest);
+            
+            response.put("success", true);
+            response.put("message", "每週營業日更新成功");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "更新失敗：" + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+
 	// 獲取根本原因的輔助方法
 	private Throwable getRootCause(Throwable e) {
 	    Throwable cause = e;
