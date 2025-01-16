@@ -2,24 +2,11 @@ package com.chumore.member.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.springframework.format.annotation.DateTimeFormat;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.reservation.model.ReservationVO;
@@ -29,52 +16,52 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 @Table(name = "member")
 public class MemberVO implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Integer memberId;
-    
+
     @NotBlank(message = "姓名不能為空")
     @Column(name = "member_name", nullable = false)
     private String memberName;
-    
+
     @NotBlank(message = "電子郵件不能為空")
     @Email(message = "請輸入有效的電子郵件地址")
     @Column(name = "member_email", unique = true, nullable = false)
     private String memberEmail;
-    
+
     @NotBlank(message = "密碼不能為空")
     @Size(min = 6, message = "密碼長度至少為6個字符")
     @Column(name = "member_password", nullable = false, length = 60)
     private String memberPassword;
-    
+
     @Pattern(regexp = "^09\\d{8}$", message = "請輸入有效的手機號碼")
     @Column(name = "member_phone_number")
     private String memberPhoneNumber;
-    
+
     @NotNull(message = "性別不能為空")
-    @Column(name = "member_gender",columnDefinition="TINYINT")
+    @Column(name = "member_gender", columnDefinition = "TINYINT")
     private Integer memberGender;
-    
+
     @Past(message = "生日必須是過去的日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "member_birthdate")
     private Date memberBirthdate;
-    
+
+    @Size(max = 255, message = "地址長度不能超過255個字符")
     @Column(name = "member_address")
     private String memberAddress;
 
-    @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonManagedReference("reservation-member")
     private Set<ReservationVO> reservations;
-    
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonManagedReference("orderMaster-member")
     private Set<OrderMasterVO> orderMasters;
-    
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonManagedReference("member-review")
     private Set<ReviewVO> reviews;
@@ -120,15 +107,15 @@ public class MemberVO implements Serializable {
         this.memberPhoneNumber = memberPhoneNumber;
     }
 
-    public @NotNull(message = "性別不能為空") Integer getMemberGender() {
+    public Integer getMemberGender() {
         return memberGender;
     }
 
-    public void setMemberGender(Integer memberGender2) {
-        this.memberGender = memberGender2;
+    public void setMemberGender(Integer memberGender) {
+        this.memberGender = memberGender;
     }
 
-    public @Past(message = "生日必須是過去的日期") Date getMemberBirthdate() {
+    public Date getMemberBirthdate() {
         return memberBirthdate;
     }
 
@@ -152,20 +139,19 @@ public class MemberVO implements Serializable {
         this.reservations = reservations;
     }
 
-	public Set<OrderMasterVO> getOrderMasters() {
-		return orderMasters;
-	}
+    public Set<OrderMasterVO> getOrderMasters() {
+        return orderMasters;
+    }
 
-	public void setOrderMasters(Set<OrderMasterVO> orderMasters) {
-		this.orderMasters = orderMasters;
-	}
+    public void setOrderMasters(Set<OrderMasterVO> orderMasters) {
+        this.orderMasters = orderMasters;
+    }
 
-	public Set<ReviewVO> getReviews() {
-		return reviews;
-	}
+    public Set<ReviewVO> getReviews() {
+        return reviews;
+    }
 
-	public void setReviews(Set<ReviewVO> reviews) {
-		this.reviews = reviews;
-	}
-    
+    public void setReviews(Set<ReviewVO> reviews) {
+        this.reviews = reviews;
+    }
 }

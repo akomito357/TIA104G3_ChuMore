@@ -34,46 +34,65 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        logger.debug("開始進行用戶認證流程，電子郵件: {}", email);
+        logger.debug("正在認證用戶，電子郵件: {}", email);
 
-        // 嘗試從一般會員中找到匹配
-        MemberVO member = memberRepository.findByMemberEmail(email).orElse(null);
-        if (member != null) {
-            return createMemberUserDetails(member);
+        UserDetails userDetails = findMemberByEmail(email);
+        if (userDetails != null) {
+            logger.info("用戶認證成功（一般會員）: {}", email);
+            return userDetails;
         }
 
-        // 如果不是一般會員，嘗試從餐廳會員中找到匹配
-        RestVO restaurant = restRepository.findByMerchantEmail(email)
-                .filter(rest -> rest.getApprovalStatus() == 1 && rest.getBusinessStatus() == 1)
-                .orElse(null);
-        if (restaurant != null) {
-            return createRestaurantUserDetails(restaurant);
+        userDetails = findRestaurantByEmail(email);
+        if (userDetails != null) {
+            logger.info("用戶認證成功（餐廳會員）: {}", email);
+            return userDetails;
         }
 
-        // 如果都找不到
         logger.warn("用戶認證失敗，未找到相符的帳號: {}", email);
         throw new UsernameNotFoundException("找不到用戶帳號或帳號未啟用");
     }
 
-    private UserDetails createMemberUserDetails(MemberVO member) {
-        logger.info("建立一般會員認證資訊: {}", member.getMemberEmail());
-        return User.builder()
-                .username(member.getMemberEmail())
-                .password(member.getMemberPassword())
-                .authorities(Collections.singleton(new SimpleGrantedAuthority("ROLE_MEMBER")))
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
+    /**
+     * 尋找一般會員
+     */
+    private UserDetails findMemberByEmail(String email) {
+        MemberVO member = memberRepository.findByMemberEmail(email).orElse(null);
+        if (member != null) {
+            return createUserDetails(
+                    member.getMemberEmail(),
+                    member.getMemberPassword(),
+                    "ROLE_MEMBER"
+            );
+        }
+        return null;
     }
 
-    private UserDetails createRestaurantUserDetails(RestVO restaurant) {
-        logger.info("建立餐廳會員認證資訊: {}", restaurant.getMerchantEmail());
+    /**
+     * 尋找餐廳會員
+     */
+    private UserDetails findRestaurantByEmail(String email) {
+        RestVO restaurant = restRepository.findByMerchantEmail(email)
+                .filter(rest -> rest.getApprovalStatus() == 1 && rest.getBusinessStatus() == 1)
+                .orElse(null);
+        if (restaurant != null) {
+            return createUserDetails(
+                    restaurant.getMerchantEmail(),
+                    restaurant.getMerchantPassword(),
+                    "ROLE_RESTAURANT"
+            );
+        }
+        return null;
+    }
+
+    /**
+     * 通用的 UserDetails 建立方法
+     */
+    private UserDetails createUserDetails(String email, String password, String role) {
+        logger.debug("建立用戶對象，電子郵件: {}, 角色: {}", email, role);
         return User.builder()
-                .username(restaurant.getMerchantEmail())
-                .password(restaurant.getMerchantPassword())
-                .authorities(Collections.singleton(new SimpleGrantedAuthority("ROLE_RESTAURANT")))
+                .username(email)
+                .password(password)
+                .authorities(Collections.singleton(new SimpleGrantedAuthority(role)))
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)

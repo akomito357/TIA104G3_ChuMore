@@ -1,10 +1,26 @@
 package com.chumore.auth.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RestaurantRegisterRequest extends RegisterRequest {
+public class RestaurantRegisterRequest {
+
+    @NotBlank(message = "請輸入負責人姓名")
+    @Size(max = 50, message = "負責人姓名不能超過50個字元")
+    private String name;
+
+    @NotBlank(message = "請輸入電子信箱")
+    @Email(message = "請輸入有效的電子信箱格式")
+    private String email;
+
+    @NotBlank(message = "請輸入密碼")
+    @Size(min = 8, max = 20, message = "密碼長度必須在8到20個字元之間")
+    private String password;
+
+    @NotBlank(message = "請再次輸入密碼")
+    private String confirmPassword;
 
     @NotBlank(message = "請輸入餐廳名稱")
     @Size(max = 100, message = "餐廳名稱不能超過100個字元")
@@ -36,114 +52,141 @@ public class RestaurantRegisterRequest extends RegisterRequest {
     @NotBlank(message = "請選擇餐廳類型")
     private String cuisineType;
 
-    // 餐廳負責人身分證字號
     @NotBlank(message = "請輸入負責人身分證字號")
     @Pattern(regexp = "^[A-Z][1-2][0-9]{8}$", message = "身分證字號格式錯誤！請輸入正確格式")
     private String merchantIdNumber;
 
-    private Integer businessStatus = 1; // 預設為營業中狀態
+    private Integer businessStatus = 1;
 
-    public RestaurantRegisterRequest() {
-        super();
-    }
+    // 預設建構子
+    public RestaurantRegisterRequest() {}
 
-    // Getters
-    public String getRestaurantName() {
-        return restaurantName;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public String getAddressDetail() {
-        return addressDetail;
-    }
-
-    public String getBusinessPhone() {
-        return businessPhone;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public String getCuisineType() {
-        return cuisineType;
-    }
-
-    public String getMerchantIdNumber() {
-        return merchantIdNumber;
-    }
-
-    public Integer getBusinessStatus() {
-        return businessStatus;
-    }
-
-    // 提供完整地址的 getter 方法以便於資料庫儲存
+    // 提供完整地址的工具方法
     public String getFullAddress() {
         return String.format("%s%s%s", city, district, addressDetail);
     }
 
-    // Setters
-    public void setRestaurantName(String restaurantName) {
-        this.restaurantName = restaurantName != null ? restaurantName.trim() : null;
+    // Getters and Setters with null checks and trimming
+    public String getName() {
+        return name;
     }
 
-    public void setCity(String city) {
-        this.city = city != null ? city.trim() : null;
+    public void setName(String name) {
+        this.name = name != null ? name.trim() : null;
     }
 
-    public void setDistrict(String district) {
-        this.district = district != null ? district.trim() : null;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAddressDetail(String addressDetail) {
-        this.addressDetail = addressDetail != null ? addressDetail.trim() : null;
+    public void setEmail(String email) {
+        this.email = email != null ? email.trim().toLowerCase() : null;
     }
 
-    public void setBusinessPhone(String businessPhone) {
-        this.businessPhone = businessPhone != null ? businessPhone.trim() : null;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber != null ? phoneNumber.trim() : null;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber != null ? registrationNumber.trim() : null;
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
 
-    public void setCuisineType(String cuisineType) {
-        this.cuisineType = cuisineType != null ? cuisineType.trim() : null;
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
+    
+    public String getRestaurantName() {
+		return restaurantName;
+	}
 
-    public void setMerchantIdNumber(String merchantIdNumber) {
-        this.merchantIdNumber = merchantIdNumber != null ? merchantIdNumber.trim() : null;
-    }
+	public void setRestaurantName(String restaurantName) {
+		this.restaurantName = restaurantName;
+	}
 
-    public void setBusinessStatus(Integer businessStatus) {
-        this.businessStatus = businessStatus;
-    }
+	public String getCity() {
+		return city;
+	}
 
-    @Override
-    public void setPhone(String phone) {
-        super.setPhone(phone);
-        this.setPhoneNumber(phone); // 確保 phoneNumber 與父類一致
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+
+	public String getAddressDetail() {
+		return addressDetail;
+	}
+
+	public void setAddressDetail(String addressDetail) {
+		this.addressDetail = addressDetail;
+	}
+
+	public String getBusinessPhone() {
+		return businessPhone;
+	}
+
+	public void setBusinessPhone(String businessPhone) {
+		this.businessPhone = businessPhone;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getRegistrationNumber() {
+		return registrationNumber;
+	}
+
+	public void setRegistrationNumber(String registrationNumber) {
+		this.registrationNumber = registrationNumber;
+	}
+
+	public String getCuisineType() {
+		return cuisineType;
+	}
+
+	public void setCuisineType(String cuisineType) {
+		this.cuisineType = cuisineType;
+	}
+
+	public String getMerchantIdNumber() {
+		return merchantIdNumber;
+	}
+
+	public void setMerchantIdNumber(String merchantIdNumber) {
+		this.merchantIdNumber = merchantIdNumber;
+	}
+
+	public Integer getBusinessStatus() {
+		return businessStatus;
+	}
+
+	public void setBusinessStatus(Integer businessStatus) {
+		this.businessStatus = businessStatus;
+	}
+
+    
 
     @Override
     public String toString() {
         return "RestaurantRegisterRequest{" +
-                "restaurantName='" + restaurantName + '\'' +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", restaurantName='" + restaurantName + '\'' +
                 ", city='" + city + '\'' +
                 ", district='" + district + '\'' +
                 ", addressDetail='" + addressDetail + '\'' +
@@ -153,6 +196,7 @@ public class RestaurantRegisterRequest extends RegisterRequest {
                 ", cuisineType='" + cuisineType + '\'' +
                 ", merchantIdNumber='" + merchantIdNumber + '\'' +
                 ", businessStatus=" + businessStatus +
-                "} extends " + super.toString();
+                '}';
     }
+
 }

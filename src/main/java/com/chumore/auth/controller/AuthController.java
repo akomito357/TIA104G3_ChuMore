@@ -4,9 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,131 +42,120 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/login")
-    public String showLoginForm(Model model,
-                              @RequestParam(required = false) String error,
-                              @RequestParam(required = false) String logout) {
-        logger.info("處理登入頁面請求");
+    @GetMapping("login")
+    public String showLoginForm(Model model, @RequestParam(required = false) String error, 
+                                @RequestParam(required = false) String logout) {
+        // 確保每次載入頁面時，移除過去的錯誤訊息
+        if (model.containsAttribute("errorMessage")) {
+            model.asMap().remove("errorMessage");
+        }
+        if (model.containsAttribute("error")) {
+            model.asMap().remove("error");
+        }
+
         model.addAttribute("loginRequest", new LoginRequest());
 
         if (error != null) {
-            logger.warn("使用者登入失敗");
             model.addAttribute("error", true);
             model.addAttribute("errorMessage", "帳號或密碼錯誤，請重新輸入");
         }
 
         if (logout != null) {
-            logger.info("使用者已成功登出");
             model.addAttribute("logout", true);
             model.addAttribute("successMessage", "您已成功登出系統");
         }
 
-        logger.debug("轉向登入頁面視圖");
-        return VIEW_PREFIX + "login";
+        return "auth/login";
+    }
+    
+    @GetMapping("test")
+    public String showTestPage() {
+        return "auth/test";
     }
 
-    @PostMapping("/login")
-    public String processLogin(
-            @Valid @ModelAttribute LoginRequest loginRequest,
-            BindingResult result,
-            HttpSession session,
-            RedirectAttributes redirectAttributes,
-            HttpServletRequest request) {
-
-        logger.info("接收到登入請求: {}", loginRequest.getEmail());
-
-        if (result.hasErrors()) {
-            logger.warn("表單驗證失敗: {}", result.getAllErrors());
-            addValidationErrorsToRedirectAttributes(result, loginRequest, redirectAttributes);
-            return REDIRECT_LOGIN;
+    
+    @PostMapping("login")
+    public String processLogin(Authentication authentication, RedirectAttributes redirectAttributes) {
+        // 獲取當前已認證的用戶
+        if (authentication == null || !authentication.isAuthenticated()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "登入失敗，請重新嘗試");
+            return "redirect:/auth/login?error";
         }
 
-        try {
-            AuthenticatedUser user = authService.authenticateAndGetUser(loginRequest);
-            logger.info("用戶驗證成功: {}", user.getEmail());
+        // 獲取用戶角色
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-            setupUserSession(session, user);
-            return determineRedirectPath(user.getUserType());
+        logger.info("用戶登入成功，角色: {}", role);
 
-        } catch (AuthenticationException e) {
-            logger.error("登入驗證失敗: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("loginRequest", loginRequest);
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return REDIRECT_LOGIN;
+        // 根據角色跳轉到對應的頁面
+        if ("ROLE_MEMBER".equals(role)) {
+            return "redirect:/secure/member/member_information";
+        } else if ("ROLE_RESTAURANT".equals(role)) {
+            return "redirect:/secure/restaurant/restaurant_information";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
+            return "redirect:/auth/login?error";
         }
     }
 
-    private void setupUserSession(HttpSession session, AuthenticatedUser user) {
-        session.setAttribute("userId", user.getUserId());
-        session.setAttribute("userType", user.getUserType());
-        session.setAttribute("userName", user.getName());
-        session.setAttribute("loginTime", LocalDateTime.now().toString());
-        logger.info("用戶會話已設置: userId={}, userType={}", user.getUserId(), user.getUserType());
-    }
 
-    private String determineRedirectPath(String userType) {
-        return switch (userType) {
-            case "MEMBER" -> "redirect:/secure/member/member_dashboard";
-            case "RESTAURANT" -> "redirect:/secure/rest/rest_information";
-            default -> {
-                logger.error("未知的身份類型: {}", userType);
-                throw new AuthenticationException("未知的身份類型: " + userType);
-            }
-        };
-    }
 
-    @GetMapping("/register/member")
-    public String showMemberRegisterForm(Model model) {
-        if (!model.containsAttribute("registerRequest")) {
-            model.addAttribute("registerRequest", new RegisterRequest());
-        }
-        return VIEW_PREFIX + "memberRegister";
-    }
 
     @PostMapping("/register/member")
-    public String processMemberRegistration(
-            @Valid @ModelAttribute RegisterRequest request,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
+    public String processMemberRegistration(@Valid @ModelAttribute RegisterRequest request, BindingResult result,
+                                            RedirectAttributes redirectAttributes) {
+        logger.info("接收到會員註冊請求: {}", request);
 
         if (result.hasErrors()) {
             logger.warn("會員註冊表單驗證失敗: {}", result.getAllErrors());
             addValidationErrorsToRedirectAttributes(result, request, redirectAttributes);
-            return REDIRECT_MEMBER_REGISTER;
+            return "redirect:/auth/register/member";
         }
 
         try {
+            logger.info("開始執行會員註冊流程");
             Integer memberId = authService.registerMember(request);
             logger.info("會員註冊成功: memberId={}", memberId);
+
             redirectAttributes.addFlashAttribute("successMessage", "會員註冊成功，請登入");
-            return REDIRECT_LOGIN;
-
-        } catch (DuplicateEmailException | DuplicatePhoneNumberException e) {
-            logger.warn("會員註冊驗證失敗: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            redirectAttributes.addFlashAttribute("registerRequest", request);
-            return REDIRECT_MEMBER_REGISTER;
-
+            return "redirect:/auth/login";
         } catch (Exception e) {
-            logger.error("會員註冊過程發生未預期錯誤", e);
+            logger.error("會員註冊過程發生錯誤: ", e);
             redirectAttributes.addFlashAttribute("errorMessage", "系統錯誤，請稍後再試");
-            return REDIRECT_MEMBER_REGISTER;
+            return "redirect:/auth/register/member";
         }
     }
 
+
+    @GetMapping("/register/member")
+    public String showMemberRegisterForm(Model model) {
+        logger.info("顯示會員註冊頁面");
+
+        if (!model.containsAttribute("registerRequest")) {
+            logger.debug("新增空的註冊請求物件至模型");
+            model.addAttribute("registerRequest", new RegisterRequest());
+        }
+
+        // 不需要手動處理 CSRF Token
+        return "auth/memberRegister";
+    }
+    
     @GetMapping("/register/restaurant")
     public String showRestaurantRegisterForm(Model model) {
+        // 確保模型中包含註冊請求物件
         if (!model.containsAttribute("restaurantRegisterRequest")) {
             model.addAttribute("restaurantRegisterRequest", new RestaurantRegisterRequest());
         }
-        return VIEW_PREFIX + "restaurantRegister";
-    }
 
+        // 返回對應的視圖名稱
+        return "auth/restaurantRegister";
+    }
+    
     @PostMapping("/register/restaurant")
-    public String processRestaurantRegistration(
-            @Valid @ModelAttribute RestaurantRegisterRequest request,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
+    public String processRestaurantRegistration(@Valid @ModelAttribute RestaurantRegisterRequest request,
+                                              BindingResult result,
+                                              RedirectAttributes redirectAttributes) {
+        logger.info("接收到餐廳註冊請求: {}", request);
 
         if (result.hasErrors()) {
             logger.warn("餐廳註冊表單驗證失敗: {}", result.getAllErrors());
@@ -172,41 +164,38 @@ public class AuthController {
         }
 
         try {
+            logger.info("開始執行餐廳註冊流程");
             Integer restaurantId = authService.registerRestaurant(request);
             logger.info("餐廳註冊成功: restaurantId={}", restaurantId);
-            redirectAttributes.addFlashAttribute("successMessage", "餐廳註冊成功，請等待審核通過後登入");
+
+            redirectAttributes.addFlashAttribute("successMessage", "餐廳註冊成功，請登入");
             return REDIRECT_LOGIN;
-
-        } catch (DuplicateEmailException | DuplicatePhoneNumberException | 
-                DuplicateRegistrationNumberException e) {
-            logger.warn("餐廳註冊驗證失敗: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            redirectAttributes.addFlashAttribute("restaurantRegisterRequest", request);
+        } catch (DuplicateEmailException e) {
+            logger.warn("註冊失敗：電子郵件已存在");
+            redirectAttributes.addFlashAttribute("errorMessage", "此電子郵件已被註冊");
             return REDIRECT_RESTAURANT_REGISTER;
-
+        } catch (DuplicateRegistrationNumberException e) {
+            logger.warn("註冊失敗：統一編號已存在");
+            redirectAttributes.addFlashAttribute("errorMessage", "此統一編號已被註冊");
+            return REDIRECT_RESTAURANT_REGISTER;
+        } catch (DuplicatePhoneNumberException e) {
+            logger.warn("註冊失敗：電話號碼已存在");
+            redirectAttributes.addFlashAttribute("errorMessage", "此電話號碼已被註冊");
+            return REDIRECT_RESTAURANT_REGISTER;
         } catch (Exception e) {
-            logger.error("餐廳註冊過程發生未預期錯誤", e);
+            logger.error("餐廳註冊過程發生錯誤: ", e);
             redirectAttributes.addFlashAttribute("errorMessage", "系統錯誤，請稍後再試");
             return REDIRECT_RESTAURANT_REGISTER;
         }
     }
 
-    @PostMapping("/logout")
-    public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
-        String userId = (String) session.getAttribute("userId");
-        String userType = (String) session.getAttribute("userType");
-        logger.info("用戶登出: userId={}, userType={}", userId, userType);
 
-        session.invalidate();
-        redirectAttributes.addFlashAttribute("successMessage", "您已成功登出");
-        return REDIRECT_LOGIN;
-    }
-    
-    private void addValidationErrorsToRedirectAttributes(
-            BindingResult result, Object formObject, RedirectAttributes redirectAttributes) {
+
+    private void addValidationErrorsToRedirectAttributes(BindingResult result, Object formObject,
+                                                         RedirectAttributes redirectAttributes) {
+        logger.debug("將驗證錯誤存入 RedirectAttributes");
         redirectAttributes.addFlashAttribute(
-            "org.springframework.validation.BindingResult." + formObject.getClass().getSimpleName(), result);
+                "org.springframework.validation.BindingResult." + formObject.getClass().getSimpleName(), result);
         redirectAttributes.addFlashAttribute(formObject.getClass().getSimpleName(), formObject);
     }
-
 }

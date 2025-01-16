@@ -1,7 +1,9 @@
 package com.chumore.auth.dto;
 
 import javax.validation.constraints.*;
+
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class RegisterRequest {
     @NotBlank(message = "請輸入姓名")
@@ -20,58 +22,125 @@ public class RegisterRequest {
     @NotBlank(message = "請確認密碼")
     private String confirmPassword;
 
-    // 移除 @NotBlank 註解，但保留格式驗證
-    @Pattern(regexp = "^09\\d{8}$", message = "請輸入有效的手機號碼格式")
+    @NotBlank(message = "手機號碼不能為空")
+    @Pattern(regexp = "^09\\d{8}$", message = "手機號碼格式不正確")
     private String phone;
+    
 
-    // 移除 @NotNull、@Min、@Max 註解
+    @NotNull(message = "請選擇性別")
     private Integer gender;
 
-    // 移除 @NotNull、@Past 註解
+    @NotNull(message = "請選擇生日")
+    @Past(message = "生日必須是過去的日期")
     private Date birthdate;
 
     private String address;
 
-    public RegisterRequest() {
-    }
+    
 
-    public RegisterRequest(String name, String email, String password, String phone,
-            Integer gender, Date birthdate, String address) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.gender = gender;
-        this.birthdate = birthdate;
-        this.address = address;
-    }
+    public String getName() {
+		return name;
+	}
 
-    // Getters
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public String getConfirmPassword() { return confirmPassword; }
-    public String getPhone() { return phone; }
-    public Integer getGender() { return gender; }
-    public Date getBirthdate() { return birthdate; }
-    public String getAddress() { return address; }
 
-    // Setters
-    public void setName(String name) { this.name = name != null ? name.trim() : null; }
-    public void setEmail(String email) { this.email = email != null ? email.trim() : null; }
-    public void setPassword(String password) { this.password = password; }
-    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
-    public void setPhone(String phone) { this.phone = phone != null ? phone.trim() : null; }
-    public void setGender(Integer gender) { this.gender = gender; }
-    public void setBirthdate(Date birthdate) { this.birthdate = birthdate; }
-    public void setAddress(String address) { this.address = address != null ? address.trim() : null; }
 
-    @Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
+
+
+	public String getPhone() {
+		return phone;
+	}
+
+
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+
+	public Integer getGender() {
+		return gender;
+	}
+
+
+
+	public void setGender(Integer gender) {
+		this.gender = gender;
+	}
+
+
+
+	public Date getBirthdate() {
+		return birthdate;
+	}
+
+
+
+	public void setBirthdate(@NotNull(message = "請選擇生日") @Past(message = "生日必須是過去的日期") Date birthdate) {
+		this.birthdate = birthdate;
+	}
+
+
+
+	public String getAddress() {
+		return address;
+	}
+
+
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+
+
+	@Override
     public String toString() {
         return "RegisterRequest{" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='[PROTECTED]'" +
+                ", confirmPassword='[PROTECTED]'" +
                 ", phone='" + phone + '\'' +
                 ", gender=" + gender +
                 ", birthdate=" + birthdate +

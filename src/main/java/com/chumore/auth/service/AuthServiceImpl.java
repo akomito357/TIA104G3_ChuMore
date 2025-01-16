@@ -194,7 +194,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private void validateRestaurantRegistrationData(RestaurantRegisterRequest request) {
-		validateRegistrationData(request.getEmail(), request.getPhone());
+		validateRegistrationData(request.getEmail(), request.getPhoneNumber());
 		validateRegistrationNumber(request.getRegistrationNumber());
 	}
 
@@ -254,7 +254,7 @@ public class AuthServiceImpl implements AuthService {
 		restaurant.setMerchantName(request.getName());
 		restaurant.setMerchantEmail(request.getEmail());
 		restaurant.setMerchantPassword(passwordEncoder.encode(request.getPassword()));
-		restaurant.setPhoneNumber(request.getPhone());
+		restaurant.setPhoneNumber(request.getPhoneNumber());
 
 		// 手動設置 merchantIdNumber 和 phoneNumber 並驗證
 		validateAndSetMerchantIdNumber(request, restaurant);

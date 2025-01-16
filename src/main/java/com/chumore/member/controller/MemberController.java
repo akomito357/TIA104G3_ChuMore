@@ -2,9 +2,12 @@ package com.chumore.member.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.member.model.MemberService;
@@ -24,11 +28,30 @@ import com.chumore.member.model.MemberVO;
 import com.chumore.util.ResponseUtil;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/secure/member")
 public class MemberController {
 
     @Autowired
     private MemberService memberService;
+    
+    // 添加新的方法處理會員資訊頁面
+    @GetMapping("/member_information")
+    public String showMemberInformation(Model model, Authentication authentication) {
+        try {
+            String email = authentication.getName();
+            MemberVO member = memberService.findMemberByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("找不到會員資訊"));
+            
+            model.addAttribute("member", member);
+            
+            
+            return "secure/member/member_information";
+            
+        } catch (Exception e) {
+            
+            throw new RuntimeException("載入會員資訊失敗", e);
+        }
+    }
 
     /**
      * 顯示會員查詢頁面
@@ -85,18 +108,41 @@ public class MemberController {
      * 更新會員資料
      */
     @PostMapping("/update")
-    public String updateMember(@Validated @ModelAttribute("memberVO") MemberVO memberVO,
-                             BindingResult result, Model model) {
-        List<String> errorMsgs = validateMemberData(memberVO);
+    public String updateMemberInformation(
+            @Validated @ModelAttribute("member") MemberVO memberVO,
+            BindingResult result,
+            Model model,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+            
+        String currentUserEmail = authentication.getName();
         
-        if (result.hasErrors() || !errorMsgs.isEmpty()) {
-            model.addAttribute("memberVO", memberVO);
-            model.addAttribute("errorMsgs", errorMsgs);
-            return "member/update_member_input";
+        if (!currentUserEmail.equals(memberVO.getMemberEmail())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "無權限修改其他會員資料");
+            return "redirect:/secure/member/member_information";
         }
-
+        
+        if (result.hasErrors()) {
+            List<String> errorMessages = result.getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.toList());
+            
+            redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
+            return "redirect:/secure/member/member_information";
+        }
+        
         try {
-            memberVO = memberService.updateMember(
+            MemberVO existingMember = memberService.findMemberByEmail(currentUserEmail)
+                .orElseThrow(() -> new IllegalArgumentException("找不到會員資料"));
+            
+            // 保留不可修改的資料
+            memberVO.setMemberId(existingMember.getMemberId());
+            memberVO.setMemberEmail(existingMember.getMemberEmail());
+            memberVO.setMemberPassword(existingMember.getMemberPassword());
+            memberVO.setMemberBirthdate(existingMember.getMemberBirthdate());
+            
+            // 執行更新
+            MemberVO updatedMember = memberService.updateMember(
                 memberVO.getMemberId(),
                 memberVO.getMemberName(),
                 memberVO.getMemberEmail(),
@@ -107,13 +153,13 @@ public class MemberController {
                 memberVO.getMemberAddress()
             );
             
-            model.addAttribute("memberVO", memberVO);
-            return "member/listOneMember";
+            redirectAttributes.addFlashAttribute("successMessage", "會員資料更新成功");
+            return "redirect:/secure/member/member_information";
             
         } catch (Exception e) {
-            errorMsgs.add("修改資料失敗: " + e.getMessage());
-            model.addAttribute("errorMsgs", errorMsgs);
-            return "member/update_member_input";
+            
+            redirectAttributes.addFlashAttribute("errorMessage", "系統錯誤，請稍後再試");
+            return "redirect:/secure/member/member_information";
         }
     }
 

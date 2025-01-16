@@ -41,8 +41,43 @@ body {
 
 .form-section {
 	border-bottom: 1px solid #dee2e6;
-	margin-bottom: 2rem;
-	padding-bottom: 1rem;
+	margin-bottom: 2.5rem;
+	padding-bottom: 1.5rem;
+}
+
+.form-label {
+	font-weight: 600;
+	color: #495057;
+}
+
+.form-control {
+	border-radius: 8px;
+	padding: 0.75rem;
+}
+
+.btn-primary {
+	background: linear-gradient(to right, #FEA116, #e89214);
+	border: none;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+	background: linear-gradient(to right, #e89214, #FEA116);
+	transform: scale(1.05);
+}
+
+.btn-outline-secondary {
+	color: #495057;
+	border: 1px solid #ced4da;
+}
+
+.btn-outline-secondary:hover {
+	background-color: #f8f9fa;
+	color: #212529;
+}
+
+.invalid-feedback {
+	font-size: 0.875rem;
 }
 
 .section-title {
@@ -67,10 +102,13 @@ body {
 }
 
 /* 針對小螢幕的響應式設計 */
-@media ( max-width : 768px) {
+@media ( max-width : 576px) {
 	.address-group {
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+	.form-section {
+		padding: 1.5rem;
 	}
 }
 </style>
@@ -81,8 +119,7 @@ body {
 			<h1 class="text-center h3 mb-4">餐廳會員註冊</h1>
 
 			<form th:action="@{/auth/register/restaurant}" method="post"
-				th:object="${restaurantRegisterRequest}" class="needs-validation"
-				novalidate>
+				th:object="${restaurantRegisterRequest}" class="needs-validation">
 				<!-- 負責人資訊 -->
 				<div class="form-section">
 					<div class="col-md-6 mb-3">
@@ -160,11 +197,14 @@ body {
 
 					<div class="mb-3">
 						<label class="form-label required">食品業者登錄字號</label> <input
-							type="text" class="form-control" th:field="*{registrationNumber}"
-							pattern="^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$" required>
+							type="text" class="form-control" id="registrationNumber"
+							th:field="*{registrationNumber}"
+							pattern="^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$"
+							placeholder="例：B-123456789-12345-1" required>
 						<div class="form-text">請輸入食品業者登錄字號（格式：B-123456789-12345-1）</div>
 						<div class="invalid-feedback">請輸入有效的食品業者登錄字號</div>
 					</div>
+
 
 					<div class="mb-3">
 						<label class="form-label required">餐廳類型</label> <select
@@ -214,6 +254,14 @@ body {
 						</div>
 					</div>
 
+					<div class="form-check">
+						<input type="checkbox" class="form-check-input" id="termsCheckbox"
+							required> <label class="form-check-label"
+							for="termsCheckbox"> 我已閱讀並同意 <a href="#">服務條款</a>
+						</label>
+					</div>
+
+
 					<div class="d-grid gap-2">
 						<button type="submit" class="btn btn-primary">註冊</button>
 						<a th:href="@{/auth/login}"
@@ -232,188 +280,200 @@ body {
 
 
 			<script>
-	document.addEventListener('DOMContentLoaded', function() {
-	    console.log('DOM 載入完成，開始初始化表單...');
-	    
-	    try {
-	        // 初始化所有功能
-	        initializeFormValidation();
-	        initializePasswordToggle();
-	        initializeLocationSelectors();  // 確保這個函數被呼叫
-	        initializeRegistrationValidation();
-	        
-	        console.log('表單初始化完成');
-	    } catch (error) {
-	        console.error('初始化過程發生錯誤:', error);
-	    }
-	});
-	    // 城市與地區資料
-	    const cityDistricts = {
-	        '臺北市': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區',
-	                  '士林區', '北投區', '內湖區', '南港區', '文山區'],
-	        '新北市': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區',
-	                  '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區'],
-	        '桃園市': ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '龜山區',
-	                  '龍潭區', '大溪區', '大園區', '觀音區', '新屋區', '復興區'],
-	        '臺中市': ['中區', '東區', '南區', '西區', '北區', '北屯區', '西屯區', '南屯區'],
-	        '臺南市': ['中西區', '東區', '南區', '北區', '安平區', '安南區'],
-	        '高雄市': ['楠梓區', '左營區', '鼓山區', '三民區', '苓雅區', '前鎮區', '新興區']
-	    };
+			document.addEventListener('DOMContentLoaded', function() {
+			    console.log('開始初始化表單...');
+			    
+			    try {
+			        initializeFormValidation();
+			        initializePasswordToggle();
+			        initializeLocationSelectors();
+			        initializeRegistrationValidation();
+			        console.log('表單初始化完成');
+			    } catch (error) {
+			        console.error('初始化錯誤:', error);
+			    }
+			});
 
-	    // 初始化所有功能
-	    initializeFormValidation();
-	    initializePasswordToggle();
-	    initializeLocationSelectors();
-	    initializeRegistrationValidation();
-	    
-	    // 表單驗證初始化
-	    function initializeFormValidation() {
-	        const forms = document.querySelectorAll('.needs-validation');
-	        Array.from(forms).forEach(form => {
-	            form.addEventListener('submit', event => {
-	                if (!form.checkValidity() || !validatePassword()) {
-	                    event.preventDefault();
-	                    event.stopPropagation();
-	                }
-	                form.classList.add('was-validated');
-	            }, false);
-	        });
-	    }
+			// 城市與地區資料
+			const cityDistricts = {
+			    '臺北市': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區',
+			              '士林區', '北投區', '內湖區', '南港區', '文山區'],
+			    '新北市': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區',
+			              '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區'],
+			    '桃園市': ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '龜山區',
+			              '龍潭區', '大溪區', '大園區', '觀音區', '新屋區', '復興區'],
+			    '臺中市': ['中區', '東區', '南區', '西區', '北區', '北屯區', '西屯區', '南屯區'],
+			    '臺南市': ['中西區', '東區', '南區', '北區', '安平區', '安南區'],
+			    '高雄市': ['楠梓區', '左營區', '鼓山區', '三民區', '苓雅區', '前鎮區', '新興區']
+			};
 
-        // 密碼驗證
-        function validatePassword() {
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirmPassword');
-            
-            const requirements = [
-                { test: /[A-Z]/, message: '需要至少一個大寫字母' },
-                { test: /[a-z]/, message: '需要至少一個小寫字母' },
-                { test: /\d/, message: '需要至少一個數字' },
-                { test: /.{8,}/, message: '長度至少為 8 個字元' }
-            ];
+			// 表單驗證和提交
+			function initializeFormValidation() {
+			    let isSubmitting = false;
+			    const form = document.querySelector('.needs-validation');
+			    const submitButton = form.querySelector('button[type="submit"]');
 
-            // 檢查密碼格式
-            for (const req of requirements) {
-                if (!req.test.test(password.value)) {
-                    password.setCustomValidity(req.message);
-                    return false;
-                }
-            }
-            password.setCustomValidity('');
+			    form.addEventListener('submit', async function(event) {
+			        event.preventDefault();
+			        
+			        if (isSubmitting) return;
+			        
+			        if (!this.checkValidity() || !validatePassword()) {
+			            event.stopPropagation();
+			            this.classList.add('was-validated');
+			            return;
+			        }
 
-            // 檢查密碼確認
-            if (password.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('密碼與確認密碼不符');
-                return false;
-            }
-            confirmPassword.setCustomValidity('');
+			        try {
+			            isSubmitting = true;
+			            submitButton.disabled = true;
+			            
+			            const formData = new FormData(this);
+			            const response = await fetch('/auth/register/restaurant', {
+			                method: 'POST',
+			                body: formData,
+			                headers: {
+			                    'Accept': 'application/json'
+			                }
+			            });
 
-            return true;
-        }
+			            if (!response.ok) {
+			                const errorData = await response.json();
+			                throw new Error(errorData.message || '註冊失敗');
+			            }
 
-     // 密碼顯示切換
-        function initializePasswordToggle() {
-            const toggleButton = document.getElementById('togglePassword');
-            const passwordInput = document.querySelector('input[type="password"]');
-            
-            if (toggleButton && passwordInput) {
-                toggleButton.addEventListener('click', () => {
-                    const type = passwordInput.type === 'password' ? 'text' : 'password';
-                    passwordInput.type = type;
-                    toggleButton.querySelector('i').classList.toggle('bi-eye');
-                    toggleButton.querySelector('i').classList.toggle('bi-eye-slash');
-                });
-            }
-        }
+			            showSuccess('註冊成功！請等待系統審核');
+			            setTimeout(() => {
+			                window.location.href = '/auth/login?registration=success';
+			            }, 2000);
 
-        function initializeLocationSelectors() {
-            // 取得選擇器元素
-            const citySelect = document.getElementById('city');
-            const districtSelect = document.getElementById('district');
+			        } catch (error) {
+			            console.error('註冊錯誤:', error);
+			            showError(error.message || '註冊過程發生錯誤，請稍後再試');
+			        } finally {
+			            isSubmitting = false;
+			            submitButton.disabled = false;
+			        }
+			    });
+			}
 
-            // 檢查元素是否存在
-            if (!citySelect || !districtSelect) {
-                console.error('找不到城市或地區選擇器元素');
-                return;
-            }
+			// 密碼驗證
+			function validatePassword() {
+			    const password = document.querySelector('input[name="password"]');
+			    const confirmPassword = document.querySelector('input[name="confirmPassword"]');
+			    
+			    if (!password || !confirmPassword) return false;
 
-            // 清空現有選項
-            citySelect.innerHTML = '<option value="">請選擇縣市</option>';
-            districtSelect.innerHTML = '<option value="">請選擇地區</option>';
-            districtSelect.disabled = true;
+			    const passwordValue = password.value;
+			    const confirmValue = confirmPassword.value;
 
-            // 添加城市選項
-            for (const city in cityDistricts) {
-                const option = new Option(city, city);
-                citySelect.add(option);
-            }
+			    const requirements = {
+			        length: passwordValue.length >= 8 && passwordValue.length <= 20,
+			        uppercase: /[A-Z]/.test(passwordValue),
+			        lowercase: /[a-z]/.test(passwordValue),
+			        number: /\d/.test(passwordValue)
+			    };
 
-            // 綁定城市變更事件
-            citySelect.addEventListener('change', function() {
-                const selectedCity = this.value;
-                updateDistricts(selectedCity, districtSelect);
-            });
-        }
+			    if (!Object.values(requirements).every(Boolean)) {
+			        password.setCustomValidity('密碼必須包含大小寫字母、數字，長度為8-20個字元');
+			        return false;
+			    }
 
-        function updateDistricts(selectedCity, districtSelect) {
-            // 清空並重置地區選擇器
-            districtSelect.innerHTML = '<option value="">請選擇地區</option>';
-            
-            if (selectedCity && cityDistricts[selectedCity]) {
-                // 啟用地區選擇器
-                districtSelect.disabled = false;
-                
-                // 添加地區選項
-                cityDistricts[selectedCity].forEach(district => {
-                    const option = new Option(district, district);
-                    districtSelect.add(option);
-                });
-            } else {
-                // 如果沒有選擇城市，停用地區選擇器
-                districtSelect.disabled = true;
-            }
-        }
-            // 填入城市選項
-            Object.keys(cityDistricts).forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
+			    if (passwordValue !== confirmValue) {
+			        confirmPassword.setCustomValidity('密碼與確認密碼不符');
+			        return false;
+			    }
 
-            // 處理城市選擇變更事件
-            citySelect.addEventListener('change', function() {
-                const selectedCity = this.value;
-                districtSelect.innerHTML = '<option value="">請選擇地區</option>';
-                
-                if (selectedCity && cityDistricts[selectedCity]) {
-                    cityDistricts[selectedCity].forEach(district => {
-                        const option = document.createElement('option');
-                        option.value = district;
-                        option.textContent = district;
-                        districtSelect.appendChild(option);
-                    });
-                    districtSelect.disabled = false;
-                } else {
-                    districtSelect.disabled = true;
-                }
-            });
+			    password.setCustomValidity('');
+			    confirmPassword.setCustomValidity('');
+			    return true;
+			}
 
-     // 食品業者登錄字號驗證
-        function initializeRegistrationValidation() {
-            const registrationInput = document.getElementById('registrationNumber');
-            if (registrationInput) {
-                registrationInput.addEventListener('input', function(e) {
-                    const value = e.target.value;
-                    const pattern = /^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$/;
-                    if (!pattern.test(value)) {
-                        e.target.setCustomValidity('請輸入正確格式的食品業者登錄字號（例：B-123456789-12345-1）');
-                    } else {
-                        e.target.setCustomValidity('');
-                    }
-                });
-            }
-        }
+			// 密碼顯示切換
+			function initializePasswordToggle() {
+			    const toggleButtons = document.querySelectorAll('.btn-outline-secondary');
+			    toggleButtons.forEach(button => {
+			        button.addEventListener('click', function() {
+			            const input = this.previousElementSibling;
+			            const icon = this.querySelector('i');
+			            
+			            input.type = input.type === 'password' ? 'text' : 'password';
+			            icon.classList.toggle('bi-eye');
+			            icon.classList.toggle('bi-eye-slash');
+			        });
+			    });
+			}
+
+			// 地址選擇器
+			function initializeLocationSelectors() {
+			    const citySelect = document.getElementById('city');
+			    const districtSelect = document.getElementById('district');
+			    
+			    if (!citySelect || !districtSelect) return;
+
+			    const cityFragment = document.createDocumentFragment();
+			    cityFragment.appendChild(new Option('請選擇縣市', ''));
+
+			    Object.keys(cityDistricts).forEach(city => {
+			        cityFragment.appendChild(new Option(city, city));
+			    });
+
+			    citySelect.innerHTML = '';
+			    citySelect.appendChild(cityFragment);
+			    
+			    citySelect.addEventListener('change', function() {
+			        updateDistricts(this.value, districtSelect);
+			    });
+			}
+
+			function updateDistricts(selectedCity, districtSelect) {
+			    districtSelect.innerHTML = '<option value="">請選擇地區</option>';
+			    districtSelect.disabled = !selectedCity;
+			    
+			    if (selectedCity && cityDistricts[selectedCity]) {
+			        const fragment = document.createDocumentFragment();
+			        cityDistricts[selectedCity].forEach(district => {
+			            fragment.appendChild(new Option(district, district));
+			        });
+			        districtSelect.appendChild(fragment);
+			    }
+			}
+
+			// 食品業者登錄字號驗證
+			function initializeRegistrationValidation() {
+			    const registrationInput = document.getElementById('registrationNumber');
+			    if (registrationInput) {
+			        registrationInput.addEventListener('input', function() {
+			            const value = this.value;
+			            const pattern = /^[A-Za-z]-[0-9]{9}-[0-9]{5}-[0-9]{1}$/;
+			            
+			            this.setCustomValidity(
+			                pattern.test(value) ? '' : 
+			                '請輸入正確格式的食品業者登錄字號（例：B-123456789-12345-1）'
+			            );
+			        });
+			    }
+			}
+
+			// 錯誤和成功提示
+			function showMessage(message, type) {
+			    const alertDiv = document.createElement('div');
+			    alertDiv.className = `alert alert-${type} mt-3`;
+			    alertDiv.textContent = message;
+			    
+			    const form = document.querySelector('form');
+			    form.parentNode.insertBefore(alertDiv, form.nextSibling);
+			    
+			    setTimeout(() => alertDiv.remove(), 5000);
+			}
+
+			function showError(message) {
+			    showMessage(message, 'danger');
+			}
+
+			function showSuccess(message) {
+			    showMessage(message, 'success');
+			}
 	
 	
 
