@@ -3,27 +3,22 @@ import com.chumore.emp.model.EmpUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-
 // 啟用方法層級的安全性註解，如 @PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-
 // 配置 HttpSecurity 的類
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
 // 啟用 Spring Security 的核心功能
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 // 提供 BCrypt 密碼編碼器
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 // 提供 NoOp 密碼編碼器（無編碼器，用於測試）
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-
 // 密碼編碼器的接口
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.security.web.SecurityFilterChain;
 // 配置 Security Filter Chain 的接口
 import org.springframework.security.web.SecurityFilterChain;
 

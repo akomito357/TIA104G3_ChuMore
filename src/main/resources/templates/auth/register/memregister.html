@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChuMore 會員註冊系統">
+    <title>ChuMore - 會員註冊</title>
+    
+    <!-- External Resources -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #F2994A;
+            --primary-dark: #e08838;
+            --secondary: #092C4C;
+            --error: #EB5757;
+            --success: #27AE60;
+            --gray-1: #333333;
+            --gray-2: #4F4F4F;
+            --gray-3: #828282;
+            --gray-4: #BDBDBD;
+            --white: #FFFFFF;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .register-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin: 0 auto;
+        }
+
+        .page-title {
+            color: var(--gray-1);
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            color: var(--gray-2);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            border: 1.5px solid var(--gray-4);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(242, 153, 74, 0.15);
+        }
+
+        .location-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .required::after {
+            content: "*";
+            color: var(--error);
+            margin-left: 4px;
+        }
+
+        .btn-register {
+            background-color: var(--primary);
+            border: none;
+            color: var(--white);
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(242, 153, 74, 0.2);
+        }
+
+        .password-requirements {
+            font-size: 0.75rem;
+            color: var(--gray-3);
+            margin-top: 0.5rem;
+        }
+
+        .password-requirements i {
+            font-size: 0.625rem;
+            margin-right: 0.25rem;
+        }
+
+        .form-floating {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-3);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .input-icon:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 576px) {
+            .register-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .location-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <h1 class="page-title">會員註冊</h1>
+
+            <!-- Alert Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Registration Form -->
+            <form th:action="@{/auth/register}" method="post" th:object="${registerRequest}" class="needs-validation" novalidate>
+                <!-- Name Field -->
+                <div class="mb-3">
+                    <label class="form-label required">會員姓名</label>
+                    <input type="text" 
+                           class="form-control" 
+                           th:field="*{memberName}"
+                           placeholder="請輸入真實姓名"
+                           required>
+                    <div class="invalid-feedback">請輸入姓名</div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="mb-3">
+                    <label class="form-label required">電子信箱</label>
+                    <input type="email" 
+                           class="form-control"
+                           th:field="*{memberEmail}"
+                           placeholder="請輸入電子信箱"
+                           required>
+                    <div class="invalid-feedback">請輸入有效的電子信箱</div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-3">
+                    <label class="form-label required">密碼</label>
+                    <div class="form-floating">
+                        <input type="password" 
+                               class="form-control"
+                               th:field="*{memberPassword}"
+                               placeholder="請輸入密碼"
+                               required
+                               minlength="8">
+                        <i class="bi bi-eye input-icon" id="togglePassword"></i>
+                    </div>
+                    <div class="password-requirements">
+                        <i class="bi bi-info-circle"></i>
+                        密碼至少8個字元，需包含大小寫字母及數字
+                    </div>
+                </div>
+
+                <!-- Gender Field -->
+                <div class="mb-3">
+                    <label class="form-label">性別</label>
+                    <select class="form-control" th:field="*{memberGender}">
+                        <option value="">請選擇性別</option>
+                        <option value="0">男性</option>
+                        <option value="1">女性</option>
+                    </select>
+                </div>
+
+                <!-- Birthdate Field -->
+                <div class="mb-3">
+                    <label class="form-label">生日</label>
+                    <input type="date" 
+                           class="form-control"
+                           th:field="*{memberBirthdate}">
+                </div>
+
+                <!-- Phone Number Field -->
+                <div class="mb-3">
+                    <label class="form-label required">手機號碼</label>
+                    <input type="tel" 
+                           class="form-control"
+                           th:field="*{memberPhoneNumber}"
+                           placeholder="請輸入手機號碼"
+                           pattern="09[0-9]{8}"
+                           required>
+                    <div class="invalid-feedback">請輸入有效的手機號碼</div>
+                </div>
+
+                <!-- Address Fields -->
+                <div class="mb-4">
+                    <label class="form-label required">地址</label>
+                    <div class="location-group">
+                        <select class="form-control" id="city" name="city" required>
+                            <option value="" disabled selected>請選擇縣市</option>
+                        </select>
+                        <select class="form-control" id="district" name="district" required>
+                            <option value="" disabled selected>請選擇鄉鎮市區</option>
+                        </select>
+                    </div>
+                    <input type="text" 
+                           class="form-control mt-2"
+                           th:field="*{memberAddress}"
+                           placeholder="請輸入詳細地址"
+                           required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-register">
+                    註冊會員
+                </button>
+
+                <!-- Login Link -->
+                <div class="text-center mt-3">
+                    <span class="text-gray-3">已經有帳號？</span>
+                    <a th:href="@{/auth/login}" class="text-decoration-none" style="color: var(--primary);">
+                        立即登入
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Section -->
+    <script th:inline="javascript">
+        // City and District Data
+        const cityDistricts = {
+            '臺北市': ['中正區', '大同區', '中山區', '萬華區', '信義區', '松山區', 
+                      '大安區', '南港區', '北投區', '內湖區', '士林區', '文山區'],
+            '新北市': ['板橋區', '新莊區', '泰山區', '林口區', '淡水區', '金山區', 
+                      '八里區', '萬里區', '石門區', '三芝區', '瑞芳區', '汐止區', 
+                      '平溪區', '貢寮區', '雙溪區', '深坑區', '石碇區', '新店區', 
+                      '坪林區', '烏來區', '中和區', '永和區', '土城區', '三峽區', 
+                      '樹林區', '鶯歌區', '三重區', '蘆洲區', '五股區']
+        };
+
+        // Initialize Form Validation
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        // Password Toggle Visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.querySelector('input[type="password"]');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // Initialize Location Selectors
+        function initializeLocationSelectors() {
+            const citySelect = document.getElementById('city');
+            const districtSelect = document.getElementById('district');
+
+            // Populate Cities
+            Object.keys(cityDistricts).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            // Handle City Selection
+            citySelect.addEventListener('change', function() {
+                const selectedCity = this.value;
+                
+                districtSelect.innerHTML = '<option value="" disabled selected>請選擇鄉鎮市區</option>';
+                
+                if (selectedCity && cityDistricts[selectedCity]) {
+                    cityDistricts[selectedCity].forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        districtSelect.appendChild(option);
+                    });
+                    districtSelect.disabled = false;
+                } else {
+                    districtSelect.disabled = true;
+                }
+            });
+        }
+
+        // Initialize on Page Load
+        document.addEventListener('DOMContentLoaded', initializeLocationSelectors);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
