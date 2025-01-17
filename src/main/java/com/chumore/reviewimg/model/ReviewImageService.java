@@ -56,19 +56,19 @@ public class ReviewImageService {
     }
 
     @Transactional
-    public void deleteImage(Integer imageId, Integer memberId) {
-        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
+    public void deleteImage(Integer reviewImageId) {
+        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(reviewImageId);
         
         if (imageOpt.isEmpty()) {
             throw new RuntimeException("圖片不存在");
         }
 
-        ReviewImageVO image = imageOpt.get();
-        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
-            throw new RuntimeException("無權限刪除此圖片");
-        }
+//        ReviewImageVO image = imageOpt.get();
+//        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
+//            throw new RuntimeException("無權限刪除此圖片");
+//        }
 
-        reviewImageRepository.deleteById(imageId);
+        reviewImageRepository.deleteByReviewImgId(reviewImageId);
     }
 
     public List<ReviewImageVO> getReviewImages(Integer reviewId) {

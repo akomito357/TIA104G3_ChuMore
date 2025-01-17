@@ -181,7 +181,7 @@
 
         function loadTables() {
             console.log('Starting to load tables...');
-            fetch('http://localhost:8080/ordertables/getAllTables?restId=2001', {
+            fetch('/ordertables/getAllTables?restId=2001', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -337,14 +337,22 @@
                 tableNumber: newTableNumber
             };
             
-            fetch(`http://localhost:8080/ordertables/updateTable/${orderTableId}`, {
+            fetch(`/ordertables/updateTable/${orderTableId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(updateData)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Network response was not ok');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     loadTables();
@@ -356,7 +364,7 @@
             })
             .catch(error => {
                 console.error('Error updating table:', error);
-                alert('更新桌位失敗');
+                alert('更新桌位失敗: ' + error.message);
             });
         }
 
@@ -375,7 +383,7 @@
             
             console.log('Sending data:', JSON.stringify(tableData));
             
-            fetch('http://localhost:8080/ordertables/addTable', {
+            fetch('/ordertables/addTable', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',
@@ -416,7 +424,7 @@
             if (confirm('確定要刪除此桌位嗎？此操作無法復原。')) {
                 $('.delete-btn').addClass('loading');
                 
-                fetch(`http://localhost:8080/ordertables/deleteTable/${orderTableId}`, {
+                fetch(`/ordertables/deleteTable/${orderTableId}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())

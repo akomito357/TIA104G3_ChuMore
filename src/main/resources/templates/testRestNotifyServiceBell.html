@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>餐廳端-通知</title>
+</head>
+<body>
+    <h1>餐廳通知列表</h1>
+    <label>餐廳編號：</label>
+    <input type="text" id="restId" placeholder="請輸入餐廳編號如: 2001">
+    <button id="connectBtn">連接</button>
+    <br><br>
+
+    <div id="notificationList">
+        <h2>通知訊息：</h2>
+        <ul id="messages"></ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    let socket;
+
+    document.getElementById("connectBtn").addEventListener("click", function() {
+        const restId = document.getElementById("restId").value;
+        if(!restId) {
+            alert("請輸入餐廳編號！");
+            return;
+        }
+
+        // 建立 WebSocket 連線
+        socket = new WebSocket(`/ws/notify/${restId}`);
+
+        socket.onopen = function() {
+            console.log("WebSocket 已連接！");
+            alert("已連上通知服務！");
+        };
+
+        socket.onmessage = function(event) {
+            console.log("收到通知：", event);
+            console.log("收到通知：", event.data);
+            const li = document.createElement("li");
+            li.textContent = event.data;
+            document.getElementById("messages").appendChild(li);
+        };
+
+        socket.onclose = function() {
+            console.log("WebSocket 已斷開！");
+            alert("通知連線中斷！");
+        };
+
+        socket.onerror = function(err) {
+            console.error("WebSocket 錯誤：", err);
+        };
+    });
+    </script>
+</body>
+</html>

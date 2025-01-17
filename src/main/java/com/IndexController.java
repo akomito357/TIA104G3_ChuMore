@@ -36,6 +36,10 @@ public class IndexController {
 	public String memberDiningHistory() {
 		return "secure/member/dining/member_dining_history";
 	}
+//	@GetMapping("/memberDiningHistory")
+//	public String memberDiningHistory() {
+//		return "secure/member/dining/member_dining_history";
+//	}
 	
 	@GetMapping("/restDiningHistory")
 	public String restDiningHistory() {
@@ -45,5 +49,15 @@ public class IndexController {
 	@GetMapping("/restMenuSetting")
 	public String restMenuSetting() {
 		return "secure/rest/menu/menu_setting";
+	}
+	
+	@GetMapping("/testServiceBellOrder")
+	public String testOrderServiceBell(){
+		return "/testOrderServiceBell";
+	}
+	
+	@GetMapping("/testRestNotifyServiceBell")
+	public String testRestNotifyServiceBell(){
+		return "/testRestNotifyServiceBell";
 	}
 }

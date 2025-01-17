@@ -30,6 +30,7 @@ import com.chumore.reviewimg.model.ReviewImageVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+
 @Entity
 @Table(name = "review")
 public class ReviewVO implements Serializable {

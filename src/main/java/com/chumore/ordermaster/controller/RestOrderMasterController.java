@@ -2,7 +2,6 @@ package com.chumore.ordermaster.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -13,13 +12,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
 import com.chumore.ordermaster.model.OrderMasterServiceImpl;
 import com.chumore.ordermaster.model.OrderMasterVO;
@@ -27,7 +27,7 @@ import com.chumore.ordermaster.res.OrderMasterResponse;
 import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.rest.model.RestVO;
 
-@RestController
+@Controller
 @RequestMapping("/rest/orderMaster")
 public class RestOrderMasterController {
 
@@ -44,6 +44,7 @@ public class RestOrderMasterController {
 	OrderItem_Service orderItemSvc;
 	
 	@GetMapping("diningList")
+	@ResponseBody
 	public ResponseEntity<OrderMasterResponse<Page<Map<String, Object>>>> findOrderByRestId(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "served_datetime,asc") String sort,
@@ -53,7 +54,7 @@ public class RestOrderMasterController {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+			restId = 2003;
 		} else {
 			RestVO rest = (RestVO) restNum;
 			restId = rest.getRestId();
@@ -113,14 +114,34 @@ public class RestOrderMasterController {
 	}
 
 	
+	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
 	@GetMapping("getOne")
-	public String getOneForCheckOut(@RequestParam Integer orderId, ModelMap model) {
-//		session.setAttribute("orderId", 1);
-		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
-		List<OrderItemVO> orderItems = orderItemSvc.getOrderItemListByOrderId(orderId);
-		model.addAttribute("orderMaster", orderMaster);
+	public String getOneForCheckOut(@RequestParam Integer orderId, Model model, HttpSession session) {
+//			session.setAttribute("orderId", 1);
+		if (session.getAttribute("restId") == null) {
+			session.setAttribute("restId", 2001);
+		}
 		
-		return "";
+		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
+		model.addAttribute("orderMaster", orderMaster);
+		return "secure/rest/order/rest_checkout";
 	} 
+	
+	@PostMapping("checkout")
+	@ResponseBody
+	public String checkoutSubmit(@RequestParam Map<String, String> map) {		
+		Integer memberId = Integer.valueOf(map.get("memberId"));
+		Integer orderId = Integer.valueOf(map.get("orderId"));
+		Integer pointUsed = Integer.valueOf(map.get("usePoints"));
+		
+		OrderMasterVO orderMaster = ordersvc.checkout(memberId, orderId, pointUsed);
+		orderMaster = ordersvc.updateOrderMaster(orderMaster);
+		
+//		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
+		System.out.println(orderMaster);
+		
+		return "success/n" + orderMaster;
+	}
+	
 	
 }

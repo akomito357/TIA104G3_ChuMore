@@ -76,6 +76,29 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),"Bad Request", e.getMessage());
         return ResponseEntity.status(400).body(errorResponse);
     }
+    
+    @ExceptionHandler(DiscPtsAbsentException.class)
+    public ResponseEntity<ErrorResponse> handleDiscPtsAbsent(DiscPtsAbsentException e){
+    	ErrorResponse errorResponse = new ErrorResponse(
+    			HttpStatus.BAD_REQUEST.value(), "Forbidden", e.getMessage());
+    	return ResponseEntity.status(400).body(errorResponse);
+    }
+    
+    @ExceptionHandler(PointsInsufficientException.class)
+    public ResponseEntity<ErrorResponse> handlePointsInsufficient(PointsInsufficientException e){
+    	ErrorResponse errorResponse = new ErrorResponse(
+    			HttpStatus.FORBIDDEN.value(), "Forbidden", e.getMessage());
+    	return ResponseEntity.status(403).body(errorResponse);
+    }
+    
+    @ExceptionHandler(PointsOverUsedException.class)
+    public ResponseEntity<ErrorResponse> handlePointsOverUsed(PointsOverUsedException e){
+    	ErrorResponse errorResponse = new ErrorResponse(
+    			HttpStatus.UNPROCESSABLE_ENTITY.value(), "Unprocessable entity", e.getMessage());
+    	return ResponseEntity.status(422).body(errorResponse);
+    }
+    
+
 
 
 }

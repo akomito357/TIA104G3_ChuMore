@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -78,9 +79,11 @@ public class OrderMasterVO implements Serializable{
 	private LocalDateTime checkoutDatetime;
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)
+	@JsonManagedReference("orderMaster-usePoints")
 	private Set<UsePointsVO> usePoints;
 	
 	@OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL)
+	@OrderBy("created_datetime asc")
 	private Set<OrderItemVO> orderItems;
 	
 	@OneToMany(mappedBy = "orderMaster", cascade = CascadeType.ALL)

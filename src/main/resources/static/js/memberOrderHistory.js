@@ -9,7 +9,6 @@ $(document).ready(function() {
 	const content = $(".tab-content");
 
 
-
 	const diningPrevButton = $("#diningPreBtn.prev-btn");
 	const diningNextButton = $("#diningNextBtn.next-btn");
 	$(diningPrevButton).on("click", function() {
@@ -35,7 +34,7 @@ $(document).ready(function() {
 
 	//for dining
 	function loadOrderData(page, sortField, sortOrder) {
-		fetch(`member/orderMaster/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+		fetch(`/member/orderMaster/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
 			method: "GET",
 		}).then(res => res.json())
 			.then(response => {
@@ -59,7 +58,7 @@ $(document).ready(function() {
 	                        <td class="px-4 py-3 rest-column">${orderMaster.restName}</td>
 	                        <td class="px-4 py-3">${date}</td>
 	                        <td class="px-4 py-3">${time}</td>
-	                    	<td class="px-4 py-3">${orderMaster.totalPrice}</td>
+	                    	<td class="px-4 py-3">${orderMaster.totalPrice?orderMaster.totalPrice:"未結帳"}</td>
 	                        <td class="px-4 py-3"><a href="javascript:void(0);" class="show-detail">
 	                                <i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a>
 	                        </td>        
@@ -67,7 +66,7 @@ $(document).ready(function() {
 	                            ${orderMaster.reviewId ? `<span class="status-badge status-completed">已評論</span>` :
 							`<span class="status-badge status-pending">未評論</span>`}
 	                        </td>
-	                    	<td class="px-4 py-3">${orderMaster.pointEarned}</td>
+	                    	<td class="px-4 py-3">${orderMaster.pointEarned?orderMaster.pointEarned:"0"}</td>
 	                    	<td class="px-4 py-3">
 								<form action="${formAction}" method="post">
 									<input type="hidden" value="${orderMaster.orderId}" name="orderId">

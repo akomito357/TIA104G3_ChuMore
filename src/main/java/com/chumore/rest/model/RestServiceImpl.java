@@ -1,6 +1,8 @@
 package com.chumore.rest.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,8 +10,10 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.chumore.event.RestChangedEvent;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.chumore.approval.model.ApprovalVO;
@@ -29,46 +33,35 @@ public class RestServiceImpl implements RestService{
 	
 	@Autowired
 	RestRepository repository;
-	
+
+
 	@Autowired
-	SessionFactory sessionFactory;
+	private ApplicationEventPublisher publisher;
 
 	@Override
 	public void addRest(RestVO rest) {
 		repository.save(rest);
+		publisher.publishEvent(new RestChangedEvent(this,rest, "ADD"));
 	}
 
-	 @Override
-	    @Transactional
-	    public void updateRest(RestVO rest) {
+	@Override
+	@Transactional
+	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
 	            RestVO existingRest = repository.findById(rest.getRestId())
 	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
 
-	            // 設置不可修改的欄位
-	            rest.setMerchantPassword(existingRest.getMerchantPassword());
-	            rest.setMerchantIdNumber(existingRest.getMerchantIdNumber());
-	            rest.setRegisterDatetime(existingRest.getRegisterDatetime());
-	            rest.setCreatedDatetime(existingRest.getCreatedDatetime());
-	            rest.setWeeklyBizDays(existingRest.getWeeklyBizDays());
-	            rest.setBusinessHours(existingRest.getBusinessHours());
-	            rest.setOrderTableCount(existingRest.getOrderTableCount());
-	            rest.setRestStars(existingRest.getRestStars());
-	            rest.setRestReviewers(existingRest.getRestReviewers());
-	            rest.setApprovalStatus(existingRest.getApprovalStatus());
-
-	            // 設置更新時間
-	            rest.setUpdatedDatetime(LocalDateTime.now());
-
 	            // 保存更新
 	            repository.saveAndFlush(rest);
+
+				// 發布更新索引事件
+				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
 
 	        } catch (Exception e) {
 	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
 	        }
 	    }
-	    
 
 	@Override
 	public RestVO getOneById(Integer restId) {
@@ -77,7 +70,6 @@ public class RestServiceImpl implements RestService{
 		if (rest == null) {
 			throw new ResourceNotFoundException("Rest with id = " + restId + "is not found.");
 		}
-		
 		return rest;
 	}
 
@@ -87,19 +79,9 @@ public class RestServiceImpl implements RestService{
 		if (rests.isEmpty()) {
 			throw new ResourceNotFoundException("No rests found.");
 		}
-			
 		return rests;
 	}
 
-	@Override
-	public List<RestVO> getAllCompos(Map<String, String[]> map) {
-		List<RestVO> rests = RestCompositeQuery.getAllC(map, sessionFactory.openSession());
-		if (rests.isEmpty()) {
-			throw new ResourceNotFoundException("No match rests found.");
-		}
-		
-		return rests;
-	}
 
 	public Set<DiscPtsVO> getDiscPtsByRestId(Integer restId){
 		return getOneById(restId).getDiscPts();
@@ -146,6 +128,52 @@ public class RestServiceImpl implements RestService{
 		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
 	}
 	
+	public List<Integer[]> getBusinessHoursFor(Integer restId){
+		
+		Optional<RestVO> optional = repository.findById(restId);
+		String businessHours = optional.get().getBusinessHours();
+		
+		char[] hours = businessHours.toCharArray();
+		List<Integer[]> result = new ArrayList<>();
+		
+		Integer[] currentSegment = new Integer[24];
+        Arrays.fill(currentSegment, 0);
+        
+        boolean inSegment = false;//如果不是1，則不營業
+        
+        for (int i = 0; i < hours.length; i++) {
+            if (hours[i] == '1') {
+                // 如果是營業時間，標記為 1
+                currentSegment[i] = 1;
+                inSegment = true;
+            } else if (hours[i] == '0' && inSegment) {
+                // 遇到非營業時間且在營業段中，保存當前段並重置
+                result.add(currentSegment);
+                currentSegment = new Integer[24];
+                Arrays.fill(currentSegment, 0);
+                inSegment = false;
+            }
+        }
+        // 如果最後一段是營業時間段，將其加入結果
+        if (inSegment) {
+            result.add(currentSegment);
+        }
+		return result;
+	}
+	
+	
+	@Override
+	public String getBusinessDays(Integer restId) {
+		Optional<RestVO> optional = repository.findById(restId);
+		String weeklyBusinessDays = optional.get().getWeeklyBizDays();
+		return weeklyBusinessDays;
+	}
+	
+	@Override
+	public List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId) {
+		return repository.findRestIdsByOptionalFields(city, district, cuisineTypeId);
+	}
+	
 	public Set<OrderTableVO> getOrderTablesByRestId(Integer restId){
 		return getOneById(restId).getOrderTables();
 	}
@@ -155,4 +183,5 @@ public class RestServiceImpl implements RestService{
 	    return repository.findByMerchantEmail(email).orElse(null);
 	}
 
+	
 }

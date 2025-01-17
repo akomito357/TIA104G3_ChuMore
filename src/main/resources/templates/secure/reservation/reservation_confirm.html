@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂位確認</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- 1. 訂位資訊卡片區 -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <!-- 1a. 餐廳圖片 -->
+                <img src="https://placehold.co/400x200" class="card-img-top" alt="餐廳照片">
+                <!-- 1b. 餐廳名稱與編輯按鈕 -->
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><span id="restName" th:value="${reservation.rest.restName}"></span></h5>
+                        <i class="fas fa-edit text-primary" role="button" data-bs-toggle="modal" data-bs-target="#editModal"></i>
+                    </div>
+                    <hr>
+                    <div class="card-text">
+                        <p class="mb-2"><i class="fas fa-calendar-alt me-2"></i><span id="displayDate" th:text="${#temporals.format(reservation.reservationDate, 'yyyy/MM/dd (E)')}"></span></p>
+                        <p class="mb-2"><i class="fas fa-clock me-2"></i><span id="displayTime" th:text="${#temporals.format(reservation.reservationTime, 'HH:mm')}"></span></p>
+                        <p class="mb-0"><i class="fas fa-users me-2"></i><span id="displayGuestCount" th:text="${reservation.guestCount} + '位'"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 確認訂位與聯絡資訊區 -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="text-center mb-4">確認訂位與聯絡資訊</h4>
+                    <form id="bookingForm">
+                        <input type="hidden" id="memberId" th:value="${reservation.member.memberId}"/>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="memberName" placeholder="姓名"
+                                   th:value="${reservation.member.memberName}" readonly>
+                            <label for="memberName">訂位人姓名</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="memberPhone" placeholder="手機號碼"
+                                   th:value="${reservation.phoneNumber}" readonly>
+                            <label for="memberPhone">訂位人手機號碼</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="email" class="form-control" id="memberEmail" placeholder="電子信箱"
+                                   th:value="${reservation.member.memberEmail}" readonly>
+                            <label for="memberEmail">訂位人電子信箱</label>
+                        </div>
+
+                        <div class="small text-muted mb-4">
+                            按下訂位代表同意<a href="#" class="text-decoration-none">服務條款</a>及<a href="#" class="text-decoration-none">隱私條款</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 mb-3 rounded-3">確認訂位</button>
+                        <button type="button" class="btn btn-outline-secondary w-100 py-3 rounded-3" id="back">回上一步</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 編輯訂位資訊 Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">編輯訂位資訊</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" name="restId" id="restId" th:value="${reservation.rest.restId}" >
+                    <div class="mb-3">
+                        <label class="form-label">用餐日期</label>
+                        <input type="date" class="form-control" name="reservationDate" id="reservationDate"
+                               th:value="${#temporals.format(reservation.reservationDate, 'yyyy-MM-dd')}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">用餐時間</label>
+                        <select class="form-select" name="reservationTime" id="reservationTime">
+                            <option th:value="${#temporals.format(reservation.reservationTime, 'HH:mm')}"
+                                    th:text="${#temporals.format(reservation.reservationTime, 'HH:mm')}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">用餐人數</label>
+                        <select class="form-select" name="guestCount" id="guestCount">
+                            <option th:each="i : ${#numbers.sequence(1, 10)}"
+                                    th:value="${i}"
+                                    th:text="${i} + '位'"
+                                    th:selected="${reservation.guestCount == i}">
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="submit" form="editForm" class="btn btn-primary">更新訂位資訊</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/reservation_confirm.js}"></script>
+<script>
+    // $(document).ready(function() {
+    //     // 儲存原始值
+    //     let originalDate = '';
+    //     let originalGuestCount = '';
+    //     let hasLoadedTimes = false;  // 新增：追蹤是否已載入時間選項
+    //
+    //     // Modal 開啟時儲存原始值
+    //     $('#editModal').on('show.bs.modal', function () {
+    //         originalDate = $('#reservationDate').val();
+    //         originalGuestCount = $('#guestCount').val();
+    //         hasLoadedTimes = false;  // 重設載入狀態
+    //     });
+    //
+    //     // 監聽日期和人數的變更
+    //     $('#reservationDate, #guestCount').change(function() {
+    //         const currentDate = $('#reservationDate').val();
+    //         const currentGuestCount = $('#guestCount').val();
+    //
+    //         if (currentDate !== originalDate || currentGuestCount !== originalGuestCount) {
+    //             updateAvailableTime();
+    //         }
+    //     });
+    //
+    //     // 新增：監聽時間選單的點擊事件
+    //     $('#reservationTime').on('mousedown focus', function(e) {
+    //         if (!hasLoadedTimes) {
+    //             e.preventDefault();  // 防止下拉選單立即開啟
+    //             updateAvailableTime().then(() => {
+    //                 hasLoadedTimes = true;
+    //                 $(this).trigger('click');  // 手動觸發下拉選單
+    //             });
+    //         }
+    //     });
+    //
+    //     async function updateAvailableTime(){
+    //         const reservationDate = $('#reservationDate').val();
+    //         const guestCount = $('#guestCount').val();
+    //         const restId = $('input[name="restId"]').val();
+    //         const currentTime = $('#reservationTime').val();  // 保存當前選擇的時間
+    //
+    //         if(!reservationDate || !guestCount) return;
+    //
+    //         const timeSlot = $('#reservationTime');
+    //         timeSlot.empty().append('<option value="">載入中...</option>').prop('disabled', true);
+    //
+    //         try {
+    //             let availableTablesData = await getAvailableTablesData(restId, guestCount, reservationDate);
+    //             timeSlot.empty();
+    //
+    //             // 如果當前時間仍然可用，則加入當前時間作為第一個選項
+    //             if (currentTime) {
+    //                 timeSlot.append(
+    //                     $('<option>', {
+    //                         value: currentTime,
+    //                         text: currentTime,
+    //                         selected: true
+    //                     })
+    //                 );
+    //             }
+    //
+    //             availableTablesData.forEach((tables, index) => {
+    //                 if (tables > 0) {
+    //                     const hour = index.toString().padStart(2, '0');
+    //                     const time = `${hour}:00`;
+    //                     if (time !== currentTime) {  // 避免重複加入當前時間
+    //                         timeSlot.append(
+    //                             $('<option>', {
+    //                                 value: time,
+    //                                 text: time
+    //                             })
+    //                         );
+    //                     }
+    //                 }
+    //             });
+    //             timeSlot.prop('disabled', false);
+    //         } catch(error) {
+    //             console.error(error);
+    //             timeSlot.empty()
+    //                 .append('<option value="">發生錯誤，請重試</option>')
+    //                 .prop('disabled', false);
+    //         }
+    //     }
+    //
+    //     async function getAvailableTablesData(restId,guestCount,reservedDate){
+    //         try{
+    //             const url = `http://localhost:8080/test/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
+    //             const res = await fetch(url);
+    //             if(!res.ok){
+    //                 if(res.status === 404){
+    //                     errorData = await res.json();
+    //                     throw new Error(JSON.stringify(errorData));
+    //                 }
+    //             }
+    //
+    //             let availableTablesData = await res.json();
+    //             return availableTablesData;
+    //         }catch(error){
+    //             throw new Error(JSON.stringify(errorData));
+    //         }
+    //     }
+    //
+    //
+    //     // 更新左側卡片的訂位資訊
+    //     function updateDisplayInfo(date, time, guestCount) {
+    //         // 格式化日期顯示，包含星期
+    //         const dateObj = new Date(date);
+    //         const weekDay = ['日', '一', '二', '三', '四', '五', '六'][dateObj.getDay()];
+    //         const formattedDate = `${date.replace(/-/g, '/')} (${weekDay})`;
+    //
+    //         $('#displayDate').text(formattedDate);
+    //         $('#displayTime').text(time);
+    //         $('#displayGuestCount').text(guestCount + '位');
+    //     }
+    //
+    //     // 修改表單提交處理
+    //     $('#editForm').on('submit', function(e) {
+    //         e.preventDefault();
+    //
+    //         // 獲取表單的值
+    //         const newDate = $('#reservationDate').val();
+    //         const newTime = $('#reservationTime').val();
+    //         const newGuestCount = $('#guestCount').val();
+    //
+    //         // 更新左側卡片顯示
+    //         updateDisplayInfo(newDate, newTime, newGuestCount);
+    //
+    //         // 關閉 Modal
+    //         $('#editModal').modal('hide');
+    //
+    //         // 更新原始值，避免不必要的重新載入
+    //         originalDate = newDate;
+    //         originalGuestCount = newGuestCount;
+    //         hasLoadedTimes = false;
+    //     });
+    //
+    //
+    //     $('#bookingForm').submit(addReservation);
+    //
+    //
+    //     async function addReservation(e){
+    //         e.preventDefault();
+    //         let newReservation = {
+    //             reservationDate : $('#reservationDate').val(),
+    //             reservationTime : $('#reservationTime').val(),
+    //             guestCount : $('#guestCount').val()
+    //         }
+    //
+    //         let reservationStatus;
+    //
+    //         try{
+    //             let restId = $('#restId').val();
+    //             let memberId = $('#memberId').val();
+    //             console.log(restId);
+    //             console.log(memberId);
+    //             const url = `http://localhost:8080/test/reservations/reservation?restId=${restId}&memberId=${memberId}`;
+    //             const res = await fetch(url,{
+    //                 method:'POST',
+    //                 headers:{
+    //                     'Content-Type':'application/json'
+    //                 },
+    //                 body: JSON.stringify(newReservation)
+    //             });
+    //
+    //
+    //             if(!res.ok){
+    //                 if(res.status.toString().startsWith('4') || res.status.toString().startsWith('5')){
+    //                     errorData = await res.json();
+    //                     throw new Error(JSON.stringify(errorData));
+    //                 }
+    //             }
+    //             reservationStatus = "success";
+    //             newReservation = await res.json();
+    //             alert("新增成功！\n"+JSON.stringify(newReservation));
+    //             await transferToReservationStatusPage(reservationStatus);
+    //         }catch(error){
+    //             reservationStatus = "error";
+    //             await  transferToReservationStatusPage(reservationStatus);
+    //         }
+    //
+    //     }
+    //
+    //     async function transferToReservationStatusPage(reservationStatus){
+    //         let url = `http://localhost:8080/test/reservations/reservation/${reservationStatus}`;
+    //         try{
+    //             const res = await fetch(url);
+    //             if(!res.ok){
+    //                 errorData = await res.text();
+    //                 throw new Error('提交失敗！：' + errorData);
+    //             }
+    //             const html = await res.text();
+    //             document.open();
+    //             document.write(html);
+    //             document.close();
+    //         }catch(error){
+    //             console.log(error.message);
+    //             alert('提交失敗，請稍後再試！');
+    //         }
+    //     }
+    //
+    //
+    //     $('#back').click(function() {
+    //         history.back();
+    //     });
+    //
+    //     $('.terms-text a').click(function(e) {
+    //         e.preventDefault();
+    //         alert('開啟條款內容');
+    //     });
+    // });
+
+
+
+
+</script>
+</body>
+</html>

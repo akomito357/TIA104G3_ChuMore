@@ -76,6 +76,11 @@
     color: white;
 }
 
+.checkout-btn.disabled{
+    background-color: var(--btn_disable);
+    color: white;
+}
+
 .order-time {
     color: #666;
     font-size: 0.9rem;
@@ -106,9 +111,56 @@
     display: block;
 }
 
+#showMemberPoints {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: none;
+    margin-top: 10px;
+    text-align: right;
+}
+
+#showMemberPoints.show {
+    background-color: hsl(216, 100%, 91%);
+    color: hsl(216, 90%, 31%);
+    display: block;
+}
+
+#showMemberPoints.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    display: block;
+}
+
 .table-header {
     background-color: #f8f9fa;
     padding: 0.75rem 0;
     font-weight: bold;
     border-bottom: 2px solid #dee2e6;
 }
+
+#pointUseForm{
+    display: none;
+}
+
+#pointUseForm.show{
+    display:flex;
+}
+
+.member-discpts-status {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: none;
+}
+
+.member-discpts-status.success {
+    background-color: #d4edda;
+    color: #155724;
+    display: block;
+}
+
+.member-discpts-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    display: block;
+}
+
