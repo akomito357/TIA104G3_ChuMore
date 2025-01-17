@@ -61,7 +61,6 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public Integer registerRestaurant(RestaurantRegisterRequest request) {
 		logger.info("處理餐廳註冊請求: {}", request.getEmail());
-		validateRestaurantRegistrationData(request);
 		RestVO restaurant = createRestaurantFromRequest(request);
 		RestVO savedRestaurant = restRepository.save(restaurant);
 		logger.info("餐廳註冊成功: {}", request.getEmail());
@@ -193,10 +192,6 @@ public class AuthServiceImpl implements AuthService {
 		validatePhone(phone);
 	}
 
-	private void validateRestaurantRegistrationData(RestaurantRegisterRequest request) {
-		validateRegistrationData(request.getEmail(), request.getPhoneNumber());
-		validateRegistrationNumber(request.getRegistrationNumber());
-	}
 
 	private void validateEmail(String email) {
 		if (memberRepository.existsByMemberEmail(email) || restRepository.existsByMerchantEmail(email)) {
@@ -209,13 +204,6 @@ public class AuthServiceImpl implements AuthService {
 		if (memberRepository.existsByMemberPhoneNumber(phone) || restRepository.existsByPhoneNumber(phone)) {
 			logger.warn("電話號碼已被註冊: {}", phone);
 			throw new DuplicatePhoneNumberException("此電話號碼已被註冊");
-		}
-	}
-
-	private void validateRegistrationNumber(String registrationNumber) {
-		if (restRepository.existsByRestRegist(registrationNumber)) {
-			logger.warn("食品業者登錄字號已被註冊: {}", registrationNumber);
-			throw new DuplicateRegistrationNumberException("此食品業者登錄字號已被註冊");
 		}
 	}
 
