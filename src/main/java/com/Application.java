@@ -14,7 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import java.io.IOException;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = "com.chumore")
 public class Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);

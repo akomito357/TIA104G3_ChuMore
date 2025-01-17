@@ -2,19 +2,16 @@ package com.chumore.auth.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class LoginRequest {
-    
-    @NotBlank(message = "電子郵件不能為空")
-    @Email(message = "請輸入有效的電子郵件地址")
-    @Size(max = 100, message = "電子郵件長度不能超過100個字符")
+    @NotBlank(message = "請輸入電子信箱")
+    @Email(message = "請輸入有效的電子信箱格式")
+    @Size(max = 100, message = "電子信箱長度不能超過100個字元")
     private String email;
 
-    @NotBlank(message = "密碼不能為空")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", 
-            message = "密碼必須包含至少8個字符，包括字母和數字")
+    @NotBlank(message = "請輸入密碼")
+    @Size(min = 8, max = 50, message = "密碼長度必須在8到50個字元之間")
     private String password;
 
     public LoginRequest() {
@@ -43,27 +40,6 @@ public class LoginRequest {
 
     @Override
     public String toString() {
-        return "LoginRequest{" +
-                "email='" + email + '\'' +
-                ", password='[PROTECTED]'" +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LoginRequest)) return false;
-        
-        LoginRequest that = (LoginRequest) o;
-        
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        return password != null ? password.equals(that.password) : that.password == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = email != null ? email.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+        return "LoginRequest{email='" + email + "', password='[PROTECTED]'}";
     }
 }

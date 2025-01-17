@@ -11,7 +11,12 @@ public interface RestService {
 	List<RestVO> getAll();
 	List<String> getFormattedBusinessHours(Integer restId);
 	List<Integer> getBusinessHours(Integer restId);
+
+	RestVO getOneByEmail(String email);
+
+
 	List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId);
 	List<Integer[]> getBusinessHoursFor(Integer restId);
 	String getBusinessDays(Integer restId);
+
 }

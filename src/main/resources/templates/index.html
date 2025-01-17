@@ -2,571 +2,720 @@
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8">
-    <title>ChuMore</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+<meta charset="utf-8">
+<title>ChuMore</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="" name="keywords">
+<meta content="" name="description">
 
-    <!-- Favicon -->
-    <link th:href="@{img/favicon.ico}" rel="icon">
+<!-- Favicon -->
+<link th:href="@{img/favicon.ico}" rel="icon">
 
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
-    <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}" rel="stylesheet">
+<!-- Google Web Fonts -->
+<link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
+<link rel="preconnect" th:href="@{https://fonts.gstatic.com}"
+	crossorigin>
+<link
+	th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}"
+	rel="stylesheet">
 
-    <!-- Icon Font Stylesheet -->
-    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}" rel="stylesheet">
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet">
+<!-- Icon Font Stylesheet -->
+<link
+	th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}"
+	rel="stylesheet">
+<link
+	th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}"
+	rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
-    <link th:href="@{/lib/animate/animate.min.css}" rel="stylesheet">
-    <link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
-    <link th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet" />
+<!-- Libraries Stylesheet -->
+<link th:href="@{/lib/animate/animate.min.css}" rel="stylesheet">
+<link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}"
+	rel="stylesheet" />
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+<!-- Customized Bootstrap Stylesheet -->
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
-    <!-- Template Stylesheet -->
-    <link th:href="@{/css/style.css}" rel="stylesheet">
+<!-- Template Stylesheet -->
+<link th:href="@{/css/style.css}" rel="stylesheet">
+
+<style>
+#chatButton {
+	transition: all 0.3s ease;
+}
+
+#chatButton:hover {
+	transform: scale(1.1);
+}
+
+#chatContainer {
+	transition: all 0.3s ease;
+}
+</style>
+
+
 </head>
 
 <body>
-    <div class="container-xxl bg-white p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <!-- Spinner End -->
+	<div class="container-xxl bg-white p-0">
+		<!-- Spinner Start -->
+		<div id="spinner"
+			class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+			<div class="spinner-border text-primary"
+				style="width: 3rem; height: 3rem;" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+		<!-- Spinner End -->
 
 
-        <!-- Navbar & Hero Start -->
-        <div class="container-xxl position-relative p-0">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-                <a href="" class="navbar-brand p-0">
-                    <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>ChuMore</h1>
-                    <!-- <img src="img/logo.png" alt="Logo"> -->
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav ms-auto py-0 pe-4">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="service.html" class="nav-item nav-link">Service</a>
-                        <a href="menu.html" class="nav-item nav-link">Menu</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu m-0">
-                                <a href="booking.html" class="dropdown-item">Booking</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
-                </div>
-            </nav>
-        </div>
+		<!-- Navbar & Hero Start -->
+		<div class="container-xxl position-relative p-0">
+			<nav
+				class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+				<a href="" class="navbar-brand p-0">
+					<h1 class="text-primary m-0">
+						<i class="fa fa-utensils me-3"></i>ChuMore
+					</h1> <!-- <img src="img/logo.png" alt="Logo"> -->
+				</a>
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+					<span class="fa fa-bars"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarCollapse">
+					<div class="navbar-nav ms-auto py-0 pe-4">
+						<a href="index.html" class="nav-item nav-link active">Home</a> <a
+							href="about.html" class="nav-item nav-link">About</a> <a
+							href="service.html" class="nav-item nav-link">Service</a> <a
+							href="menu.html" class="nav-item nav-link">Menu</a>
+						<div class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle"
+								data-bs-toggle="dropdown">Pages</a>
+							<div class="dropdown-menu m-0">
+								<a href="booking.html" class="dropdown-item">Booking</a> <a
+									href="team.html" class="dropdown-item">Our Team</a> <a
+									href="testimonial.html" class="dropdown-item">Testimonial</a>
+							</div>
+						</div>
+						<a href="contact.html" class="nav-item nav-link">Contact</a>
+					</div>
+					<a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
+				</div>
+			</nav>
+		</div>
 
 
-        <div class="container-xxl position-relative p-0">
+		<div class="container-xxl position-relative p-0">
 
-            <div class="container-xxl py-5 bg-dark hero-header mb-5">
-                <div class="container my-5 py-5">
-                    <div class="row align-items-center g-5">
-                        <div class="col-lg-12 text-center text-lg-start">
-                            <!-- 加入的搜尋欄(以下) -->
-                            <div class="container py-4">
-                                <div class="search-form">
-                                    <form>
-                                        <!-- 第一行：搜尋欄 -->
-                                        <div class="row search-row">
-                                            <div class="col-12">
-                                                <div class="input-group search-bar">
-                                                    <input type="text" class="form-control" placeholder="搜尋餐廳美食">
-                                                    <button class="btn btn-primary search-button" type="button">
-                                                        <i class="fas fa-search me-2"></i>搜尋
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- 第二行：四個欄位 -->
-                                        <div class="row">
-                                            <div class="col">
-                                                <select class="form-select search-bar">
-                                                    <option selected>地區</option>
-                                                    <option>台北市</option>
-                                                    <option>新北市</option>
-                                                    <option>桃園市</option>
-                                                    <option>台中市</option>
-                                                    <option>高雄市</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="col">
-                                                <input type="date" class="form-control search-bar">
-                                            </div>
-                                            
-                                            <div class="col">
-                                                <input type="time" class="form-control search-bar" value="19:00">
-                                            </div>
-                                            
-                                            <div class="col">
-                                                <select class="form-select search-bar">
-                                                    <option selected>請選擇人數</option>
-                                                    <option>1人</option>
-                                                    <option>2人</option>
-                                                    <option>3人</option>
-                                                    <option>4人</option>
-                                                    <option>5人</option>
-                                                    <option>6人</option>
-                                                    <option>7人</option>
-                                                    <option>8人以上</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- 加入的搜尋欄(以上) -->
+			<div class="container-xxl py-5 bg-dark hero-header mb-5">
+				<div class="container my-5 py-5">
+					<div class="row align-items-center g-5">
+						<div class="col-lg-12 text-center text-lg-start">
+							<!-- 加入的搜尋欄(以下) -->
+							<div class="container py-4">
+								<div class="search-form">
+									<form>
+										<!-- 第一行：搜尋欄 -->
+										<div class="row search-row">
+											<div class="col-12">
+												<div class="input-group search-bar">
+													<input type="text" class="form-control"
+														placeholder="搜尋餐廳美食">
+													<button class="btn btn-primary search-button" type="button">
+														<i class="fas fa-search me-2"></i>搜尋
+													</button>
+												</div>
+											</div>
+										</div>
 
-                            <h1 class="display-3 text-white animated slideInLeft mt-5">Enjoy Our<br>Delicious Meal</h1>
-                            <p class="text-white animated slideInLeft mb-4 pb-2">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
-                            <!-- <a href="" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInLeft">Book A Table</a> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Navbar & Hero End -->
+										<!-- 第二行：四個欄位 -->
+										<div class="row">
+											<div class="col">
+												<select class="form-select search-bar">
+													<option selected>地區</option>
+													<option>台北市</option>
+													<option>新北市</option>
+													<option>桃園市</option>
+													<option>台中市</option>
+													<option>高雄市</option>
+												</select>
+											</div>
 
-        <!-- 新增的本月熱門餐廳 start -->
-        <div class="container-xxl pt-5 pb-3">
-            <div class="container">
-                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">吃貨必訪</h5>
-                    <h1 class="mb-5">本月熱門餐廳</h1>
-                </div>
+											<div class="col">
+												<input type="date" class="form-control search-bar">
+											</div>
 
-                <div class="row g-3">
-                    <div class="col-lg-7 col-md-6">
-                        <div class="row g-3">
-                            <div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
-                                <a class="position-relative d-block overflow-hidden" href="">
-                                    <img class="img-fluid" src="https://placehold.co/1000x800" alt="">
-                                    <div class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
-                                    <div class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
-                                </a>
-                            </div>
-                            <div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.3s">
-                                <a class="position-relative d-block overflow-hidden" href="">
-                                    <img class="img-fluid" src="https://placehold.co/600x600" alt="">
-                                    <div class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
-                                    <div class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
-                                </a>
-                            </div>
-                            <div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.5s">
-                                <a class="position-relative d-block overflow-hidden" href="">
-                                    <img class="img-fluid" src="https://placehold.co/600x600" alt="">
-                                    <div class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
-                                    <div class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5 col-md-6 wow zoomIn" data-wow-delay="0.7s" style="min-height: 350px;">
-                        <a class="position-relative d-block h-100 overflow-hidden" href="">
-                            <img class="img-fluid position-absolute w-100 h-100" src="https://placehold.co/300x600" alt="" style="object-fit: cover;">
-                            <div class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
-                            <div class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
-                        </a>
-                    </div>
-                </div>
+											<div class="col">
+												<input type="time" class="form-control search-bar"
+													value="19:00">
+											</div>
 
-            </div>
-        </div>
-        <!-- 本月熱門餐廳 End -->
+											<div class="col">
+												<select class="form-select search-bar">
+													<option selected>請選擇人數</option>
+													<option>1人</option>
+													<option>2人</option>
+													<option>3人</option>
+													<option>4人</option>
+													<option>5人</option>
+													<option>6人</option>
+													<option>7人</option>
+													<option>8人以上</option>
+												</select>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- 加入的搜尋欄(以上) -->
 
-        <!-- 今晚有空位餐廳 Start -->
-        <div class="container-xxl pt-5 pb-3">
-            <div class="container">
-                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">立即預定今晚有空位餐廳</h5>
-                    <h1 class="mb-5">人氣異國餐廳供您選擇</h1>
-                </div>
-                <div class="row g-4">
-                    <!-- 第一個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$100/Night</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Junior Suite</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                <p class="text-body mb-3">Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第一個餐廳元件 end -->
-                    <!-- 第二個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$$$-$$$$</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">麥當勞勞勞</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <!-- <div class="d-flex mb-3">
+							<h1 class="display-3 text-white animated slideInLeft mt-5">
+								Enjoy Our<br>Delicious Meal
+							</h1>
+							<p class="text-white animated slideInLeft mb-4 pb-2">Tempor
+								erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam
+								amet diam et eos. Clita erat ipsum et lorem et sit, sed stet
+								lorem sit clita duo justo magna dolore erat amet</p>
+							<!-- <a href="" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInLeft">Book A Table</a> -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Navbar & Hero End -->
+
+		<!-- 新增的本月熱門餐廳 start -->
+		<div class="container-xxl pt-5 pb-3">
+			<div class="container">
+				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+					<h5
+						class="section-title ff-secondary text-center text-primary fw-normal">吃貨必訪</h5>
+					<h1 class="mb-5">本月熱門餐廳</h1>
+				</div>
+
+				<div class="row g-3">
+					<div class="col-lg-7 col-md-6">
+						<div class="row g-3">
+							<div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
+								<a class="position-relative d-block overflow-hidden" href="">
+									<img class="img-fluid" src="https://placehold.co/1000x800"
+									alt="">
+									<div
+										class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
+									<div
+										class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
+								</a>
+							</div>
+							<div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.3s">
+								<a class="position-relative d-block overflow-hidden" href="">
+									<img class="img-fluid" src="https://placehold.co/600x600"
+									alt="">
+									<div
+										class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
+									<div
+										class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
+								</a>
+							</div>
+							<div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.5s">
+								<a class="position-relative d-block overflow-hidden" href="">
+									<img class="img-fluid" src="https://placehold.co/600x600"
+									alt="">
+									<div
+										class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
+									<div
+										class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-5 col-md-6 wow zoomIn" data-wow-delay="0.7s"
+						style="min-height: 350px;">
+						<a class="position-relative d-block h-100 overflow-hidden" href="">
+							<img class="img-fluid position-absolute w-100 h-100"
+							src="https://placehold.co/300x600" alt=""
+							style="object-fit: cover;">
+							<div
+								class="bg-white text-danger fw-bold position-absolute top-0 start-0 m-3 py-1 px-2">台北市大安區</div>
+							<div
+								class="bg-white text-primary fw-bold position-absolute bottom-0 end-0 m-3 py-1 px-2">全家就是你家</div>
+						</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- 本月熱門餐廳 End -->
+
+		<!-- 今晚有空位餐廳 Start -->
+		<div class="container-xxl pt-5 pb-3">
+			<div class="container">
+				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+					<h5
+						class="section-title ff-secondary text-center text-primary fw-normal">立即預定今晚有空位餐廳</h5>
+					<h1 class="mb-5">人氣異國餐廳供您選擇</h1>
+				</div>
+				<div class="row g-4">
+					<!-- 第一個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$100/Night</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">Junior Suite</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
+								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
+									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第一個餐廳元件 end -->
+					<!-- 第二個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$$$-$$$$</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">麥當勞勞勞</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<!-- <div class="d-flex mb-3">
                                     <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>3 Bed</small>
                                     <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>2 Bath</small>
                                     <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small>
                                 </div> -->
 
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                
-                                <p class="text-body mb-3">餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第三個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Super Deluxe</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                <p class="text-body mb-3">Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第三個餐廳元件 end -->
-                     <!-- 第四個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Super Deluxe</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                <p class="text-body mb-3">Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第四個餐廳元件 end -->
-                     <!-- 第五個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Super Deluxe</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                <p class="text-body mb-3">Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第五個餐廳元件 end -->
-                     <!-- 第六個餐廳元件 start -->
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="restaurant-item shadow rounded overflow-hidden">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="https://placehold.co/500x300" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
-                            </div>
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">Super Deluxe</h5>
-                                    <div class="ps-2">
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                        <small class="fa fa-star text-primary"></small>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-evenly mb-3">
-                                    <small class="me-3 pe-3" ><i class="fa fa-bed text-primary me-2"></i>台北市信義區</small>
-                                    <small class="me-3 ps-3 pe-auto"><i class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
-                                </div>
-                                <p class="text-body mb-3">Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
-                                <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View Detail</a>
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="">Book Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第六個餐廳元件 end -->
-                </div>
-            </div>
-        </div>
-        <!-- 今晚有空位餐廳 End -->
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
 
-        <!-- 熱門評論 Start -->
-        <div class="container-xxl pt-5 pb-3">
-            <div class="container">
-                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">熱門評論</h5>
-                    <h1 class="mb-5">看看其他吃貨怎麼說</h1>
-                </div>
-                <div class="row g-4">
-                    <!-- 第一個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第一個評論 end -->
-                     <!-- 第二個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第二個評論 end -->
-                     <!-- 第三個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第三個評論 end -->
-                     <!-- 第四個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第四個評論 end -->
-                     <!-- 第五個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第五個評論 end -->
-                     <!-- 第六個評論 start -->
-                    <div class="col-md-6">
-                        <div class="service-item d-flex p-4">
-                            <img class="flaticon-food display-1 text-primary me-4" src="https://placehold.co/120x120">
-                            <div>
-                                <h5 class="text-uppercase mb-3">Pet Feeding</h5>
-                                <p>已購買，小孩很愛吃</p>
-                                <a class="text-primary text-uppercase" href="">Read More<i class="bi bi-chevron-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 第六個評論 end -->
-                </div>
-            </div>
-        </div>
-        <!-- 熱門評論 End -->        
+								<p class="text-body mb-3">餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述餐廳敘述</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第三個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">Super Deluxe</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
+								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
+									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第三個餐廳元件 end -->
+					<!-- 第四個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">Super Deluxe</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
+								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
+									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第四個餐廳元件 end -->
+					<!-- 第五個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">Super Deluxe</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
+								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
+									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第五個餐廳元件 end -->
+					<!-- 第六個餐廳元件 start -->
+					<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+						<div class="restaurant-item shadow rounded overflow-hidden">
+							<div class="position-relative">
+								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
+								<small
+									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$200-400</small>
+							</div>
+							<div class="p-4 mt-2">
+								<div class="d-flex justify-content-between mb-3">
+									<h5 class="mb-0">Super Deluxe</h5>
+									<div class="ps-2">
+										<small class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small> <small
+											class="fa fa-star text-primary"></small>
+									</div>
+								</div>
+								<div class="d-flex justify-content-evenly mb-3">
+									<small class="me-3 pe-3"><i
+										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="me-3 ps-3 pe-auto"><i
+										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+								</div>
+								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
+									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+								<div class="d-flex justify-content-between">
+									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
+										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
+										href="">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 第六個餐廳元件 end -->
+				</div>
+			</div>
+		</div>
+		<!-- 今晚有空位餐廳 End -->
 
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
-                        <a class="btn btn-link" href="">About Us</a>
-                        <a class="btn btn-link" href="">Contact Us</a>
-                        <a class="btn btn-link" href="">Reservation</a>
-                        <a class="btn btn-link" href="">Privacy Policy</a>
-                        <a class="btn btn-link" href="">Terms & Condition</a>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
-                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                        <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Opening</h4>
-                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
-                        <p>09AM - 09PM</p>
-                        <h5 class="text-light fw-normal">Sunday</h5>
-                        <p>10AM - 08PM</p>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Newsletter</h4>
-                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                        <div class="position-relative mx-auto" style="max-width: 400px;">
-                            <input class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="copyright">
-                    <div class="row">
-                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
-							
+		<!-- 熱門評論 Start -->
+		<div class="container-xxl pt-5 pb-3">
+			<div class="container">
+				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+					<h5
+						class="section-title ff-secondary text-center text-primary fw-normal">熱門評論</h5>
+					<h1 class="mb-5">看看其他吃貨怎麼說</h1>
+				</div>
+				<div class="row g-4">
+					<!-- 第一個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第一個評論 end -->
+					<!-- 第二個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第二個評論 end -->
+					<!-- 第三個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第三個評論 end -->
+					<!-- 第四個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第四個評論 end -->
+					<!-- 第五個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第五個評論 end -->
+					<!-- 第六個評論 start -->
+					<div class="col-md-6">
+						<div class="service-item d-flex p-4">
+							<img class="flaticon-food display-1 text-primary me-4"
+								src="https://placehold.co/120x120">
+							<div>
+								<h5 class="text-uppercase mb-3">Pet Feeding</h5>
+								<p>已購買，小孩很愛吃</p>
+								<a class="text-primary text-uppercase" href="">Read More<i
+									class="bi bi-chevron-right"></i></a>
+							</div>
+						</div>
+					</div>
+					<!-- 第六個評論 end -->
+				</div>
+			</div>
+		</div>
+		<!-- 熱門評論 End -->
+
+		<!-- Footer Start -->
+		<div
+			class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
+			data-wow-delay="0.1s">
+			<div class="container py-5">
+				<div class="row g-5">
+					<div class="col-lg-3 col-md-6">
+						<h4
+							class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
+						<a class="btn btn-link" href="">About Us</a> <a
+							class="btn btn-link" href="">Contact Us</a> <a
+							class="btn btn-link" href="">Reservation</a> <a
+							class="btn btn-link" href="">Privacy Policy</a> <a
+							class="btn btn-link" href="">Terms & Condition</a>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<h4
+							class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
+						<p class="mb-2">
+							<i class="fa fa-map-marker-alt me-3"></i>123 Street, New York,
+							USA
+						</p>
+						<p class="mb-2">
+							<i class="fa fa-phone-alt me-3"></i>+012 345 67890
+						</p>
+						<p class="mb-2">
+							<i class="fa fa-envelope me-3"></i>info@example.com
+						</p>
+						<div class="d-flex pt-2">
+							<a class="btn btn-outline-light btn-social" href=""><i
+								class="fab fa-twitter"></i></a> <a
+								class="btn btn-outline-light btn-social" href=""><i
+								class="fab fa-facebook-f"></i></a> <a
+								class="btn btn-outline-light btn-social" href=""><i
+								class="fab fa-youtube"></i></a> <a
+								class="btn btn-outline-light btn-social" href=""><i
+								class="fab fa-linkedin-in"></i></a>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<h4
+							class="section-title ff-secondary text-start text-primary fw-normal mb-4">Opening</h4>
+						<h5 class="text-light fw-normal">Monday - Saturday</h5>
+						<p>09AM - 09PM</p>
+						<h5 class="text-light fw-normal">Sunday</h5>
+						<p>10AM - 08PM</p>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<h4
+							class="section-title ff-secondary text-start text-primary fw-normal mb-4">Newsletter</h4>
+						<p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+						<div class="position-relative mx-auto" style="max-width: 400px;">
+							<input class="form-control border-primary w-100 py-3 ps-4 pe-5"
+								type="text" placeholder="Your email">
+							<button type="button"
+								class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container">
+				<div class="copyright">
+					<div class="row">
+						<div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+							&copy; <a class="border-bottom" href="#">Your Site Name</a>, All
+							Right Reserved.
+
 							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
-                        </div>
-                        <div class="col-md-6 text-center text-md-end">
-                            <div class="footer-menu">
-                                <a href="">Home</a>
-                                <a href="">Cookies</a>
-                                <a href="">Help</a>
-                                <a href="">FQAs</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
+							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML
+								Codex</a>
+						</div>
+						<div class="col-md-6 text-center text-md-end">
+							<div class="footer-menu">
+								<a href="">Home</a> <a href="">Cookies</a> <a href="">Help</a> <a
+									href="">FQAs</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Footer End -->
 
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
+		<!-- Back to Top -->
+		<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i
+			class="bi bi-arrow-up"></i></a>
+	</div>
 
-    <!-- JavaScript Libraries -->
-    <script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>
-    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/lib/wow/wow.min.js}"></script>
-    <script th:src="@{/lib/easing/easing.min.js}"></script>
-    <script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
-    <script th:src="@{/lib/counterup/counterup.min.js}"></script>
-    <script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
-    <script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
-    <script th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
-    <script th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- JavaScript Libraries -->
+	<script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>
+	<script
+		th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/lib/wow/wow.min.js}"></script>
+	<script th:src="@{/lib/easing/easing.min.js}"></script>
+	<script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+	<script th:src="@{/lib/counterup/counterup.min.js}"></script>
+	<script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+	<script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+	<script th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+	<script
+		th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
 
-    <!-- Template Javascript -->
-    <script th:src="@{/js/mainpage.js}"></script>
+	<!-- Template Javascript -->
+	<script th:src="@{/js/mainpage.js}"></script>
+
+	<!-- 客服聊天室按鈕和容器 -->
+	<div id="customerService"
+		class="position-fixed bottom-0 end-0 mb-4 me-4" style="z-index: 1000;">
+		<!-- 聊天按鈕 -->
+		<button id="chatButton"
+			class="btn btn-primary rounded-circle p-3 shadow"
+			onclick="toggleChat()">
+			<i class="fas fa-comments fa-lg"></i>
+		</button>
+
+		<!-- iframe容器 -->
+		<div id="chatContainer" class="d-none"
+			style="position: absolute; bottom: 80px; right: 0;">
+			<iframe src="customer-service.html" width="300" height="400"
+				frameborder="0"></iframe>
+		</div>
+	</div>
+
+	<!-- 添加對應的JavaScript -->
+	<script>
+    function toggleChat() {
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.classList.toggle('d-none');
+    }
+
+    function minimizeChat() {
+        document.getElementById('chatContainer').classList.add('d-none');
+    }
+</script>
 </body>
 
 </html>
