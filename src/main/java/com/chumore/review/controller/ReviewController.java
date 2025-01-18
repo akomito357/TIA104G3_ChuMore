@@ -348,6 +348,7 @@ public class ReviewController {
 		if (memberId == null) {
 			memberId = 1002;
 		}
+		System.out.print(session.getAttribute("memberId"));
 		
 		List<ReviewVO> list = reviewService.getMemberReviews(memberId);
 		ResponseUtil res = new ResponseUtil("success", 200, list);

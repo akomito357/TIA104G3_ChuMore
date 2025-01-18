@@ -17,7 +17,7 @@
     <style>
         
         .checkout-container {
-            max-width: 800px;
+            /* max-width: 800px; */
             margin: 2rem auto;
             background: white;
             border-radius: 8px;
@@ -156,34 +156,6 @@
             border-bottom: 2px solid #dee2e6;
         }
 
-        /* #pointUseForm{
-            display: none;
-        }
-
-        #pointUseForm.show{
-            display:flex;
-        }
-
-        .member-discpts-status {
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .member-discpts-status.success {
-            background-color: #d4edda;
-            color: #155724;
-            display: block;
-        }
-
-        .member-discpts-status.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            display: block;
-        } */
-
-
-
     </style>
 </head>
 <body>
@@ -204,6 +176,8 @@
                     </div>
                 </div>
             </div>
+
+            <div class="p-4">感謝您今日的用餐！請保留點餐明細，至櫃檯結帳。</div>
 
             <th:block th:each="orderItemVO : ${orderMaster.orderItems}">
                 <div class="p-4">
@@ -264,7 +238,7 @@
     <!-- JavaScript Libraries -->
     <script th:inline="javascript">
         window.orderMaster = /*[[${orderMaster}]]*/ {};
-        // window.restId = /*[[${session.restId}]]*/ {};
+        // window.restId = /*[[${orderMaster.rest.restId}]]*/ {};
         // console.log(orderMaster);
     </script>
     <script th:src="@{/js/orderFinish.js}"></script>

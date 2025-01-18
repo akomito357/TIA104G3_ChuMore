@@ -24,7 +24,7 @@ public class IndexController {
 	
 	@GetMapping("/header") // test
 	public String headertest() {
-		return "header_merchant_test";
+		return "header_merchant";
 	}
 	
 	@GetMapping("/check") // test
@@ -55,5 +55,10 @@ public class IndexController {
 	@GetMapping("/testRestNotifyServiceBell")
 	public String testRestNotifyServiceBell(){
 		return "/testRestNotifyServiceBell";
+	}
+	
+	@GetMapping("/rest_reservation")
+	public String testRestReservation() {
+		return "secure/reservation/reserved_limit_setting";
 	}
 }

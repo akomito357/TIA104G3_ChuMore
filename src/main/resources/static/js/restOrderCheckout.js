@@ -48,7 +48,7 @@ async function verifyPhoneFetch(){
     let memberNumFormData = new FormData(document.getElementById("memberPhoneForm"));
 
     try{
-        const url = "/member/findMemberByPhone";
+        const url = "/rest/member/findMemberByPhone";
         const res = await fetch(url, {
             method: "POST",
             body: memberNumFormData,

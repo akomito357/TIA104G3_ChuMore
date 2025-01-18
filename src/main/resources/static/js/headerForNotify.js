@@ -44,9 +44,11 @@ $(".servicebell-notification").click(async function(){
     console.log(bellMsgs);
     let bellMsgListEle = $(".servicebell-notification-list");
 
-    if (bellMsgs != undefined){
+    if (bellMsgs != undefined && bellMsgs.length != 0){
         bellMsgListEle.empty();
         bellMsgs = Object.values(bellMsgs);
+        console.log("bell");
+        console.log(bellMsgs);
     
         for (let i = 0 ; i < bellMsgs.length ; i++){
             console.log(JSON.parse(bellMsgs[i]));
@@ -67,6 +69,8 @@ $(".servicebell-notification").click(async function(){
     
             bellMsgListEle.prepend(bellMsgLi);
         }
+    } else{
+        console.log("no bell msg");
     }
 });
 
@@ -101,6 +105,9 @@ $(".checkout-notification").click(async function(){
     
             checkOutMsgListEle.prepend(checkOutMsgLi);
         }
+    }else{
+        checkOutMsgListEle.empty();
+        checkOutMsgListEle += `<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`
     }
 });
 
@@ -135,6 +142,9 @@ $(".reservation-notification").click(async function(){
     
             msgListEle.prepend(msgLi);
         }
+    }else{
+        msgListEle.empty();
+        msgLiEle += `<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`
     }
 });
 
@@ -178,8 +188,8 @@ async function getReqCheckOutData(){
             }
         }
         let notifyData = await res.json();
-        console.log(JSON.parse(notifyData.data));
-        return JSON.parse(notifyData.data);
+        console.log(notifyData.data);
+        return notifyData.data;
 
     } catch (error){
         console.log(error);
@@ -201,8 +211,8 @@ async function getReservationConfirmData(){
             }
         }
         let notifyData = await res.json();
-        console.log(JSON.parse(notifyData.data));
-        return JSON.parse(notifyData.data);
+        console.log(notifyData.data);
+        return notifyData.data;
 
     } catch (error){
         console.log(error);

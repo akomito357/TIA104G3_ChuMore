@@ -14,6 +14,8 @@
     <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/main.min.css' rel='stylesheet' />
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <head th:insert="~{/included.html}"></head>
+    <head th:insert="~{/header_merchant.html}"></head>
 
     <style>
         :root {
@@ -158,6 +160,7 @@
     </style>
 </head>
 <body>
+<main class="main">
 <div class="container-fluid">
     <div class="row">
         <!-- 主要內容區域 -->
@@ -401,6 +404,7 @@
         </div>
     </div>
 </div>
+</main>
 
 <!-- jQuery & Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>

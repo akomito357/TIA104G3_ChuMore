@@ -152,7 +152,7 @@ public class ReservationTestController {
         }
 
         model.addAttribute("reservation", reservation);
-        return "back-end/reservation/reservation_confirm" ;
+        return "secure/reservation/reservation_confirm" ;
     }
 
 
@@ -168,14 +168,14 @@ public class ReservationTestController {
 
     @GetMapping("/reservation/success")
     public String transferToReservationSuccess(){
-        return "back-end/reservation/reservation_success";
+        return "secure/reservation/reservation_success";
     }
 
     // 訂位失敗頁面
 
     @GetMapping("/reservation/error")
     public String transferToReservationFail(){
-        return "back-end/reservation/reservation_error";
+        return "secure/reservation/reservation_error";
     }
 
 

@@ -43,8 +43,11 @@ public class NotificationRepository {
 		Map<String, String> restNotifications = null;
 		
 		jedis = pool.getResource();
+		jedis.select(3); 
 		restNotifications = jedis.hgetAll(notifyKey);
 		jedis.close();
+		
+		System.out.println(restNotifications.toString());
 		
 		return restNotifications;
 	}

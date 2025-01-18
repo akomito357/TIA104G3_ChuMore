@@ -65,7 +65,7 @@ function getProductCategoriesAndProducts(){
                         `<section id="procat-${productCategory.productCategoryId}" class="menu-section productCategorySection">
                         <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
                         `;
-                        // console.log(productCategory.productList);
+                        console.log(productCategory.productList);
                         
                         $.each(productCategory.productList, function(index, product){
                             // console.log(product);
@@ -75,11 +75,11 @@ function getProductCategoriesAndProducts(){
                                 productCategorySections += `
                                 <div class="menu-item product" id="product-${product.productId}">
                                     <div class="menu-item-img-container">`;
-                                if (product.productImages){ // 有圖片才顯示，否則顯示預設
+                                if (product.productImage){ // 有圖片才顯示，否則顯示預設
                                     // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
                                     // console.log('not null');
                                     // console.log(product.productImage);
-                                    productCategorySections += `<img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
+                                    productCategorySections += `<img src="data:image/jpeg; base64, ${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
                                 }else{
                                     // console.log('null');
                                     productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
@@ -399,6 +399,28 @@ console.log(orderId);
 
 $("#diningFinishConfirm").click(async function(e){
     e.preventDefault();
+    $.ajax({
+        url: "/notification/requestCheckout",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            restId: restId,
+            caller: caller
+        }),
+        success: function(res){
+            console.log(res);
+            
+        },
+        error: function(err){
+            console.log(err);
+            
+        }
+    })
+
+    if (localStorage.getItem("cartData") != null){
+        localStorage.removeItem("cartData");
+    }
+
     const orderData = {
         orderId: orderId
     }
@@ -438,6 +460,50 @@ $("#diningFinishConfirm").click(async function(e){
     }
 })
 
+const images = {
+    environment: [],
+};
+
+
+async function fetchEnvImgs(restId){
+    let imgUrlList = [];
+    try {
+        let res = await fetch(`/envImg/images/${restId}`);
+        if (!res.ok){
+            throw new Error(`Failed to fetch image IDs: ${res.status}`);
+        }       
+        let imagesIds = await res.json();
+
+        for (const id of imagesIds){
+            imgUrlList.push(`/envImg/image/${id}`);
+        }
+
+        // console.log(imgUrlList);
+        return imgUrlList;
+    } catch (error){
+        console.error(error);
+        return [];
+    }
+}
+
+async function loadEnvImgsUrl(restId){
+    images.environment = await fetchEnvImgs(restId);
+}
+
+async function populateImageGrid(restId){
+    await loadEnvImgsUrl(restId);
+
+    const EnvImgGrid = document.querySelector('.restBanner');
+    EnvImgGrid.innerHTML = "";
+
+    if (images.environment.length === 0){
+        console.log('no images');
+        EnvImgGrid.innerHTML = `<img src="https://placehold.co/400x200" alt="餐廳圖片" class="w-100 h-100 object-fit-cover restEnvImg">`
+    } else {
+        EnvImgGrid.innerHTML = `<img src=${images.environment[0]} alt="餐廳圖片" class="w-100 h-100 object-fit-cover restEnvImg">`
+    }
+}
+
 
 // 初始化
 async function main(){
@@ -446,6 +512,7 @@ async function main(){
     await getProductCategoriesAndProducts();
     await init()
     await updateCartBtn()
+    await populateImageGrid(restId)
     getOrderMaster();
     // showServiceBellModal();
 }
