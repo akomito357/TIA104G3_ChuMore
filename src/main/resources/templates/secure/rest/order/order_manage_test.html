@@ -1,26 +1,771 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>訂單管理測試</title>
+    <title>訂單管理</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+        <head th:insert="~{/header_merchant.html}" />
+
+    <style>
+        :root {
+            --primary: #F2994A;
+            --secondary: #1A1F2C;
+            --background: #F5F6F8;
+        }
+
+        body {
+            background-color: #FBFBFB;
+        }
+
+        .control-section {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-height: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .form-label {
+            width: auto;
+            white-space: nowrap;
+            font-size: small;
+            margin-left: 5px;
+        }
+
+        input[type="date"],
+        .form-select {
+            width: auto;
+        }
+
+
+        .btn-primary {
+            background-color: #FEA116;
+            border-color: #FEA116;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .next-btn:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .prev-btn:hover {
+            background-color: #e6950e;
+            border-color: #e6950e;
+        }
+
+        .btn-light {
+            background-color: rgb(232, 232, 232);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden; */
+        }
+
+        tr,
+        th {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+            height: 70px;
+        }
+
+
+        .table-hover tbody tr:hover {
+            background-color: #cecece6d;
+            /* 懸停時的背景顏色 */
+        }
+
+
+
+
+
+
+        .pagination-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            /* 調整按鈕間的間距 */
+            margin-top: 20%;
+        }
+
+        .pagination-btns button:disabled {
+            padding: 5px 10px;
+            background-color: #ddd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+        }
+
+        .pagination-btns button {
+            padding: 5px 10px;
+            background-color: #FEA116;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination-btns button:not(:disabled):hover {
+            background-color: #ff9800;
+        }
+
+        .pagination-btns .page-num {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .sort-icon {
+            margin-left: 5px;
+        }
+
+        .fa-solid {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+
+        .fa-solid:hover {
+            color: var(--primary);
+        }
+
+        .form-label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-control,
+        .form-select {
+            width: 180px;
+        }
+
+        .me-3 {
+
+            margin-top: 20px;
+        }
+
+        .ms-5 {
+            margin-left: 40px;
+        }
+
+        #customerName {
+            width: 200px;
+        }
+
+        #mealDetailsModal {
+            display: none;
+            /* 確保初始隱藏 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        #mealDetailsModal.show {
+            display: flex;
+            /* 顯示 Modal */
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            min-height: 500px;
+        }
+
+        .modal-header,
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 10px;
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .flex {
+            margin-bottom: 0px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            margin-right: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #mealDetailsModal {
+            border-bottom: none;
+        }
+
+        .order-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .text-gray-600 {
+            color: #757575;
+        }
+
+        .btn_close {
+            background-color: #ca0909;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            height: 30px;
+            width: 30px;
+            margin-right: 20px;
+        }
+
+        .btn_close:hover {
+            background-color: #ac1a1a;
+        }
+
+        .sort-icon.asc::after {
+            content: '↑';
+        }
+
+        .sort-icon.desc::after {
+            content: '↓';
+        }
+
+        input[type="hidden"] {
+            display: none;
+        }
+    </style>
+
 </head>
+
 <body>
-    <form th:action="@{/rest/orderMaster/getOne}" method="get">
-        <input type="text" value="1" name="orderId"><br>
-        <button type="submit" class="btn btn-primary mx-2 my-2">連結結帳頁測試</button>
-    </form>
 
 
 
 
+    <main class="main">
+        <div class="container mt-4">
+            <!-- 調整區 -->
+            <div class="control-section mb-4">
+                <h2 class="mb-3">訂單管理</h2>
+                <form id="filterForm">
+                    <div class="row g-3">
+                        <!-- 日期範圍 -->
+                        <div class="d-flex align-items-center g-3 flex-row">
+                            <!-- 開始日期與時間 -->
+                            <div class="d-flex align-items-center me-3">
+                                <div class="me-3">
+                                    <label for="startDate" class="form-label">開始日期</label>
+                                    <input type="date" class="form-control" id="startDate">
+                                </div>
+                                <div class="me-3">
+                                    <label for="startTime" class="form-label">開始時間</label>
+                                    <select class="form-select" id="startTime">
+                                        <option value="">選擇時間</option>
+                                    </select>
+                                </div>
+                            </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/restOrderManage.js}"></script>
-    <!-- <script src="/static/js/restOrderManage.js"></script> -->
 
+                            <!-- 結束日期與時間 -->
+                            <div class="d-flex align-items-center me-3">
+                                <div class="me-3">
+                                    <label for="endDate" class="form-label">結束日期</label>
+                                    <input type="date" class="form-control" id="endDate">
+                                </div>
+                                <div class="me-3">
+                                    <label for="endTime" class="form-label">結束時間</label>
+                                    <select class="form-select" id="endTime">
+                                        <option value="">選擇時間</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- 額外條件區 -->
+                        <div class="col-md-5 d-flex align-items-center">
+                            <div class="me-3">
+                                <label for="tableNumber" class="form-label">桌號查詢</label>
+                                <select class="form-select" id="orderTableId">
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- 按鈕區 -->
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary me-2" id="searchButton">搜尋</button>
+                        <button type="button" class="btn btn-light" id="resetButton">清空條件</button>
+                    </div>
+                </form>
+
+                <div class="mt-5">
+                    <!-- 查詢區 -->
+                    <div style="overflow-x: auto; max-width: 100%;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>日期<span class="sort-icon" data-sort="served_datetime"><i
+                                                class="fas fa-sort"></i></span>
+                                    </th>
+                                    <th>時間</th>
+                                    <th>桌號</th>
+                                    <th>用餐小計<span class="sort-icon" data-sort="subtotalPrice"><i
+                                                class="fas fa-sort"></i></span>
+                                    </th>
+                                    <th>餐點明細</th>
+                                    <th>結帳</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="resultTable">
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    <!-- 分頁按鈕 -->
+                    <div class="pagination-btns" id="diningPageBlock">
+                        <button class="prev-btn" id="diningPreBtn">上一頁</button>
+                        <span class="page-num" id="diningPageNum"> 1 </span>
+                        <!-- 顯示當前頁數 -->
+                        <button class="next-btn" id="diningNextBtn">下一頁</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mealDetailsModal"
+            class="hidden fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+            <div class="modal-content bg-white rounded-lg shadow-lg">
+                <div class="modal-header px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-xl font-semibold" style="margin-left: 20px;">餐點明細</h3>
+                    <button onclick="closeModal()" class="btn_close">X</button>
+                </div>
+                <div class="modal-body p-6"></div>
+                <div class="modal-footer p-4 border-t flex justify-between items-center">
+
+                </div>
+            </div>
+
+    </main>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        function showTableOptionList() {
+            fetch(`ordertables/getTableNumberById`, {
+                method: "GET",
+            }).then(res => res.json())
+                .then(tableName => {
+                    console.log(tableName);
+
+                    let allTable = `<option value="">全部桌號</option>`;
+                    let table_number = "";
+                    tableName.forEach((tableOption, index) => {
+                        table_number += `
+                            <option value="${tableOption.order_table_id}">${tableOption.table_number}</option>
+                            `;
+                    })
+                    document.querySelector("#orderTableId.form-select").innerHTML = allTable + table_number;
+                })
+
+        }
+
+        let today = new Date();
+        let todayDate = today.toISOString().split('T')[0];
+        let currentSort = { field: "served_datetime", order: "asc" };
+        $(document).ready(function () {
+
+        	 generateTimeOptions(['startTime', 'endTime']);
+            $("input#startDate").val(todayDate);
+            $("input#endDate").val(todayDate);
+
+            const tabs = $(".nav-link");
+            const content = $(".tab-content");
+
+
+            const diningPrevButton = $("#diningPreBtn.prev-btn");
+            const diningNextButton = $("#diningNextBtn.next-btn");
+            $(diningPrevButton).on("click", function () {
+                const pageNumElement = $("#diningPageNum.page-num");
+                let page = pageNumElement.text();
+                // console.log(page)
+                let pageIndex = parseInt(page) - 1;
+
+                const queryParam = createQueryParam(pageIndex - 1);
+                loadDiningList(queryParam);
+            });
+
+            $(diningNextButton).on("click", function () {
+                const pageNumElement = $("#diningPageNum.page-num");
+                let page = pageNumElement.text();
+                // console.log(page)
+                let pageIndex = parseInt(page) - 1;
+
+                const queryParam = createQueryParam(pageIndex + 1);
+                loadDiningList(queryParam);
+            });
+
+            showTableOptionList();
+            const page = 0;
+            const size = 10;
+            
+            function loadDiningList(queryParam) {
+                fetch(`rest/orderMaster/getUnpaidOrder?${queryParam}`, {
+                    method: "GET",
+                }).then(res => res.json())
+                    .then(response => {
+                        console.log(response);
+                        console.log(queryParam.toString());
+
+                        const pageData = response.data;
+                        const diningList = pageData.content;
+                        const totalPages = pageData.totalPages;
+                        // console.log(totalPages);
+
+                        let table_body = "";
+                        diningList.forEach((orderMaster, index) => {
+                            const [date, time] = orderMaster.servedDatetime.split(" ");
+
+                            table_body += `
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>${time}</td>
+                                    <td value="${orderMaster.orderTableId}">${orderMaster.tableNumber}</td>
+                                    <td>${orderMaster.subtotalPrice}</td>
+                                    <td><a href="#"><i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a></td>
+                                    <td>
+                                        <form method="get" id="checkoutForm">
+                                            <input hidden type="text" value="${orderMaster.orderId}" name="orderId">
+                                            <button type="button" class="btn btn-primary mx-2 my-2">結帳</button>
+                                        </form>
+
+	                                </td>
+                                </tr>
+                            
+                            `;
+
+                        });
+                        document.getElementById("resultTable").innerHTML = table_body;
+
+                        const detailLinks = document.querySelectorAll('td a i.fa-arrow-up-right-from-square');
+                        // console.log(detailLinks);
+                        detailLinks.forEach((link) =>
+                            link.addEventListener("click", function (event) {
+                                event.preventDefault();
+                                let orderId = $(this).attr("data-orderId");
+
+                                showModal(orderId);
+                            })
+                        );
+                        renderPage(pageData.number, totalPages, "dining");
+
+                    })
+                    .catch(error => {
+                        console.log("錯誤產生", error);
+                    });
+
+            }
+            
+            let todayStartDatetime = todayDate + "T00:00";
+            let todayEndDatetime = todayDate + "T23:59";
+            
+            const queryParam = new URLSearchParams({
+                startDatetime: todayStartDatetime,
+                endDatetime: todayEndDatetime,
+                orderTableId: "",
+                page: page,
+                size: size,
+                sort: `${currentSort.field},${currentSort.order}`
+            });
+
+            loadDiningList(queryParam);
+            
+
+            $("#resultTable").on("click", ".btn.btn-primary", function () {
+                const orderId = $(this).closest("form").find("input[name='orderId']").val();
+                console.log(orderId);
+                window.location.href = `/rest/orderMaster/getOne?orderId=${orderId}`;
+            });
+
+
+
+            $("#searchButton").click(function () {
+
+                const today = new Date();
+                const todayDate = today.toISOString().split('T')[0];
+
+                const startDate = $("#startDate").val();
+                const startTime = $("#startTime").val();
+                const endDate = $("#endDate").val();
+                const endTime = $("#endTime").val();
+
+                
+                // $("input#startDate").val(todayDate);
+                let startDatetime = startDate ? String(startDate) + (startTime ? "T" + startTime : 'T00:00') : null;
+                // let startDatetime = startTime ? String(todayDate) + "T" + startTime : (startDate ? String(startDate) + (startTime ? "T" + startTime : 'T00:00') : null);
+
+               
+                    // $("input#endDate").val(todayDate);
+                    // console.log(startDatetime);
+                    let endDatetime = endDate ? String(endDate) + (endTime ? "T" + endTime : "T23:59") : null;
+                    // let endDatetime = endTime ? String(todayDate) + "T" + endTime : (endDate ? String(endDate) + (endTime ? "T" + endTime : 'T00:00') : null);
+
+            
+
+                const orderTableId = $('#orderTableId').val();
+
+                // console.log(tableNumber);
+
+                const queryParam = new URLSearchParams({
+                    startDatetime: startDatetime,
+                    endDatetime: endDatetime,
+                    orderTableId: orderTableId || "",
+                    page: page,
+                    size: size,
+                    sort: `${currentSort.field},${currentSort.order}`
+                });
+
+                loadDiningList(queryParam);
+
+                // 清空條件按鈕
+                $('#resetButton').click(function () {
+                    $('#filterForm')[0].reset();
+                });
+            });
+
+            // 排序功能
+            $('.sort-icon').click(function () {
+                const sortField = $(this).data('sort');
+                //                 console.log(sortField);
+                const currentOrder = currentSort.field === sortField && currentSort.order === 'asc' ? 'desc' : 'asc';
+
+                currentSort = { field: sortField, order: currentOrder };
+                $('.sort-icon').data('order', '');
+                $(this).data('order', currentOrder);
+
+                const pageNumElement = $("#diningPageNum.page-num");
+                let page = pageNumElement.text();
+                // console.log(page)
+                let pageIndex = parseInt(page) - 1;
+                let currentPage = pageIndex;
+
+                const queryParam = createQueryParam(currentPage);
+
+                if (typeof loadDiningList === "function") {
+                    loadDiningList(queryParam);
+                } else {
+                    console.error("loadDiningList 函式未定義！");
+                }
+            });
+
+            //分頁功能
+            function renderPage(currentPage, totalPages, tabType) {
+                if (tabType == "dining") {
+                    const pagination = $("#diningPageBlock.pagination");
+                    const pageNumElement = $("#diningPageNum.page-num");
+
+                    pageNumElement.text(currentPage + 1);
+
+                    const prevButton = $("#diningPreBtn.prev-btn");
+                    const nextButton = $("#diningNextBtn.next-btn");
+
+                    prevButton.prop("disabled", currentPage === 0);
+                    nextButton.prop("disabled", currentPage === totalPages - 1);
+
+                } else {
+                    const pagination = $("#reviewPageBlock.pagination");
+                    const pageNumElement = $("#reviewPageNum.page-num");
+
+                    pageNumElement.text(currentPage + 1);
+
+                    const prevButton = $("#reviewPreBtn.prev-btn");
+                    const nextButton = $("#reviewNextBtn.next-btn");
+
+                    prevButton.prop("disabled", currentPage === 0);
+                    nextButton.prop("disabled", currentPage === totalPages - 1);
+                }
+            }
+
+        });
+
+
+
+
+        function showModal(orderId) {
+
+            fetch(`member/orderLineItem/items?orderId=${orderId}`, {
+                method: "GET",
+            }).then(res => res.json())
+                .then(response => {
+
+                    console.log(response);
+                    const mealDetailList = response.orderItemListDto;
+                    // console.log(mealDetailList);
+
+
+
+                    let mealDetail_body = "";
+
+                    mealDetailList.forEach((orderItem, index) => {
+
+                        const mealLineList = orderItem.lineItemList;
+                        let mealLineDetail_body = "";
+
+                        mealLineList.forEach((orderLineItem, index) => {
+
+                            mealLineDetail_body += `
+                            <div class="flex justify-between items-center mb-1 p-2 border-b">
+                                <span style="margin-left: 40px">${orderLineItem.productName} x ${orderLineItem.quantity}</span>
+                                <span class="text-gray-600  flex-grow text-right">$ ${orderLineItem.price}</span>
+                            </div>
+
+                        `;
+                        });
+
+
+                        mealDetail_body += `
+                        <div class="order-section mb-6">
+                            <h4 class="text-lg font-semibold text-gray-800" style="margin-left: 20px">第${index + 1}次點餐</h4>
+                            <div>${mealLineDetail_body}
+                              ${orderItem.memo ? `<div class="text-sm text-gray-500 mb-3 mt-3" style="margin-left: 20px;">備註: ${orderItem.memo}</div>` : ''}
+                            </div >
+                        </div >
+                        `;
+
+                    });
+
+                    let mealSummary = "";
+
+                    mealSummary += `
+                    <div class="summary">
+                            <p class="text-gray-600">小計: <span id="discountPoints">${response.subtotalPrice}</span></p>
+                    </div>
+                    
+                    `;
+
+                    // console.log(mealDetail_body);
+                    document.querySelector(".modal-body").innerHTML = mealDetail_body;
+                    document.querySelector(".modal-footer").innerHTML = mealSummary;
+
+
+                });
+
+
+            const modal = document.getElementById("mealDetailsModal");
+
+            // 顯示 Modal
+            modal.classList.add("show");
+        }
+
+        // 關閉 Modal
+        function closeModal() {
+            const modal = document.getElementById("mealDetailsModal");
+            modal.classList.remove("show");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabs = document.querySelectorAll(".nav-link");
+            const content = document.querySelectorAll(".tab-content");
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    tabs.forEach(function (tab) {
+                        tab.classList.remove("active");
+                    });
+                    content.forEach(function (cont) {
+                        cont.classList.remove("active");
+                    });
+
+                    tab.classList.add("active");
+
+                    const targetId = tab.getAttribute("data-target");
+                    document.getElementById(targetId).classList.add("active");
+                });
+            });
+        });
+
+        function createQueryParam(page) {
+            const params = {
+                startDatetime: $("#startDate").val() ? `${$("#startDate").val()}T${$("#startTime").val() || "00:00"}` : "",
+                endDatetime: $("#endDate").val() ? `${$("#endDate").val()}T${$("#endTime").val() || "23:59"}` : "",
+                orderTableId: $("#orderTableId").val() || "",
+                page: page,
+                size: 10,
+                sort: `${currentSort.field},${currentSort.order}`
+            };
+            return new URLSearchParams(params);
+        }
+
+        function generateTimeOptions(selectIds) {
+            const startTime = 0; // 0:00
+            const endTime = 24 * 60; // 24:00 in minutes
+            const interval = 15; // 每 15 分鐘
+
+            selectIds.forEach((id) => {
+                const selectElement = document.getElementById(id);
+                let count = 0;
+                for (let time = startTime; time < endTime; time += interval) {
+                    const hours = Math.floor(time / 60).toString().padStart(2, '0');
+                    const minutes = (time % 60).toString().padStart(2, '0');
+                    const timeValue = `${hours}:${minutes}`;
+                    const option = document.createElement('option');
+                    option.value = timeValue;
+                    option.textContent = timeValue;
+                    selectElement.appendChild(option);
+                    count++
+                }
+                console.log(count);
+            });
+        }
+    </script>
 </body>
+
 </html>
