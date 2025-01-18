@@ -181,6 +181,20 @@ public class OrderMasterController {
 	}
 	
 	
+	// 連結到消費者用餐完畢/結帳確認頁面
+	@PostMapping("finishOrder")
+	public String getOneForCheckOut(@RequestBody Map<String, Integer> map, Model model, HttpSession session) {
+//				session.setAttribute("orderId", 1);
+//		if (session.getAttribute("restId") == null) {
+//			session.setAttribute("restId", 2001);
+//		}
+		
+		OrderMasterVO orderMaster = orderSvc.getOneById(map.get("orderId"));
+		model.addAttribute("orderMaster", orderMaster);
+		return "public/order/order_finish_page";
+	}
+	
+	
 //	@PostMapping("findOneFromSession")
 //	@ResponseBody
 //	public ResponseEntity<OrderMasterResponse> insert(HttpSession session){

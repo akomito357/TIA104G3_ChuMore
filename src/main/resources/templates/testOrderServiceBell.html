@@ -10,7 +10,7 @@
     <label>餐廳編號：</label>
     <input type="text" id="restId" placeholder="請輸入餐廳編號如: 2001"><br>
     <label>桌位編號：</label>
-    <input type="text" id="tableName" placeholder="請輸入桌位如: A1"><br><br>
+    <input type="text" id="caller" placeholder="請輸入桌位如: A1"><br><br>
     <button id="pressBtn">按下服務鈴</button>
 
     <div id="response" style="margin-top:20px; color:green;"></div>
@@ -20,18 +20,18 @@
     $(document).ready(function () {
         $("#pressBtn").click(function () {
             const restId = $("#restId").val();
-            const tableName = $("#tableName").val();
+            const caller = $("#caller").val();
 
-            if(!restId || !tableName) {
+            if(!restId || !caller) {
                 alert("請輸入餐廳與桌位編號！");
                 return;
             }
 
             $.ajax({
-                url: "/serviceBell/pressBell",
+                url: "/notification/serviceBell",
                 method: "POST",
                 contentType: "application/json",
-                data: JSON.stringify({ restId, tableName }),
+                data: JSON.stringify({ restId, caller }),
                 success: function (res) {
                     $("#response").text(res);
                 },

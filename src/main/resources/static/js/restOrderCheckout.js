@@ -6,12 +6,12 @@ let submitUsePoints = 0;
 
 
 async function getOrderMaster(){
-    let url = "http://localhost:8080/orders/findOneByOrderId";
+    let url = "/orders/findOneByOrderId";
     // let order = {
     //     orderId: orderMaster.orderId,
     // }
 
-    fetch('http://localhost:8080/orders/findOneByOrderId?orderId=' + orderMaster.orderId).then((res) => {
+    fetch('/orders/findOneByOrderId?orderId=' + orderMaster.orderId).then((res) => {
         if (res.ok){
             return res.json();
         }
@@ -70,30 +70,21 @@ async function verifyPhoneFetch(){
         $("#memberStatus").removeClass("error");
         $("#memberStatus").addClass("success");
         $("#memberStatus").text(`驗證成功！會員姓名：${memberPhoneVerify.data.memberName}`);
-        // let memberPoints = await getMemberDiscPts(memberPhoneVerify.data.memberId, restId);
-        // console.log(memberPoints);
-
-        // $("#showMemberPoints").removeClass("error");
-        // $("#showMemberPoints").addClass("show");
-        // $("#showMemberPoints").text(`現有會員點數：${memberPoints.data.discPtsQty}`);
-        // showPointUseForm();
+        
 
         $("#verifyPhoneNumberBtn").disabled = false;
         return memberPhoneVerify;
     }catch(error){
-        // error = JSON.parse(error);
-        // if (error == "verifyPhoneFetch Failed"){
-            $("#memberStatus").removeClass("success");
-            $("#memberStatus").addClass("error");
-            $("#memberStatus").text("查無會員！");
-            $("#pointUseForm").removeClass("show");
-            $("#showMemberPoints").removeClass("show");
-            $("#verifyPhoneNumberBtn").disabled = false;
-            console.log(error);
-            return [];
-        // } else {
-            // console.log(error);
-        // }
+        
+        $("#memberStatus").removeClass("success");
+        $("#memberStatus").addClass("error");
+        $("#memberStatus").text("查無會員！");
+        $("#pointUseForm").removeClass("show");
+        $("#showMemberPoints").removeClass("show");
+        $("#verifyPhoneNumberBtn").disabled = false;
+        console.log(error);
+        return [];
+        
 
     }
 
