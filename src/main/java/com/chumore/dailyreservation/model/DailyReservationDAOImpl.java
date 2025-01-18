@@ -47,6 +47,7 @@ public class DailyReservationDAOImpl implements DailyReservationDAO{
     }
 
 
+
     // 查詢該餐廳某日特定桌種的 daily reservation
     @Override
     public DailyReservationVO findByDate(Integer restId, LocalDate date, Integer tableType) {

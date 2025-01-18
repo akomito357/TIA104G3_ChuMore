@@ -15,6 +15,7 @@ public interface DailyReservationDAO {
     List<DailyReservationVO> findDailyReservationsByDate(Integer restId,LocalDate date);
     DailyReservationVO findByDate(Integer restId, LocalDate date, Integer tableType);
 
+
     List<DailyReservationVO> findDailyReservationsByCompositeQuery(Map<String,String> params);
     DailyReservationVO findByCompositeQuery(Map<String,String> params);
 

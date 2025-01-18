@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import com.chumore.discpts.model.DiscPtsVO;
 import com.chumore.ordermaster.model.OrderMasterVO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.io.Serializable;
 
@@ -20,10 +21,12 @@ public class UsePointsVO implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "disc_pts_id", referencedColumnName = "disc_pts_id", nullable = false)
+    @JsonBackReference("discPts-usePoints")
     private DiscPtsVO discPts; // 折扣點數ID (外鍵)
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
+    @JsonBackReference("orderMaster-usePoints")
     private OrderMasterVO orderMaster; // 訂單ID (外鍵)
 
     @Column(name = "used_points_quantity", nullable = false)

@@ -19,14 +19,16 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 	@Transactional
 	@Modifying
 	@Query(value = "delete from order_master where order_id = ?1", nativeQuery = true)
-	OrderMasterVO deleteByOrderId(Integer orderId);
+	void deleteByOrderId(Integer orderId);
 	
 	@Query(value= "SELECT * FROM order_master om WHERE om.member_id = ?", nativeQuery = true)
 	List<OrderMasterVO> getByMemberId(Integer memberId);
     
 	
-    @Query(value= "SELECT * FROM order_master om WHERE om.member_id = ?", 
-            countQuery = "SELECT COUNT(*) FROM order_master om WHERE om.member_id = :memberId"
+    @Query(value= "SELECT * FROM order_master om WHERE om.member_id = ? "+
+    		"AND om.order_status = 1 ",
+            countQuery = "SELECT COUNT(*) FROM order_master om WHERE om.member_id = :memberId "+
+            			 "AND om.order_status = 1 "
             , nativeQuery = true)
     Page<OrderMasterVO> findByMemberId(Integer memberId, Pageable pageable);
     
@@ -40,7 +42,7 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 					"AND(:endDatetime IS NULL OR om.served_datetime <= :endDatetime) "+
 					"AND(:orderTableId IS NULL OR om.order_table_id = :orderTableId) "+
 					"AND (IFNULL(m.member_name,'') LIKE CONCAT('%', :memberName, '%')) "+
-					"AND om.order_status = 0 ",
+					"AND om.order_status = 1 ",
 		    countQuery = "SELECT COUNT(*) FROM order_master om "+
 		    		"LEFT JOIN order_table ot on om.order_table_id = ot.order_table_id "+
 					"LEFT JOIN member m on om.member_id = m.member_id "+
@@ -49,7 +51,7 @@ public interface OrderMasterRepository extends JpaRepository<OrderMasterVO, Inte
 					"AND(:endDatetime IS NULL OR om.served_datetime <= :endDatetime) "+
 					"AND(:orderTableId IS NULL OR om.order_table_id = :orderTableId) "+
 					"AND (IFNULL(m.member_name,'') LIKE CONCAT('%', :memberName, '%')) "+
-					"AND om.order_status = 0 ",
+					"AND om.order_status = 1 ",
 			nativeQuery = true)
     Page<Map<String, Object>> findOrderByRestId(Integer restId, LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable);
 

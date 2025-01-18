@@ -15,6 +15,12 @@ public interface DailyReservationService {
 
     DailyReservationVO findDailyReservationByCompositeQuery(Map<String, String> conditions);
 
+    // 查詢剩餘桌數
+    List<Integer> findAvailableTables(Integer restId,LocalDate date,Integer guestCount);
+
+    // 回傳符合條件的餐廳ID
+    List<Integer> filterRestIdsByConditions(List<Integer> restIds, LocalDate date, Integer reservedTime, Integer guestCount);
+
     // 新增與更新相關方法
     DailyReservationVO addDailyReservation(DailyReservationVO dailyReservationVO);
 

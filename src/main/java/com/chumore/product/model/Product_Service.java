@@ -20,12 +20,8 @@ public class Product_Service {
 		return repository.save(product);
 	}
 	
-	public Integer deleteProduct(Integer productId) {
-		if(repository.existsById(productId)) {
-			repository.deleteById(productId);
-			return 1;
-		}
-		return -1;
+	public void deleteProductsByIds(List<Integer> productIds) {
+	    repository.deleteAllById(productIds);
 	}
 	
 	public List<ProductVO> getAllProductByRestId(Integer restId) {
@@ -38,5 +34,35 @@ public class Product_Service {
 	
 	public ProductVO getProductById(Integer productId) {
 		return repository.findById(productId).orElse(null);
+	}
+	
+	public List<ProductVO> getAllProductByActiveStatusAndSelected(Integer restId, 
+			ProductVO selectedProduct){
+		// for review showing
+		
+		List<ProductVO> availableProduct = getAllProductByActiveStatus(restId);
+		Boolean isAvailable = false;
+		
+		if (availableProduct != null) {
+			for (ProductVO product: availableProduct) {
+				if (product.getProductId().equals(selectedProduct.getProductId())) {
+					isAvailable = true;
+					break;
+				}
+			}
+		}
+		if (!isAvailable || availableProduct.isEmpty()) {
+			availableProduct.add(selectedProduct);
+		}
+		
+		return availableProduct;
+	}
+		
+	public List<ProductVO> getProductByProductCatId(Integer productCategoryId) {
+		return repository.getProductByProductCatId(productCategoryId);
+	}
+	
+	public void deleteProduct(Integer productId) {
+	    repository.deleteProduct(productId);
 	}
 }

@@ -1,9 +1,9 @@
 package com.chumore.ordermaster.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
-
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chumore.discpts.model.DiscPtsService;
+import com.chumore.discpts.model.DiscPtsVO;
 import com.chumore.exception.DataMismatchException;
+import com.chumore.exception.PointsOverUsedException;
 import com.chumore.exception.ResourceNotFoundException;
+import com.chumore.member.model.MemberService;
+import com.chumore.member.model.MemberVO;
 import com.chumore.orderitem.dto.OrderItemForOrderDto;
 import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
@@ -32,11 +37,15 @@ import com.chumore.ordermaster.dto.RestDiningDto;
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
 import com.chumore.review.model.ReviewVO;
+import com.chumore.usepoints.model.UsePointsService;
 import com.chumore.usepoints.model.UsePointsVO;
 
 @Transactional
 @Service("OrderMasterService")
 public class OrderMasterServiceImpl implements OrderMasterService {
+	
+	private BigDecimal earnRatio = new BigDecimal(100); // 消費X元得1點
+	private BigDecimal discountRatio = new BigDecimal(10); // 1點抵X元
 
 	@Autowired
 	OrderMasterRepository repository;
@@ -49,7 +58,16 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 	
 	@Autowired
 	Product_Service productSvc;
+	
+	@Autowired
+	MemberService memberSvc;
+	
+	@Autowired
+	DiscPtsService discPtsSvc;
 
+	@Autowired
+	UsePointsService usePtSvc;
+	
 	@Autowired
 	SessionFactory factory;
 
@@ -186,6 +204,68 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 
 	public Page<Map<String, Object>> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
 		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
+	}
+	
+	@Override
+	public BigDecimal calcDiscount(Integer usePoints) {
+		BigDecimal discounts = discountRatio.multiply(BigDecimal.valueOf(usePoints));
+		return discounts;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal calcTotalPrice(Integer orderId, BigDecimal discounts) {
+		OrderMasterVO orderMaster = getOneById(orderId);
+		BigDecimal subtotalPrice = orderMaster.getSubtotalPrice();
+		BigDecimal totalPrice = subtotalPrice.subtract(discounts);
+		
+		if (totalPrice.compareTo(BigDecimal.ZERO) == -1) {
+			// totalPrice < 0
+			throw new PointsOverUsedException("discount(" + discounts + ") exceed total price(" + totalPrice + ")");
+		}
+		
+		return totalPrice;
+	}
+	
+	public Integer calcEarnPoints(BigDecimal totalPrice) {
+		Integer earnedPoints = null;
+		try {
+			System.out.println(totalPrice);
+			System.out.println(totalPrice.divide(earnRatio, 0, RoundingMode.DOWN).intValue());
+			earnedPoints = totalPrice.divide(earnRatio, RoundingMode.DOWN).intValue();
+		} catch (ArithmeticException ae) {
+			System.out.println("ArithmeticException!");
+			ae.printStackTrace();
+		}
+		
+		return earnedPoints;
+	}
+	
+	
+	@Transactional
+	public OrderMasterVO checkout(Integer memberId, Integer orderId, Integer pointUsed) {
+		BigDecimal discounts = calcDiscount(pointUsed);
+		BigDecimal totalPrice = calcTotalPrice(orderId, discounts);
+		Integer earnedPoints = calcEarnPoints(totalPrice);
+		MemberVO member = memberSvc.getOneMember(memberId).orElse(null);
+		
+		OrderMasterVO orderMaster = getOneById(orderId);
+		orderMaster.setMember(member);
+		orderMaster.setPointUsed(pointUsed);
+		orderMaster.setTotalPrice(totalPrice);
+		orderMaster.setOrderStatus(1); // 已結帳
+		orderMaster.setPointEarned(earnedPoints);
+		orderMaster.setCheckoutDatetime(LocalDateTime.now());
+		
+		System.out.println(orderMaster);
+
+		// 處理扣除與新增點數
+		if (member != null) {
+			discPtsSvc.deductPoints(memberId, orderMaster, pointUsed);
+			discPtsSvc.gainPoints(memberId, orderMaster, pointUsed, earnedPoints);
+		}
+		
+		return orderMaster;
 	}
 
 }

@@ -25,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
+import com.chumore.productcategory.dto.ProductCategoryDto;
+import com.chumore.productcategory.dto.ProductCategoryDto.ProductDTO;
+import com.chumore.productcategory.model.MenuUploadReq;
 import com.chumore.productcategory.model.ProductCategoryVO;
 import com.chumore.productcategory.model.ProductCategory_Service;
 import com.chumore.productcategory.res.ProductCategoryResponse;
@@ -53,13 +56,13 @@ public class ProductCategoryController {
 //	
 //	}
 
-	@PostMapping("updateProductCategory")
-	public ResponseEntity<ProductCategoryResponse> update(@RequestBody ProductCategoryVO productCategory) {
-		ProductCategoryVO vo = productCategorySvc.updateProductCategory(productCategory);
-		ProductCategoryResponse<ProductCategoryVO> response = new ProductCategoryResponse<ProductCategoryVO>("Success",
-				200, vo);
-		return ResponseEntity.ok(response);
-	}
+//	@PostMapping("updateProductCategory")
+//	public ResponseEntity<ProductCategoryResponse> update(@RequestBody ProductCategoryVO productCategory) {
+//		ProductCategoryVO vo = productCategorySvc.updateProductCategory(productCategory);
+//		ProductCategoryResponse<ProductCategoryVO> response = new ProductCategoryResponse<ProductCategoryVO>("Success",
+//				200, vo);
+//		return ResponseEntity.ok(response);
+//	}
 
 	@PostMapping("deleteProductCategory")
 	public ResponseEntity<ProductCategoryResponse> delete(@RequestBody Map<String, Integer> request) {
@@ -76,6 +79,24 @@ public class ProductCategoryController {
 		List<ProductCategoryVO> vo = productCategorySvc.getAllCategoryByRest(restId);
 		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>(
 				"Success", 200, vo);
+
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("getActiveListByRestId")
+	public ResponseEntity<ProductCategoryResponse> getActiveListByRestId() {
+		Object restNum = session.getAttribute("restId");
+		Integer restId = null;
+		if (restNum == null) {
+			restId = 2001;
+		} else {
+			RestVO rest = (RestVO) restNum;
+			restId = rest.getRestId();
+		}
+		
+		List<ProductCategoryVO> list = productCategorySvc.getActiveListByRestId(restId);
+		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>(
+				"Success", 200, list);
 
 		return ResponseEntity.ok(response);
 	}
@@ -120,6 +141,7 @@ public class ProductCategoryController {
 					ProductCategoryVO prodouctCategory = new ProductCategoryVO();
 					prodouctCategory.setCategoryName(categoryName);
 					prodouctCategory.setRestId(restId);
+					prodouctCategory.setEnableStatus(1);
 					productList = new ArrayList();
 					prodouctCategory.setProductList(productList);
 					categoryMap.put(categoryName, prodouctCategory);
@@ -170,7 +192,42 @@ public class ProductCategoryController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
+	
+	@PostMapping("modifyProduct")
+	public ResponseEntity<ProductCategoryResponse> modifyProduct(@RequestBody MenuUploadReq req){
+		Object restNum = session.getAttribute("restId");
+		Integer restId = null;
+		if (restNum == null) {
+			restId = 2001;
+		} else {
+			RestVO rest = (RestVO) restNum;
+			restId = rest.getRestId();
+		}
+		productCategorySvc.batchDelete(req);
+		for(ProductCategoryDto category : req.getProductCatList()) {
+
+			for(ProductDTO product : category.getProductList()) {
+				if((product.getProductImage() == null || product.getProductImage().length == 0) && (product.getProductId() != null)) {
+					byte[]exsitingImage = productCategorySvc.getImageById(product.getProductId());
+					product.setProductImage(exsitingImage);
+				}
+			}
+			
+			if(category.getProductCategoryId()==null) {
+				System.out.println("Adding new category: " + category.getCategoryName());
+				productCategorySvc.addProductCat(category);
+			}else {
+				System.out.println("Updating category with ID: " + category.getProductCategoryId());
+				productCategorySvc.updateProductCategory(category);
+			}
+		}
+		ProductCategoryResponse response = new ProductCategoryResponse();
+		response.setCode(200);
+		response.setMsg("success");
+		return ResponseEntity.ok(response);
+		
+		
+	}
+	
 
 }
-
-

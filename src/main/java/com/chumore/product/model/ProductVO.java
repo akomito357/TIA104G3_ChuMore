@@ -23,7 +23,7 @@ public class ProductVO {
 	@Column(name = "rest_id")
 	private Integer restId;
 	
-	@Column(name = "product_category_id")
+	@Column(name = "product_category_id", updatable = false)
 	private Integer productCategoryId;
 
 //	@ManyToOne
@@ -37,7 +37,7 @@ public class ProductVO {
 	private String productDescription;
 	
 	@Column(name = "product_price")
-	private BigDecimal ProductPrice;
+	private BigDecimal productPrice;
 	
 	@Column(name = "product_image", columnDefinition = "mediumblob")
 	private byte[] productImage;
@@ -76,10 +76,10 @@ public class ProductVO {
 		this.productDescription = productDescription;
 	}
 	public BigDecimal getProductPrice() {
-		return ProductPrice;
+		return productPrice;
 	}
 	public void setProductPrice(BigDecimal productPrice) {
-		ProductPrice = productPrice;
+		this.productPrice = productPrice;
 	}
 	public byte[] getProductImage() {
 		return productImage;
