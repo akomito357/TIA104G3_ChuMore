@@ -171,8 +171,10 @@ public class OrderTableController {
 		if (restNum == null) {
 			restId = 2001;
 		} else {
-			RestVO rest = (RestVO) restNum;
-			restId = rest.getRestId();
+			Integer rest = (Integer) restNum;
+//			restId = rest.getRestId();
+			restId = rest;
+			
 		}
 		
 
