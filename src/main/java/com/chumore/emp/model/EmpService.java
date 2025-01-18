@@ -143,37 +143,39 @@ public class EmpService {
 		return empRepository.findAllActiveEmps();
 	}
 	//新增員工
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void addEmp(EmpFullDTO dto) {
-		// 檢查帳號是否已存在
-		if (empRepository.existsByEmpAccount(dto.getEmpAccount())) {
-			throw new IllegalArgumentException("此帳號已存在");
-		}
+	    // 檢查帳號是否已存在
+	    if (empRepository.existsByEmpAccount(dto.getEmpAccount())) {
+	        throw new IllegalArgumentException("此帳號已存在");
+	    }
 
-		// 檢查手機號碼是否已存在
-		if (empRepository.existsByEmpPhone(dto.getEmpPhone())) {
-			throw new IllegalArgumentException("此手機號碼已被使用");
-		}
+	    // 檢查手機號碼是否已存在
+	    if (empRepository.existsByEmpPhone(dto.getEmpPhone())) {
+	        throw new IllegalArgumentException("此手機號碼已被使用");
+	    }
 
-		// 檢查Email是否已存在
-		if (empRepository.existsByEmpEmail(dto.getEmpEmail())) {
-			throw new IllegalArgumentException("此Email已被使用");
-		}
+	    // 檢查Email是否已存在
+	    if (empRepository.existsByEmpEmail(dto.getEmpEmail())) {
+	        throw new IllegalArgumentException("此Email已被使用");
+	    }
 
-		// 建立新的員工實體
-		EmpVO emp = new EmpVO();
-		emp.setEmpName(dto.getEmpName());
-		emp.setEmpAccount(dto.getEmpAccount());
-		emp.setEmpPassword(passwordEncoder.encode(dto.getEmpPassword())); // 加密密碼
-		emp.setEmpPhone(dto.getEmpPhone());
-		emp.setEmpEmail(dto.getEmpEmail());
-		emp.setEmpAccountStatus(dto.getEmpAccountStatus());
-		emp.setEmpRole(dto.getEmpRole());
-		emp.setEmpHireDate(dto.getEmpHireDate());
-		emp.setEmpResignDate(dto.getEmpResignDate());
+	    // 建立新的員工實體
+	    EmpVO emp = new EmpVO();
+	    emp.setEmpName(dto.getEmpName());
+	    emp.setEmpAccount(dto.getEmpAccount());
+	    emp.setEmpPassword(passwordEncoder.encode("A1234567")); // 設置預設密碼
+	    emp.setEmpPhone(dto.getEmpPhone());
+	    emp.setEmpEmail(dto.getEmpEmail());
+	    emp.setEmpAccountStatus(dto.getEmpAccountStatus());
+	    emp.setEmpRole(dto.getEmpRole());
+	    emp.setEmpHireDate(dto.getEmpHireDate());
+	    emp.setEmpResignDate(dto.getEmpResignDate());
 
-		empRepository.save(emp);
+	    empRepository.save(emp);
 	}
+	
 	// ====== 共用方法 ======
 
 	private void updateEmpFromDTO(EmpVO emp, EmpFullDTO dto) {
