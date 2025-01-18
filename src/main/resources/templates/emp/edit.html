@@ -1,66 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout :: head('編輯個人資料')">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>編輯個人資料</title>
 </head>
 <body>
-    <nav th:replace="layout :: navbar"></nav>
+    <div layout:fragment="content">
+        
 
-    <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">編輯個人資料</h4>
+                        <a th:href="@{/emp/profile}" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i>返回
+                        </a>
                     </div>
-                    
+
                     <div class="card-body">
                         <!-- 錯誤訊息提示 -->
-                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-4">
+                            <i class="bi bi-exclamation-circle me-2"></i>
                             <span th:text="${error}"></span>
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
 
-                      
-                        <form th:action="${#request.contextPath} + '/emp/edit'" method="post">
-                        <!-- 因為目前禁用CSRF 所以先註解起來
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        -->
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">姓名：</label>
+                        <form th:action="@{/emp/edit}" method="post" class="needs-validation" novalidate>
+                            <!-- 姓名（唯讀） -->
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">姓名</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control-plaintext" 
                                            th:value="${empInfo.empName}" readonly>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">帳號：</label>
+                            <!-- 帳號（唯讀） -->
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">帳號</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control-plaintext" 
                                            th:value="${empInfo.empAccount}" readonly>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label for="empPhone" class="col-sm-3 col-form-label">手機：</label>
+                            <!-- 手機 -->
+                            <div class="mb-3 row">
+                                <label for="empPhone" class="col-sm-3 col-form-label">手機</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="empPhone" 
-                                           name="empPhone" th:value="${empInfo.empPhone}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-phone"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="empPhone" 
+                                               name="empPhone" th:value="${empInfo.empPhone}" 
+                                               pattern="^09\d{8}$" required>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        請輸入有效的手機號碼（格式：09xxxxxxxx）
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label for="empEmail" class="col-sm-3 col-form-label">Email：</label>
+                            <!-- Email -->
+                            <div class="mb-3 row">
+                                <label for="empEmail" class="col-sm-3 col-form-label">Email</label>
                                 <div class="col-sm-9">
-                                    <input type="email" class="form-control" id="empEmail" 
-                                           name="empEmail" th:value="${empInfo.empEmail}" required>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="empEmail" 
+                                               name="empEmail" th:value="${empInfo.empEmail}" required>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        請輸入有效的Email地址
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group row mt-4">
+                            <!-- 按鈕群組 -->
+                            <div class="row mt-4">
                                 <div class="col-sm-9 offset-sm-3">
-                                    <button type="submit" class="btn btn-primary">儲存變更</button>
-                                    <a th:href="@{/emp/profile}" class="btn btn-secondary ml-2">取消</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i>儲存變更
+                                    </button>
+                                    <a th:href="@{/emp/profile}" class="btn btn-secondary ms-2">
+                                        <i class="bi bi-x-circle me-1"></i>取消
+                                    </a>
                                 </div>
                             </div>
                         </form>
@@ -70,7 +100,29 @@
         </div>
     </div>
 
-    <div th:replace="layout :: footer"></div>
-    <div th:replace="layout :: scripts"></div>
+    <!-- 頁面特定的 JavaScript -->
+    <th:block layout:fragment="script">
+        <script>
+            // 表單驗證
+            (function() {
+                'use strict'
+                
+                // 取得所有需要驗證的表單
+                var forms = document.querySelectorAll('.needs-validation')
+
+                // 對每個表單進行驗證
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        </script>
+    </th:block>
 </body>
 </html>

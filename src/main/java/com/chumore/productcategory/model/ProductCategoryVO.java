@@ -14,16 +14,13 @@ import javax.persistence.Table;
 
 import com.chumore.product.model.ProductVO;
 
-import lombok.Data;
-
-@Data
 @Entity
 @Table(name = "product_category")
 public class ProductCategoryVO {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "product_category_id", updatable = false)
+	@Column(name = "product_category_id")
 	private Integer productCategoryId;
 
 //	@ManyToOne
@@ -36,12 +33,9 @@ public class ProductCategoryVO {
 	@Column(name = "category_name")
 	private String categoryName;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "product_category_id", referencedColumnName = "product_category_id")
 	private List<ProductVO> productList;
-	
-	@Column(name = "enable_status", columnDefinition = "TINYINT")
-	private Integer enableStatus ;
 
 	public Integer getProductCategoryId() {
 		return productCategoryId;

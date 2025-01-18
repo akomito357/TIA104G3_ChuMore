@@ -1,50 +1,31 @@
 package com.chumore.review.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.member.model.MemberService;
-import com.chumore.ordermaster.model.OrderMasterService;
-import com.chumore.ordermaster.model.OrderMasterVO;
-import com.chumore.product.model.ProductVO;
-import com.chumore.product.model.Product_Service;
-import com.chumore.rest.model.RestService;
-import com.chumore.rest.model.RestVO;
 import com.chumore.review.model.ReviewService;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.reviewimg.model.ReviewImageService;
 import com.chumore.reviewimg.model.ReviewImageVO;
-import com.chumore.util.ResponseUtil;
 
-@Controller
-@RequestMapping("/member/reviews")
+@RestController
+@RequestMapping("/reviews")
 public class ReviewController {
 
     @Autowired
@@ -55,22 +36,12 @@ public class ReviewController {
     
     @Autowired
     private MemberService memberService;
-    
-    @Autowired
-    private OrderMasterService orderSvc;
-    
-    @Autowired
-    private Product_Service productSvc;
-    
-    @Autowired
-    private RestService restSvc;
 
     /**
      * 獲取訂單資訊用於評論頁面初始化
      * 對應前端：用餐資訊區域的自動填充
      */
     @GetMapping("/order/{orderId}")
-    @ResponseBody
     public ResponseEntity<?> getOrderForReview(@PathVariable Integer orderId) {
         try {
             Map<String, Object> orderInfo = new HashMap<>();
@@ -91,7 +62,6 @@ public class ReviewController {
      * 處理：星級評分、文字評論、推薦料理、平均消費
      */
     @PostMapping("/create")
-    @ResponseBody
     public ResponseEntity<?> createReview(
             @RequestHeader("Member-Id") Integer memberId,
             @Valid @RequestBody ReviewVO review,
@@ -118,7 +88,6 @@ public class ReviewController {
      * 對應前端：進入評論頁面時的檢查
      */
     @GetMapping("/check/{orderId}")
-    @ResponseBody
     public ResponseEntity<?> checkReviewExists(@PathVariable Integer orderId) {
         try {
             boolean exists = reviewService.existsByOrderId(orderId);
@@ -133,7 +102,6 @@ public class ReviewController {
      * 對應前端：推薦料理下拉選單
      */
     @GetMapping("/restaurant/{restId}/dishes")
-    @ResponseBody
     public ResponseEntity<?> getRestaurantDishes(@PathVariable Integer restId) {
         try {
             // 需要與Restaurant服務整合，獲取菜品列表
@@ -148,7 +116,6 @@ public class ReviewController {
      * 對應前端：照片上傳區的即時上傳
      */
     @PostMapping("/{reviewId}/upload-image")
-    @ResponseBody
     public ResponseEntity<?> uploadImage(
             @PathVariable Integer reviewId,
             @RequestParam("file") MultipartFile file,
@@ -176,213 +143,15 @@ public class ReviewController {
      * 刪除評論圖片
      * 對應前端：照片預覽區的刪除功能
      */
-    @DeleteMapping("/images/delete/{reivewImgId}")
-    @ResponseBody
-    public ResponseEntity<?> deleteImage(@PathVariable Integer reivewImgId) {
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<?> deleteImage(
+            @PathVariable Integer imageId,
+            @RequestHeader("Member-Id") Integer memberId) {
         try {
-            reviewImageService.deleteImage(reivewImgId);
-            return ResponseEntity.ok("圖片已成功刪除, id = " + reivewImgId);
+            reviewImageService.deleteImage(imageId, memberId);
+            return ResponseEntity.ok("圖片已成功刪除");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
-    // 準備新增評論 - thymeleaf
-    @PostMapping("addReview")
-    public String addReview(ModelMap model, HttpSession session, @RequestParam Integer orderId) {
-    	Integer memberId = (Integer)session.getAttribute("memberId");
-    	
-    	if ((Integer)session.getAttribute("memberId") == null) {    		
-    		memberId = 1002;
-    	} 
-    	
-    	OrderMasterVO orderMaster = orderSvc.getOneById(orderId);
-    	
-    	ReviewVO review = new ReviewVO();
-    	review.setRest(orderMaster.getRest());
-    	review.setMember(orderMaster.getMember());
-//    	review.setMember(memberService.getOneMember(memberId));
-    	review.setOrderMaster(orderMaster);
-    	
-    	session.setAttribute("reviewedRest", orderMaster.getRest());
-    	session.setAttribute("reviewedOrder", orderMaster);
-    	
-    	model.addAttribute("orderMaster", orderMaster);
-    	model.addAttribute("review", review);
-    	model.addAttribute("productListData", 
-    			productSvc.getAllProductByActiveStatus(orderMaster.getRest().getRestId()));
-//    	model.addAttribute("restId", review.getRest().getRestId());
-    	
-    	System.out.println("origin order = " + orderMaster);
-//    	System.out.println("req = " + (OrderMasterVO)req.getAttribute("orderMaster"));
-    	return "secure/member/review/member_review_adding_page";
-    }
-    
-    @PostMapping("insert")
-    public String insert(@Valid @ModelAttribute("review") ReviewVO review, BindingResult result, ModelMap model, 
-    		HttpSession session, HttpServletRequest req, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs) throws IOException {
-    	RestVO reviewedRest = (RestVO)session.getAttribute("reviewedRest");
-    	OrderMasterVO reviewedOrder = (OrderMasterVO)session.getAttribute("reviewedOrder");
-    	
-    	result = removeFieldError(review, result, "member");
-    	result = removeFieldError(review, result, "rest");
-    	result = removeFieldError(review, result, "orderMaster");
-
-    	if (session.getAttribute("memberId")  == null) {    		
-    		session.setAttribute("memberId", 1002);
-    	}
-    	
-    	if (result.hasErrors()) {
-    		System.out.println("Errors: " + result.getFieldErrors());
-    		model.addAttribute("orderMaster", reviewedOrder);
-        	model.addAttribute("review", review);
-        	model.addAttribute("productListData", 
-        			productSvc.getAllProductByActiveStatus(reviewedOrder.getRest().getRestId()));
-        	
-    		return "secure/member/review/member_review_adding_page";
-    	}
-    	
-    	review.setMember(memberService.getOneMember((Integer)session.getAttribute("memberId")).orElse(null));
-    	review.setRest(reviewedRest);
-    	review.setOrderMaster(reviewedOrder);
-
-//    	System.out.println("review = " + review);    	   		
-    	review = reviewService.createReviewWithImg(review, reviewImgs);
-    	
-    	return "redirect:/memberDiningHistory";
-    }
-    
-	@PostMapping("update") // getOneForUpdate
-	public String getOneForUpdate(@RequestParam String reviewId, ModelMap model, HttpSession session) {
-		ReviewVO review = reviewService.getReviewById(Integer.valueOf(reviewId), session);
-		List<ReviewImageVO> imgList = reviewImageService.getReviewImages(Integer.valueOf(reviewId));
-		model.addAttribute("review", review);
-		model.addAttribute("reviewImgs", imgList);
-		
-		List<ProductVO> availableProduct = 
-				productSvc.getAllProductByActiveStatus(review.getRest().getRestId());
-		ProductVO selectedProduct = review.getProduct();
-		Boolean isAvailable = false;
-		
-		if (availableProduct != null) {
-			for (ProductVO product: availableProduct) {
-				if (product.getProductId().equals(selectedProduct.getProductId())) {
-					isAvailable = true;
-					break;
-				}
-			}
-		}
-		
-		if (!isAvailable || availableProduct.isEmpty()) {
-			availableProduct.add(selectedProduct);
-		}
-		model.addAttribute("productListData", availableProduct);
-//		System.out.println("review = " + review);
-		
-		return "secure/member/review/member_review_update_page";
-	}
-	
-	@PostMapping("confirmUpdate")
-	public String update(@Valid @ModelAttribute("review") ReviewVO review, BindingResult result, 
-			ModelMap model, @RequestParam(value = "upfiles", required = false) MultipartFile[] reviewImgs, HttpSession session) throws IOException {
-		
-		result = removeFieldError(review, result, "member");
-    	result = removeFieldError(review, result, "rest");
-    	result = removeFieldError(review, result, "orderMaster");
-    	
-    	review.setOrderMaster(orderSvc.getOneById(review.getOrderMaster().getOrderId()));
-    	review.setMember(memberService.getOneMember(review.getMember().getMemberId()).orElse(null));
-    	review.setRest(restSvc.getOneById(review.getRest().getRestId()));
-    	
-//    	System.out.println(review);
-    	
-		if (result.hasErrors()) {
-    		System.out.println("Errors: " + result.getFieldErrors());
-    		List<ReviewImageVO> imgList = reviewImageService.getReviewImages(review.getReviewId());
-    		review.setReviewImages(imgList);
-        	List<ProductVO> availableProduct = 
-    				productSvc.getAllProductByActiveStatusAndSelected(review.getRest().getRestId(), review.getProduct());
-//    		model.addAttribute("orderMaster", reviewedOrder);
-        	model.addAttribute("review", review);
-        	model.addAttribute("reviewImgs", imgList);
-    		model.addAttribute("productListData", availableProduct);
-        	
-    		return "secure/member/review/member_review_update_page";
-    	}
-		
-		reviewService.updateReviewWithImgs(review, session, reviewImgs);
-		
-		return "redirect:/memberDiningHistory";
-	}
-    
-    // 顯示單筆評論 - thymeleaf
-    @PostMapping("getReview")
-    public String getOneReview(@RequestParam String orderId, ModelMap model, HttpSession session) {
-    	ReviewVO review = reviewService.getReviewByOrderId(Integer.valueOf(orderId));
-    	OrderMasterVO orderMaster = orderSvc.getOneById(Integer.valueOf(orderId));
-    	model.addAttribute("review", review);
-    	model.addAttribute("orderMaster", orderMaster);
-//    	System.out.println(session.getAttribute("order"));
-    	return "secure/member/review/member_review_show_page";
-    }
-    
-	@GetMapping("/images/{reviewId}")
-	@ResponseBody
-	public ResponseEntity<List<Integer>> getRevImgIds(@PathVariable Integer reviewId){
-		List<Integer> imageIds = reviewImageService.findImgIdByReview(reviewId);
-		return ResponseEntity.ok(imageIds);
-	}
-    
-	@GetMapping("/image/{reviewImgId}")
-	@ResponseBody
-	public ResponseEntity<byte[]> getOneRevImg(@PathVariable Integer reviewImgId) {
-		ReviewImageVO reviewImage = reviewImageService.getOneRevImg(reviewImgId);
-//		System.out.println(reviewImage.getReviewImage());
-		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(reviewImage.getReviewImage());
-	}
-	
-	@PostMapping("getMemberReviews")
-	@ResponseBody
-	public ResponseEntity<ResponseUtil> getMemberReview(HttpSession session){
-		Integer memberId = (Integer)session.getAttribute("memberId");
-		if (memberId == null) {
-			memberId = 1002;
-		}
-		
-		List<ReviewVO> list = reviewService.getMemberReviews(memberId);
-		ResponseUtil res = new ResponseUtil("success", 200, list);
-		
-		return ResponseEntity.ok(res);
-	}
-	
-	@PostMapping("deleteReview")
-	@ResponseBody
-	public ResponseEntity<ResponseUtil> deleteReview(@RequestBody Map <String, String> map, HttpSession session){
-		Integer memberId = (Integer)session.getAttribute("memberId");
-		if (memberId == null) {
-			memberId = 1001;
-		}
-		reviewService.deleteReview(Integer.valueOf(map.get("reviewId")), memberId);
-		ResponseUtil res = new ResponseUtil("success", 200, null);
-		
-		return ResponseEntity.ok(res);
-	}
-	
-
-	
-	public BindingResult removeFieldError(ReviewVO review, BindingResult result, String removedFieldname) {
-		List<FieldError> errorsListToKeep = result.getFieldErrors().stream()
-				.filter(fieldname -> !fieldname.getField().equals(removedFieldname))
-				.collect(Collectors.toList());
-		
-		result = new BeanPropertyBindingResult(review, "review");
-//		result.getFieldErrors().clear();
-		for (FieldError fieldError : errorsListToKeep) {
-			result.addError(fieldError);
-		}
-		return result;
-	}
-	
-	
-    
 }

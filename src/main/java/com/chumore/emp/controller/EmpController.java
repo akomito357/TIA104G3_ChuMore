@@ -4,6 +4,9 @@ import com.chumore.emp.dto.EmpBasicUpdateDTO;
 import com.chumore.emp.dto.EmpBasicViewDTO;
 import com.chumore.emp.dto.EmpFullDTO;
 import com.chumore.emp.model.EmpVO;
+import com.chumore.member.model.MemberRepository;
+import com.chumore.rest.model.RestRepository;
+import com.chumore.emp.model.EmpRepository;
 import com.chumore.emp.model.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,7 +26,14 @@ public class EmpController {
 	@Autowired
 	private EmpService empService;
 
+	@Autowired
+	private MemberRepository memberRepository;
 
+	@Autowired
+	private RestRepository restRepository;
+
+	@Autowired
+	private EmpRepository empRepository;
 	// ========== 一般員工功能 ==========
 	// 查看個人資料
 	@GetMapping("/profile")
@@ -68,7 +78,21 @@ public class EmpController {
 	        return "redirect:/emp/edit";
 	    }
 	}
-
+	
+	@GetMapping("/dashboard")
+	public String showDashboard(Model model) {
+	    // 取得各項數量
+	    long totalMembers = memberRepository.count();
+	    long totalRests = restRepository.count(); 
+	    long totalEmps = empRepository.count();
+	    
+	    // 添加到model
+	    model.addAttribute("totalMembers", totalMembers);
+	    model.addAttribute("totalRests", totalRests); 
+	    model.addAttribute("totalEmps", totalEmps);
+	    
+	    return "emp/dashboard";
+	}
 	// ========== 管理員功能 ==========
 	// 顯示所有員工列表
 	@GetMapping("/admin/list")

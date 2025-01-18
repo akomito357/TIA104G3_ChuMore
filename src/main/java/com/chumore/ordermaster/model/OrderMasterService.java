@@ -1,6 +1,5 @@
 package com.chumore.ordermaster.model;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +25,5 @@ public interface OrderMasterService {
 	Page<OrderMasterVO> findByMemberId(Integer memberId,  Pageable pageable);
 	
 	void submitOrder(OrderItemForOrderDto item, HttpSession session);
-	BigDecimal calcDiscount(Integer usePoint);
-	BigDecimal calcTotalPrice(Integer orderId, BigDecimal discounts);
 
 }

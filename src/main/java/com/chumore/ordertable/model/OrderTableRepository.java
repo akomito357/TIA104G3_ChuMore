@@ -31,5 +31,5 @@ public interface OrderTableRepository extends JpaRepository<OrderTableVO, Intege
 	@Query(value = "SELECT ot FROM OrderTableVO ot where ot.rest.restId = ?1 and ot.tableNumber = ?2")
     OrderTableVO findByRestIdAndNumber(Integer restId, String tableNumber);
 	
-
+	
 }

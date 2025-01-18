@@ -1,19 +1,18 @@
 package com.chumore.blob.reader;
 
-import java.io.IOException;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.sql.DataSource;
 
 import com.chumore.envimg.model.EnvImgService;
-import com.chumore.reviewimg.model.ReviewImageService;
 
 @Controller
 @RequestMapping("/DBGifReader")
@@ -21,9 +20,6 @@ public class DBGifReaderController {
 	
 	@Autowired
 	EnvImgService envImgSvc;
-	
-	@Autowired
-	ReviewImageService reviewImgSvc;
 	
 	/*
 	 * This method will serve as listOneEmp.html , listAllEmp.html handler.
@@ -43,16 +39,4 @@ public class DBGifReaderController {
 		}
 	}
 	//
-	
-	@GetMapping("review")
-	public void dBImageReaderForReviewImg(@RequestParam("reviewImgId") String reviewImgId, 
-			HttpServletRequest req, HttpServletResponse res) throws IOException {
-	
-		res.setContentType("image/jpeg");
-		ServletOutputStream out = res.getOutputStream();
-		
-		out.write(reviewImgSvc.getOneRevImg(Integer.valueOf(reviewImgId)).getReviewImage());
-		
-	}
-	
 }
