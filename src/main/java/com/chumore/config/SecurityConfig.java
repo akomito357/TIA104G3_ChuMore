@@ -121,13 +121,21 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 添加一個額外的配置來處理其他請求
+    // 修改默認的安全配置，允許訪問首頁和其他公開頁面
     @Bean
     @Order(3)
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
+            // 允許訪問靜態資源
             .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
+            // 允許訪問首頁和其他公開頁面
+            .antMatchers("/", "/index", "/about", "/contact", "/products/**", "/restaurants/**").permitAll()
+            // 允許訪問註冊相關頁面
+            .antMatchers("/register/**").permitAll()
+            // API 端點也需要允許訪問
+            .antMatchers("/api/**").permitAll()
+            // 其他路徑需要認證
             .anyRequest().authenticated()
             .and()
             .csrf().disable();
