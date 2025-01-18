@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>系統主控台</title>
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon-container {
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .card-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <h2 class="mb-4">系統主控台</h2>
+            
+            <div class="row">
+                <!-- 餐廳數量卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="card-title">餐廳總數</div>
+                                    <div class="card-number" th:text="${totalRests}">0</div>
+                                </div>
+                                <div class="icon-container">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 會員數量卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="card-title">會員總數</div>
+                                    <div class="card-number" th:text="${totalMembers}">0</div>
+                                </div>
+                                <div class="icon-container">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 員工數量卡片 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card bg-info text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="card-title">員工總數</div>
+                                    <div class="card-number" th:text="${totalEmps}">0</div>
+                                </div>
+                                <div class="icon-container">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -75,7 +75,7 @@ public class RestVO implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "cuisine_type_id", referencedColumnName = "cuisine_type_id")
-//	@NotEmpty(message = "請輸入餐廳料理類型")
+	@NotEmpty(message = "請輸入餐廳料理類型")
 	@JsonBackReference("cuisineType-rest")
 	private CuisineTypeVO cuisineType;
 	
@@ -84,7 +84,7 @@ public class RestVO implements Serializable{
 	
 	@Column(name = "merchant_name")
 	@NotEmpty(message = "請輸入負責人姓名")
-	@Pattern(regexp = "^[\\u4e00-\\u9fa5_a-zA-Z0-9]+$", message = "負責人姓名只能是中、英文字母、數字和_")
+	@Pattern(regexp = "^(\u4e00-\u9fa5)(A-Za-z0-9_)$", message = "負責人姓名只能是中、英文字母、數字和_")
 	private String merchantName;
 	
 	@Column(name = "merchant_id_number", columnDefinition = "char(10)", unique = true)
@@ -240,7 +240,7 @@ public class RestVO implements Serializable{
 	}
 	
 	public void setCuisineType(CuisineTypeVO cuisineType) {
-	    this.cuisineType = cuisineType;
+		this.cuisineType = cuisineType;
 	}
 	
 //	public Integer getCuisineTypeId() {

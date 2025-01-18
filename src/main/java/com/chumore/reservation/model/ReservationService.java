@@ -7,8 +7,6 @@ import java.util.Map;
 public interface ReservationService {
 
     // 查詢相關功能
-    ReservationVO findReservationById(int reservationId);
-
     List<ReservationVO> findReservationsByCompositeQuery(Map<String, String> params);
 
     List<ReservationVO> findCurrentDateReservation(int restId);
@@ -23,14 +21,10 @@ public interface ReservationService {
 
     List<ReservationVO> findReservationsByMemberIdAndReservationStatus(int memberId, String reservationStatus);
 
-
     // 更新與操作功能
     ReservationVO cancelReservation(int reservationId);
 
     ReservationVO processCheckIn(int reservationId);
 
-    ReservationVO restoreReservation(int reservationId);
-
     ReservationVO addReservation(ReservationVO reservation);
-
 }

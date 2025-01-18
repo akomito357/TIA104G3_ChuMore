@@ -11,12 +11,10 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.review.model.ReviewRepository;
 import com.chumore.review.model.ReviewVO;
 
@@ -56,19 +54,19 @@ public class ReviewImageService {
     }
 
     @Transactional
-    public void deleteImage(Integer reviewImageId) {
-        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(reviewImageId);
+    public void deleteImage(Integer imageId, Integer memberId) {
+        Optional<ReviewImageVO> imageOpt = reviewImageRepository.findById(imageId);
         
         if (imageOpt.isEmpty()) {
             throw new RuntimeException("圖片不存在");
         }
 
-//        ReviewImageVO image = imageOpt.get();
-//        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
-//            throw new RuntimeException("無權限刪除此圖片");
-//        }
+        ReviewImageVO image = imageOpt.get();
+        if (!image.getReview().getMember().getMemberId().equals(memberId)) {
+            throw new RuntimeException("無權限刪除此圖片");
+        }
 
-        reviewImageRepository.deleteByReviewImgId(reviewImageId);
+        reviewImageRepository.deleteById(imageId);
     }
 
     public List<ReviewImageVO> getReviewImages(Integer reviewId) {
@@ -119,28 +117,4 @@ public class ReviewImageService {
             image.getReview().getMember().getMemberId().equals(memberId)
         ).orElse(false);
     }
-    
-    public ReviewImageVO getOneRevImg(Integer imageId) {
-    	Optional<ReviewImageVO> optional = reviewImageRepository.findById(imageId);
-    	ReviewImageVO image = optional.orElse(null);
-    	
-    	if (image == null || image.getReviewImage() == null) {
-    		throw new ResourceNotFoundException("ImageId: " + imageId + " is not found");
-    	}			
-    	return image;
-    }
-    
-    public List<Integer> findImgIdByReview(@Param("reviewId") Integer reviewId){
-    	return reviewImageRepository.findImgIdByReview(reviewId);
-    }
-    
-    public void addImg(ReviewImageVO reviewImg) {
-    	if (reviewImg.getUploadDatetime() == null) {
-    		reviewImg.setUploadDatetime(new Timestamp(System.currentTimeMillis()));
-    	}
-    	reviewImageRepository.save(reviewImg);
-    }
-    
-    
-    
 }

@@ -1,7 +1,6 @@
 package com.chumore.tabletype.model;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,5 @@ public class TableTypeService {
 	public List<TableTypeVO>getAllTableTypeById(Integer restId){
 		return repository.findByRestId(restId);
 	}
-	
-	public Optional<TableTypeVO> getTableTypeById(Integer tableTypeId) {
-        return repository.findById(tableTypeId);
-    }
+
 }
