@@ -19,8 +19,8 @@ body {
 
 main.main{
     /* display: flex; */
-    width: calc(100% - var(--sidebar_width));
-    margin-left: var(--sidebar_width);
+    /* width: calc(100% - var(--sidebar_width)); */
+    /* margin-left: var(--sidebar_width); */
     min-height: calc(100vh - var(--header_height));
     /* margin-top: calc(var(--header_height)); */
 }

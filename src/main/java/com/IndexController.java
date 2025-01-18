@@ -24,7 +24,7 @@ public class IndexController {
 	
 	@GetMapping("/header") // test
 	public String headertest() {
-		return "header_member";
+		return "header_merchant_test";
 	}
 	
 	@GetMapping("/check") // test

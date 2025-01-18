@@ -10,16 +10,16 @@
         <link th:href="@{img/favicon.ico}" rel="icon">
 
         <!-- Google Web Fonts -->
-        <link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
-        <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin>
-        <link th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}" rel="stylesheet">
+        <!-- <link rel="preconnect" th:href="@{https://fonts.googleapis.com}"> -->
+        <!-- <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin> -->
+        <!-- <link th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}" rel="stylesheet"> -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
 
         <!-- Icon Font Stylesheet -->
-        <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}" rel="stylesheet">
-        <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet">
+        <!-- <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}" rel="stylesheet"> -->
+        <!-- <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet"> -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -48,15 +48,16 @@
         <!-- Bootstrap CSS include有 -->
         <link th:href="@{/css/bootstrapcss/bootstrap.min.css}" rel="stylesheet">
         <!-- Bootstrap Icons -->
-        <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}" rel="stylesheet">
+        <!-- <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}" rel="stylesheet"> -->
 
         <link rel="stylesheet" href="/static/css/common.css"/>
+        <link rel="stylesheet" href="/static/header/common.css"/>
         <!-- <link rel="stylesheet" th:href="@{/css/error.css}"/> -->
 
         <!-- Bootstrap CSS include有 -->
         <link href="/static/css/bootstrapcss/bootstrap.min.css" rel="stylesheet">
         <!-- Bootstrap Icons -->
-        <link th:href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
        
     </style>
@@ -71,8 +72,8 @@
                 <span class="fa fa-bars"></span>
             </button>
         
-            <div class="collapse navbar-collapse header-collapse" id="navbarCollapse">
-                <ul class="navbar-nav ms-auto py-0 pe-4">
+            <div class="collapse navbar-collapse header-collapse unlogin-btn-container" id="navbarCollapse">
+                <!-- <ul class="navbar-nav ms-auto py-0 pe-4">
                     <li>
                         <btn href="#" class="nav-item nav-link active header-item header-link">帳號資訊</btn>
                     </li>
@@ -80,8 +81,8 @@
                     <li><btn href="service.html" class="nav-item nav-link header-item header-link">餐廳預約紀錄</btn></li>
                     <li><btn href="menu.html" class="nav-item nav-link header-item header-link">收藏清單</btn></li>
                     <li><btn href="menu.html" class="nav-item nav-link header-item header-link">我的點數</btn></li>
-                </ul>
-                <btn onclick="" class="btn btn-danger py-2 px-4 ml-2">登出</btn>
+                </ul> -->
+                <btn onclick="" class="btn btn-primary py-2 px-4 ml-2 login_btn">登入 / 註冊</btn>
             </div>
         </nav>
     <!-- </div> -->

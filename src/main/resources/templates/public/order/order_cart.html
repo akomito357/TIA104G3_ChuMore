@@ -105,6 +105,9 @@
         .btn-group{
             background-color: white;
         }
+        .btn-for-warning{
+            display: none;
+        }
 
         .btn-outline-primary:active{
             background-color: var(--btn_hover) !important;
@@ -118,6 +121,7 @@
             color: var(--lighten_dark);
             background-color: white;
         }
+        
     </style>
 </head>
 <body>
@@ -215,7 +219,7 @@
                     確定要送出點餐嗎？
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn btn-for-warning" data-bs-toggle="modal" data-bs-dismiss="modal"></button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="confirmOrder" data-bs-dismiss="modal" onclick="submitOrder()">確認</button>
                 </div>
@@ -282,112 +286,7 @@
     <script th:src="@{/js/orderCart.js}"></script>
     <script src="/static/js/orderCart.js"></script>
     <script>
-    //     // Sample cart data
-    //     let cartItems = [
-    //         { id: 1, name: '沙拉', price: 200, quantity: 1 },
-    //         { id: 2, name: '義大利麵', price: 200, quantity: 1 },
-    //         { id: 3, name: '濃湯', price: 200, quantity: 1 }
-    //     ];
-
-    //     // Initialize
-    //     $(document).ready(function() {
-    //         renderCart();
-    //         updateTotal();
-    //     });
-
-    //     // Render cart items
-    //     function renderCart() {
-    //         const cartContainer = $('.cart-items');
-    //         cartContainer.empty();
-            
-    //         cartItems.forEach(item => {
-    //             cartContainer.append(`
-    //                 <div class="cart-item" data-id="${item.id}">
-    //                     <div class="row">
-    //                         <div class="col">
-    //                             <div class="item-name h5 mb-0">${item.name}</div>
-                                
-    //                             <div class="btn-group mt-3 col-4">
-    //                                 <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
-    //                                 <span class="btn btn-outline-primary btn-sm disabled orderCount">${item.quantity}</span>
-    //                                 <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
-    //                             </div>
-
-    //                         </div>
-    //                         <div class="col-auto">
-    //                             <div class="right-content">
-    //                                 <div class="item-price">$${item.price}</div>
-    //                                 <button class="delete-btn" onclick="showDeleteConfirm(${item.id})">
-    //                                     <i class="fas fa-trash"></i>
-    //                                     刪除
-    //                                 </button>
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             `);
-    //         });
-    //     }
-
-    //     // Update quantity
-    //     function updateQuantity(itemId, change) {
-    //         const item = cartItems.find(item => item.id === itemId);
-    //         if (item) {
-    //             const newQuantity = item.quantity + change;
-    //             if (newQuantity >= 1) {
-    //                 item.quantity = newQuantity;
-    //                 renderCart();
-    //                 updateTotal();
-    //             }
-    //         }
-    //     }
-
-    //     // Show delete confirmation
-    //     function showDeleteConfirm(itemId) {
-    //         const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    //         $('#confirmDelete').off('click').on('click', function() {
-    //             deleteItem(itemId);
-    //             modal.hide();
-    //         });
-    //         modal.show();
-    //     }
-
-    //     // Delete item
-    //     function deleteItem(itemId) {
-    //         cartItems = cartItems.filter(item => item.id !== itemId);
-    //         renderCart();
-    //         updateTotal();
-    //     }
-
-    //     // Update total amount
-    //     function updateTotal() {
-    //         const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    //         $('#total-amount').fadeOut(150, function() {
-    //             $(this).text('$' + total).fadeIn(150);
-    //         });
-    //     }
-
-    //     // Continue shopping
-    //     function continueShopping() {
-    //         history.back();
-    //     }
-
-    //     // Submit order
-    //     function submitOrder() {
-    //         if (cartItems.length === 0) {
-    //             alert('購物車為空，請先添加餐點');
-    //             return;
-    //         }
-            
-    //         // Here you would typically send the order to your backend
-    //         alert('訂單已送出！');
-    //         cartItems = [];
-    //         renderCart();
-    //         updateTotal();
-    //         setTimeout(() => {
-    //             history.back();
-    //         }, 1000);
-    //     }
-    // </script>
+    
+    </script>
 </body>
 </html>
