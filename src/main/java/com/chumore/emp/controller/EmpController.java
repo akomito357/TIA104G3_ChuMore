@@ -105,8 +105,10 @@ public class EmpController {
 	// 前往新增員工頁面
 	@GetMapping("/admin/add")
 	public String showAddForm(Model model) {
-		model.addAttribute("empDTO", new EmpFullDTO());
-		return "emp/admin/add";
+	    if (!model.containsAttribute("empDTO")) {
+	        model.addAttribute("empDTO", new EmpFullDTO());
+	    }
+	    return "emp/admin/add";  // 不需要前導斜線
 	}
 	// 修改密碼
 	@PostMapping("/admin/reset-password/{id}")
@@ -120,22 +122,27 @@ public class EmpController {
 	    return "redirect:/emp/admin/list";
 	}
 	// 新增員工
+	
 	@PostMapping("/admin/add")
-	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, BindingResult result,
-			RedirectAttributes redirectAttr) {
-		if (result.hasErrors()) {
-			return "emp/admin/add";
-		}
+	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, 
+	                    BindingResult result,
+	                    RedirectAttributes redirectAttr) {
+	    if (result.hasErrors()) {
+	        return "/emp/admin/add";
+	    }
 
-		try {
-			empService.addEmp(dto);
-			redirectAttr.addFlashAttribute("message", "員工新增成功！");
-			return "redirect:/emp/admin/list";
-		} catch (IllegalArgumentException e) {
-			redirectAttr.addFlashAttribute("error", e.getMessage());
-			return "redirect:/emp/admin/add";
-		}
+	    try {
+	        empService.addEmp(dto);
+	        redirectAttr.addFlashAttribute("message", 
+	            "員工新增成功！預設密碼為：A1234567，請通知員工盡快修改密碼。");
+	        return "redirect:/emp/admin/list";
+	    } catch (IllegalArgumentException e) {
+	        redirectAttr.addFlashAttribute("error", e.getMessage());
+	        return "redirect:/emp/admin/add";
+	    }
 	}
+	
+	
 
 	// 前往編輯員工頁面
 	@GetMapping("/admin/edit/{id}")
