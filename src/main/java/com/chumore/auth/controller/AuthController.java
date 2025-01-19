@@ -91,7 +91,7 @@ public class AuthController {
         if ("ROLE_MEMBER".equals(role)) {
             return "redirect:/secure/member/member_information";
         } else if ("ROLE_RESTAURANT".equals(role)) {
-            return "redirect:/secure/restaurant/restaurant_information";
+            return "redirect:/secure/rest/rest_information";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
             return "redirect:/auth/login?error";

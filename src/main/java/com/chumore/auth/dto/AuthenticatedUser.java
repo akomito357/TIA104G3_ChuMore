@@ -4,20 +4,27 @@ package com.chumore.auth.dto;
  * 認證用戶資訊的資料傳輸物件
  */
 public class AuthenticatedUser {
+	
+	public static final String TYPE_MEMBER = "MEMBER";
+    public static final String TYPE_RESTAURANT = "RESTAURANT";
+    
     private Integer userId;
+    private Integer memberId;      // 會員 ID
+    private Integer restId;  // 餐廳 ID
     private String email;
     private String userType;    // "MEMBER" 或 "RESTAURANT"
     private String name;
     private Integer approvalStatus;
     private Integer businessStatus;
 
-    // 建構函數
-    public AuthenticatedUser() {
-    }
+    // 建構函
 
-    public AuthenticatedUser(Integer userId, String email, String userType, String name, 
+    public AuthenticatedUser(Integer userId, Integer memberId, Integer restId, 
+            String email, String userType, String name,
             Integer approvalStatus, Integer businessStatus) {
         this.userId = userId;
+        this.memberId = memberId;
+        this.restId = restId;
         this.email = email;
         this.userType = userType;
         this.name = name;
@@ -29,6 +36,14 @@ public class AuthenticatedUser {
     public Integer getUserId() {
         return userId;
     }
+    
+    public Integer getMemberId() {
+		return memberId;
+	}
+    
+    public Integer getRestId() {
+		return restId;
+	}
 
     public String getEmail() {
         return email;
@@ -54,6 +69,14 @@ public class AuthenticatedUser {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+    
+    public void setMemberId(Integer memberId) {
+		this.memberId = memberId;
+	}
+    
+    public void setRestId(Integer restId) {
+		this.restId = restId;
+	}
 
     public void setEmail(String email) {
         this.email = email;
@@ -78,6 +101,8 @@ public class AuthenticatedUser {
     // Builder 模式實作
     public static class Builder {
         private Integer userId;
+        private Integer memberId;
+        private Integer restId;
         private String email;
         private String userType;
         private String name;
@@ -86,6 +111,16 @@ public class AuthenticatedUser {
 
         public Builder userId(Integer userId) {
             this.userId = userId;
+            return this;
+        }
+        
+        public Builder memberId(Integer memberId) {
+            this.memberId = memberId;
+            return this;
+        }
+
+        public Builder restId(Integer restId) {
+            this.restId = restId;
             return this;
         }
 
@@ -115,9 +150,10 @@ public class AuthenticatedUser {
         }
 
         public AuthenticatedUser build() {
-            return new AuthenticatedUser(userId, email, userType, name, 
+            return new AuthenticatedUser(userId, memberId, restId, 
+                    email, userType, name,
                     approvalStatus, businessStatus);
-        }
+}
     }
 
     public static Builder builder() {
@@ -128,6 +164,8 @@ public class AuthenticatedUser {
     public String toString() {
         return "AuthenticatedUser{" +
                 "userId=" + userId +
+                ", memberId=" + memberId +
+                ", restId=" + restId +
                 ", email='" + email + '\'' +
                 ", userType='" + userType + '\'' +
                 ", name='" + name + '\'' +
@@ -135,4 +173,6 @@ public class AuthenticatedUser {
                 ", businessStatus=" + businessStatus +
                 '}';
     }
+    
+    
 }
