@@ -19,16 +19,7 @@ public interface RestRepository extends JpaRepository<RestVO, Integer> {
 
     boolean existsByPhoneNumber(String phoneNumber);
 
-    @Query("SELECT r.restId FROM RestVO r " +
-            "WHERE (:city IS NULL OR r.restCity = :city) " +
-            "AND (:district IS NULL OR r.restDist = :district) " +
-            "AND (:cuisineTypeId IS NULL OR r.cuisineType.cuisineTypeId = :cuisineTypeId)")
-    List<Integer> findRestIdsByOptionalFields(
-            @Param("city") String city,
-            @Param("district") String district,
-            @Param("cuisineTypeId") Integer cuisineTypeId
-    );
-
+    List<RestVO> findByRestIdIn(List<Integer> restIds);
 
     @Query("SELECT r FROM RestVO r WHERE r.merchantEmail = :merchantEmail")
     Optional<RestVO> findByMerchantEmailWithLog(@Param("merchantEmail") String merchantEmail);

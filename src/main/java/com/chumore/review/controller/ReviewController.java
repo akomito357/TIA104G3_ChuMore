@@ -136,7 +136,6 @@ public class ReviewController {
     @ResponseBody
     public ResponseEntity<?> getRestaurantDishes(@PathVariable Integer restId) {
         try {
-            // 需要與Restaurant服務整合，獲取菜品列表
             return ResponseEntity.ok(new HashMap<>());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -382,6 +381,25 @@ public class ReviewController {
 			result.addError(fieldError);
 		}
 		return result;
+	}
+
+	@GetMapping("/reviewCounts/{restId}")
+	@ResponseBody
+	public ResponseEntity<?> getReviewCountsByRestId(@PathVariable Integer restId){
+		return ResponseEntity.ok(reviewService.getReviewCount(restId));
+	}
+
+	@GetMapping("/averageRating/{restId}")
+	@ResponseBody
+	public ResponseEntity<?> getAverageRatingByRestId(@PathVariable Integer restId){
+		return ResponseEntity.ok(reviewService.calculateAverageRating(restId));
+	}
+
+
+	@GetMapping("/averageCost/{restId}")
+	@ResponseBody
+	public ResponseEntity<?> getAverageCostByRestId(@PathVariable Integer restId){
+		return ResponseEntity.ok(reviewService.getAverageCostByRestId(restId));
 	}
 	
 	
