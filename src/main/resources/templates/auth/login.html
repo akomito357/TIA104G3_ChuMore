@@ -212,63 +212,162 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// 使用 DOMContentLoaded 確保整個頁面元素已經載入
 document.addEventListener('DOMContentLoaded', function() {
-
-	// ---- 移除 sessionStorage 檢查 ----
-    // const memberId = sessionStorage.getItem('member_id');
-    // const restId = sessionStorage.getItem('rest_id');
-    // const userType = sessionStorage.getItem('userType');
-    // if (userType) {
-    //     if (userType === 'MEMBER' && memberId) {
-    //         window.location.href = '/secure/member/member_information';
-    //     } else if (userType === 'RESTAURANT' && restId) {
-    //         window.location.href = '/secure/restaurant/restaurant_information';
-    //     } else {
-    //         window.location.href = '/auth/login';
-    //     }
-    // }
-    // if (!memberId && !restId) { sessionStorage.clear(); }
-
-    // 取得表單
     const form = document.querySelector('.needs-validation');
+    const passwordInput = document.querySelector('#password');
+    const confirmPasswordInput = document.querySelector('#confirmPassword');
+    const emailInput = document.querySelector('#username');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const togglePassword = document.querySelector('#togglePassword');
     let isSubmitting = false;
 
-    // 送出表單時的驗證
-    form.addEventListener('submit', event => {
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function validatePassword(password) {
+        return password != null && password.length >= 8 && password.length <= 50;
+    }
+
+    function validatePasswordMatch(password, confirmPassword) {
+        return password === confirmPassword;
+    }
+
+    function showError(message) {
+        const alertContainer = document.querySelector('.alert-container');
+        if (!alertContainer) return;
+
+        const alertHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        alertContainer.insertAdjacentHTML('beforeend', alertHTML);
+
+        setTimeout(() => {
+            const newAlert = alertContainer.lastElementChild;
+            if (newAlert) {
+                newAlert.querySelector('.btn-close').click();
+            }
+        }, 5000);
+    }
+
+    function resetSubmitButton() {
+        isSubmitting = false;
+        submitButton.disabled = false;
+        submitButton.innerHTML = '註冊';
+    }
+
+    // 密碼輸入驗證
+    passwordInput.addEventListener('input', function() {
+        const isValid = validatePassword(this.value);
+        
+        if (!isValid) {
+            this.setCustomValidity('密碼長度必須在8到50個字元之間');
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else {
+            this.setCustomValidity('');
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+
+        // 如果確認密碼欄位已有輸入，同時驗證確認密碼
+        if (confirmPasswordInput && confirmPasswordInput.value) {
+            const isMatch = validatePasswordMatch(this.value, confirmPasswordInput.value);
+            if (!isMatch) {
+                confirmPasswordInput.setCustomValidity('密碼與確認密碼不符');
+                confirmPasswordInput.classList.add('is-invalid');
+                confirmPasswordInput.classList.remove('is-valid');
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+                confirmPasswordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.add('is-valid');
+            }
+        }
+    });
+
+    // 確認密碼驗證
+    if (confirmPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+            const isMatch = validatePasswordMatch(passwordInput.value, this.value);
+            
+            if (!isMatch) {
+                this.setCustomValidity('密碼與確認密碼不符');
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+    }
+
+    // 密碼顯示/隱藏切換
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            if (confirmPasswordInput) {
+                confirmPasswordInput.setAttribute('type', type);
+            }
+            const icon = this.querySelector('i');
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
+    }
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
         if (isSubmitting) {
-            // 防止重複提交
-            event.preventDefault();
             return;
         }
 
-        // 檢查表單必填欄位
         if (!form.checkValidity()) {
-            event.preventDefault();
             event.stopPropagation();
-        } else {
-            // 標記已提交, 禁用送出按鈕
-            isSubmitting = true;
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>登入中...';
+            form.classList.add('was-validated');
+            return;
         }
-        // 加上 .was-validated 以顯示錯誤樣式
-        form.classList.add('was-validated');
+
+        if (confirmPasswordInput && !validatePasswordMatch(passwordInput.value, confirmPasswordInput.value)) {
+            showError('密碼與確認密碼不符');
+            return;
+        }
+
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>處理中...';
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error('註冊失敗');
+            }
+
+            form.submit();
+        } catch (error) {
+            console.error('註冊錯誤:', error);
+            showError('發生錯誤，請稍後再試');
+            resetSubmitButton();
+        }
+
+        setTimeout(resetSubmitButton, 10000);
     });
 
-    // 密碼顯示/隱藏切換
-    const togglePassword = document.querySelector('#togglePassword');
-    const password = document.querySelector('#password');
-    togglePassword.addEventListener('click', function() {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        const icon = this.querySelector('i');
-        icon.classList.toggle('bi-eye');
-        icon.classList.toggle('bi-eye-slash');
-    });
-
-    // 自動隱藏 alert 訊息
+    // 自動隱藏提示訊息
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
