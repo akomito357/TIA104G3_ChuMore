@@ -1,203 +1,195 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商家餐廳資料</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商家餐廳資料</title>
+<!-- Bootstrap CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- 其他自訂的 head: included.html, header_merchant.html 等 -->
-    <head th:insert="~{/included.html}"></head>
-    <head th:insert="~{/header_merchant.html}"></head>
+<!-- 其他自訂的 head: included.html, header_merchant.html 等 -->
+<head th:insert="~{/included.html}"></head>
+<head th:insert="~{/header_merchant.html}"></head>
 </head>
 
 <body>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>商家餐廳資料</h2>
-        <div class="button-group">
-            <button type="button" class="btn btn-primary view-only" id="editButton">
-                <i class="bi bi-pencil-square me-2"></i>修改資料
-            </button>
-            <button type="button" class="btn btn-secondary edit-only" id="cancelButton">
-                <i class="bi bi-x-circle me-2"></i>取消
-            </button>
-            <button type="submit" form="restaurantForm" class="btn btn-primary edit-only" id="saveButton">
-                <i class="bi bi-check-circle me-2"></i>送出
-            </button>
-        </div>
-    </div>
+	<div class="container mt-5">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h2>商家餐廳資料</h2>
+			<div class="button-group">
+				<button type="button" class="btn btn-primary view-only"
+					id="editButton">
+					<i class="bi bi-pencil-square me-2"></i>修改資料
+				</button>
+				<button type="button" class="btn btn-secondary edit-only"
+					id="cancelButton">
+					<i class="bi bi-x-circle me-2"></i>取消
+				</button>
+				<button type="submit" form="restaurantForm"
+					class="btn btn-primary edit-only" id="saveButton">
+					<i class="bi bi-check-circle me-2"></i>送出
+				</button>
+			</div>
+		</div>
 
-    <form id="restaurantForm" class="needs-validation" novalidate>
-        <!-- ====== 負責人資料區塊 ====== -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <span>負責人資料</span>
-            </div>
-            <div class="card-body">
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <label class="form-label">負責人信箱</label>
-                        <input type="email" class="form-control read-only-field" id="memberEmail" name="merchantEmail" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">負責人姓名</label>
-                        <input type="text" class="form-control" id="memberName" name="merchantName" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">負責人電話</label>
-                        <input type="tel" class="form-control" id="memberPhone" name="phoneNumber" required>
-                    </div>
-                </div>
+		<form id="restaurantForm" class="needs-validation" novalidate>
+			<!-- ====== 負責人資料區塊 ====== -->
+			<div class="card mb-4">
+				<div class="card-header">
+					<span>負責人資料</span>
+				</div>
+				<div class="card-body">
+					<div class="row mb-4">
+						<div class="col-md-4">
+							<label class="form-label">負責人信箱</label> <input type="email"
+								class="form-control read-only-field" id="memberEmail"
+								name="merchantEmail" readonly>
+						</div>
+						<div class="col-md-4">
+							<label class="form-label">負責人姓名</label> <input type="text"
+								class="form-control" id="memberName" name="merchantName"
+								required>
+						</div>
+						<div class="col-md-4">
+							<label class="form-label">負責人電話</label> <input type="tel"
+								class="form-control" id="memberPhone" name="phoneNumber"
+								required>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                <!-- 密碼修改區塊 -->
-                <div class="edit-only">
-                    <hr class="mb-4">
-                    <div class="row">
-                        <div class="col-12">
-                            <h6 class="mb-3">密碼修改</h6>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">目前密碼</label>
-                            <input type="password" class="form-control" name="oldPassword" id="oldPassword">
-                            <div class="form-text">若不修改密碼則此欄位留空</div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">新密碼</label>
-                            <input type="password" class="form-control" name="newPassword" id="newPassword">
-                            <div id="passwordStrength" class="form-text"></div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">確認新密碼</label>
-                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
-                            <div id="passwordMatch" class="form-text"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+			<!-- ====== 餐廳資料區塊 ====== -->
+			<div class="card">
+				<div class="card-header">
+					<span>餐廳資料</span>
+				</div>
+				<div class="card-body">
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<label class="form-label">餐廳名稱</label> <input type="text"
+								class="form-control" id="restaurantName" name="restName"
+								required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">食品業者登錄字號</label> <input type="text"
+								class="form-control read-only-field" id="businessId"
+								name="restRegist" readonly>
+						</div>
+					</div>
 
-        <!-- ====== 餐廳資料區塊 ====== -->
-        <div class="card">
-            <div class="card-header">
-                <span>餐廳資料</span>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">餐廳名稱</label>
-                        <input type="text" class="form-control" id="restaurantName" name="restName" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">食品業者登錄字號</label>
-                        <input type="text" class="form-control read-only-field" id="businessId" name="restRegist" readonly>
-                    </div>
-                </div>
+					<div class="row mb-3">
+						<div class="col-md-4">
+							<label class="form-label">餐廳電話</label> <input type="tel"
+								class="form-control" id="restaurantPhone" name="restPhone"
+								required>
+						</div>
+						<div class="col-md-4">
+							<label class="form-label">料理類型</label>
+							<!-- 檢視模式 -->
+							<select class="form-select view-only read-only-field"
+								id="cuisineTypeDisplay" disabled></select>
+							<!-- 編輯模式 -->
+							<select class="form-select edit-only" name="cuisineType"
+								id="cuisineTypeEdit" required></select>
+						</div>
+					</div>
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label">餐廳電話</label>
-                        <input type="tel" class="form-control" id="restaurantPhone" name="restPhone" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">料理類型</label>
-                        <!-- 檢視模式 -->
-                        <select class="form-select view-only read-only-field" id="cuisineTypeDisplay" disabled></select>
-                        <!-- 編輯模式 -->
-                        <select class="form-select edit-only" name="cuisineType" id="cuisineTypeEdit" required></select>
-                    </div>
-                </div>
+					<div class="row mb-3">
+						<div class="col-md-12">
+							<label class="form-label">地址</label>
+							<div class="row">
+								<div class="col-md-4">
+									<select class="form-select view-only" id="cityDisplay" disabled></select>
+									<select class="form-select edit-only" name="restCity"
+										id="cityEdit" required></select>
+								</div>
+								<div class="col-md-4">
+									<select class="form-select view-only" id="districtDisplay"
+										disabled></select> <select class="form-select edit-only"
+										name="restDist" id="districtEdit" required></select>
+								</div>
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="restAddress"
+										id="address" required>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <label class="form-label">地址</label>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <select class="form-select view-only" id="cityDisplay" disabled></select>
-                                <select class="form-select edit-only" name="restCity" id="cityEdit" required></select>
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select view-only" id="districtDisplay" disabled></select>
-                                <select class="form-select edit-only" name="restDist" id="districtEdit" required></select>
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="restAddress" id="address" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+					<div class="mb-3">
+						<label class="form-label">餐廳簡介</label>
+						<textarea class="form-control" id="restaurantIntro"
+							name="restIntro" rows="4" required></textarea>
+					</div>
 
-                <div class="mb-3">
-                    <label class="form-label">餐廳簡介</label>
-                    <textarea class="form-control" id="restaurantIntro" name="restIntro" rows="4" required></textarea>
-                </div>
+					<!-- 環境圖片區塊 -->
+					<div class="mb-3">
+						<label class="form-label">餐廳環境圖片</label>
+						<div id="environmentImagesDisplay" class="d-flex flex-wrap">
+							<!-- 圖片將由 JavaScript 動態載入 -->
+						</div>
+						<input type="file" class="form-control mt-2 edit-only"
+							id="environmentImages" name="environmentImages" multiple
+							accept="image/*">
+						<button type="button" class="btn btn-primary mt-2 edit-only"
+							id="uploadEnvImagesButton">上傳環境圖片</button>
+						<div class="form-text">可以選擇多張圖片，建議尺寸 1200x800 像素</div>
+					</div>
 
-                <!-- 環境圖片區塊 -->
-                <div class="mb-3">
-                    <label class="form-label">餐廳環境圖片</label>
-                    <div id="environmentImagesDisplay" class="d-flex flex-wrap">
-                        <!-- 圖片將由 JavaScript 動態載入 -->
-                    </div>
-                    <input type="file" class="form-control mt-2 edit-only" id="environmentImages" name="environmentImages" multiple accept="image/*">
-                    <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadEnvImagesButton">上傳環境圖片</button>
-                    <div class="form-text">可以選擇多張圖片，建議尺寸 1200x800 像素</div>
-                </div>
+					<!-- 菜單圖片區塊 -->
+					<div class="mb-3">
+						<label class="form-label">菜單圖片</label>
+						<div id="menuImagesDisplay" class="d-flex flex-wrap">
+							<!-- 圖片將由 JavaScript 動態載入 -->
+						</div>
+						<input type="file" class="form-control mt-2 edit-only"
+							id="menuImages" name="menuImages" multiple accept="image/*">
+						<button type="button" class="btn btn-primary mt-2 edit-only"
+							id="uploadMenuImagesButton">上傳菜單圖片</button>
+						<div class="form-text">可以選擇多張圖片，建議尺寸 1200x1600 像素</div>
+					</div>
 
-                <!-- 菜單圖片區塊 -->
-                <div class="mb-3">
-                    <label class="form-label">菜單圖片</label>
-                    <div id="menuImagesDisplay" class="d-flex flex-wrap">
-                        <!-- 圖片將由 JavaScript 動態載入 -->
-                    </div>
-                    <input type="file" class="form-control mt-2 edit-only" id="menuImages" name="menuImages" multiple accept="image/*">
-                    <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadMenuImagesButton">上傳菜單圖片</button>
-                    <div class="form-text">可以選擇多張圖片，建議尺寸 1200x1600 像素</div>
-                </div>
+					<!-- 營業狀態和座位資訊 -->
+					<div class="row mb-3">
+						<div class="col-md-3">
+							<label class="form-label">營業狀態</label> <select
+								class="form-select view-only" id="businessStatusDisplay"
+								disabled>
+								<option value="open">營業中</option>
+								<option value="closed">停業</option>
+							</select> <select class="form-select edit-only" name="businessStatus"
+								id="businessStatusEdit">
+								<option value="open">營業中</option>
+								<option value="closed">停業</option>
+							</select>
+						</div>
+						<div id="tablesContainer" class="col-md-8">
+							<!-- 桌型資訊將由 JavaScript 動態載入 -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
 
-                <!-- 營業狀態和座位資訊 -->
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">營業狀態</label>
-                        <select class="form-select view-only" id="businessStatusDisplay" disabled>
-                            <option value="open">營業中</option>
-                            <option value="closed">停業</option>
-                        </select>
-                        <select class="form-select edit-only" name="businessStatus" id="businessStatusEdit">
-                            <option value="open">營業中</option>
-                            <option value="closed">停業</option>
-                        </select>
-                    </div>
-                    <div id="tablesContainer" class="col-md-8">
-                        <!-- 桌型資訊將由 JavaScript 動態載入 -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
-<!-- JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+	<!-- JS -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
 $(document).ready(function() {
 
-    // =========================
-    // 1) 移除 sessionStorage 檢查
-    //    不再依賴 rest_id / userType 存在前端
-    // =========================
 
-    // 初始化表單為只讀模式
     setReadOnlyMode(true);
-    // 載入所有資料 (後端根據 Session 判斷是哪個餐廳)
+
     loadRestaurantData();
 
-    // =============================
-    // 2) 監聽「修改 / 取消 / 送出」等按鈕
-    // =============================
 
     $('#editButton').click(async function() {
         setReadOnlyMode(false);
@@ -229,12 +221,7 @@ $(document).ready(function() {
             $(this).addClass('was-validated');
             return;
         }
-
-        // ================================
-        // 從後端取得該使用者目前的 restId
-        // (或你也可在 loadRestaurantData 時保存在全域變數)
-        // ================================
-
+        
         try {
             const currentInfo = await fetch('/rests/getOneRest', {
                 method: 'GET',
@@ -246,9 +233,9 @@ $(document).ready(function() {
                 throw new Error('無法取得使用者餐廳資訊');
             }
             const data = await currentInfo.json();
-            const restId = data.restId;  // 後端應回傳 restId
+            const restId = data.restId; 
 
-            // 接著收集表單欄位
+
             const cuisineTypeId = $('#cuisineTypeEdit').val();
             if (!cuisineTypeId) {
                 alert('請選擇料理類型');
@@ -271,25 +258,24 @@ $(document).ready(function() {
                 businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
             };
 
-            // 檢查密碼
-            const oldPassword = $('#oldPassword').val();
-            const newPassword = $('#newPassword').val();
-            const confirmPassword = $('#confirmPassword').val();
 
-            if (oldPassword || newPassword || confirmPassword) {
-                if (!oldPassword || !newPassword || !confirmPassword) {
-                    alert('如要修改密碼，請填寫所有密碼欄位');
-                    return;
-                }
-                if (newPassword !== confirmPassword) {
-                    alert('新密碼與確認密碼不符');
-                    return;
-                }
-                restData.oldPassword = oldPassword;
-                restData.newPassword = newPassword;
-            }
+			const oldPassword = $('#oldPassword').val();
+			const newPassword = $('#newPassword').val();
+			const confirmPassword = $('#confirmPassword').val();
+			
+			if (oldPassword || newPassword || confirmPassword) {
+			    if (!oldPassword || !newPassword || !confirmPassword) {
+			        alert('如要修改密碼，請填寫所有密碼欄位');
+			        return;
+			    }
+			    if (newPassword !== confirmPassword) {
+			        alert('新密碼與確認密碼不符');
+			        return;
+			    }
+			    restData.oldPassword = oldPassword;
+			    restData.merchantPassword = newPassword; 
+			}
 
-            // 呼叫後端 Update
             const restResponse = await fetch('/rests/updateRest', {
                 method: 'PUT',
                 credentials: 'include',
@@ -301,8 +287,8 @@ $(document).ready(function() {
                 throw new Error(errorData.message || '餐廳資料更新失敗');
             }
 
-            // 再來更新桌型
-            const tableTypesResponse = await fetch(`/tableType/getTableType/${restId}`, {
+
+            const tableTypesResponse = await fetch(`/rests/tableType/getTableType/${restId}`, {
                 credentials: 'include'
             });
             if (!tableTypesResponse.ok) {
@@ -310,13 +296,13 @@ $(document).ready(function() {
             }
             const currentTableTypes = await tableTypesResponse.json();
 
-            // 組裝前端輸入的桌型
+
             const tableData = [];
             $('[id^="table"]').each(function() {
                 const tType = parseInt(this.id.replace('table', ''));
                 const tCount = parseInt($(this).val());
                 if (!isNaN(tType) && !isNaN(tCount)) {
-                    // 尋找對應tableTypeId
+
                     const existing = currentTableTypes.find(t => t.tableType === tType);
                     if (existing) {
                         tableData.push({
@@ -331,7 +317,7 @@ $(document).ready(function() {
             });
 
             const updatePromises = tableData.map(tbl =>
-                fetch('/tableType/updateTableCount', {
+                fetch('rests/tableType/updateTableCount', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -344,20 +330,26 @@ $(document).ready(function() {
                 })
             );
             await Promise.all(updatePromises);
-
-            alert('餐廳資料和桌型更新成功');
+            const responseData = await restResponse.json();
+            
+            if (!responseData.success) {
+                alert(responseData.message || '更新失敗');
+                return;
+            }
+            $('#oldPassword').val('');
+            $('#newPassword').val('');
+            $('#confirmPassword').val('');
+            $('#passwordMatch').text(''); 
+            
+            alert('更新成功');
             setReadOnlyMode(true);
-            loadRestaurantData(); // 重新載入所有資料
+            loadRestaurantData(); 
         } catch (error) {
             console.error('Error updating restaurant and table types:', error);
             alert('更新失敗：' + (error.message || '發生未知錯誤'));
         }
     });
 
-    // =============================
-    // 3) 以下載入/顯示資料的方法同原始
-    //    不再使用 sessionStorage
-    // =============================
 
     function setReadOnlyMode(readonly) {
         const form = $('#restaurantForm');
@@ -430,7 +422,6 @@ $(document).ready(function() {
         })
         .catch(error => {
             console.error(error);
-            // 可以顯示錯誤提醒
         });
     }
 
@@ -523,7 +514,7 @@ $(document).ready(function() {
     }
 
     function loadEnvironmentImages() {
-        // 不從 sessionStorage 取 restId，改後端 session
+
         fetch(`/envImg/images/${restId}`, { credentials: 'include' })
         .then(resp => resp.json())
         .then(imageIds => {
@@ -588,8 +579,8 @@ $(document).ready(function() {
     }
 
     function loadTableTypes() {
-        // 使用全域的 restId
-        fetch(`/tableType/getTableType/${restId}`, { 
+
+        fetch(`/rests/tableType/getTableType/${restId}`, { 
             credentials: 'include' 
         })
         .then(resp => {
@@ -636,7 +627,7 @@ $(document).ready(function() {
         });
     }
 
-    // 同步刪除圖片
+
     $(document).on('click', '.delete-btn', function(e) {
         e.preventDefault();
         if (!confirm('確定要刪除這張圖片嗎？')) return;
@@ -679,7 +670,7 @@ $(document).ready(function() {
             formData.append('upFiles', files[i]);
         }
         formData.append('restId', `${restId}`);
-        fetch('/envImg/addEnvImg', { // 後端依 Session 知道 restId
+        fetch('/envImg/addEnvImg', {
             method: 'POST',
             credentials: 'include',
             body: formData

@@ -31,7 +31,7 @@ import com.chumore.tabletype.model.TableTypeVO;
 
 @CrossOrigin
 @Controller
-@RequestMapping("tableType")
+@RequestMapping("/rests/tableType")
 public class TabletypeController {
 
 	@Autowired

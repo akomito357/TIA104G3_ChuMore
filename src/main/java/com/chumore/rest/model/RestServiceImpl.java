@@ -11,6 +11,7 @@ import com.chumore.event.RestChangedEvent;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.chumore.approval.model.ApprovalVO;
@@ -52,17 +53,41 @@ public class RestServiceImpl implements RestService{
 	            RestVO existingRest = repository.findById(rest.getRestId())
 	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
 
-	            // 保存更新
 	            repository.saveAndFlush(rest);
-
-				// 發布更新索引事件
 				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
 
 	        } catch (Exception e) {
 	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
 	        }
 	    }
+	
+	
+	    @Autowired
+	    private PasswordEncoder passwordEncoder;
+	    
+	    @Override
+	    public boolean updatePassword(Integer restId, String oldPassword, String newPassword) {
+	        try {
+	            RestVO rest = getOneById(restId);
+	            if (rest == null) {
+	                return false;
+	            }
 
+	            if (!passwordEncoder.matches(oldPassword, rest.getMerchantPassword())) {
+	                return false;
+	            }
+
+	            rest.setMerchantPassword(passwordEncoder.encode(newPassword));
+	            updateRest(rest);
+	            
+	            return true;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	
+	
 	@Override
 	@Transactional(readOnly = true)
 	public RestVO getOneById(Integer restId) {
