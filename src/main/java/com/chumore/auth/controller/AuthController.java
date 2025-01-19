@@ -75,27 +75,33 @@ public class AuthController {
 
     
     @PostMapping("login")
-    public String processLogin(Authentication authentication, RedirectAttributes redirectAttributes) {
-        // 獲取當前已認證的用戶
+    public String processLogin(Authentication authentication, HttpSession session, 
+                             RedirectAttributes redirectAttributes) {
         if (authentication == null || !authentication.isAuthenticated()) {
             redirectAttributes.addFlashAttribute("errorMessage", "登入失敗，請重新嘗試");
             return "redirect:/auth/login?error";
         }
 
-        // 獲取用戶角色
+        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
 
         logger.info("用戶登入成功，角色: {}", role);
 
-        // 根據角色跳轉到對應的頁面
-        if ("ROLE_MEMBER".equals(role)) {
-            return "redirect:/secure/member/member_information";
-        } else if ("ROLE_RESTAURANT".equals(role)) {
+        // 在這裡統一處理 session 設置
+        if ("ROLE_RESTAURANT".equals(role)) {
+            session.setAttribute("restId", user.getRestId());
+            session.setAttribute("userType", AuthenticatedUser.TYPE_RESTAURANT);
+            session.setAttribute("loginTime", LocalDateTime.now());
             return "redirect:/secure/rest/rest_information";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
-            return "redirect:/auth/login?error";
+        } else if ("ROLE_MEMBER".equals(role)) {
+            session.setAttribute("memberId", user.getMemberId());
+            session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
+            session.setAttribute("loginTime", LocalDateTime.now());
+            return "redirect:/secure/member/member_information";
         }
+
+        redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
+        return "redirect:/auth/login?error";
     }
 
 
@@ -187,6 +193,18 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("errorMessage", "系統錯誤，請稍後再試");
             return REDIRECT_RESTAURANT_REGISTER;
         }
+    }
+    
+    @GetMapping("/logout-confirm")
+    public String showLogoutConfirmation(Authentication authentication) {
+        // 檢查用戶是否已經登入
+        if (authentication == null || !authentication.isAuthenticated()) {
+            logger.debug("未登入用戶嘗試訪問登出確認頁面");
+            return "redirect:/auth/login";
+        }
+        
+        logger.debug("用戶 {} 訪問登出確認頁面", authentication.getName());
+        return "auth/logout_confirm";  // 確保這個視圖名稱與您的HTML檔案路徑相符
     }
 
 
