@@ -178,10 +178,10 @@ public class RestServiceImpl implements RestService{
 		return getOneById(restId).getOrderTables();
 	}
 	
-	@Override
-	public RestVO getOneByEmail(String email) {
-	    return repository.findByMerchantEmail(email).orElse(null);
-	}
+	public RestVO getOneByEmail(String merchantEmail) {
+        return repository.findByMerchantEmail(merchantEmail)
+            .orElse(null);
+    }
 
 	
 }

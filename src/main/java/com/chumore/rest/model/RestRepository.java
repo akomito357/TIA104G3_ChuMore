@@ -10,12 +10,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface RestRepository extends JpaRepository<RestVO, Integer> {
 
-	@Query(value = "from RestVO r where r.restCity = ?1 and r.restDist = ?2")
-	List<RestVO> findByCityAndDist(String city, String district);
-	
-	 // 添加以下方法來支援認證功能
+    @Query(value = "FROM RestVO r WHERE r.restCity = ?1 AND r.restDist = ?2")
+    List<RestVO> findByCityAndDist(String city, String district);
+
     Optional<RestVO> findByMerchantEmail(String merchantEmail);
+
     boolean existsByMerchantEmail(String merchantEmail);
+
     boolean existsByPhoneNumber(String phoneNumber);
 
     @Query("SELECT r.restId FROM RestVO r " +
@@ -28,4 +29,11 @@ public interface RestRepository extends JpaRepository<RestVO, Integer> {
             @Param("cuisineTypeId") Integer cuisineTypeId
     );
 
+
+    @Query("SELECT r FROM RestVO r WHERE r.merchantEmail = :merchantEmail")
+    Optional<RestVO> findByMerchantEmailWithLog(@Param("merchantEmail") String merchantEmail);
+
 }
+
+}
+

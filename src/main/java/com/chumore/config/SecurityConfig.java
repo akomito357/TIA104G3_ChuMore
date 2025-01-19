@@ -93,7 +93,7 @@ public class SecurityConfig {
             .authorizeRequests()
             .antMatchers("/css/**", "/js/**", "/images/**", "/auth/register/**", "/auth/login").permitAll()
             .antMatchers("/secure/member/**").hasRole("MEMBER")
-            .antMatchers("/secure/restaurant/**").hasRole("RESTAURANT")
+            .antMatchers("/secure/rest/**").hasRole("RESTAURANT")
             .and()
             .formLogin()
             .loginPage("/auth/login")
@@ -105,7 +105,8 @@ public class SecurityConfig {
                 if ("ROLE_MEMBER".equals(role)) {
                     response.sendRedirect("/secure/member/member_information");
                 } else if ("ROLE_RESTAURANT".equals(role)) {
-                    response.sendRedirect("/secure/restaurant/restaurant_information");
+                    response.sendRedirect("/secure/rest/rest_information");
+
                 }
             })
             .failureUrl("/auth/login?error")

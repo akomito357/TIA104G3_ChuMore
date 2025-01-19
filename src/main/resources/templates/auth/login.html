@@ -1,247 +1,282 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChuMore - 會員登入與註冊</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChuMore - 會員登入與註冊</title>
 
-<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-<link rel="stylesheet"
-	href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+    <!-- Bootstrap 核心 CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <!-- 字型 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
 
-<style>
-:root {
-	--primary: #FEA116;
-	--primary-hover: #e89214;
-	--secondary: #092C4C;
-}
+    <style>
+        :root {
+            --primary: #FEA116;
+            --primary-hover: #e89214;
+            --secondary: #092C4C;
+        }
 
-body {
-	background-color: #f8f9fa;
-	font-family: 'Noto Sans TC', sans-serif;
-}
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
 
-.auth-container {
-	max-width: 900px;
-	margin: 2rem auto;
-	padding: 2.5rem;
-	background-color: #ffffff;
-	border-radius: 16px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
+        .auth-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
 
-.auth-section {
-	padding: 2rem;
-	background-color: #f8f9fa;
-	border-radius: 12px;
-	height: 100%;
-}
+        .auth-section {
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            height: 100%;
+        }
 
-.register-option {
-	padding: 1.5rem;
-	border: 2px solid #e0e0e0;
-	border-radius: 12px;
-	transition: all 0.3s ease;
-	background-color: #ffffff;
-	margin-bottom: 1rem;
-}
+        .register-option {
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .register-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(254, 161, 22, 0.1);
+        }
 
-.register-option:hover {
-	border-color: var(--primary);
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(254, 161, 22, 0.1);
-}
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(254, 161, 22, 0.25);
+        }
 
-.form-control:focus {
-	border-color: var(--primary);
-	box-shadow: 0 0 0 0.2rem rgba(254, 161, 22, 0.25);
-}
-
-.btn-primary {
-	background-color: var(--primary);
-	border-color: var(--primary);
-}
-
-.btn-primary:hover {
-	background-color: var(--primary-hover);
-	border-color: var(--primary-hover);
-}
-</style>
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+    </style>
 </head>
 <body>
-	<div class="container">
-		<div class="auth-container">
-			<h1 class="text-center h3 mb-4">歡迎使用 ChuMore</h1>
+<div class="container">
+    <div class="auth-container">
+        <h1 class="text-center h3 mb-4">歡迎使用 ChuMore</h1>
 
-			<!-- 主要內容區域 -->
-			<div class="row g-4">
-				<!-- 登入區塊 -->
-				<div class="col-md-6">
-					<div class="auth-section h-100">
-						<h2 class="h4 mb-4 text-center">會員登入</h2>
+        <div class="row g-4">
+            <!-- 登入區塊 -->
+            <div class="col-md-6">
+                <div class="auth-section h-100">
+                    <h2 class="h4 mb-4 text-center">會員登入</h2>
+                    <!-- 加上 novalidate 避免瀏覽器默認驗證，但保留 Bootstrap 驗證樣式 -->
+                    <form action="/auth/login" method="post" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">電子信箱</label>
+                            <input type="email"
+                                   class="form-control"
+                                   id="username"
+                                   name="username"
+                                   required
+                                   placeholder="請輸入電子信箱"
+                                   autocomplete="username"
+                                   autofocus>
+                            <div class="invalid-feedback">請輸入有效的電子信箱</div>
+                        </div>
 
-						<form action="/auth/login" method="post">
-							<class="needs-validation" >
-							<div class="mb-3">
-								<label for="username" class="form-label">電子信箱</label> <input
-									type="email" class="form-control" id="username" name="username"
-									required placeholder="請輸入電子信箱">
-								<div class="invalid-feedback">請輸入有效的電子信箱</div>
-							</div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">密碼</label>
+                            <div class="input-group">
+                                <input type="password"
+                                       class="form-control"
+                                       id="password"
+                                       name="password"
+                                       required
+                                       placeholder="請輸入密碼"
+                                       autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="顯示或隱藏密碼">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">請輸入密碼</div>
+                        </div>
 
-							<div class="mb-4">
-								<label for="password" class="form-label">密碼</label>
-								<div class="input-group">
-									<input type="password" class="form-control" id="password"
-										name="password" required placeholder="請輸入密碼">
-									<button class="btn btn-outline-secondary" type="button"
-										id="togglePassword">
-										<i class="bi bi-eye"></i>
-									</button>
-								</div>
-								<div class="invalid-feedback">請輸入密碼</div>
-							</div>
+                        <!-- 可考慮增加 "Remember Me" -->
+                        <!--
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">記住我</label>
+                        </div>
+                        -->
 
-							<div class="d-grid">
-								<button type="submit" class="btn btn-primary">登入</button>
-							</div>
-						</form>
-					</div>
-				</div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">登入</button>
+                        </div>
 
-				<!-- 註冊選項區塊 -->
-				<div class="col-md-6">
-					<div class="auth-section h-100">
-						<h2 class="h4 mb-4 text-center">註冊新會員</h2>
-						<a th:href="@{/auth/register/member}"
-							class="register-option d-block text-decoration-none">
-							<h3 class="h5 mb-2">
-								<i class="bi bi-person-fill me-2"></i>一般會員
-							</h3>
-							<p class="text-muted mb-0">探索美食、預約訂位，開啟您的美食之旅</p>
-						</a> <a th:href="@{/auth/register/restaurant}"
-							class="register-option d-block text-decoration-none">
-							<h3 class="h5 mb-2">
-								<i class="bi bi-shop me-2"></i>餐廳會員
-							</h3>
-							<p class="text-muted mb-0">展示特色、管理訂位，提升您的餐廳營運</p>
-						</a>
-					</div>
-				</div>
-			</div>
+                        <!-- 可考慮增加 "忘記密碼" 連結 -->
+                        <!--
+                        <div class="mt-2 text-end">
+                            <a href="#" class="small text-muted">忘記密碼？</a>
+                        </div>
+                        -->
+                    </form>
+                </div>
+            </div>
 
-			<!-- 提示訊息區域 -->
-			<div class="mt-4">
-				<!-- 操作成功提示 -->
-				<div th:if="${successMessage}"
-					class="alert alert-success alert-dismissible fade show"
-					role="alert">
-					<div class="d-flex align-items-center">
-						<i class="bi bi-check-circle me-2"></i> <span
-							th:text="${successMessage}"></span>
-					</div>
-					<button type="button" class="btn-close" data-bs-dismiss="alert"
-						aria-label="Close"></button>
-				</div>
+            <!-- 註冊選項區塊 -->
+            <div class="col-md-6">
+                <div class="auth-section h-100">
+                    <h2 class="h4 mb-4 text-center">註冊新會員</h2>
+                    <a th:href="@{/auth/register/member}"
+                       class="register-option d-block text-decoration-none">
+                        <h3 class="h5 mb-2">
+                            <i class="bi bi-person-fill me-2"></i>一般會員
+                        </h3>
+                        <p class="text-muted mb-0">探索美食、預約訂位，開啟您的美食之旅</p>
+                    </a>
 
-				<!-- 操作錯誤提示 -->
-				<div th:if="${errorMessage}"
-					class="alert alert-danger alert-dismissible fade show" role="alert">
-					<div class="d-flex align-items-center">
-						<i class="bi bi-exclamation-circle me-2"></i> <span
-							th:text="${errorMessage}"></span>
-					</div>
-					<button type="button" class="btn-close" data-bs-dismiss="alert"
-						aria-label="Close"></button>
-				</div>
+                    <a th:href="@{/auth/register/restaurant}"
+                       class="register-option d-block text-decoration-none">
+                        <h3 class="h5 mb-2">
+                            <i class="bi bi-shop me-2"></i>餐廳會員
+                        </h3>
+                        <p class="text-muted mb-0">展示特色、管理訂位，提升您的餐廳營運</p>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-				<!-- 登入狀態提示 -->
-				<div class="alert-container">
-					<!-- 登入錯誤提示 -->
-					<div th:if="${param.error}"
-						class="alert alert-danger alert-dismissible fade show"
-						role="alert">
-						<div class="d-flex align-items-center">
-							<i class="bi bi-exclamation-circle me-2"></i> <span>帳號或密碼錯誤</span>
-						</div>
-						<button type="button" class="btn-close" data-bs-dismiss="alert"
-							aria-label="Close"></button>
-					</div>
+        <!-- 提示訊息區域 -->
+        <div class="mt-4">
+            <!-- 操作成功提示 -->
+            <div th:if="${successMessage}"
+                 class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span th:text="${successMessage}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
-					<!-- 登出成功提示 -->
-					<div th:if="${param.logout}"
-						class="alert alert-success alert-dismissible fade show"
-						role="alert">
-						<div class="d-flex align-items-center">
-							<i class="bi bi-check-circle me-2"></i> <span>您已成功登出</span>
-						</div>
-						<button type="button" class="btn-close" data-bs-dismiss="alert"
-							aria-label="Close"></button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            <!-- 操作錯誤提示 -->
+            <div th:if="${errorMessage}"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
-	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-	<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 表單驗證
-            const form = document.querySelector('.needs-validation');
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            });
-            
-            //訪止重複提交
-            document.addEventListener('DOMContentLoaded', function() {
-                const form = document.querySelector('.needs-validation');
-                let isSubmitting = false;
+            <!-- 登入狀態提示 -->
+            <div class="alert-container">
+                <!-- 登入錯誤提示 -->
+                <div th:if="${param.error}"
+                     class="alert alert-danger alert-dismissible fade show"
+                     role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <span>帳號或密碼錯誤</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
-                form.addEventListener('submit', event => {
-                    if (isSubmitting) {
-                        event.preventDefault();
-                        return;
-                    }
+                <!-- 登出成功提示 -->
+                <div th:if="${param.logout}"
+                     class="alert alert-success alert-dismissible fade show"
+                     role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <span>您已成功登出</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    } else {
-                        isSubmitting = true;
-                        const submitButton = form.querySelector('button[type="submit"]');
-                        submitButton.disabled = true;
-                        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 登入中...';
-                    }
-                    form.classList.add('was-validated');
-                });
-            });
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            // 密碼顯示切換
-            const togglePassword = document.querySelector('#togglePassword');
-            const password = document.querySelector('#password');
-            
-            togglePassword.addEventListener('click', function() {
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
-                this.querySelector('i').classList.toggle('bi-eye');
-                this.querySelector('i').classList.toggle('bi-eye-slash');
-            });
+<script>
+// 使用 DOMContentLoaded 確保整個頁面元素已經載入
+document.addEventListener('DOMContentLoaded', function() {
 
-            // 自動隱藏提示訊息
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    const closeBtn = alert.querySelector('.btn-close');
-                    if (closeBtn) closeBtn.click();
-                }, 5000);
-            });
-        });
-    </script>
+	// ---- 移除 sessionStorage 檢查 ----
+    // const memberId = sessionStorage.getItem('member_id');
+    // const restId = sessionStorage.getItem('rest_id');
+    // const userType = sessionStorage.getItem('userType');
+    // if (userType) {
+    //     if (userType === 'MEMBER' && memberId) {
+    //         window.location.href = '/secure/member/member_information';
+    //     } else if (userType === 'RESTAURANT' && restId) {
+    //         window.location.href = '/secure/restaurant/restaurant_information';
+    //     } else {
+    //         window.location.href = '/auth/login';
+    //     }
+    // }
+    // if (!memberId && !restId) { sessionStorage.clear(); }
+
+    // 取得表單
+    const form = document.querySelector('.needs-validation');
+    let isSubmitting = false;
+
+    // 送出表單時的驗證
+    form.addEventListener('submit', event => {
+        if (isSubmitting) {
+            // 防止重複提交
+            event.preventDefault();
+            return;
+        }
+
+        // 檢查表單必填欄位
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            // 標記已提交, 禁用送出按鈕
+            isSubmitting = true;
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>登入中...';
+        }
+        // 加上 .was-validated 以顯示錯誤樣式
+        form.classList.add('was-validated');
+    });
+
+    // 密碼顯示/隱藏切換
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        icon.classList.toggle('bi-eye');
+        icon.classList.toggle('bi-eye-slash');
+    });
+
+    // 自動隱藏 alert 訊息
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            const closeBtn = alert.querySelector('.btn-close');
+            if (closeBtn) closeBtn.click();
+        }, 5000);
+    });
+});
+</script>
 </body>
 </html>

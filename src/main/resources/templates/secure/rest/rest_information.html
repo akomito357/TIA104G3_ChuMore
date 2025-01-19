@@ -4,904 +4,739 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商家餐廳資料</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        .preview-image {
-            max-width: 200px;
-            max-height: 200px;
-            margin: 10px;
-            position: relative;
-        }
 
-        .read-only-field {
-            background-color: #f8f9fa;
-        }
-
-        .image-wrapper {
-            display: inline-block;
-            position: relative;
-            margin: 10px;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            display: none;
-        }
-
-        .edit-mode .delete-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #environmentImagesDisplay,
-        #menuImagesDisplay {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding: 10px 0;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .edit-only {
-            display: none;
-        }
-
-        .edit-mode .edit-only {
-            display: block;
-        }
-
-        .edit-mode select.edit-only {
-            display: inline-block;
-        }
-
-        .view-only {
-            display: inline-block;
-        }
-
-        .edit-mode .view-only {
-            display: none;
-        }
-    </style>
+    <!-- 其他自訂的 head: included.html, header_merchant.html 等 -->
+    <head th:insert="~{/included.html}"></head>
+    <head th:insert="~{/header_merchant.html}"></head>
 </head>
+
 <body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>商家餐廳資料</h2>
-            <div class="button-group">
-                <button type="button" class="btn btn-primary view-only" id="editButton">
-                    <i class="bi bi-pencil-square me-2"></i>修改資料
-                </button>
-                <button type="button" class="btn btn-secondary edit-only" id="cancelButton">
-                    <i class="bi bi-x-circle me-2"></i>取消
-                </button>
-                <button type="submit" form="restaurantForm" class="btn btn-primary edit-only" id="saveButton">
-                    <i class="bi bi-check-circle me-2"></i>送出
-                </button>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>商家餐廳資料</h2>
+        <div class="button-group">
+            <button type="button" class="btn btn-primary view-only" id="editButton">
+                <i class="bi bi-pencil-square me-2"></i>修改資料
+            </button>
+            <button type="button" class="btn btn-secondary edit-only" id="cancelButton">
+                <i class="bi bi-x-circle me-2"></i>取消
+            </button>
+            <button type="submit" form="restaurantForm" class="btn btn-primary edit-only" id="saveButton">
+                <i class="bi bi-check-circle me-2"></i>送出
+            </button>
+        </div>
+    </div>
+
+    <form id="restaurantForm" class="needs-validation" novalidate>
+        <!-- ====== 負責人資料區塊 ====== -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <span>負責人資料</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label">負責人信箱</label>
+                        <input type="email" class="form-control read-only-field" id="memberEmail" name="merchantEmail" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">負責人姓名</label>
+                        <input type="text" class="form-control" id="memberName" name="merchantName" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">負責人電話</label>
+                        <input type="tel" class="form-control" id="memberPhone" name="phoneNumber" required>
+                    </div>
+                </div>
+
+                <!-- 密碼修改區塊 -->
+                <div class="edit-only">
+                    <hr class="mb-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="mb-3">密碼修改</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">目前密碼</label>
+                            <input type="password" class="form-control" name="oldPassword" id="oldPassword">
+                            <div class="form-text">若不修改密碼則此欄位留空</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">新密碼</label>
+                            <input type="password" class="form-control" name="newPassword" id="newPassword">
+                            <div id="passwordStrength" class="form-text"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">確認新密碼</label>
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <form id="restaurantForm" class="needs-validation" novalidate>
-            <!-- 負責人資料區塊 -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <span>負責人資料</span>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">負責人信箱</label>
-                            <input type="email" class="form-control read-only-field" id="memberEmail" name="merchantEmail" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">負責人姓名</label>
-                            <input type="text" class="form-control" id="memberName" name="merchantName" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">負責人電話</label>
-                            <input type="tel" class="form-control" id="memberPhone" name="phoneNumber" required>
-                        </div>
+        <!-- ====== 餐廳資料區塊 ====== -->
+        <div class="card">
+            <div class="card-header">
+                <span>餐廳資料</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">餐廳名稱</label>
+                        <input type="text" class="form-control" id="restaurantName" name="restName" required>
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">食品業者登錄字號</label>
+                        <input type="text" class="form-control read-only-field" id="businessId" name="restRegist" readonly>
+                    </div>
+                </div>
 
-                    <!-- 密碼修改區塊 -->
-                    <div class="edit-only">
-                        <hr class="mb-4">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">餐廳電話</label>
+                        <input type="tel" class="form-control" id="restaurantPhone" name="restPhone" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">料理類型</label>
+                        <!-- 檢視模式 -->
+                        <select class="form-select view-only read-only-field" id="cuisineTypeDisplay" disabled></select>
+                        <!-- 編輯模式 -->
+                        <select class="form-select edit-only" name="cuisineType" id="cuisineTypeEdit" required></select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">地址</label>
                         <div class="row">
-                            <div class="col-12">
-                                <h6 class="mb-3">密碼修改</h6>
+                            <div class="col-md-4">
+                                <select class="form-select view-only" id="cityDisplay" disabled></select>
+                                <select class="form-select edit-only" name="restCity" id="cityEdit" required></select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">目前密碼</label>
-                                <input type="password" class="form-control" name="oldPassword" id="oldPassword">
-                                <div class="form-text">若不修改密碼則此欄位留空</div>
+                                <select class="form-select view-only" id="districtDisplay" disabled></select>
+                                <select class="form-select edit-only" name="restDist" id="districtEdit" required></select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">新密碼</label>
-                                <input type="password" class="form-control" name="newPassword" id="newPassword">
-                                <div id="passwordStrength" class="form-text"></div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">確認新密碼</label>
-                                <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
-                                <div id="passwordMatch" class="form-text"></div>
+                                <input type="text" class="form-control" name="restAddress" id="address" required>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">餐廳簡介</label>
+                    <textarea class="form-control" id="restaurantIntro" name="restIntro" rows="4" required></textarea>
+                </div>
+
+                <!-- 環境圖片區塊 -->
+                <div class="mb-3">
+                    <label class="form-label">餐廳環境圖片</label>
+                    <div id="environmentImagesDisplay" class="d-flex flex-wrap">
+                        <!-- 圖片將由 JavaScript 動態載入 -->
+                    </div>
+                    <input type="file" class="form-control mt-2 edit-only" id="environmentImages" name="environmentImages" multiple accept="image/*">
+                    <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadEnvImagesButton">上傳環境圖片</button>
+                    <div class="form-text">可以選擇多張圖片，建議尺寸 1200x800 像素</div>
+                </div>
+
+                <!-- 菜單圖片區塊 -->
+                <div class="mb-3">
+                    <label class="form-label">菜單圖片</label>
+                    <div id="menuImagesDisplay" class="d-flex flex-wrap">
+                        <!-- 圖片將由 JavaScript 動態載入 -->
+                    </div>
+                    <input type="file" class="form-control mt-2 edit-only" id="menuImages" name="menuImages" multiple accept="image/*">
+                    <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadMenuImagesButton">上傳菜單圖片</button>
+                    <div class="form-text">可以選擇多張圖片，建議尺寸 1200x1600 像素</div>
+                </div>
+
+                <!-- 營業狀態和座位資訊 -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">營業狀態</label>
+                        <select class="form-select view-only" id="businessStatusDisplay" disabled>
+                            <option value="open">營業中</option>
+                            <option value="closed">停業</option>
+                        </select>
+                        <select class="form-select edit-only" name="businessStatus" id="businessStatusEdit">
+                            <option value="open">營業中</option>
+                            <option value="closed">停業</option>
+                        </select>
+                    </div>
+                    <div id="tablesContainer" class="col-md-8">
+                        <!-- 桌型資訊將由 JavaScript 動態載入 -->
                     </div>
                 </div>
             </div>
+        </div>
+    </form>
+</div>
 
-            <!-- 餐廳資料區塊 -->
-            <div class="card">
-                <div class="card-header">
-                    <span>餐廳資料</span>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">餐廳名稱</label>
-                            <input type="text" class="form-control" id="restaurantName" name="restName" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">食品業者登錄字號</label>
-                            <input type="text" class="form-control read-only-field" id="businessId" name="restRegist" readonly>
-                        </div>
-                    </div>
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">餐廳電話</label>
-                            <input type="tel" class="form-control" id="restaurantPhone" name="restPhone" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">料理類型</label>
-                            <!-- 檢視模式 -->
-                            <select class="form-select view-only read-only-field" id="cuisineTypeDisplay" disabled>
-                                <!-- 選項將由 JavaScript 動態載入 -->
-                            </select>
-                            <!-- 編輯模式 -->
-                            <select class="form-select edit-only" name="cuisineType" id="cuisineTypeEdit" required>
-                                <!-- 選項將由 JavaScript 動態載入 -->
-                            </select>
-                        </div>   
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="form-label">地址</label>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <select class="form-select view-only" id="cityDisplay" disabled>
-                                        <!-- 選項將由 JavaScript 動態載入 -->
-                                    </select>
-                                    <select class="form-select edit-only" name="restCity" id="cityEdit" required>
-                                        <!-- 選項將由 JavaScript 動態載入 -->
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <select class="form-select view-only" id="districtDisplay" disabled>
-                                        <!-- 選項將由 JavaScript 動態載入 -->
-                                    </select>
-                                    <select class="form-select edit-only" name="restDist" id="districtEdit" required>
-                                        <!-- 選項將由 JavaScript 動態載入 -->
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="restAddress" id="address" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">餐廳簡介</label>
-                        <textarea class="form-control" id="restaurantIntro" name="restIntro" rows="4" required></textarea>
-                    </div>
+<script>
+$(document).ready(function() {
 
-                    <!-- 環境圖片區塊 -->
-                    <div class="mb-3">
-                        <label class="form-label">餐廳環境圖片</label>
-                        <div id="environmentImagesDisplay" class="d-flex flex-wrap">
-                            <!-- 圖片將由 JavaScript 動態載入 -->
-                        </div>
-                        <input type="file" class="form-control mt-2 edit-only" 
-                               id="environmentImages" 
-                               name="environmentImages" 
-                               multiple 
-                               accept="image/*">
-                        <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadEnvImagesButton">
-                            上傳環境圖片
-                        </button>
-                        <div class="form-text">可以選擇多張圖片，建議尺寸 1200x800 像素</div>
-                    </div>
-                    <!-- 菜單圖片區塊 -->
-                    <div class="mb-3">
-                        <label class="form-label">菜單圖片</label>
-                        <div id="menuImagesDisplay" class="d-flex flex-wrap">
-                            <!-- 圖片將由 JavaScript 動態載入 -->
-                        </div>
-                        <input type="file" class="form-control mt-2 edit-only" 
-                               id="menuImages" 
-                               name="menuImages" 
-                               multiple 
-                               accept="image/*">
-                        <button type="button" class="btn btn-primary mt-2 edit-only" id="uploadMenuImagesButton">
-                            上傳菜單圖片
-                        </button>
-                        <div class="form-text">可以選擇多張圖片，建議尺寸 1200x1600 像素</div>
-                    </div>
-                    <!-- 營業狀態和座位資訊 -->
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label class="form-label">營業狀態</label>
-                            <select class="form-select view-only" id="businessStatusDisplay" disabled>
-                                <option value="open">營業中</option>
-                                <option value="closed">停業</option>
-                            </select>
-                            <select class="form-select edit-only" name="businessStatus" id="businessStatusEdit">
-                                <option value="open">營業中</option>
-                                <option value="closed">停業</option>
-                            </select>
-                        </div>
-                        <div id="tablesContainer" class="col-md-8">
-                            <!-- 桌型資訊將由 JavaScript 動態載入 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            const districts = {
-                'taipei': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
-                'newtaipei': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區'],
-                'taoyuan': ['桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '大溪區', '龜山區', '龍潭區', '大園區', '觀音區', '新屋區']
-            };
-            // 初始化表單為只讀模式
-            setReadOnlyMode(true);
-            // 載入所有資料
-            loadRestaurantData();
-            // 修改編輯按鈕點擊事件
-$('#editButton').click(async function() {
-    setReadOnlyMode(false);
-    // 保存當前值
-    const currentDistrict = $('#districtDisplay').val();
-    const currentCity = $('#cityDisplay').val();
-    // 同步其他值
-    $('#businessStatusEdit').val($('#businessStatusDisplay').val());
-    $('#cuisineTypeEdit').val($('#cuisineTypeDisplay').val());
-    $('#cityEdit').val(currentCity);
-    
-    try {
-        // 等待區域更新完成
-        await updateDistricts(currentCity, '#districtEdit', currentDistrict);
-    } catch (error) {
-        console.error('Error updating districts:', error);
-    }
-});
-            // 取消按鈕點擊事件
-            $('#cancelButton').click(function() {
-                if (confirm('確定要取消編輯？未儲存的修改將會遺失。')) {
-                    setReadOnlyMode(true);
-                    // 重新載入原始資料
-                    loadRestaurantData();
-                }
-            });
-            // 設置表單唯讀模式
-            function setReadOnlyMode(readonly) {
-    const form = $('#restaurantForm');
-    const container = $('.container');
-    
-    if (readonly) {
-        // 檢視模式
-        container.removeClass('edit-mode');
-        form.find('input:not(.read-only-field), textarea').prop('readonly', true);
-        $('[id^="table"]').prop('readonly', true); // 將所有桌位輸入框設為唯讀
-        $('.edit-only').hide();
-        $('.view-only').show();
-    } else {
-        // 編輯模式
-        container.addClass('edit-mode');
-        form.find('input:not(.read-only-field), textarea').prop('readonly', false);
-        $('[id^="table"]').prop('readonly', false); // 將所有桌位輸入框設為可編輯
-        $('.edit-only').show();
-        $('.view-only').hide();
-    }
-}
-            $('#cityEdit').change(function() {
-                const selectedCity = $(this).val();
-                updateDistricts(selectedCity, '#districtEdit');
-            });
-            // 綁定環境圖片上傳按鈕事件
-            $('#uploadEnvImagesButton').click(function() {
-                const input = $('#environmentImages')[0];
-                handleEnvImageUpload(input);
-            });
-            // 綁定菜單圖片上傳按鈕事件
-            $('#uploadMenuImagesButton').click(function() {
-                const input = $('#menuImages')[0];
-                handleMenuImageUpload(input);
-            });
-            // 修改環境圖片上傳處理函數
-            function handleEnvImageUpload(input) {
-                const files = input.files;
-                const formData = new FormData();
-                if (files.length === 0) {
-                    alert('請選擇要上傳的圖片');
-                    return;
-                }
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('upFiles', files[i]);
-                }
-                formData.append('restId', '2001');
-                fetch('/envImg/addEnvImg?restId=2001', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(result => {
-                    if (result.includes('errorMessage')) {
-                        alert('上傳失敗：' + result);
-                    } else {
-                        // 清空檔案選擇
-                        input.value = '';
-                        // 重新載入環境圖片
-                        loadEnvironmentImages();
-                        alert('圖片上傳成功');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error uploading environment images:', error);
-                    alert('圖片上傳失敗，請稍後再試');
-                });
-            }
-            function handleMenuImageUpload(input) {
-            const files = input.files;
-            const formData = new FormData();
-            if (files.length === 0) {
-                alert('請選擇要上傳的圖片');
-                return;
-            }
-            // 修改參數名稱為 upFiles 以匹配後端
-            for (let i = 0; i < files.length; i++) {
-                formData.append('upFiles', files[i]);
-            }
-            formData.append('restId', '2001');
-            fetch('/menuImg/addMenuImg', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // 清空檔案選擇
-                    input.value = '';
-                    // 重新載入菜單圖片
-                    loadMenuImages();
-                    alert('圖片上傳成功');
-                } else {
-                    alert(data.message || '菜單圖片上傳失敗');
-                }
-            })
-            .catch(error => {
-                console.error('Error uploading menu images:', error);
-                alert('菜單圖片上傳失敗');
-            });
-        }
+    // =========================
+    // 1) 移除 sessionStorage 檢查
+    //    不再依賴 rest_id / userType 存在前端
+    // =========================
 
-    $(document).on('click', '.delete-btn', function(event) {
-        event.preventDefault(); 
-        if (confirm('確定要刪除這張圖片嗎？')) {
-            const wrapper = $(this).closest('.image-wrapper');
-            const imgId = $(this).data('id');
-            const type = $(this).data('type');
-            
-            const deleteUrl = type === 'env' 
-                ? `/envImg/deleteEnvImage/${imgId}` 
-                : `/menuImg/deleteMenuImage/${imgId}`;
-            fetch(deleteUrl, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    wrapper.remove();
-                    if(type === 'env') {
-                        loadEnvironmentImages();
-                    } else {
-                        loadMenuImages();
-                    }
-                } else {
-                    alert(data.message || '刪除圖片失敗');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting image:', error);
-                alert('刪除圖片失敗');
-            });
+    // 初始化表單為只讀模式
+    setReadOnlyMode(true);
+    // 載入所有資料 (後端根據 Session 判斷是哪個餐廳)
+    loadRestaurantData();
+
+    // =============================
+    // 2) 監聽「修改 / 取消 / 送出」等按鈕
+    // =============================
+
+    $('#editButton').click(async function() {
+        setReadOnlyMode(false);
+        const currentDistrict = $('#districtDisplay').val();
+        const currentCity = $('#cityDisplay').val();
+        $('#businessStatusEdit').val($('#businessStatusDisplay').val());
+        $('#cuisineTypeEdit').val($('#cuisineTypeDisplay').val());
+        $('#cityEdit').val(currentCity);
+        try {
+            await updateDistricts(currentCity, '#districtEdit', currentDistrict);
+        } catch (error) {
+            console.error('Error updating districts:', error);
         }
     });
-            // 密碼修改相關驗證
-            $('#newPassword, #confirmPassword').on('input', function() {
-                const newPassword = $('#newPassword').val();
-                const confirmPassword = $('#confirmPassword').val();
-                // 更新密碼匹配提示
-                if (newPassword || confirmPassword) {
-                    if (newPassword === confirmPassword) {
-                        $('#passwordMatch')
-                            .text('密碼符合')
-                            .removeClass('text-danger')
-                            .addClass('text-success');
-                    } else {
-                        $('#passwordMatch')
-                            .text('密碼不符合')
-                            .removeClass('text-success')
-                            .addClass('text-danger');
-                    }
-                } else {
-                    $('#passwordMatch').text('');
-                }
-            });
 
-            function loadRestaurantData() {
-            const restId = 2001; // 假設這是當前餐廳ID
-            
-            fetch(`/rests/getOneRest?restId=${restId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 填充基本資料
-                $('#memberEmail').val(data.merchantEmail);
-                $('#memberName').val(data.merchantName);
-                $('#memberPhone').val(data.phoneNumber);
-                $('#restaurantName').val(data.restName);
-                $('#businessId').val(data.restRegist);
-                $('#restaurantPhone').val(data.restPhone);
-                // 料理類型 - 同時設置顯示和編輯模式的值
-                $('#cuisineTypeDisplay, #cuisineTypeEdit').val(data.cuisineTypeName);
-                // 城市設設置 - 同時設置顯示和編輯模式的值
-                $('#cityDisplay, #cityEdit').val(data.restCity);    
-                // 先更新區域選項
-                updateDistricts(data.restCity, '#districtDisplay');
-                updateDistricts(data.restCity, '#districtEdit');
-                // 設置區域值 - 使用 Promise 確保選項已更新
-                Promise.resolve().then(() => {
-                    $('#districtDisplay, #districtEdit').val(data.restDist);
-                });
-                // 詳細地址
-                $('#address').val(data.restAddress);
-                $('#restaurantIntro').val(data.restIntro);
-                // 營業狀態
-                const businessStatus = data.businessStatus === 1 ? 'open' : 'closed';
-                $('#businessStatusDisplay, #businessStatusEdit').val(businessStatus);
-                loadTableTypes();
-                // 載入圖片
-                loadEnvironmentImages();
-                loadMenuImages();
-                loadCuisineTypes();
-                loadCities();
-            })
-            .catch(error => {
-                console.error('Error loading restaurant data:', error);
-                alert('載入餐廳資料失敗');
-            });
+    $('#cancelButton').click(function() {
+        if (confirm('確定要取消編輯？未儲存的修改將會遺失。')) {
+            setReadOnlyMode(true);
+            // 重新載入原始資料
+            loadRestaurantData();
+        }
+    });
+
+    // 表單送出（更新資料）
+    $('#restaurantForm').on('submit', async function(e) {
+        e.preventDefault();
+        if (!this.checkValidity()) {
+            e.stopPropagation();
+            $(this).addClass('was-validated');
+            return;
         }
 
-    // 載入料理類型
+        // ================================
+        // 從後端取得該使用者目前的 restId
+        // (或你也可在 loadRestaurantData 時保存在全域變數)
+        // ================================
+
+        try {
+            const currentInfo = await fetch('/rests/getOneRest', {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!currentInfo.ok) {
+                throw new Error('無法取得使用者餐廳資訊');
+            }
+            const data = await currentInfo.json();
+            const restId = data.restId;  // 後端應回傳 restId
+
+            // 接著收集表單欄位
+            const cuisineTypeId = $('#cuisineTypeEdit').val();
+            if (!cuisineTypeId) {
+                alert('請選擇料理類型');
+                return;
+            }
+
+            const restData = {
+                restId: restId,
+                merchantEmail: $('#memberEmail').val(),
+                merchantName: $('#memberName').val(),
+                phoneNumber: $('#memberPhone').val(),
+                restName: $('#restaurantName').val(),
+                restRegist: $('#businessId').val(),
+                restPhone: $('#restaurantPhone').val(),
+                cuisineTypeId: parseInt(cuisineTypeId),
+                restCity: $('#cityEdit').val(),
+                restDist: $('#districtEdit').val(),
+                restAddress: $('#address').val(),
+                restIntro: $('#restaurantIntro').val(),
+                businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
+            };
+
+            // 檢查密碼
+            const oldPassword = $('#oldPassword').val();
+            const newPassword = $('#newPassword').val();
+            const confirmPassword = $('#confirmPassword').val();
+
+            if (oldPassword || newPassword || confirmPassword) {
+                if (!oldPassword || !newPassword || !confirmPassword) {
+                    alert('如要修改密碼，請填寫所有密碼欄位');
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    alert('新密碼與確認密碼不符');
+                    return;
+                }
+                restData.oldPassword = oldPassword;
+                restData.newPassword = newPassword;
+            }
+
+            // 呼叫後端 Update
+            const restResponse = await fetch('/rests/updateRest', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(restData)
+            });
+            if (!restResponse.ok) {
+                const errorData = await restResponse.json();
+                throw new Error(errorData.message || '餐廳資料更新失敗');
+            }
+
+            // 再來更新桌型
+            const tableTypesResponse = await fetch(`/tableType/getTableType?restId=${restId}`, {
+                credentials: 'include'
+            });
+            if (!tableTypesResponse.ok) {
+                throw new Error('獲取現有桌型資料失敗');
+            }
+            const currentTableTypes = await tableTypesResponse.json();
+
+            // 組裝前端輸入的桌型
+            const tableData = [];
+            $('[id^="table"]').each(function() {
+                const tType = parseInt(this.id.replace('table', ''));
+                const tCount = parseInt($(this).val());
+                if (!isNaN(tType) && !isNaN(tCount)) {
+                    // 尋找對應tableTypeId
+                    const existing = currentTableTypes.find(t => t.tableType === tType);
+                    if (existing) {
+                        tableData.push({
+                            tableTypeId: existing.tableTypeId,
+                            tableType: tType,
+                            tableCount: tCount,
+                            reservedLimit: existing.reservedLimit,
+                            rest: { restId: restId }
+                        });
+                    }
+                }
+            });
+
+            const updatePromises = tableData.map(tbl =>
+                fetch('/tableType/updateTableCount', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tbl)
+                }).then(resp => {
+                    if (!resp.ok) {
+                        throw new Error(`桌型 ${tbl.tableType} 人座更新失敗`);
+                    }
+                    return resp.text();
+                })
+            );
+            await Promise.all(updatePromises);
+
+            alert('餐廳資料和桌型更新成功');
+            setReadOnlyMode(true);
+            loadRestaurantData(); // 重新載入所有資料
+        } catch (error) {
+            console.error('Error updating restaurant and table types:', error);
+            alert('更新失敗：' + (error.message || '發生未知錯誤'));
+        }
+    });
+
+    // =============================
+    // 3) 以下載入/顯示資料的方法同原始
+    //    不再使用 sessionStorage
+    // =============================
+
+    function setReadOnlyMode(readonly) {
+        const form = $('#restaurantForm');
+        const container = $('.container');
+        if (readonly) {
+            container.removeClass('edit-mode');
+            form.find('input:not(.read-only-field), textarea').prop('readonly', true);
+            $('[id^="table"]').prop('readonly', true);
+            $('.edit-only').hide();
+            $('.view-only').show();
+        } else {
+            container.addClass('edit-mode');
+            form.find('input:not(.read-only-field), textarea').prop('readonly', false);
+            $('[id^="table"]').prop('readonly', false);
+            $('.edit-only').show();
+            $('.view-only').hide();
+        }
+    }
+
+    // 載入後端資料: 後端會依 Session 找出對應 rest
+    function loadRestaurantData() {
+        fetch('/rests/getOneRest', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    // 未登入或權限不足 -> 跳轉登入
+                    window.location.href = '/auth/login';
+                }
+                throw new Error('資料獲取失敗');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // 後端傳回該使用者的餐廳信息
+            $('#memberEmail').val(data.merchantEmail);
+            $('#memberName').val(data.merchantName);
+            $('#memberPhone').val(data.phoneNumber);
+            $('#restaurantName').val(data.restName);
+            $('#businessId').val(data.restRegist);
+            $('#restaurantPhone').val(data.restPhone);
+
+            // 料理類型
+            $('#cuisineTypeDisplay, #cuisineTypeEdit').val(data.cuisineTypeName);
+
+            // 城市、地區
+            $('#cityDisplay, #cityEdit').val(data.restCity);
+            updateDistricts(data.restCity, '#districtDisplay');
+            updateDistricts(data.restCity, '#districtEdit')
+                .then(() => {
+                    $('#districtDisplay, #districtEdit').val(data.restDist);
+                });
+
+            $('#address').val(data.restAddress);
+            $('#restaurantIntro').val(data.restIntro);
+            const businessStatus = data.businessStatus === 1 ? 'open' : 'closed';
+            $('#businessStatusDisplay, #businessStatusEdit').val(businessStatus);
+
+            // 依序載入其他
+            loadTableTypes();
+            loadEnvironmentImages();
+            loadMenuImages();
+            loadCuisineTypes();
+            loadCities();
+        })
+        .catch(error => {
+            console.error(error);
+            // 可以顯示錯誤提醒
+        });
+    }
+
     function loadCuisineTypes() {
-    fetch('/cuisineTypes/getAllCuisineType')
-        .then(response => response.json())
+        fetch('/cuisineTypes/getAllCuisineType', {
+            credentials: 'include'
+        })
+        .then(resp => resp.json())
         .then(data => {
             const displaySelect = $('#cuisineTypeDisplay');
             const editSelect = $('#cuisineTypeEdit');
-            // 清空現有選項
             displaySelect.empty();
             editSelect.empty();
-            // 為編輯模式添加預設選項
             editSelect.append('<option value="">請選擇料理類型</option>');
-            // 添加從後端獲取的料理類型
             data.forEach(type => {
                 displaySelect.append($('<option></option>')
                     .attr('value', type.cuisineTypeId)
-                    .text(type.cuisineDescr)); 
+                    .text(type.cuisineDescr));
                 editSelect.append($('<option></option>')
                     .attr('value', type.cuisineTypeId)
                     .text(type.cuisineDescr));
             });
-            // 設定目前的值
             const currentCuisineType = $('#cuisineTypeDisplay').val();
             if (currentCuisineType) {
                 $('#cuisineTypeEdit').val(currentCuisineType);
             }
         })
-        .catch(error => {
-            console.error('Error loading cuisine types:', error);
+        .catch(err => {
+            console.error('Error loading cuisine types:', err);
             alert('載入料理類型失敗');
         });
     }
-        // 載入縣市
-        function loadCities() {
-            fetch('/location/findCitys')
-                .then(response => response.json())
-                .then(response => {
-                    // 檢查回應狀態
-                    if (response.resCode === 200 && Array.isArray(response.data)) {
-                        const cityDisplay = $('#cityDisplay');
-                        const cityEdit = $('#cityEdit');
-                        
-                        // 清空現有選項
-                        cityDisplay.empty();
-                        cityEdit.empty();
-                        
-                        // 為編輯模式添加預設選項
-                        cityEdit.append('<option value="">選擇縣市</option>');
-                        
-                        // 添加從後端獲取的縣市
-                        response.data.forEach(city => {
-                            cityDisplay.append($('<option></option>')
-                                .attr('value', city)  // 直接使用 city 字串作為值
-                                .text(city));         // 直接使用 city 字串作為顯示文字
-                                
-                            cityEdit.append($('<option></option>')
-                                .attr('value', city)  // 直接使用 city 字串作為值
-                                .text(city));         // 直接使用 city 字串作為顯示文字
-                        });
-                    } else {
-                        console.error('Invalid city data format:', response);
-                        alert('載入縣市資料失敗');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading cities:', error);
-                    alert('載入縣市資料失敗');
+
+    function loadCities() {
+        fetch('/location/findCitys', { credentials: 'include' })
+        .then(resp => resp.json())
+        .then(response => {
+            if (response.resCode === 200 && Array.isArray(response.data)) {
+                const cityDisplay = $('#cityDisplay');
+                const cityEdit = $('#cityEdit');
+                cityDisplay.empty();
+                cityEdit.empty();
+                cityEdit.append('<option value="">選擇縣市</option>');
+                response.data.forEach(city => {
+                    cityDisplay.append($('<option></option>').val(city).text(city));
+                    cityEdit.append($('<option></option>').val(city).text(city));
                 });
+            } else {
+                alert('載入縣市資料失敗');
+            }
+        })
+        .catch(err => {
+            console.error('Error loading cities:', err);
+            alert('載入縣市資料失敗');
+        });
+    }
+
+    function updateDistricts(selectedCity, targetSelect, selectedDistrict = null) {
+        if (!selectedCity) {
+            const districtSelect = $(targetSelect);
+            districtSelect.empty();
+            if (targetSelect === '#districtEdit') {
+                districtSelect.append('<option value="">選擇鄉鎮市區</option>');
+            }
+            return Promise.resolve();
         }
-        // 修改 updateDistricts 函數
-        function updateDistricts(selectedCity, targetSelect, selectedDistrict = null) {
-            if (!selectedCity) {
-                const districtSelect = $(targetSelect);
-                districtSelect.empty();
-                if (targetSelect === '#districtEdit') {
-                    districtSelect.append('<option value="">選擇鄉鎮市區</option>');
+        return fetch(`/location/findDistByCity?city=${selectedCity}`, { credentials: 'include' })
+            .then(resp => resp.json())
+            .then(response => {
+                if (response.resCode === 200 && Array.isArray(response.data)) {
+                    const districtSelect = $(targetSelect);
+                    districtSelect.empty();
+                    if (targetSelect === '#districtEdit') {
+                        districtSelect.append('<option value="">選擇鄉鎮市區</option>');
+                    }
+                    response.data.forEach(dist => {
+                        districtSelect.append($('<option></option>').val(dist).text(dist));
+                    });
+                    if (selectedDistrict) {
+                        districtSelect.val(selectedDistrict);
+                    }
+                } else {
+                    throw new Error('載入區域資料失敗');
                 }
-                return Promise.resolve();
-            }
-            return fetch(`/location/findDistByCity?city=${selectedCity}`)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.resCode === 200 && Array.isArray(response.data)) {
-                        const districtSelect = $(targetSelect);
-                        districtSelect.empty();                       
-                        // 為編輯模式添加預設選項
-                        if (targetSelect === '#districtEdit') {
-                            districtSelect.append('<option value="">選擇鄉鎮市區</option>');
-                        }
-                        // 添加從後端獲取的區域
-                        response.data.forEach(district => {
-                            districtSelect.append($('<option></option>')
-                                .attr('value', district)
-                                .text(district));
-                        });
-                        // 如果有提供要選擇的區域值，就設置它
-                        if (selectedDistrict) {
-                            districtSelect.val(selectedDistrict);
-                        }
-                    } else {
-                        console.error('Invalid district data format:', response);
-                        throw new Error('載入區域資料失敗');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading districts:', error);
-                    alert('載入區域資料失敗');
-                    throw error;
-                });
-        }
-            function loadEnvironmentImages() {
-            const restId = 2001; // 假設這是當前餐廳ID
-            
-            fetch(`/envImg/images/${restId}`)
-                .then(response => response.json())
-                .then(imageIds => {
-                    const container = $('#environmentImagesDisplay');
-                    container.empty();
-                    
-                    if (!imageIds || imageIds.length === 0) {
-                        container.append('<p class="text-muted">尚未上傳環境圖片</p>');
-                        return;
-                    }
-                    
-                    imageIds.forEach(imageId => {
-                        const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
-                        const imgContainer = $('<div>').addClass('preview-image');
-                        
-                        const imgElement = $('<img>')
-                            .addClass('img-thumbnail')
-                            .attr('src', `/envImg/image/${imageId}`)
-                            .css({
-                                'max-width': '200px',
-                                'max-height': '200px',
-                                'object-fit': 'contain'
-                            });
+            })
+            .catch(err => {
+                console.error('Error loading districts:', err);
+                alert('載入區域資料失敗');
+            });
+    }
 
-                        const deleteBtn = $('<button>')
-                            .addClass('delete-btn')
-                            .attr('data-id', imageId)
-                            .attr('data-type', 'env')
-                            .html('<i class="bi bi-x"></i>');
-                        
-                        imgContainer.append(imgElement);
-                        wrapper.append(imgContainer, deleteBtn);
-                        container.append(wrapper);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading environment images:', error);
-                    alert('載入環境圖片失敗');
-                });
+    function loadEnvironmentImages() {
+        // 不從 sessionStorage 取 restId，改後端 session
+        fetch('/envImg/images', { credentials: 'include' })
+        .then(resp => resp.json())
+        .then(imageIds => {
+            const container = $('#environmentImagesDisplay');
+            container.empty();
+            if (!imageIds || imageIds.length === 0) {
+                container.append('<p class="text-muted">尚未上傳環境圖片</p>');
+                return;
             }
-            function loadMenuImages() {
-            const restId = 2001; // 假設這是當前餐廳ID
-            
-            fetch(`/menuImg/images/${restId}`)
-                .then(response => response.json())
-                .then(imageIds => {
-                    const container = $('#menuImagesDisplay');
-                    container.empty();
-                    
-                    if (!imageIds || imageIds.length === 0) {
-                        container.append('<p class="text-muted">尚未上傳菜單圖片</p>');
-                        return;
-                    }                   
-                   imageIds.forEach(imageId => {
-                        const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
-                        const imgContainer = $('<div>').addClass('preview-image');
-                        
-                        const imgElement = $('<img>')
-                            .addClass('img-thumbnail')
-                            .attr('src', `/menuImg/image/${imageId}`)
-                            .css({
-                                'max-width': '200px',
-                                'max-height': '200px',
-                                'object-fit': 'contain'
-                            });
+            imageIds.forEach(id => {
+                const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
+                const imgContainer = $('<div>').addClass('preview-image');
+                const imgElement = $('<img>')
+                    .addClass('img-thumbnail')
+                    .attr('src', `/envImg/image/${id}`)
+                    .css({ 'max-width':'200px', 'max-height':'200px', 'object-fit':'contain' });
+                const deleteBtn = $('<button>')
+                    .addClass('delete-btn')
+                    .attr({ 'data-id': id, 'data-type': 'env' })
+                    .html('<i class="bi bi-x"></i>');
+                imgContainer.append(imgElement);
+                wrapper.append(imgContainer, deleteBtn);
+                container.append(wrapper);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading environment images:', err);
+            alert('載入環境圖片失敗');
+        });
+    }
 
-                        const deleteBtn = $('<button>')
-                            .addClass('delete-btn')
-                            .attr('data-id', imageId)
-                            .attr('data-type', 'menu')
-                            .html('<i class="bi bi-x"></i>');
-                        
-                        imgContainer.append(imgElement);
-                        wrapper.append(imgContainer, deleteBtn);
-                        container.append(wrapper);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading menu images:', error);
-                    alert('載入菜單圖片失敗');
-                });
+    function loadMenuImages() {
+        fetch('/menuImg/images', { credentials: 'include' })
+        .then(resp => resp.json())
+        .then(imageIds => {
+            const container = $('#menuImagesDisplay');
+            container.empty();
+            if (!imageIds || imageIds.length === 0) {
+                container.append('<p class="text-muted">尚未上傳菜單圖片</p>');
+                return;
             }
-            // 載入桌型資訊
-            function loadTableTypes() {
-    const restId = 2001; // 假設這是當前餐廳ID
-    
-    fetch(`/tableType/getTableType?restId=${restId}`)
-        .then(response => response.json())
+            imageIds.forEach(id => {
+                const wrapper = $('<div>').addClass('image-wrapper position-relative mb-3 me-3');
+                const imgContainer = $('<div>').addClass('preview-image');
+                const imgElement = $('<img>')
+                    .addClass('img-thumbnail')
+                    .attr('src', `/menuImg/image/${id}`)
+                    .css({ 'max-width':'200px', 'max-height':'200px', 'object-fit':'contain' });
+                const deleteBtn = $('<button>')
+                    .addClass('delete-btn')
+                    .attr({ 'data-id': id, 'data-type': 'menu' })
+                    .html('<i class="bi bi-x"></i>');
+                imgContainer.append(imgElement);
+                wrapper.append(imgContainer, deleteBtn);
+                container.append(wrapper);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading menu images:', err);
+            alert('載入菜單圖片失敗');
+        });
+    }
+
+    function loadTableTypes() {
+        // 後端可直接知道當前餐廳 -> 也可改成 "/tableType/getTableType"
+        fetch('/tableType/getTableType', { credentials: 'include' })
+        .then(resp => resp.json())
         .then(data => {
             const container = $('#tablesContainer');
             container.empty();
-            
-            // 建立桌型顯示的行
             const row = $('<div>').addClass('row');
-            
-            // 遍歷所有桌型
-            data.forEach(table => {
+            data.forEach(tbl => {
                 let tableLabel;
-                switch(table.tableType) {
-                    case 2:
-                        tableLabel = '1~2人桌數';
-                        break;
-                    case 4:
-                        tableLabel = '3~4人桌數';
-                        break;
-                    case 8:
-                        tableLabel = '5~8人桌數';
-                        break;
-                    default:
-                        tableLabel = `${table.tableType}人桌數`;
+                switch(tbl.tableType) {
+                    case 2:  tableLabel = '1~2人桌數'; break;
+                    case 4:  tableLabel = '3~4人桌數'; break;
+                    case 8:  tableLabel = '5~8人桌數'; break;
+                    default: tableLabel = `${tbl.tableType}人桌數`;
                 }
-                
                 const col = $('<div>').addClass('col');
                 const formGroup = $('<div>').addClass('mb-3');
                 const label = $('<label>').addClass('form-label').text(tableLabel);
                 const input = $('<input>')
-                    .attr({
-                        'type': 'number',
-                        'min': '0',
-                        'required': true,
-                        'name': `table${table.tableType}`,
-                        'id': `table${table.tableType}`
-                    })
+                    .attr({ type:'number', min:'0', required:true, name:`table${tbl.tableType}`, id:`table${tbl.tableType}` })
                     .addClass('form-control')
-                    .val(table.tableCount)
-                    .prop('readonly', true); // 預設為唯讀
-                
+                    .val(tbl.tableCount)
+                    .prop('readonly', true);
                 formGroup.append(label, input);
                 col.append(formGroup);
                 row.append(col);
             });
-            
             container.append(row);
         })
-        .catch(error => {
-            console.error('Error loading table types:', error);
+        .catch(err => {
+            console.error('Error loading table types:', err);
             alert('載入桌型資訊失敗');
         });
-}
+    }
 
-// 在表單提交時收集桌型資訊
-function collectTableData() {
-    const tableData = [];
-    $('[id^="table"]').each(function() {
-        const tableType = parseInt(this.id.replace('table', ''));
-        const tableCount = parseInt($(this).val());
-        tableData.push({
-            tableType: tableType,
-            tableCount: tableCount
+    // 同步刪除圖片
+    $(document).on('click', '.delete-btn', function(e) {
+        e.preventDefault();
+        if (!confirm('確定要刪除這張圖片嗎？')) return;
+        const wrapper = $(this).closest('.image-wrapper');
+        const imgId = $(this).data('id');
+        const type = $(this).data('type');
+        const deleteUrl = (type === 'env')
+            ? `/envImg/deleteEnvImage/${imgId}`
+            : `/menuImg/deleteMenuImage/${imgId}`;
+        fetch(deleteUrl, { method:'DELETE', credentials:'include' })
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.success) {
+                wrapper.remove();
+                if (type === 'env') loadEnvironmentImages();
+                else loadMenuImages();
+            } else {
+                alert(data.message || '刪除圖片失敗');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting image:', error);
+            alert('刪除圖片失敗');
         });
     });
-    return tableData;
-}
-$('#restaurantForm').on('submit', async function(e) {
-    e.preventDefault();
 
-    // 表單驗證
-    if (!this.checkValidity()) {
-        e.stopPropagation();
-        $(this).addClass('was-validated');
-        return;
-    }
-
-    try {
-        // 驗證料理類型
-        const cuisineTypeId = $('#cuisineTypeEdit').val();
-        if (!cuisineTypeId) {
-            alert('請選擇料理類型');
+    // 上傳環境圖片
+    $('#uploadEnvImagesButton').click(function() {
+        const input = $('#environmentImages')[0];
+        handleEnvImageUpload(input);
+    });
+    function handleEnvImageUpload(input) {
+        const files = input.files;
+        if (!files || files.length === 0) {
+            alert('請選擇要上傳的圖片');
             return;
         }
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('upFiles', files[i]);
+        }
+        fetch('/envImg/addEnvImg', { // 後端依 Session 知道 restId
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        })
+        .then(resp => resp.text())
+        .then(result => {
+            if (result.includes('errorMessage')) {
+                alert('上傳失敗：' + result);
+            } else {
+                input.value = '';
+                loadEnvironmentImages();
+                alert('圖片上傳成功');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading environment images:', error);
+            alert('圖片上傳失敗，請稍後再試');
+        });
+    }
 
-        // 準備餐廳基本資料
-        const restData = {
-            restId: parseInt('2001'), // 假設這是當前餐廳ID
-            merchantEmail: $('#memberEmail').val(),
-            merchantName: $('#memberName').val(),
-            phoneNumber: $('#memberPhone').val(),
-            restName: $('#restaurantName').val(),
-            restRegist: $('#businessId').val(),
-            restPhone: $('#restaurantPhone').val(),
-            cuisineTypeId: parseInt(cuisineTypeId),
-            restCity: $('#cityEdit').val(),
-            restDist: $('#districtEdit').val(),
-            restAddress: $('#address').val(),
-            restIntro: $('#restaurantIntro').val(),
-            businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
-        };
+    // 上傳菜單圖片
+    $('#uploadMenuImagesButton').click(function() {
+        const input = $('#menuImages')[0];
+        handleMenuImageUpload(input);
+    });
+    function handleMenuImageUpload(input) {
+        const files = input.files;
+        if (!files || files.length === 0) {
+            alert('請選擇要上傳的圖片');
+            return;
+        }
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('upFiles', files[i]);
+        }
+        fetch('/menuImg/addMenuImg', {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.success) {
+                input.value = '';
+                loadMenuImages();
+                alert('圖片上傳成功');
+            } else {
+                alert(data.message || '菜單圖片上傳失敗');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading menu images:', error);
+            alert('菜單圖片上傳失敗');
+        });
+    }
 
-        // 檢查密碼修改
-        const oldPassword = $('#oldPassword').val();
+    // 密碼欄位即時檢查
+    $('#newPassword, #confirmPassword').on('input', function() {
         const newPassword = $('#newPassword').val();
         const confirmPassword = $('#confirmPassword').val();
-
-        if (oldPassword || newPassword || confirmPassword) {
-            if (!oldPassword || !newPassword || !confirmPassword) {
-                alert('如要修改密碼，請填寫所有密碼欄位');
-                return;
+        if (newPassword || confirmPassword) {
+            if (newPassword === confirmPassword) {
+                $('#passwordMatch').text('密碼符合').removeClass('text-danger').addClass('text-success');
+            } else {
+                $('#passwordMatch').text('密碼不符合').removeClass('text-success').addClass('text-danger');
             }
-            if (newPassword !== confirmPassword) {
-                alert('新密碼與確認密碼不符');
-                return;
-            }
-            restData.oldPassword = oldPassword;
-            restData.newPassword = newPassword;
+        } else {
+            $('#passwordMatch').text('');
         }
+    });
 
-        // 更新餐廳基本資料
-        console.log('Submitting restaurant data:', restData);
-        const restResponse = await fetch('/rests/updateRest', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(restData)
-        });
-
-        const restResult = await restResponse.json();
-        if (!restResult.success) {
-            throw new Error(restResult.message || '餐廳資料更新失敗');
-        }
-
-        // 收集桌型資料
-        const tableData = [];
-        $('[id^="table"]').each(function() {
-            const tableType = parseInt(this.id.replace('table', ''));
-            const tableCount = parseInt($(this).val());
-            
-            if (!isNaN(tableType) && !isNaN(tableCount) && tableCount >= 0) {
-                tableData.push({
-                    tableTypeId: null, // 稍後從現有數據中獲取
-                    tableType: tableType,
-                    tableCount: tableCount,
-                    rest: {
-                        restId: restData.restId
-                    }
-                });
-            }
-        });
-
-        // 獲取現有桌型資料
-        const tableTypesResponse = await fetch(`/tableType/getTableType?restId=${restData.restId}`);
-        if (!tableTypesResponse.ok) {
-            throw new Error('獲取現有桌型資料失敗');
-        }
-        const currentTableTypes = await tableTypesResponse.json();
-
-        // 更新每個桌型的 tableTypeId
-        tableData.forEach(table => {
-            const existing = currentTableTypes.find(t => t.tableType === table.tableType);
-            if (existing) {
-                table.tableTypeId = existing.tableTypeId;
-                table.reservedLimit = existing.reservedLimit; // 保留原有的 reservedLimit
-            }
-        });
-
-        // 更新所有桌型資訊
-        const updatePromises = tableData.map(table => 
-            fetch('/tableType/updateTableCount', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(table)
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error(`桌型 ${table.tableType} 人座更新失敗`);
-                }
-                return response.text();
-            })
-        );
-        await Promise.all(updatePromises);
-        // 全部更新成功
-        alert('餐廳資料和桌型更新成功');
-        setReadOnlyMode(true);
-        loadRestaurantData(); // 重新載入所有資料
-    } catch (error) {
-        console.error('Error updating restaurant and table types:', error);
-        alert('更新失敗：' + (error.message || '發生未知錯誤'));
-    }
 });
-        });
-        
-    </script>
+</script>
 </body>
 </html>
