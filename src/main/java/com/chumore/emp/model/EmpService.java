@@ -2,6 +2,7 @@ package com.chumore.emp.model;
 
 import com.chumore.emp.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -109,22 +110,43 @@ public class EmpService {
 //	}
 	// 更新員工資料
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	
 	public void updateEmp(Integer empId, EmpFullDTO dto) {
-		EmpVO emp = empRepository.findById(empId).orElseThrow(() -> new NoSuchElementException("找不到該員工資料"));
+        try {
+            // 獲取現有員工資料
+            EmpVO existingEmp = empRepository.findById(empId)
+                    .orElseThrow(() -> new NoSuchElementException("找不到該員工資料"));
 
-		// 不更新密碼，只更新其他資料
-		emp.setEmpName(dto.getEmpName());
-		emp.setEmpAccount(dto.getEmpAccount());
-		emp.setEmpPhone(dto.getEmpPhone());
-		emp.setEmpEmail(dto.getEmpEmail());
-		emp.setEmpRole(dto.getEmpRole());
-		emp.setEmpAccountStatus(dto.getEmpAccountStatus());
-		emp.setEmpHireDate(dto.getEmpHireDate());
-		emp.setEmpResignDate(dto.getEmpResignDate());
+            // 檢查手機號碼唯一性（排除當前員工）
+            if (!existingEmp.getEmpPhone().equals(dto.getEmpPhone()) &&
+                empRepository.existsByEmpPhoneAndEmpIdNot(dto.getEmpPhone(), empId)) {
+                throw new IllegalArgumentException("此手機號碼已被其他員工使用");
+            }
 
-		empRepository.save(emp);
-	}
+            // 檢查 Email 唯一性（排除當前員工）
+            if (!existingEmp.getEmpEmail().equals(dto.getEmpEmail()) &&
+                empRepository.existsByEmpEmailAndEmpIdNot(dto.getEmpEmail(), empId)) {
+                throw new IllegalArgumentException("此 Email 已被其他員工使用");
+            }
 
+            // 更新欄位
+            existingEmp.setEmpName(dto.getEmpName());
+            existingEmp.setEmpPhone(dto.getEmpPhone());
+            existingEmp.setEmpEmail(dto.getEmpEmail());
+            existingEmp.setEmpRole(dto.getEmpRole());
+            existingEmp.setEmpAccountStatus(dto.getEmpAccountStatus());
+            existingEmp.setEmpHireDate(dto.getEmpHireDate());
+            existingEmp.setEmpResignDate(dto.getEmpResignDate());
+
+            // 保存更新
+            empRepository.save(existingEmp);
+            
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("數據完整性錯誤: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new IllegalStateException("更新員工資料時發生錯誤: " + e.getMessage(), e);
+        }
+    }
 	// 生成臨時密碼的方法
 	private String generateTempPassword() {
 		// 生成8位隨機密碼，包含數字和字母

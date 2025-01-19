@@ -31,8 +31,7 @@ public class EmpVO implements Serializable {
    
    //員工密碼，不可為空，長度限制60
    @Column(name = "emp_password", nullable = false, length = 60)
-   @NotEmpty(message = "密碼: 請勿空白")
-   @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "密碼: 至少8個字符，至少包含一個字母和一個數字")
+   
    private String empPassword;
    
    //員工手機，不可為空，長度20，不可與他人重複
@@ -64,7 +63,6 @@ public class EmpVO implements Serializable {
    //員工到職日，不可為空
    @Column(name = "emp_hire_date", nullable = false)
    @NotNull(message = "到職日: 請勿空白")
-   @Past(message = "到職日: 不能是未來日期")
    private LocalDate empHireDate;
    
    //員工離職日，可為空

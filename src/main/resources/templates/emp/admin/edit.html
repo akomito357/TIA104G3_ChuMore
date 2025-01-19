@@ -1,138 +1,160 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
 <head>
-    <title>編輯員工資料</title>
+<title>編輯員工資料</title>
 </head>
 <body>
-    <div layout:fragment="content">
-       
+	<div layout:fragment="content">
 
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">編輯員工資料</h4>
-                        <a th:href="@{/emp/admin/list}" class="btn btn-outline-dark">
-                            <i class="bi bi-arrow-left me-1"></i> 返回列表
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="@{/emp/admin/edit/{id}(id=${empDTO.empId})}" method="post" th:object="${empDTO}">
-                            <input type="hidden" th:field="*{empId}"/>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="empName" class="form-label">姓名 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="empName" th:field="*{empName}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></div>
-                                </div>
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="card shadow-sm">
+					<div
+						class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+						<h4 class="mb-0">編輯員工資料</h4>
+						<a th:href="@{/emp/admin/list}" class="btn btn-outline-dark">
+							<i class="bi bi-arrow-left me-1"></i> 返回列表
+						</a>
+					</div>
+					<div class="card-body">
+						<form th:action="@{/emp/admin/edit/{id}(id=${empDTO.empId})}"
+							method="post" th:object="${empDTO}" class="needs-validation"
+							novalidate>
+							<input type="hidden" th:field="*{empId}"/>
 
-                                <div class="col-md-6">
-                                    <label for="empAccount" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="empAccount" th:field="*{empAccount}" readonly>
-                                </div>
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label for="empName" class="form-label">姓名 <span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="empName" th:field="*{empName}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></div>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empPhone" class="form-label">手機 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="empPhone" th:field="*{empPhone}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}"></div>
-                                </div>
+								<div class="col-md-6">
+									<label for="empAccount" class="form-label">帳號</label> <input
+										type="text" class="form-control" id="empAccount"
+										th:field="*{empAccount}" readonly>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="empEmail" th:field="*{empEmail}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}"></div>
-                                </div>
+								<div class="col-md-6">
+									<label for="empPhone" class="form-label">手機 <span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="empPhone" th:field="*{empPhone}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empPhone')}"
+										th:errors="*{empPhone}"></div>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empRole" class="form-label">權限角色 <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="empRole" th:field="*{empRole}" required>
-                                        <option value="0">一般員工</option>
-                                        <option value="1">管理員</option>
-                                    </select>
-                                </div>
+								<div class="col-md-6">
+									<label for="empEmail" class="form-label">Email <span
+										class="text-danger">*</span></label> <input type="email"
+										class="form-control" id="empEmail" th:field="*{empEmail}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empEmail')}"
+										th:errors="*{empEmail}"></div>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empAccountStatus" class="form-label">帳號狀態 <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="empAccountStatus" th:field="*{empAccountStatus}" required>
-                                        <option value="1">啟用</option>
-                                        <option value="0">停用</option>
-                                    </select>
-                                </div>
+								<div class="col-md-6">
+									<label for="empRole" class="form-label">權限角色 <span
+										class="text-danger">*</span></label> <select class="form-select"
+										id="empRole" th:field="*{empRole}" required>
+										<option value="0">一般員工</option>
+										<option value="1">管理員</option>
+									</select>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empHireDate" class="form-label">到職日 <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="empHireDate" th:field="*{empHireDate}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empHireDate')}" th:errors="*{empHireDate}"></div>
-                                </div>
+								<div class="col-md-6">
+									<label for="empAccountStatus" class="form-label">帳號狀態 <span
+										class="text-danger">*</span></label> <select class="form-select"
+										id="empAccountStatus" th:field="*{empAccountStatus}" required>
+										<option value="1">啟用</option>
+										<option value="0">停用</option>
+									</select>
+								</div>
 
-                                <div class="col-md-6">
-                                    <label for="empResignDate" class="form-label">離職日</label>
-                                    <input type="date" class="form-control" id="empResignDate" th:field="*{empResignDate}">
-                                </div>
+								<div class="col-md-6">
+									<label for="empHireDate" class="form-label">到職日 <span
+										class="text-danger">*</span></label> <input type="date"
+										class="form-control" id="empHireDate"
+										th:field="*{empHireDate}" required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empHireDate')}"
+										th:errors="*{empHireDate}"></div>
+								</div>
 
-                                <div class="col-12">
-                                    <div class="card bg-light">
-                                        <div class="card-body">
-                                            <h5 class="card-title">
-                                                <i class="bi bi-key me-2"></i>密碼管理
-                                            </h5>
-                                            <p class="card-text">若需要重置員工密碼，請點擊下方按鈕。新密碼將會自動生成並發送至員工信箱。</p>
-                                            <form th:action="@{/emp/admin/reset-password/{id}(id=${empDTO.empId})}" 
-                                                  method="post" 
-                                                  onsubmit="return confirm('確定要重置此員工的密碼嗎？新密碼將會發送到員工信箱。');"
-                                                  style="display: inline;">
-                                                <button type="submit" class="btn btn-warning">
-                                                    <i class="bi bi-key me-1"></i> 重置密碼
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+								<div class="col-md-6">
+									<label for="empResignDate" class="form-label">離職日</label> <input
+										type="date" class="form-control" id="empResignDate"
+										th:field="*{empResignDate}">
+								</div>
 
-                                <div class="col-12 mt-4">
-                                    <hr>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="bi bi-save me-1"></i> 儲存變更
-                                            </button>
-                                            <a th:href="@{/emp/admin/list}" class="btn btn-secondary">
-                                                <i class="bi bi-x-circle me-1"></i> 取消
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+								<div class="col-12">
+									<div class="card bg-light">
+										<div class="card-body">
+											<h5 class="card-title">
+												<i class="bi bi-key me-2"></i>密碼管理
+											</h5>
+											<p class="card-text">若需要重置員工密碼，請點擊下方按鈕。新密碼將會自動生成並發送至員工信箱。</p>
+											<form
+												th:action="@{/emp/admin/reset-password/{id}(id=${empDTO.empId})}"
+												method="post"
+												onsubmit="return confirm('確定要重置此員工的密碼嗎？新密碼將會發送到員工信箱。');"
+												style="display: inline;">
+												<button type="submit" class="btn btn-warning">
+													<i class="bi bi-key me-1"></i> 重置密碼
+												</button>
+											</form>
+										</div>
+									</div>
+								</div>
 
-    <!-- 頁面特定的 JavaScript -->
-    <th:block layout:fragment="script">
-        <script th:inline="javascript">
-            // 表單驗證
-            (function() {
-                'use strict'
-                var forms = document.querySelectorAll('.needs-validation')
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-        </script>
-    </th:block>
+								<div class="col-12 mt-4">
+									<hr>
+									<div class="d-flex justify-content-between">
+										<div>
+											<button type="submit" class="btn btn-primary">
+												<i class="bi bi-save me-1"></i> 儲存變更
+											</button>
+											<a th:href="@{/emp/admin/list}" class="btn btn-secondary">
+												<i class="bi bi-x-circle me-1"></i> 取消
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 頁面特定的 JavaScript -->
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+			// 表單驗證
+			(function() {
+				'use strict'
+				var forms = document.querySelectorAll('.needs-validation')
+				Array.prototype.slice.call(forms).forEach(function(form) {
+					form.addEventListener('submit', function(event) {
+						if (!form.checkValidity()) {
+							event.preventDefault()
+							event.stopPropagation()
+						}
+						form.classList.add('was-validated')
+					}, false)
+				})
+			})()
+		</script>
+	</th:block>
 </body>
 </html>
