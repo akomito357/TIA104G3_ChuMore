@@ -873,9 +873,11 @@
                     deleteProductCategorys.push(parseInt(productCategoryId));
                     // console.log(deleteProductCategorys);
                 }
-
+				const ans = confirm("確定要刪除嗎?")
+				if(ans){
                 $(tabId).remove(); // 刪除內容
                 $(this).closest('.nav-item').remove(); // 刪除標籤
+				}
             });
 
             // 動態新增餐點
@@ -934,9 +936,12 @@
                     deleteProducts.push(parseInt(productId));
                     console.log(deleteProducts);
                 }
-
+                
+                const ans = confirm("確定要刪除嗎?")
+				if(ans){
                 item.remove(); // 刪除項目
                 nextHr.remove(); // 刪除分隔線
+				}
             });
 
             // 圖片上傳預覽

@@ -34,7 +34,7 @@ import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.rest.model.RestVO;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/rests")
 public class RestOrderMasterController {
 
 	@Autowired

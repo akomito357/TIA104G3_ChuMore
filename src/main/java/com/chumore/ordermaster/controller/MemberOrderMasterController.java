@@ -98,7 +98,7 @@ public class MemberOrderMasterController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("diningAndReview/history")
+	@GetMapping("dining_and_review/history")
 	public String memberDiningHistory() {
 		return "secure/member/dining/member_dining_history";
 	}
