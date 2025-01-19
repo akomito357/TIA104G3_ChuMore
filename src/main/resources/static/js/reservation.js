@@ -8,6 +8,58 @@ $(document).ready(function() {
         language: 'zh-TW'
     });
 
+
+    const images = {
+        environment: [
+            'https://placehold.co/800x600?text=環境1',
+            'https://placehold.co/800x600?text=環境2',
+            'https://placehold.co/800x600?text=環境3',
+            'https://placehold.co/800x600?text=環境4',
+            'https://placehold.co/800x600?text=環境5',
+            'https://placehold.co/800x600?text=環境6',
+            'https://placehold.co/800x600?text=環境7',
+            'https://placehold.co/800x600?text=環境8',
+        ],
+        menu: [
+            'https://placehold.co/800x600?text=菜單1',
+            'https://placehold.co/800x600?text=菜單2',
+            'https://placehold.co/800x600?text=菜單3',
+            'https://placehold.co/800x600?text=菜單4',
+            'https://placehold.co/800x600?text=菜單5',
+            'https://placehold.co/800x600?text=菜單6',
+            'https://placehold.co/800x600?text=菜單7',
+            'https://placehold.co/800x600?text=菜單8',
+        ]
+    };
+
+
+    let currentTab = 'environment';
+
+
+    // 取得request param 並初始化值
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const restId = urlParams.get("restId");
+    const reservationDate = urlParams.get("reservationDate");
+    const reservationTime = urlParams.get("reservationTime");
+    const guestCount = urlParams.get("guestCount");
+
+    if (reservationDate) {
+        $('#reservedDate').val(reservationDate);
+    }
+
+    if (guestCount) {
+        $('#guestCount').val(guestCount);
+    }
+
+    if(restId){
+        loadRestInfo(restId);
+        initializeImageGrid(restId);
+        // 初始化時段按鈕
+        updateTimeSlots(restId);
+    }
+
     // utilities
     function isOpen(hours,indices){
         return indices.some(index => hours[index] === 1);
@@ -15,13 +67,14 @@ $(document).ready(function() {
 
 
     // 訂位 ui logic
-    async function generateTimeSlots(guestCount, reservedDate){
+    async function generateTimeSlots(restId,guestCount, reservedDate){
         try {
             // 取得 daily Reservation 資料
-            let availableTablesData = await getAvailableTablesData(guestCount, reservedDate);
-            let businessHours = await getRestBusinessHours();
+            let availableTablesData = await getAvailableTablesData(restId,guestCount, reservedDate);
+            let businessHours = await getRestBusinessHours(restId);
             let container = $('#timeSlots'); // 確認選擇器是否正確，假設 id 為 'timeSlots'
 
+            console.log(businessHours);
 
             // 清空容器以避免重複生成
             container.empty();
@@ -84,7 +137,7 @@ $(document).ready(function() {
     function generateTimeSlotsButton(containerId,startHour,endHour,availableTablesData){
         const container = $(`#${containerId}`);
 
-        for(let hour = startHour; hour < endHour; hour++){
+        for(let hour = startHour; hour <= endHour; hour++){
             const time = `${hour.toString().padStart(2,'0')}:00`;
             const availableTables =  parseInt(availableTablesData[hour])
             const isAvailable =  availableTables ? true:false;
@@ -109,12 +162,12 @@ $(document).ready(function() {
         }
     }
 
-    async function updateTimeSlots() {
+    async function updateTimeSlots(restId) {
         const date = $('#reservedDate').val();
         const guests = $('#guestCount').val();
 
         if (date && guests) {
-            await generateTimeSlots(guests, date);
+            await generateTimeSlots(restId,guests, date);
             // 重新綁定點擊事件
             $('.time-slot-btn').off('click').on('click', function() {
                 if (!$(this).hasClass('disabled-slot')) {
@@ -148,11 +201,10 @@ $(document).ready(function() {
         .appendTo('head');
 
     // 綁定事件
-    $('#guestCount, #reservedDate').change(updateTimeSlots);
+    $('#guestCount, #reservedDate').change(updateTimeSlots.bind(null,restId));
 
 
-    // 初始化時段按鈕
-    updateTimeSlots();
+
 
     // 更新訂位資訊
     function updateBookingSummary() {
@@ -177,13 +229,12 @@ $(document).ready(function() {
     $('#guestCount, #reservedDate').change(updateBookingSummary);
 
     // 確認訂位
-    $('#confirmBooking, #confirmBookingFixed').click(confirmReservation);
+    $('#confirmBooking, #confirmBookingFixed').click(confirmReservation.bind(null,restId));
 
     // 訂位 data logic
 
-    async function getAvailableTablesData(guestCount,reservedDate){
+    async function getAvailableTablesData(restId,guestCount,reservedDate){
         try{
-            let restId = 2001;
             const url = `http://localhost:8080/test/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
             const res = await fetch(url);
             if(!res.ok){
@@ -244,9 +295,9 @@ $(document).ready(function() {
         }
     }
 
-    async function getRestFormattedBusinessHours(){
+    async function getRestFormattedBusinessHours(restId){
         try{
-            let url = `http://localhost:8080/test/rests/rest/2001/formattedBusinessHours`;
+            let url = `http://localhost:8080/test/rests/rest/${restId}/formattedBusinessHours`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -262,9 +313,9 @@ $(document).ready(function() {
         }
     }
 
-    async function getRestBusinessHours(){
+    async function getRestBusinessHours(restId){
         try{
-            let url = `http://localhost:8080/test/rests/rest/2001/businessHours`;
+            let url = `http://localhost:8080/test/rests/rest/${restId}/businessHours`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -281,8 +332,7 @@ $(document).ready(function() {
     }
 
 
-
-    async function confirmReservation() {
+    async function confirmReservation(restId) {
         const reservationInfo = {
             reservationDate: $('#reservedDate').val(),
             reservationTime: $('.time-slot-btn.active').data('time'),
@@ -291,7 +341,7 @@ $(document).ready(function() {
 
         //按下確認訂位後，跳轉至確認訂位頁面
         try{
-            const url = `http://localhost:8080/test/reservations/reservation/confirm?memberId=1071&restId=2001`;
+            const url = `http://localhost:8080/test/reservations/reservation/confirm?memberId=1072&restId=${restId}`;
             const res = await fetch(url,
                 {
                     method: 'POST',
@@ -317,9 +367,9 @@ $(document).ready(function() {
     }
 
 
-    async function loadRestInfo(){
-        let restData = await getRestData(2001);
-        let businessHours = await getRestFormattedBusinessHours();
+    async function loadRestInfo(restId){
+        let restData = await getRestData(restId);
+        let businessHours = await getRestFormattedBusinessHours(restId);
 
         let restNameEl = $('#restName');
         let restAddressEl = $('#restAddress');
@@ -347,7 +397,7 @@ $(document).ready(function() {
         restBusinessHoursEl.text(businessHoursText);
     }
 
-    loadRestInfo()
+
 
     // 訂位資訊顯示
 
@@ -381,32 +431,6 @@ $(document).ready(function() {
 
     // 圖片
 
-    const images = {
-        // environment: [
-        //     'https://placehold.co/800x600?text=環境1',
-        //     'https://placehold.co/800x600?text=環境2',
-        //     'https://placehold.co/800x600?text=環境3',
-        //     'https://placehold.co/800x600?text=環境4',
-        //     'https://placehold.co/800x600?text=環境5',
-        //     'https://placehold.co/800x600?text=環境6',
-        //     'https://placehold.co/800x600?text=環境7',
-        //     'https://placehold.co/800x600?text=環境8',
-        // ],
-        menu: [
-            'https://placehold.co/800x600?text=菜單1',
-            'https://placehold.co/800x600?text=菜單2',
-            'https://placehold.co/800x600?text=菜單3',
-            'https://placehold.co/800x600?text=菜單4',
-            'https://placehold.co/800x600?text=菜單5',
-            'https://placehold.co/800x600?text=菜單6',
-            'https://placehold.co/800x600?text=菜單7',
-            'https://placehold.co/800x600?text=菜單8',
-        ]
-    };
-
-
-    let currentTab = 'environment';
-
 
     // 取得環境圖片
     async function fetchEnvImages(restId){
@@ -429,15 +453,70 @@ $(document).ready(function() {
         }
     }
 
+    // 取得菜單圖片
+    async function fetchMenuImages(restId){
+        let imgUrlList = [];
+        try {
+            let res = await fetch(`http://localhost:8080/menuImg/images/${restId}`);
+            if (!res.ok) {
+                throw new Error(`Failed to fetch image IDs: ${res.status}`);
+            }
+            let imagesIds = await res.json();
+
+            for (const id of imagesIds) {
+                imgUrlList.push(`http://localhost:8080/menuImg/image/${id}`);
+            }
+
+            return imgUrlList;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
 
     async function loadImagesUrl(restId){
         images["environment"] = await fetchEnvImages(restId);
+        images["menu"] = await fetchMenuImages(restId);
     }
 
 
     async function populateImageGrid(restId){
         await loadImagesUrl(restId);
 
+        // 更新輪播圖
+        const carouselInner = document.querySelector('#heroCarousel .carousel-inner');
+        carouselInner.innerHTML = '';
+
+        // 添加環境照片
+        if (images.environment && images.environment.length > 0) {
+            const envDiv = document.createElement('div');
+            envDiv.className = 'carousel-item active';
+            envDiv.innerHTML = `
+                    <img src="${images.environment[0]}" class="d-block w-100" alt="餐廳環境">
+                    <div class="carousel-caption">
+                        <h3>精緻用餐環境</h3>
+                        <p>享受無與倫比的美食體驗</p>
+                    </div>
+                `;
+            carouselInner.appendChild(envDiv);
+        }
+
+        // 添加菜單照片
+        if (images.menu && images.menu.length > 0) {
+            const menuDiv = document.createElement('div');
+            menuDiv.className = 'carousel-item';
+            menuDiv.innerHTML = `
+                    <img src="${images.menu[0]}" class="d-block w-100" alt="主廚特餐">
+                    <div class="carousel-caption">
+                        <h3>主廚特製料理</h3>
+                        <p>每日精選新鮮食材</p>
+                    </div>
+                `;
+            carouselInner.appendChild(menuDiv);
+        }
+
+        // 原有的圖片格狀排列代碼
         const imageGrid = document.querySelector('.image-grid .row.g-2');
         imageGrid.innerHTML = '';
 
@@ -527,7 +606,6 @@ $(document).ready(function() {
         await populateImageGrid(restId);
     }
 
-    initializeImageGrid(2001);
 
     // 為所有圖片和 more-images 添加點擊事件
     $('.image-grid img, .more-images').click(function(e) {
@@ -579,6 +657,7 @@ $(document).ready(function() {
         });
         event.target.classList.add('active');
         updateCarouselImages(tab);
+        updateImageCounter(1);
     }
 
     function updateCarouselImages(tab) {

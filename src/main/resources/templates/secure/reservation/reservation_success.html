@@ -120,18 +120,32 @@
             delay: 3000
         });
 
-        // 重寄確認信按鈕
-        $('#resendBtn').click(function() {
-            $(this).prop('disabled', true);
-            setTimeout(() => {
-                successToast.show();
-                $(this).prop('disabled', false);
-            }, 1000);
+        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'), {
+            delay: 3000
         });
 
-        // 回首頁按鈕
-        $('#homeBtn').click(function() {
-            window.location.href = '/';
+        // 重寄確認信按鈕
+        $('#resendBtn').click(function () {
+            console.log("Resend button clicked");
+            $(this).prop('disabled', true);
+            $.ajax({
+                url: 'http:localhost:8080/test/reservations/reservation/resend-confirmation-mail',
+                method: 'POST',
+                success: function (response) {
+                    successToast.show();
+                },
+                error: function (xhr) {
+                    errorToast.show();
+                },
+                complete: function (btn) {
+                    btn.prop('disabled', false);
+                }
+            });
+
+            // 回首頁按鈕
+            $('#homeBtn').click(function () {
+                window.location.href = '/';
+            });
         });
     });
 </script>

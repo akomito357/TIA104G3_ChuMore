@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>訂位確認信</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
+    <style>
+        /* 添加一些基本樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            max-width: 150px;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        .confirmation-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .footer {
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1><i class="fa fa-utensils me-3"></i>  ChuMore</h1>
+        <h2>訂位確認信</h2>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <p>親愛的 <strong th:text="${memberName}">訂位人姓名</strong>，</p>
+        <p>感謝您選擇我們的餐廳進行用餐。以下是您的訂位資訊：</p>
+        <ul>
+            <li><strong>餐廳名稱：</strong> <span th:text="${restName}">餐廳名稱</span></li>
+            <li><strong>用餐日期：</strong> <span th:text="${reservationDate}">2024/03/15 (五)</span></li>
+            <li><strong>用餐時間：</strong> <span th:text="${reservationTime}">18:30</span></li>
+            <li><strong>用餐人數：</strong> <span th:text="${guestCount}">4位</span></li>
+        </ul>
+        <p>請點擊下方按鈕以確認您的訂位：</p>
+        <a href="#" th:href="@{${confirmationLink}}" class="confirmation-button">確認訂位</a>
+        <p>此連結將在24小時後過期。如有任何問題，請隨時聯繫我們。</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 chumore. 版權所有。</p>
+    </div>
+</div>
+</body>
+</html>
