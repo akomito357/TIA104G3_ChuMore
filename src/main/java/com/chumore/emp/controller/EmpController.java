@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -103,44 +104,48 @@ public class EmpController {
 	}
 
 	// 前往新增員工頁面
-	@GetMapping("/admin/add")
-	public String showAddForm(Model model) {
-	    if (!model.containsAttribute("empDTO")) {
-	        model.addAttribute("empDTO", new EmpFullDTO());
-	    }
-	    return "emp/admin/add";  // 不需要前導斜線
-	}
-	// 修改密碼
-	@PostMapping("/admin/reset-password/{id}")
-	public String resetPassword(@PathVariable("id") Integer empId, RedirectAttributes redirectAttr) {
-	    try {
-	        String tempPassword = empService.resetPassword(empId);
-	        redirectAttr.addFlashAttribute("message", "密碼重置成功，暫時密碼為：" + tempPassword);
-	    } catch (Exception e) {
-	        redirectAttr.addFlashAttribute("error", "密碼重置失敗：" + e.getMessage());
-	    }
-	    return "redirect:/emp/admin/list";
-	}
-	// 新增員工
 	
+	@GetMapping("admin/add")
+	public String addEmp(ModelMap model) {
+	    // 初始化一個新的EmpFullDTO對象
+	    EmpFullDTO empDTO = new EmpFullDTO();
+	    model.addAttribute("empDTO", empDTO);
+	    return "emp/admin/add";
+	}
+	
+	
+	// 新增員工
 	@PostMapping("/admin/add")
-	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, 
-	                    BindingResult result,
+	public String insert(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, 
+	                    BindingResult result, 
+	                    ModelMap model,
 	                    RedirectAttributes redirectAttr) {
+
+	    // 驗證錯誤處理
 	    if (result.hasErrors()) {
-	        return "/emp/admin/add";
+	        model.addAttribute("empDTO", dto);
+	        return "emp/admin/add";
 	    }
 
 	    try {
+	        // 新增員工
 	        empService.addEmp(dto);
+	        // 新增成功訊息
 	        redirectAttr.addFlashAttribute("message", 
 	            "員工新增成功！預設密碼為：A1234567，請通知員工盡快修改密碼。");
+	        
+	        // 獲取更新後的員工列表
+	        List<EmpFullDTO> list = empService.getAllEmpsFullInfo();
+	        model.addAttribute("empListData", list);
+	        
 	        return "redirect:/emp/admin/list";
+	        
 	    } catch (IllegalArgumentException e) {
-	        redirectAttr.addFlashAttribute("error", e.getMessage());
-	        return "redirect:/emp/admin/add";
+	        model.addAttribute("error", e.getMessage());
+	        return "emp/admin/add";
 	    }
 	}
+	
 	
 	
 
@@ -169,7 +174,17 @@ public class EmpController {
 			return "redirect:/emp/admin/edit/" + empId;
 		}
 	}
-
+	// 修改密碼
+		@PostMapping("/admin/reset-password/{id}")
+		public String resetPassword(@PathVariable("id") Integer empId, RedirectAttributes redirectAttr) {
+		    try {
+		        String tempPassword = empService.resetPassword(empId);
+		        redirectAttr.addFlashAttribute("message", "密碼重置成功，暫時密碼為：" + tempPassword);
+		    } catch (Exception e) {
+		        redirectAttr.addFlashAttribute("error", "密碼重置失敗：" + e.getMessage());
+		    }
+		    return "redirect:/emp/admin/list";
+		}
 	// 處理例外
 	@ExceptionHandler(Exception.class)
 	public String handleError(Exception e, RedirectAttributes redirectAttr) {
