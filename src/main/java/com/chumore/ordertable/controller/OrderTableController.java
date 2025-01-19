@@ -1,6 +1,5 @@
 package com.chumore.ordertable.controller;
 
-import java.awt.PageAttributes.MediaType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,11 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.ordertable.model.OrderTableVO;
-import com.chumore.ordertable.model.TableUpdateRequest;
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
 
@@ -159,7 +154,7 @@ public class OrderTableController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", e.getMessage());
+            response.put("message", "此桌尚有訂單");
             return ResponseEntity.badRequest().body(response);
         }
     }

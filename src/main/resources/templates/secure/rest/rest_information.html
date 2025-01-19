@@ -580,7 +580,7 @@ $(document).ready(function() {
 
     function loadTableTypes() {
 
-        fetch(`rests/tableType/getTableType/${restId}`, { 
+        fetch(`/rests/tableType/getTableType/${restId}`, { 
             credentials: 'include' 
         })
         .then(resp => {
