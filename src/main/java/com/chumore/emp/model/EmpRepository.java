@@ -48,10 +48,5 @@ public interface EmpRepository extends JpaRepository<EmpVO, Integer> {
     boolean existsByEmpPhone(String empPhone);
     
     boolean existsByEmpEmail(String empEmail);
-    // 更新員工的電話和Email
-    @Modifying
-    @Query("UPDATE EmpVO e SET e.empPhone = :phone, e.empEmail = :email WHERE e.empId = :empId")
-    void updateBasicInfo(@Param("empId") Integer empId, 
-                        @Param("phone") String phone, 
-                        @Param("email") String email);
+    
 }

@@ -18,7 +18,9 @@ public interface MemberService {
     Optional<MemberVO> getOneMember(Integer memberId);
     
     List<MemberVO> getAll();
-    
+   
+    MemberVO getMemberByEmail(String email);
+
     Optional<MemberVO> findMemberByEmail(String memberEmail);
     
     Optional<MemberVO> findMemberByPhoneNumber(String memberPhoneNumber);

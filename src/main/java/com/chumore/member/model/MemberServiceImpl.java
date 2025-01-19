@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
@@ -140,5 +141,12 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     public boolean verifyMemberPhoneNumber(String memberPhoneNumber) {
         return !memberRepository.existsByMemberPhoneNumber(memberPhoneNumber);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberVO getMemberByEmail(String email) {
+        return memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("找不到此會員：" + email));
     }
 }
