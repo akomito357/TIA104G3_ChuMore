@@ -395,7 +395,7 @@
     <script>
 
         function showTableOptionList() {
-            fetch(`/ordertables/getTableNumberById`, {
+            fetch(`/rests/ordertables/getTableNumberById`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(tableName => {
@@ -450,16 +450,16 @@
             const size = 10;
             function loadDiningList(queryParam) {
 
-                fetch(`/rest/diningList?${queryParam.toString()}`, {
+                fetch(`/rests/diningList?${queryParam.toString()}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
-                        // console.log(response);
+                        console.log(response);
 
                         const pageData = response.data;
                         const diningList = pageData.content;
                         const totalPages = pageData.totalPages;
-                        // console.log(totalPages);
+                        console.log(diningList);
 
                         let table_body = "";
                         diningList.forEach((orderMaster, index) => {
@@ -520,12 +520,37 @@
                 const endDate = $("#endDate").val();
                 const endTime = $("#endTime").val();
 
-                let startDatetime = startDate ? String(startDate) + (startTime ? "T" + startTime : 'T00:00') : null;
+                let startDatetime;
+                
+                if(!startDate && startTime){
+					alert("請填寫日期");
+					return;
+                }else if(startDate && !startTime){
+	                startDatetime = String(startDate)+'T00:00';
+                }else if(startDate && startTime){
+	                startDatetime = String(startDate)+"T"+String(startTime);
+                } else {
+                	startDatetime = null;
+                }
+                
+                console.log(startDatetime);
 
-                // console.log(startDatetime);
-                let endDatetime = endDate ? String(endDate) + (endTime ? "T" + endTime : "T23:59") : null;
+                let endDatetime;
+                
+                if (!endDate && endTime) {
+                    alert("請填寫日期");
+                    return;
+                } else if (endDate && !endTime) {
+                    endDatetime = String(endDate) + "T23:59";
+                } else if (endDate && endTime) {
+                    endDatetime = String(endDate) + "T" + String(endTime);
+                } else {
+                    endDatetime = null;
+                }
+                
+                console.log(endDatetime);
 
-                const memberName = $('#memberName').val();
+                const memberName = $('#memberName').val().trim();
                 const orderTableId = $('#orderTableId').val();
 
                 // console.log(tableNumber);

@@ -36,7 +36,7 @@ import com.chumore.rest.model.RestVO;
 import com.opencsv.CSVReader;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/rests")
 @CrossOrigin
 public class ProductCategoryController {
 
