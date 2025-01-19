@@ -92,11 +92,13 @@ public class AuthController {
             session.setAttribute("restId", user.getRestId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_RESTAURANT);
             session.setAttribute("loginTime", LocalDateTime.now());
+            System.out.println("restId:" + user.getRestId());
             return "redirect:/secure/rest/rest_information";
         } else if ("ROLE_MEMBER".equals(role)) {
             session.setAttribute("memberId", user.getMemberId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
             session.setAttribute("loginTime", LocalDateTime.now());
+            System.out.println("memberId:" + user.getMemberId());
             return "redirect:/secure/member/member_information";
         }
 

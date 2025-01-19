@@ -38,12 +38,12 @@
 <!-- Customized Bootstrap Stylesheet -->
 <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
-<head th:insert="~{/included.html}" />
+<!-- <th:block th:insert="~{/included.html}" /> -->
 
 <th:block th:switch="${session.role}">
-	<head th:case="null" th:insert="~{/header_unlogin.html}" />
-	<head th:case="'ROLE_MEMBER'" th:insert="~{/header_member.html}" />
-	<head th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
+	<th:block th:case="null" th:insert="~{/header_unlogin.html}" />
+	<th:block th:case="'ROLE_MEMBER'" th:insert="~{/header_member.html}" />
+	<th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
 </th:block>
 
 <!-- Template Stylesheet -->
@@ -151,7 +151,7 @@ h5.section-title{
 											<div class="col-12">
 												<div class="input-group search-bar">
 													<input type="text" class="form-control"
-														placeholder="搜尋餐廳美食">
+														placeholder="搜尋餐廳美食" id="searchKeyword">
 													<button class="btn btn-primary search-button" type="button">
 														<i class="fas fa-search me-2"></i>搜尋
 													</button>
@@ -161,7 +161,7 @@ h5.section-title{
 
 										<!-- 第二行：四個欄位 -->
 										<div class="row">
-											<div class="col">
+											<!-- <div class="col">
 												<select class="form-select search-bar">
 													<option selected>地區</option>
 													<option>台北市</option>
@@ -170,19 +170,19 @@ h5.section-title{
 													<option>台中市</option>
 													<option>高雄市</option>
 												</select>
+											</div> -->
+
+											<div class="col">
+												<input type="date" class="form-control search-bar" id="searchDate">
 											</div>
 
 											<div class="col">
-												<input type="date" class="form-control search-bar">
-											</div>
-
-											<div class="col">
-												<input type="time" class="form-control search-bar"
+												<input type="time" class="form-control search-bar" id="searchTime"
 													value="19:00">
 											</div>
 
 											<div class="col">
-												<select class="form-select search-bar">
+												<select class="form-select search-bar" id="searchGuestCount">
 													<option selected>請選擇人數</option>
 													<option>1人</option>
 													<option>2人</option>

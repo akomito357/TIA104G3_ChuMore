@@ -50,10 +50,11 @@ public class MemberOrderMasterController {
 		Object memId = session.getAttribute("memberId");
 		Integer memberId = null;
 		if (memId == null) {
-			memberId = 1004;
+//			memberId = 1004;
 		} else {
-			MemberVO member = (MemberVO) memberSvc.getOneMember((Integer)memId).orElse(null);
-			memberId = member.getMemberId();
+//			MemberVO member = (MemberVO) memberSvc.getOneMember((Integer)memId).orElse(null);
+//			memberId = member.getMemberId();
+			memberId = (Integer)memId;
 		}
 
 		String[] sortParams = sort.split(",");
