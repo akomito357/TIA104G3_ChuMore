@@ -35,5 +35,3 @@ public interface RestRepository extends JpaRepository<RestVO, Integer> {
 
 }
 
-}
-
