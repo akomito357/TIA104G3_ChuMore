@@ -12,14 +12,26 @@ $(document).ready(function(){
 
 // 開始時間是否小於結束時間的檢查處理
 $('#startTime','#endTime').on('change',function(){
-    const startTime = $('#startTime').val();
-    const endTime = $('#endTime').val();
-    if(startTime && endTime && startTime >= endTime){
-        alert('開始時間必須小於結束時間');
-        $(this).val('');
+    let time = $(this).val();
+    if (time) {
+        // 確保時間是整點格式
+        time = adjustToHour(time);
+        $(this).val(time); // 更新輸入框的值
+
+        const startTime = $('#startTime').val();
+        const endTime = $('#endTime').val();
+        // 確保開始時間小於結束時間
+        if (startTime && endTime && startTime >= endTime) {
+            alert('開始時間必須小於結束時間');
+            $(this).val(''); // 清空錯誤的時間
+        }
     }
 })
 
+function adjustToHour(time) {
+    const [hour, minute] = time.split(':').map(Number); // 拆分小時和分鐘
+    return `${String(hour).padStart(2, '0')}:00`; // 保持兩位數格式，並將分鐘設為 00
+}
 
 
 // 調整可訂位上限
@@ -67,6 +79,11 @@ async function adjustTables(e){
 }
 
 function showAdjustmentRecord(adjustment){
+
+    const queryRecord = $('#queryRecord');
+    queryRecord.addClass('d-none').find('.record-content').text('');
+
+
     const record = `[調整結果] 日期：${adjustment.reservedDate}，時間：${adjustment.startTime || '00:00'} - ${adjustment.endTime || '23:59'}，` +
         `${adjustment.tableType}人桌 ${adjustment.operation === 'increase' ? '+' : '-'}${adjustment.adjustmentQuantities}`;
 
@@ -74,6 +91,7 @@ function showAdjustmentRecord(adjustment){
     recordElement.removeClass('d-none')
         .find('.record-content')
         .text(record);
+
 
     // 添加視覺效果
     recordElement.hide().fadeIn().css('background-color', '#e8f5e9')
@@ -95,6 +113,8 @@ function showErrorMessage(error){
 
 function showQueryRecord(date){
     const record = `[查詢結果] 目前顯示 ${date} 的訂位開放狀況`;
+    const adjustmentRecord = $('#adjustmentRecord');
+    adjustmentRecord.addClass('d-none').find('.record-content').text('');
 
     $('#queryRecord').removeClass('d-none')
         .find('.record-content')
