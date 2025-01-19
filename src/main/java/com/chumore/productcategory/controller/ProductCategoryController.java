@@ -201,8 +201,8 @@ public class ProductCategoryController {
 		if (restNum == null) {
 			restId = 2001;
 		} else {
-			RestVO rest = (RestVO) restNum;
-			restId = rest.getRestId();
+			restId = (Integer) restNum;
+//			restId = rest;
 		}
 		productCategorySvc.batchDelete(req);
 		for(ProductCategoryDto category : req.getProductCatList()) {

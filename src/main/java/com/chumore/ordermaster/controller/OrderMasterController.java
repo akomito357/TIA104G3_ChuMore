@@ -107,7 +107,7 @@ public class OrderMasterController {
 		}
 
 		
-		session.setAttribute("restId", restId);
+		session.setAttribute("restIdForOrder", restId);
 		session.setAttribute("tableNumber", tableNumber);
 		
 
@@ -200,7 +200,7 @@ public class OrderMasterController {
 			System.out.println(name + ": " + session.getAttribute(name));
 		}
 		
-		session.removeAttribute("restId");
+		session.removeAttribute("restIdForOrder");
 		session.removeAttribute("tableName");
 		session.removeAttribute("orderId");
 		
