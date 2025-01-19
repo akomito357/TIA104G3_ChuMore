@@ -9,13 +9,14 @@ public interface RestService {
 	void updateRest(RestVO rest);
 	RestVO getOneById(Integer restId);
 	List<RestVO> getAll();
+	List<RestVO> getRestsByRestIds(List<Integer> restIds);
+
 	List<String> getFormattedBusinessHours(Integer restId);
 	List<Integer> getBusinessHours(Integer restId);
 
 	RestVO getOneByEmail(String email);
 
-
-	List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId);
+	List<Integer> getRestIdsByOptionalFields(List<String> cities,List<String> districts,List<Integer> cuisineTypeIds);
 	List<Integer[]> getBusinessHoursFor(Integer restId);
 	String getBusinessDays(Integer restId);
 

@@ -12,9 +12,14 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 import java.io.IOException;
 
 @SpringBootApplication(scanBasePackages = "com.chumore")
+@EnableScheduling
+@EnableAsync
 public class Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);

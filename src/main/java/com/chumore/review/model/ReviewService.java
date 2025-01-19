@@ -194,7 +194,7 @@ public class ReviewService {
         reviewRepository.deleteByReviewId(reviewId);
     }
 
-    public Page<ReviewVO> getRestaurantReviews(Integer restId, Pageable pageable) {
+    public Page<ReviewVO> getRestReviews(Integer restId, Pageable pageable) {
         if (restId == null) {
             throw new RuntimeException("餐廳ID不能為空");
         }
@@ -215,11 +215,17 @@ public class ReviewService {
         return reviewRepository.existsByOrderId(orderId);
     }
 
+    public BigDecimal getAverageCostByRestId(Integer restId){
+        BigDecimal averageCost = reviewRepository.calculateAverageCostByRestId(restId);
+        return averageCost != null ? averageCost : BigDecimal.ZERO;
+    }
+
     public BigDecimal calculateAverageRating(Integer restId) {
         if (restId == null) {
             throw new RuntimeException("餐廳ID不能為空");
         }
-        return reviewRepository.calculateAverageRating(restId);
+        BigDecimal averageRating = reviewRepository.calculateAverageRating(restId);
+        return averageRating != null ? averageRating : BigDecimal.ZERO;
     }
 
     public Long getReviewCount(Integer restId) {

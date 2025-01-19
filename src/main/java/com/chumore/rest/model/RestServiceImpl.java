@@ -1,14 +1,11 @@
 package com.chumore.rest.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import com.chumore.event.RestChangedEvent;
 import org.hibernate.SessionFactory;
@@ -27,16 +24,20 @@ import com.chumore.ordertable.model.OrderTableVO;
 import com.chumore.reservation.model.ReservationVO;
 import com.chumore.rest.compositequery.RestCompositeQuery;
 import com.chumore.util.ConverterUtil;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service("restService")
 public class RestServiceImpl implements RestService{
 	
 	@Autowired
 	RestRepository repository;
 
-
 	@Autowired
 	private ApplicationEventPublisher publisher;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	public void addRest(RestVO rest) {
@@ -45,7 +46,6 @@ public class RestServiceImpl implements RestService{
 	}
 
 	@Override
-	@Transactional
 	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
@@ -64,6 +64,7 @@ public class RestServiceImpl implements RestService{
 	    }
 
 	@Override
+	@Transactional(readOnly = true)
 	public RestVO getOneById(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
 		RestVO rest = optional.orElse(null);
@@ -74,12 +75,19 @@ public class RestServiceImpl implements RestService{
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<RestVO> getAll() {
 		List<RestVO> rests = repository.findAll();
 		if (rests.isEmpty()) {
 			throw new ResourceNotFoundException("No rests found.");
 		}
 		return rests;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<RestVO> getRestsByRestIds(List<Integer> restIds) {
+		return repository.findAllById(restIds);
 	}
 
 
@@ -116,6 +124,7 @@ public class RestServiceImpl implements RestService{
 //	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getFormattedBusinessHours(Integer restId){
 		Optional<RestVO> optional = repository.findById(restId);
 		List<String> formattedBusinessHours = ConverterUtil.convertStrToHours(optional.get().getBusinessHours());
@@ -123,6 +132,7 @@ public class RestServiceImpl implements RestService{
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Integer> getBusinessHours(Integer restId) {
 		Optional<RestVO> optional = repository.findById(restId);
 		return ConverterUtil.convertStrToTimeList(optional.get().getBusinessHours(),1);
@@ -168,10 +178,54 @@ public class RestServiceImpl implements RestService{
 		String weeklyBusinessDays = optional.get().getWeeklyBizDays();
 		return weeklyBusinessDays;
 	}
-	
+
+
 	@Override
-	public List<Integer> getRestIdsByOptionalFields(String city, String district, Integer cuisineTypeId) {
-		return repository.findRestIdsByOptionalFields(city, district, cuisineTypeId);
+	public List<Integer> getRestIdsByOptionalFields(List<String> cities,
+													List<String> districts,
+													List<Integer> cuisineTypeIds) {
+		// 2. 若傳進來的集合是空或 null，就設為 null 以代表不加入條件
+		if (cities == null || cities.isEmpty()) {
+			cities = null;
+		}
+		if (districts == null || districts.isEmpty()) {
+			districts = null;
+		}
+		if (cuisineTypeIds == null || cuisineTypeIds.isEmpty()) {
+			cuisineTypeIds = null;
+		}
+
+		// 3. 動態組裝 JPQL
+		//    先寫個基本條件 "WHERE 1=1" 只是讓後續好用 AND 連接
+		StringBuilder jpql = new StringBuilder("SELECT r.restId FROM RestVO r WHERE 1=1");
+
+		if (cities != null) {
+			jpql.append(" AND r.restCity IN :cities");
+		}
+		if (districts != null) {
+			jpql.append(" AND r.restDist IN :districts");
+		}
+		if (cuisineTypeIds != null) {
+			jpql.append(" AND r.cuisineType.cuisineTypeId IN :cuisineTypeIds");
+		}
+
+		// 4. 建立 TypedQuery
+		TypedQuery<Integer> query = entityManager.createQuery(jpql.toString(), Integer.class);
+
+		// 5. 設定參數
+		if (cities != null) {
+			query.setParameter("cities", cities);
+		}
+		if (districts != null) {
+			query.setParameter("districts", districts);
+		}
+		if (cuisineTypeIds != null) {
+			query.setParameter("cuisineTypeIds", cuisineTypeIds);
+		}
+
+		// 6. 執行查詢取得結果
+		List<Integer> result = query.getResultList();
+		return (result != null) ? result : Collections.emptyList();
 	}
 	
 	public Set<OrderTableVO> getOrderTablesByRestId(Integer restId){
