@@ -39,11 +39,14 @@ public class DailyReservationServiceImpl implements DailyReservationService {
 
     @Override
     public List<Integer> filterRestIdsByConditions(List<Integer> restIds, LocalDate date, Integer reservedTime, Integer guestCount){
+        if (restIds == null || restIds.isEmpty() || reservedTime == null || reservedTime < 0 || reservedTime > 24) {
+            throw new IllegalArgumentException("Invalid input parameters");
+        }
         List<Integer> resultList = new ArrayList<>();
         for(Integer restId : restIds){
             List<Integer> availableTables = findAvailableTables(restId, date, guestCount);
             boolean hasAvailable = false;
-            for(int i=Math.max(reservedTime-2,0);i<=Math.min(reservedTime+2,24);i++){
+            for(int i=Math.max(reservedTime-2,0);i<=Math.min(reservedTime+2,23);i++){
                 if(availableTables.get(i)> 0){
                     hasAvailable = true;
                     break;
@@ -82,7 +85,7 @@ public class DailyReservationServiceImpl implements DailyReservationService {
         List<Integer> result = new ArrayList<>();
         List<DailyReservationVO> dailyReservations = dailyReservationDAO.findDailyReservationsByDate(restId, date);
         for(DailyReservationVO dailyReservation : dailyReservations){
-            if(guestCount>=dailyReservation.getTableTypeName()){
+            if(guestCount<=dailyReservation.getTableTypeName()){
                 List<Integer> reservedLimit = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedLimit(), 2);
                 List<Integer> reservedTables = ConverterUtil.convertStrToTimeList(dailyReservation.getReservedTables(), 2);
                 for(int i=0;i<24;i++){
@@ -217,6 +220,14 @@ public class DailyReservationServiceImpl implements DailyReservationService {
         return dailyReservations;
     }
 
+    @Override
+    public int insertDefaultDailyReservations() {
+        return dailyReservationDAO.insertDefaultDailyReservations();
+    }
 
+//    @Override
+//    public int insertDefaultDailyReservations(LocalDate startDate, LocalDate endDate) {
+//        return dailyReservationDAO.insertDefaultDailyReservations(startDate, endDate);
+//    }
 
 }

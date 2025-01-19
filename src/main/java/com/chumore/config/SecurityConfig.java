@@ -72,12 +72,12 @@ public class SecurityConfig {
                 }
                 response.sendRedirect("/emp/profile");
             })
-            .failureUrl("/login?error")
+            .failureUrl("/login")
             .permitAll()
             .and()
             .logout()
             .logoutUrl("/logout")
-            .logoutSuccessUrl("/login?logout")
+            .logoutSuccessUrl("/login")
             .permitAll()
             .and()
             .csrf().disable();
@@ -119,7 +119,7 @@ public class SecurityConfig {
 
                 }
             })
-            .failureUrl("/auth/login?error")
+            .failureUrl("/auth/login")
             .permitAll()
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
@@ -133,7 +133,8 @@ public class SecurityConfig {
                         response.sendRedirect("/secure/rest/rest_information");
                     }
                 })
-                .failureUrl("/auth/login?error")
+
+                .failureUrl("/auth/login")
                 .permitAll()
             .and()
             .logout()
@@ -147,11 +148,12 @@ public class SecurityConfig {
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .maximumSessions(1)
-                .expiredUrl("/auth/login?expired")
+
+                .expiredUrl("/auth/login")
             .and()
             .and()
             .exceptionHandling()
-                .accessDeniedPage("/auth/login?denied")
+                .accessDeniedPage("/auth/login")
             .and()
             .csrf().disable();
 

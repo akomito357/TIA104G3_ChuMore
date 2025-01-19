@@ -92,11 +92,13 @@ public class AuthController {
             session.setAttribute("restId", user.getRestId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_RESTAURANT);
             session.setAttribute("loginTime", LocalDateTime.now());
+            System.out.println("restId:" + user.getRestId());
             return "redirect:/secure/rest/rest_information";
         } else if ("ROLE_MEMBER".equals(role)) {
             session.setAttribute("memberId", user.getMemberId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
             session.setAttribute("loginTime", LocalDateTime.now());
+            System.out.println("memberId:" + user.getMemberId());
             return "redirect:/secure/member/member_information";
         }
 
@@ -108,14 +110,31 @@ public class AuthController {
 
 
     @PostMapping("/register/member")
-    public String processMemberRegistration(@Valid @ModelAttribute RegisterRequest request, BindingResult result,
-                                            RedirectAttributes redirectAttributes) {
-        logger.info("接收到會員註冊請求: {}", request);
+    public String processMemberRegistration(@Valid @ModelAttribute RegisterRequest request, 
+                                          BindingResult result,
+                                          RedirectAttributes redirectAttributes) {
+        logger.info("接收到會員註冊請求: {}", request.getEmail());
 
+        // 基本表單驗證
         if (result.hasErrors()) {
             logger.warn("會員註冊表單驗證失敗: {}", result.getAllErrors());
             addValidationErrorsToRedirectAttributes(result, request, redirectAttributes);
-            return "redirect:/auth/register/member";
+            return REDIRECT_MEMBER_REGISTER;
+        }
+
+        // 密碼長度驗證
+        String password = request.getPassword();
+        if (password == null || password.length() < 8 || password.length() > 50) {
+            result.rejectValue("password", "error.password", "密碼長度必須在8到50個字元之間");
+            addValidationErrorsToRedirectAttributes(result, request, redirectAttributes);
+            return REDIRECT_MEMBER_REGISTER;
+        }
+
+        // 確認密碼驗證
+        if (!password.equals(request.getConfirmPassword())) {
+            result.rejectValue("confirmPassword", "error.confirmPassword", "密碼與確認密碼不符");
+            addValidationErrorsToRedirectAttributes(result, request, redirectAttributes);
+            return REDIRECT_MEMBER_REGISTER;
         }
 
         try {
@@ -124,14 +143,21 @@ public class AuthController {
             logger.info("會員註冊成功: memberId={}", memberId);
 
             redirectAttributes.addFlashAttribute("successMessage", "會員註冊成功，請登入");
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN;
+        } catch (DuplicateEmailException e) {
+            logger.warn("註冊失敗：電子郵件已存在");
+            redirectAttributes.addFlashAttribute("errorMessage", "此電子郵件已被註冊");
+            return REDIRECT_MEMBER_REGISTER;
+        } catch (DuplicatePhoneNumberException e) {
+            logger.warn("註冊失敗：電話號碼已存在");
+            redirectAttributes.addFlashAttribute("errorMessage", "此手機號碼已被註冊");
+            return REDIRECT_MEMBER_REGISTER;
         } catch (Exception e) {
             logger.error("會員註冊過程發生錯誤: ", e);
             redirectAttributes.addFlashAttribute("errorMessage", "系統錯誤，請稍後再試");
-            return "redirect:/auth/register/member";
+            return REDIRECT_MEMBER_REGISTER;
         }
     }
-
 
     @GetMapping("/register/member")
     public String showMemberRegisterForm(Model model) {

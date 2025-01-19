@@ -35,4 +35,6 @@ public interface DailyReservationService {
 
     // 設定公休日
     List<DailyReservationVO> setClosedDay(Integer restId, LocalDate date);
+
+    int insertDefaultDailyReservations();
 }

@@ -73,7 +73,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                             .build();
 
                     // 設置會話屬性
-                    session.setAttribute("memberid", member.getMemberId());
+                    session.setAttribute("memberId", member.getMemberId());
                     session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
                     
                     return authenticatedUser;
@@ -105,7 +105,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                             .businessStatus(restaurant.getBusinessStatus())
                             .build();
 
-                    
+                    session.setAttribute("restId", restaurant.getRestId());
+                    session.setAttribute("userType", AuthenticatedUser.TYPE_RESTAURANT);
 
                     return authenticatedUser;
                 })
