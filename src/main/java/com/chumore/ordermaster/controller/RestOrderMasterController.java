@@ -34,7 +34,7 @@ import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.rest.model.RestVO;
 
 @Controller
-@RequestMapping("/rest/orderMaster")
+@RequestMapping("/rest")
 public class RestOrderMasterController {
 
 	@Autowired
@@ -60,7 +60,7 @@ public class RestOrderMasterController {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+//			restId = 2001;
 		} else {
 			Integer rest = (Integer) restNum;
 //			restId = rest.getRestId();
@@ -120,6 +120,7 @@ public class RestOrderMasterController {
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
 	@GetMapping("getOne")
+	@ResponseBody
 	public String getOneForCheckOut(@RequestParam Integer orderId, Model model, HttpSession session) {
 //			session.setAttribute("orderId", 1);
 		if (session.getAttribute("restId") == null) {
@@ -143,7 +144,7 @@ public class RestOrderMasterController {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+//			restId = 2001;
 		} else {
 			Integer rest = (Integer) restNum;
 //			restId = rest.getRestId();
@@ -216,5 +217,14 @@ public class RestOrderMasterController {
 		return "success/n" + orderMaster;
 	}
 	
+	@GetMapping("dining/history")
+	public String restDiningHistory() {
+		return "secure/rest/dining/restaurant_dining_history";
+	}
+	
+	@GetMapping("check")
+	public String orderCheck() {
+		return "secure/rest/order/order_manage_test";
+	}
 	
 }

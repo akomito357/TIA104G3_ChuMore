@@ -14,13 +14,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chumore.product.model.ProductVO;
@@ -34,8 +35,8 @@ import com.chumore.productcategory.res.ProductCategoryResponse;
 import com.chumore.rest.model.RestVO;
 import com.opencsv.CSVReader;
 
-@RestController
-@RequestMapping("/rest/productcategory")
+@Controller
+@RequestMapping("/rest")
 @CrossOrigin
 public class ProductCategoryController {
 
@@ -73,6 +74,7 @@ public class ProductCategoryController {
 	}
 
 	@GetMapping("getListByRestId")
+	@ResponseBody
 	public ResponseEntity<ProductCategoryResponse> getListByRestId(@RequestParam Integer restId) {
 //		Integer restId = request.get("restId");
 		
@@ -84,11 +86,12 @@ public class ProductCategoryController {
 	}
 	
 	@GetMapping("getActiveListByRestId")
+	@ResponseBody
 	public ResponseEntity<ProductCategoryResponse> getActiveListByRestId() {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+//			restId = 2001;
 		} else {
 			Integer rest = (Integer) restNum;
 //			restId = rest.getRestId();
@@ -103,14 +106,15 @@ public class ProductCategoryController {
 	}
 
 	@PostMapping("csvFile")
+	@ResponseBody
 	public ResponseEntity<ProductCategoryResponse> uploadfile(@RequestParam("file") MultipartFile mutipartFile) {
 		Object restNum = session.getAttribute("restId");
 		Integer restId = null;
 		if (restNum == null) {
-			restId = 2001;
+//			restId = 2001;
 		} else {
-			RestVO rest = (RestVO) restNum;
-			restId = rest.getRestId();
+			restId = (Integer) restNum;
+//			restId = rest.getRestId();
 		}
 
 		ProductCategoryResponse response = new ProductCategoryResponse();
@@ -228,6 +232,11 @@ public class ProductCategoryController {
 		return ResponseEntity.ok(response);
 		
 		
+	}
+	
+	@GetMapping("menu/setting")
+	public String restMenuSetting() {
+		return "secure/rest/menu/menu_setting";
 	}
 	
 

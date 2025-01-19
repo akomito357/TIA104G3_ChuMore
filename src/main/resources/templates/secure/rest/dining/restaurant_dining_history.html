@@ -395,7 +395,7 @@
     <script>
 
         function showTableOptionList() {
-            fetch(`ordertables/getTableNumberById`, {
+            fetch(`/ordertables/getTableNumberById`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(tableName => {
@@ -450,7 +450,7 @@
             const size = 10;
             function loadDiningList(queryParam) {
 
-                fetch(`rest/orderMaster/diningList?${queryParam.toString()}`, {
+                fetch(`/rest/diningList?${queryParam.toString()}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
@@ -584,20 +584,14 @@
                     const prevButton = $("#diningPreBtn.prev-btn");
                     const nextButton = $("#diningNextBtn.next-btn");
 
-                    prevButton.prop("disabled", currentPage === 0);
-                    nextButton.prop("disabled", currentPage === totalPages - 1);
+                    if (totalPages === 0) {
+                        prevButton.prop("disabled", true);
+                        nextButton.prop("disabled", true);
+                    } else {
+                        prevButton.prop("disabled", currentPage === 0);
+                        nextButton.prop("disabled", currentPage >= totalPages - 1);
+                    }
 
-                } else {
-                    const pagination = $("#reviewPageBlock.pagination");
-                    const pageNumElement = $("#reviewPageNum.page-num");
-
-                    pageNumElement.text(currentPage + 1);
-
-                    const prevButton = $("#reviewPreBtn.prev-btn");
-                    const nextButton = $("#reviewNextBtn.next-btn");
-
-                    prevButton.prop("disabled", currentPage === 0);
-                    nextButton.prop("disabled", currentPage === totalPages - 1);
                 }
             }
 
@@ -680,28 +674,6 @@
             modal.classList.remove("show");
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const tabs = document.querySelectorAll(".nav-link");
-            const content = document.querySelectorAll(".tab-content");
-
-            tabs.forEach(function (tab) {
-                tab.addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    tabs.forEach(function (tab) {
-                        tab.classList.remove("active");
-                    });
-                    content.forEach(function (cont) {
-                        cont.classList.remove("active");
-                    });
-
-                    tab.classList.add("active");
-
-                    const targetId = tab.getAttribute("data-target");
-                    document.getElementById(targetId).classList.add("active");
-                });
-            });
-        });
 
         function createQueryParam(page) {
             const params = {

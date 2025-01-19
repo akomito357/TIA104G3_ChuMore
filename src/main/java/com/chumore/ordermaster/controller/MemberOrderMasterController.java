@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chumore.member.model.MemberService;
 import com.chumore.member.model.MemberVO;
@@ -28,7 +29,7 @@ import com.chumore.review.model.ReviewVO;
 
 @Controller
 //@RestController
-@RequestMapping("/member/orderMaster")
+@RequestMapping("/member")
 public class MemberOrderMasterController {
 
 	@Autowired
@@ -44,17 +45,18 @@ public class MemberOrderMasterController {
 	MemberService memberSvc;
 
 	@GetMapping("orders")
+	@ResponseBody
 	public ResponseEntity<OrderMasterResponse<Page<OrderMasterDto>>> findByMemberId(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam String sort) {
 		Object memId = session.getAttribute("memberId");
-		Integer memberId = null;
+		Integer  memberId = null;
 		if (memId == null) {
 //			memberId = 1004;
 		} else {
 //			MemberVO member = (MemberVO) memberSvc.getOneMember((Integer)memId).orElse(null);
-//			memberId = member.getMemberId();
-			memberId = (Integer)memId;
+//			memberId = (Integer)member.getMemberId();
+			memberId =(Integer)memId;
 		}
 
 		String[] sortParams = sort.split(",");
@@ -96,8 +98,8 @@ public class MemberOrderMasterController {
 		return ResponseEntity.ok(response);
 	}
 
-//	@GetMapping("dining/history")
-//	public String memberDiningHistory() {
-//		return "secure/member/dining/member_dining_history";
-//	}
+	@GetMapping("diningAndReview/history")
+	public String memberDiningHistory() {
+		return "secure/member/dining/member_dining_history";
+	}
 }

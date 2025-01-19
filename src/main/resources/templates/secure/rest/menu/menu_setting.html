@@ -424,7 +424,7 @@
 
             function loadRestProduct() {
 
-                fetch(`rest/productcategory/getActiveListByRestId`, {
+                fetch(`/rest/getActiveListByRestId`, {
                     method: "GET",
                 })
                     .then(res => res.json())
@@ -550,7 +550,7 @@
                 formData.append("file", file);
                 // console.log(file);
 
-                fetch("rest/productcategory/csvFile", {
+                fetch("/rest/csvFile", {
                     method: "Post",
                     body: formData
                 })
@@ -699,7 +699,7 @@
                 };
                 console.log(payload);
 
-                fetch("rest/productcategory/modifyProduct", {
+                fetch("/rest/modifyProduct", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
