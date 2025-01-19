@@ -1,7 +1,11 @@
 package com;
 
+import javax.servlet.http.HttpSession;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 
 @Controller
@@ -24,7 +28,7 @@ public class IndexController {
 	
 	@GetMapping("/header") // test
 	public String headertest() {
-		return "header_merchant_test";
+		return "header_merchant";
 	}
 	
 	@GetMapping("/check") // test
@@ -56,4 +60,17 @@ public class IndexController {
 	public String testRestNotifyServiceBell(){
 		return "/testRestNotifyServiceBell";
 	}
+	
+	@GetMapping("/rest_reservation")
+	public String testRestReservation() {
+		return "secure/reservation/reserved_limit_setting";
+	}
+	
+	@PostMapping("getRole")
+    public String getRole(Authentication authentication, HttpSession session) {
+    	String role = authentication.getAuthorities().iterator().next().getAuthority();
+    	session.setAttribute("role", role);
+    	System.out.println("role: " + role);
+    	return role;
+    }
 }

@@ -2,6 +2,7 @@ package com.chumore.ordermaster.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +107,7 @@ public class OrderMasterController {
 		}
 
 		
-		session.setAttribute("restId", restId);
+		session.setAttribute("restIdForOrder", restId);
 		session.setAttribute("tableNumber", tableNumber);
 		
 
@@ -191,6 +192,27 @@ public class OrderMasterController {
 		
 		OrderMasterVO orderMaster = orderSvc.getOneById(map.get("orderId"));
 		model.addAttribute("orderMaster", orderMaster);
+		
+		Enumeration names = session.getAttributeNames();
+		
+		while (names.hasMoreElements()) {
+			String name = (String)names.nextElement();
+			System.out.println(name + ": " + session.getAttribute(name));
+		}
+		
+		session.removeAttribute("restIdForOrder");
+		session.removeAttribute("tableName");
+		session.removeAttribute("orderId");
+		
+		names = session.getAttributeNames();
+		
+		while (names.hasMoreElements()) {
+			String name = (String)names.nextElement();
+			System.out.println("===");
+			System.out.println(name + ": " + session.getAttribute(name));
+			System.out.println("===");
+		}
+		
 		return "public/order/order_finish_page";
 	}
 	

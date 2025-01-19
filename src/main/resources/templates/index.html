@@ -12,19 +12,19 @@
 <link th:href="@{img/favicon.ico}" rel="icon">
 
 <!-- Google Web Fonts -->
-<link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
-<link rel="preconnect" th:href="@{https://fonts.gstatic.com}"
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com"
 	crossorigin>
 <link
-	th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}"
+	href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap"
 	rel="stylesheet">
 
 <!-- Icon Font Stylesheet -->
 <link
-	th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
 	rel="stylesheet">
 <link
-	th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
 	rel="stylesheet">
 
 <!-- Libraries Stylesheet -->
@@ -38,12 +38,23 @@
 <!-- Customized Bootstrap Stylesheet -->
 <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
+<head th:insert="~{/included.html}" />
+
+<th:block th:switch="${session.role}">
+	<head th:case="null" th:insert="~{/header_unlogin.html}" />
+	<head th:case="'ROLE_MEMBER'" th:insert="~{/header_member.html}" />
+	<head th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
+</th:block>
+
 <!-- Template Stylesheet -->
 <link th:href="@{/css/style.css}" rel="stylesheet">
 
-<style>
+
+<style type="text/css">
 #chatButton {
 	transition: all 0.3s ease;
+	background-color: var(--primary) !important;
+	border: 1px solid var(--primary) !important;
 }
 
 #chatButton:hover {
@@ -52,6 +63,24 @@
 
 #chatContainer {
 	transition: all 0.3s ease;
+}
+h5.section-title{
+	color: var(--primary) !important; 
+}
+.search-button, .avgcost, .rest-btn {
+    background-color: var(--primary) !important;
+	border: 1px solid var(--primary) !important;
+}
+.star, .rest_icon{
+	color: var(--primary) !important;
+	/* border: 1px solid var(--primary) !important; */
+}
+.booking-btn.rest-btn{
+	background-color: #2e304e !important;
+	border: 1px solid var(--dark) !important;
+}
+.rest-btn{
+	color: white;
 }
 </style>
 
@@ -72,13 +101,13 @@
 
 
 		<!-- Navbar & Hero Start -->
-		<div class="container-xxl position-relative p-0">
+		<!-- <div class="container-xxl position-relative p-0">
 			<nav
 				class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
 				<a href="" class="navbar-brand p-0">
 					<h1 class="text-primary m-0">
 						<i class="fa fa-utensils me-3"></i>ChuMore
-					</h1> <!-- <img src="img/logo.png" alt="Logo"> -->
+					</h1> 
 				</a>
 				<button class="navbar-toggler" type="button"
 					data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -104,12 +133,12 @@
 					<a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
 				</div>
 			</nav>
-		</div>
+		</div> -->
 
 
 		<div class="container-xxl position-relative p-0">
 
-			<div class="container-xxl py-5 bg-dark hero-header mb-5">
+			<div class="container-xxl py-5 bg-dark hero-header " th:style="'background: linear-gradient(rgba(254, 162, 22, .19), rgba(249, 168, 63, .7)), url(/images/bg-hero.jpg)'">
 				<div class="container my-5 py-5">
 					<div class="row align-items-center g-5">
 						<div class="col-lg-12 text-center text-lg-start">
@@ -171,13 +200,11 @@
 							</div>
 							<!-- 加入的搜尋欄(以上) -->
 
-							<h1 class="display-3 text-white animated slideInLeft mt-5">
-								Enjoy Our<br>Delicious Meal
-							</h1>
-							<p class="text-white animated slideInLeft mb-4 pb-2">Tempor
-								erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam
-								amet diam et eos. Clita erat ipsum et lorem et sit, sed stet
-								lorem sit clita duo justo magna dolore erat amet</p>
+							<h2 class="display-3 text-white animated slideInLeft mt-5 intro_title intro">
+								探索全新數位餐飲體驗
+								<!-- Enjoy Our<br>Delicious Meal -->
+							</h2>
+							<p class="text-white animated slideInLeft mb-4 pb-2 intro">CHUMORE 是一個專注於連接美食愛好者與餐廳的數位平台。在這裡，用戶可以輕鬆尋找心儀的餐廳、完成預訂與點餐，享受更順暢的用餐過程。CHUMORE 希望在不聲不響中，為您帶來更優質的美食體驗與服務。</p>
 							<!-- <a href="" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInLeft">Book A Table</a> -->
 						</div>
 					</div>
@@ -187,7 +214,7 @@
 		<!-- Navbar & Hero End -->
 
 		<!-- 新增的本月熱門餐廳 start -->
-		<div class="container-xxl pt-5 pb-3">
+		<!-- <div class="container-xxl pt-5 pb-3">
 			<div class="container">
 				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
 					<h5
@@ -245,7 +272,7 @@
 				</div>
 
 			</div>
-		</div>
+		</div> -->
 		<!-- 本月熱門餐廳 End -->
 
 		<!-- 今晚有空位餐廳 Start -->
@@ -263,31 +290,30 @@
 							<div class="position-relative">
 								<img class="img-fluid" src="https://placehold.co/500x300" alt="">
 								<small
-									class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">$100/Night</small>
+									class="position-absolute start-0 top-100 translate-middle-y text-white rounded py-1 px-3 ms-4 avgcost">$100/Night</small>
 							</div>
 							<div class="p-4 mt-2">
 								<div class="d-flex justify-content-between mb-3">
 									<h5 class="mb-0">Junior Suite</h5>
 									<div class="ps-2">
-										<small class="fa fa-star text-primary"></small> <small
-											class="fa fa-star text-primary"></small> <small
-											class="fa fa-star text-primary"></small> <small
-											class="fa fa-star text-primary"></small> <small
-											class="fa fa-star text-primary"></small>
+										<small class="fa fa-star star"></small> <small
+											class="fa fa-star star"></small> <small
+											class="fa fa-star star"></small> <small
+											class="fa fa-star star"></small> <small
+											class="fa fa-star star"></small>
 									</div>
 								</div>
 								<div class="d-flex justify-content-evenly mb-3">
 									<small class="me-3 pe-3"><i
-										class="fa fa-bed text-primary me-2"></i>台北市信義區</small> <small
+										class="fa fa-map me-2 rest_icon"></i>台北市信義區</small> <small
 										class="me-3 ps-3 pe-auto"><i
-										class="fa fa-utensils text-primary me-2"></i>美式餐廳</small>
+										class="fa fa-utensils me-2 rest_icon"></i>美式餐廳</small>
 								</div>
 								<p class="text-body mb-3">Erat ipsum justo amet duo et elitr
 									dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
 								<div class="d-flex justify-content-between">
-									<a class="btn btn-sm btn-primary rounded py-2 px-4" href="">View
-										Detail</a> <a class="btn btn-sm btn-dark rounded py-2 px-4"
-										href="">Book Now</a>
+									<a class="btn btn-sm rounded py-2 px-4 rest-btn" href="">立即查看</a> <a class="btn btn-sm rounded py-2 px-4 rest-btn booking-btn"
+										href="">前往預定</a>
 								</div>
 							</div>
 						</div>
@@ -484,16 +510,16 @@
 		<!-- 今晚有空位餐廳 End -->
 
 		<!-- 熱門評論 Start -->
-		<div class="container-xxl pt-5 pb-3">
+		<!-- <div class="container-xxl pt-5 pb-3">
 			<div class="container">
 				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
 					<h5
 						class="section-title ff-secondary text-center text-primary fw-normal">熱門評論</h5>
 					<h1 class="mb-5">看看其他吃貨怎麼說</h1>
 				</div>
-				<div class="row g-4">
+				<div class="row g-4"> -->
 					<!-- 第一個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -504,10 +530,10 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第一個評論 end -->
 					<!-- 第二個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -518,10 +544,10 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第二個評論 end -->
 					<!-- 第三個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -532,10 +558,10 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第三個評論 end -->
 					<!-- 第四個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -546,10 +572,10 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第四個評論 end -->
 					<!-- 第五個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -560,10 +586,10 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第五個評論 end -->
 					<!-- 第六個評論 start -->
-					<div class="col-md-6">
+					<!-- <div class="col-md-6">
 						<div class="service-item d-flex p-4">
 							<img class="flaticon-food display-1 text-primary me-4"
 								src="https://placehold.co/120x120">
@@ -574,18 +600,18 @@
 									class="bi bi-chevron-right"></i></a>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- 第六個評論 end -->
-				</div>
+				<!-- </div>
 			</div>
-		</div>
+		</div> -->
 		<!-- 熱門評論 End -->
 
 		<!-- Footer Start -->
 		<div
-			class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
+			class="container-fluid text-light footer pt-5 wow fadeIn"
 			data-wow-delay="0.1s">
-			<div class="container py-5">
+			<!-- <div class="container py-5">
 				<div class="row g-5">
 					<div class="col-lg-3 col-md-6">
 						<h4
@@ -640,24 +666,23 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="container">
 				<div class="copyright">
 					<div class="row">
 						<div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-							&copy; <a class="border-bottom" href="#">Your Site Name</a>, All
+							&copy; <a class="border-bottom" href="#">Foodie ChuMore</a>, All
 							Right Reserved.
 
 							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML
-								Codex</a>
+							2024-2025 <a class="border-bottom" href="https://htmlcodex.com">僅供網頁專題使用</a>
 						</div>
-						<div class="col-md-6 text-center text-md-end">
+						<!-- <div class="col-md-6 text-center text-md-end">
 							<div class="footer-menu">
 								<a href="">Home</a> <a href="">Cookies</a> <a href="">Help</a> <a
 									href="">FQAs</a>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -666,14 +691,14 @@
 
 
 		<!-- Back to Top -->
-		<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i
-			class="bi bi-arrow-up"></i></a>
+		<!-- <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i
+			class="bi bi-arrow-up"></i></a> -->
 	</div>
 
 	<!-- JavaScript Libraries -->
-	<script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script
-		th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js}"></script>
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script th:src="@{/lib/wow/wow.min.js}"></script>
 	<script th:src="@{/lib/easing/easing.min.js}"></script>
 	<script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
@@ -681,11 +706,9 @@
 	<script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
 	<script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
 	<script th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
-	<script
-		th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<script	th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
 
-	<!-- Template Javascript -->
-	<script th:src="@{/js/mainpage.js}"></script>
+	
 
 	<!-- 客服聊天室按鈕和容器 -->
 	<div id="customerService"
@@ -705,6 +728,8 @@
 		</div>
 	</div>
 
+	<!-- Template Javascript -->
+	<script th:src="@{/js/mainpage.js}"></script>
 	<!-- 添加對應的JavaScript -->
 	<script>
     function toggleChat() {
@@ -715,6 +740,38 @@
     function minimizeChat() {
         document.getElementById('chatContainer').classList.add('d-none');
     }
+
+	// 判斷登入角色（header需要）
+	const role = "";
+
+	async function getRole(){
+		const url = "/getRole";
+		try {
+			let res = await fetch(url, {
+				method: 'POST',
+			})
+			if (!res.ok){
+				throw new Error('cant get role');
+			}
+			// let resJson = await res.json();
+			console.log(res);
+			return res;
+		} catch(error){
+			console.log(error);
+			return [];
+		}
+	}
+
+	// 搜尋
+	$('#search-button').click(function () {
+        const keyword = $('#searchKeyword').val();
+        const reservedDate = $('#searchDate').val();
+        const reservedTime = $('#searchTime').val();
+        const guestCount = $('#searchGuestCount').val();
+        window.location.href = `http://localhost:8080/searchPage?keyword=${keyword}&reservedDate=${reservedDate}&reservedTime=${reservedTime}&guestCount=${guestCount}`;
+    });
+
+	getRole();
 </script>
 </body>
 

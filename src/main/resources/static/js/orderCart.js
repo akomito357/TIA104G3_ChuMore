@@ -254,9 +254,35 @@ function submitOrder(){
             
         }
     })
-
-
 }
+
+// window.onerror(async function (msg, url, line, col, error) {
+//     console.log("msg: " + msg);
+//     console.log("url: " + url);
+//     console.log("line: " + line);
+//     console.log("col: " + col);
+//     console.log("error: " + error);
+
+//     try{
+//         let res = await fetch(`/orders/handleMethodEx`);
+//         if (!res.ok){
+//             return {
+//                 success: false,
+//                 status: res.status,
+//                 message: errorData.message || "error occured",
+//                 errorData: errorData
+//             }
+//         }
+//         let data = await res.json();
+//         // console.log(notifyData.data);
+//         return data;
+
+//     } catch (error){
+//         console.log(error);
+//     }
+
+// });
+
 
 memoStorage();
 renderCart();

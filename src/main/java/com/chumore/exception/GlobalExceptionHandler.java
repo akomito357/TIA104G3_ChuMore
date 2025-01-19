@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -71,8 +73,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-        ErrorResponse errorResponse = new ErrorResponse(
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse res) {
+    	try {
+			res.sendRedirect("/");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    	ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),"Bad Request", e.getMessage());
         return ResponseEntity.status(400).body(errorResponse);
     }
@@ -97,6 +104,21 @@ public class GlobalExceptionHandler {
     			HttpStatus.UNPROCESSABLE_ENTITY.value(), "Unprocessable entity", e.getMessage());
     	return ResponseEntity.status(422).body(errorResponse);
     }
+    
+    // 未登入的錯誤處理 - 導回登入頁
+//    @ExceptionHandler(AccessDeniedException.class)
+//    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest req, HttpServletResponse res, HttpSession session) {
+//    	try {
+//    		String originUri = req.getRequestURI();
+//    		session.setAttribute("originUri", originUri);
+//			res.sendRedirect("/auth/login");
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
+//    	ErrorResponse errorResponse = new ErrorResponse(
+//                HttpStatus.UNAUTHORIZED.value(),"Unauthorized", e.getMessage());
+//        return ResponseEntity.status(401).body(errorResponse);
+//    }
     
 
 
