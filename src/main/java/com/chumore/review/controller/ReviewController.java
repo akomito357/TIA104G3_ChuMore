@@ -413,7 +413,7 @@ public class ReviewController {
 	        @RequestParam(defaultValue = "5") int size) {
 	    try {
 	        Pageable pageable = PageRequest.of(page, size);
-	        Page<ReviewVO> reviews = reviewService.getRestaurantReviews(restId, pageable);
+	        Page<ReviewVO> reviews = reviewService.getRestReviews(restId, pageable);
 	        return ResponseEntity.ok(reviews);
 	    } catch (Exception e) {
 	        return ResponseEntity.badRequest().body(null);

@@ -89,7 +89,8 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain memberRestaurantFilterChain(HttpSecurity http) throws Exception {
         http
-            .antMatcher("/auth/**")
+            .requestMatchers().antMatchers("/secure/**", "/auth/**")  // 修改這裡來同時匹配兩個路徑
+            .and()
             .authenticationProvider(memberAuthenticationProvider())
             .authorizeRequests()
             .antMatchers(
@@ -103,57 +104,49 @@ public class SecurityConfig {
             ).permitAll()
             .antMatchers("/secure/member/**").hasRole("MEMBER")
             .antMatchers("/secure/rest/**").hasRole("RESTAURANT")
-            .antMatchers("/auth/logout-confirm").authenticated()
+            .antMatchers("/auth/logout_confirm").authenticated()
             .anyRequest().authenticated()
             .and()
             .formLogin()
-            .loginProcessingUrl("/auth/login")  // 處理登入表單提交的URL
-            .usernameParameter("username")  // 確保與表單中的input name一致
-            .passwordParameter("password")  // 確保與表單中的input name一致
+            .loginPage("/auth/login")
+            .loginProcessingUrl("/auth/login")
+            .usernameParameter("username")
+            .passwordParameter("password")
             .successHandler((request, response, authentication) -> {
                 String role = authentication.getAuthorities().iterator().next().getAuthority();
                 if ("ROLE_MEMBER".equals(role)) {
                     response.sendRedirect("/secure/member/member_information");
                 } else if ("ROLE_RESTAURANT".equals(role)) {
                     response.sendRedirect("/secure/rest/rest_information");
-
                 }
             })
             .failureUrl("/auth/login")
             .permitAll()
-                .loginPage("/auth/login")
-                .loginProcessingUrl("/auth/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .successHandler((request, response, authentication) -> {
-                    String role = authentication.getAuthorities().iterator().next().getAuthority();
-                    if ("ROLE_MEMBER".equals(role)) {
-                        response.sendRedirect("/secure/member/member_information");
-                    } else if ("ROLE_RESTAURANT".equals(role)) {
-                        response.sendRedirect("/secure/rest/rest_information");
-                    }
-                })
-
-                .failureUrl("/auth/login")
-                .permitAll()
             .and()
             .logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/auth/login")
-                .deleteCookies("JSESSIONID")
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .permitAll()
+            .logoutUrl("/auth/logout")
+            .logoutSuccessUrl("/auth/login")
+            .deleteCookies("JSESSIONID")
+            .clearAuthentication(true)
+            .invalidateHttpSession(true)
+            .permitAll()
             .and()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .maximumSessions(1)
-
-                .expiredUrl("/auth/login")
+            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            .maximumSessions(1)
+            .expiredUrl("/auth/login")
             .and()
             .and()
             .exceptionHandling()
-                .accessDeniedPage("/auth/login")
+            .authenticationEntryPoint((request, response, authException) -> {
+                // 未授權時重定向到登入頁面
+                response.sendRedirect("/auth/login");
+            })
+            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                // 權限不足時重定向到登入頁面
+                response.sendRedirect("/auth/login");
+            })
+            .accessDeniedPage("/auth/login")
             .and()
             .csrf().disable();
 
