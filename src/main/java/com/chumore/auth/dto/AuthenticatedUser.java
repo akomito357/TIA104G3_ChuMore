@@ -79,9 +79,14 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        if (TYPE_RESTAURANT.equals(userType)) {
+            // 餐廳會員允許任何 approvalStatus 狀態登入
+            return true;
+        }
+        // 一般會員維持原有邏輯
         return approvalStatus != null && approvalStatus == 1;
     }
-
+    
     public Integer getUserId() {
         return userId;
     }
