@@ -43,6 +43,7 @@
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}">
                                         請輸入有效的員工姓名
                                     </div>
+                                    <small class="form-text text-muted">員工姓名應為中文字且長度大於2</small>
                                 </div>
 
                                 <!-- 員工帳號 -->
@@ -65,6 +66,7 @@
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}">
                                         請輸入有效的手機號碼
                                     </div>
+                                    <small class="form-text text-muted">請輸入正確的台灣手機號碼格式:09XXXXXXXX</small>
                                 </div>
 
                                 <!-- Email -->
@@ -75,6 +77,7 @@
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}">
                                         請輸入有效的Email地址
                                     </div>
+                                    <small class="form-text text-muted">請輸入正確的Email格式</small>
                                 </div>
 
                                 <!-- 權限角色 -->

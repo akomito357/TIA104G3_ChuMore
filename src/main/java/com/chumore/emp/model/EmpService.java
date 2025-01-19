@@ -37,15 +37,54 @@ public class EmpService {
 	// 更新個人資料
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void updateOwnBasicInfo(Integer empId, EmpBasicUpdateDTO dto) {
-		// 檢查是否存在相同電話或Email
-		if (empRepository.existsByEmpPhoneAndEmpIdNot(dto.getEmpPhone(), empId)) {
-			throw new IllegalArgumentException("此手機號碼已被使用");
-		}
-		if (empRepository.existsByEmpEmailAndEmpIdNot(dto.getEmpEmail(), empId)) {
-			throw new IllegalArgumentException("此Email已被使用");
-		}
+	    // 檢查是否存在相同電話或Email
+	    if (empRepository.existsByEmpPhoneAndEmpIdNot(dto.getEmpPhone(), empId)) {
+	        throw new IllegalArgumentException("此手機號碼已被使用");
+	    }
+	    if (empRepository.existsByEmpEmailAndEmpIdNot(dto.getEmpEmail(), empId)) {
+	        throw new IllegalArgumentException("此Email已被使用");
+	    }
 
-		empRepository.updateBasicInfo(empId, dto.getEmpPhone(), dto.getEmpEmail());
+	    // 獲取現有員工資料
+	    EmpVO emp = empRepository.findById(empId)
+	            .orElseThrow(() -> new NoSuchElementException("找不到該員工資料"));
+	    
+	    // 更新資料
+	    emp.setEmpPhone(dto.getEmpPhone());
+	    emp.setEmpEmail(dto.getEmpEmail());
+	    
+	    // 儲存更新
+	    empRepository.save(emp);
+	}
+	@Transactional
+	public void changePassword(Integer empId, String currentPassword, String newPassword, String confirmPassword) {
+	    // 取得員工資料
+	    EmpVO emp = empRepository.findById(empId)
+	            .orElseThrow(() -> new NoSuchElementException("找不到該員工資料"));
+
+	    // 驗證當前密碼是否正確
+	    if (!passwordEncoder.matches(currentPassword, emp.getEmpPassword())) {
+	        throw new IllegalArgumentException("目前密碼不正確");
+	    }
+
+	    // 驗證新密碼
+	    if (newPassword == null || newPassword.trim().isEmpty()) {
+	        throw new IllegalArgumentException("新密碼不能為空");
+	    }
+
+	    // 驗證確認密碼
+	    if (!newPassword.equals(confirmPassword)) {
+	        throw new IllegalArgumentException("新密碼與確認密碼不符");
+	    }
+
+	    // 驗證新密碼格式（至少包含一個大寫字母和一個數字，長度8-20位）
+	    if (!newPassword.matches("^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,20}$")) {
+	        throw new IllegalArgumentException("新密碼必須包含至少一個大寫字母和一個數字，長度在8-20位之間");
+	    }
+
+	    // 加密並更新密碼
+	    emp.setEmpPassword(passwordEncoder.encode(newPassword));
+	    empRepository.save(emp);
 	}
 
 	// ====== 管理員相關方法 ======

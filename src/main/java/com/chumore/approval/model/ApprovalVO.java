@@ -6,6 +6,7 @@ import javax.persistence.*;
 import com.chumore.emp.model.EmpVO;
 import com.chumore.rest.model.RestVO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -32,9 +33,11 @@ public class ApprovalVO implements Serializable {
 	private Integer approvalResult;
 
 	@Column(name = "submission_datetime", nullable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime submissionDatetime;
 
 	@Column(name = "approval_req_datetime", nullable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime approvalReqDatetime;
 
 	// 無參數建構子

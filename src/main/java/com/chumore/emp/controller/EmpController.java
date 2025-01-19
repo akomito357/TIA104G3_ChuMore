@@ -66,24 +66,27 @@ public class EmpController {
 
 	// 更新個人資料
 	@PostMapping("/edit")
-	public String updateProfile(@Valid EmpBasicUpdateDTO dto, BindingResult result, Authentication auth, Model model,
-			RedirectAttributes redirectAttr) {
-		if (result.hasErrors()) {
-			// 添加這行來回顯數據
-			model.addAttribute("empInfo", dto);
-			return "emp/edit";
-		}
+	public String updateProfile(@Valid EmpBasicUpdateDTO dto, 
+	                          BindingResult result, 
+	                          Authentication auth, 
+	                          Model model,
+	                          RedirectAttributes redirectAttr) {
+	    if (result.hasErrors()) {
+	        model.addAttribute("empInfo", dto);
+	        return "emp/edit";
+	    }
 
-		try {
-			String account = auth.getName();
-			EmpVO emp = empService.getEmpByAccount(account);
-			empService.updateOwnBasicInfo(emp.getEmpId(), dto);
-			redirectAttr.addFlashAttribute("message", "資料更新成功！");
-			return "emp/profile";
-		} catch (IllegalArgumentException e) {
-			redirectAttr.addFlashAttribute("error", e.getMessage());
-			return "redirect:/emp/edit";
-		}
+	    try {
+	        String account = auth.getName();
+	        EmpVO emp = empService.getEmpByAccount(account);
+	        empService.updateOwnBasicInfo(emp.getEmpId(), dto);
+	        redirectAttr.addFlashAttribute("message", "資料更新成功！");
+	        return "redirect:/emp/profile";  // 修改這裡，使用redirect
+	    } catch (IllegalArgumentException e) {
+	        model.addAttribute("error", e.getMessage());
+	        model.addAttribute("empInfo", dto);
+	        return "emp/edit";  // 發生錯誤時返回編輯頁面
+	    }
 	}
 
 	@GetMapping("/dashboard")
@@ -100,8 +103,32 @@ public class EmpController {
 
 		return "emp/dashboard";
 	}
-
+	@PostMapping("/change-password")
+	public String changePassword(@RequestParam("currentPassword") String currentPassword,
+	                           @RequestParam("newPassword") String newPassword,
+	                           @RequestParam("confirmPassword") String confirmPassword,
+	                           Authentication auth,
+	                           RedirectAttributes redirectAttr) {
+	    try {
+	        // 獲取當前登入用戶
+	        String account = auth.getName();
+	        EmpVO emp = empService.getEmpByAccount(account);
+	        
+	        // 呼叫 Service 層方法進行密碼修改
+	        empService.changePassword(emp.getEmpId(), currentPassword, newPassword, confirmPassword);
+	        
+	        // 成功訊息
+	        redirectAttr.addFlashAttribute("message", "密碼修改成功！");
+	    } catch (IllegalArgumentException e) {
+	        redirectAttr.addFlashAttribute("error", e.getMessage());
+	    }
+	    
+	    return "redirect:/emp/profile";
+	}
 	// ========== 管理員功能 ==========
+	
+	
+	
 	// 顯示所有員工列表
 	@GetMapping("/admin/list")
 	public String listAll(Model model) {
@@ -175,8 +202,6 @@ public class EmpController {
 	}
 
 	// 更新員工資料
-
-
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/admin/edit/{id}")
 	public String updateEmp(@PathVariable("id") Integer empId, 
