@@ -164,4 +164,84 @@ public class DailyReservationDAOImpl implements DailyReservationDAO{
     }
 
 
+    @Override
+    public int insertDefaultDailyReservations() {
+        String sql =
+                "INSERT INTO daily_reservation (rest_id, table_type_id, reserved_date, reserved_tables, reserved_limit) " +
+                        "WITH RECURSIVE dates AS ( " +
+                        "    SELECT CURDATE() AS v_date " +
+                        "    UNION ALL " +
+                        "    SELECT DATE_ADD(v_date, INTERVAL 1 DAY) " +
+                        "    FROM dates " +
+                        "    WHERE DATE_ADD(v_date, INTERVAL 1 DAY) <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) " +
+                        ") " +
+                        "SELECT " +
+                        "    tt.rest_id, " +
+                        "    tt.table_type_id, " +
+                        "    d.v_date, " +
+                        "    '000000000000000000000000000000000000000000000000' AS reserved_tables, " +
+                        "    CASE  " +
+                        "        WHEN SUBSTRING(r.weekly_biz_days, WEEKDAY(d.v_date) + 1, 1) = '1'  " +
+                        "        THEN tt.reserved_limit  " +
+                        "        ELSE '000000000000000000000000000000000000000000000000'  " +
+                        "    END AS reserved_limit " +
+                        "FROM " +
+                        "    dates d " +
+                        "CROSS JOIN " +
+                        "    table_type tt " +
+                        "JOIN " +
+                        "    rest r ON tt.rest_id = r.rest_id " +
+                        "LEFT JOIN " +
+                        "    daily_reservation dr ON dr.rest_id = tt.rest_id  " +
+                        "                             AND dr.table_type_id = tt.table_type_id  " +
+                        "                             AND dr.reserved_date = d.v_date " +
+                        "WHERE " +
+                        "    dr.daily_reservation_id IS NULL";
+
+        return entityManager.createNativeQuery(sql).executeUpdate();
+    }
+
+
+//    @Override
+//    public int insertDefaultDailyReservations(LocalDate startDate, LocalDate endDate) {
+//        String sql =
+//                "INSERT INTO daily_reservation (rest_id, table_type_id, reserved_date, reserved_tables, reserved_limit) " +
+//                        "WITH RECURSIVE dates AS ( " +
+//                        "    SELECT :startDate AS v_date " +
+//                        "    UNION ALL " +
+//                        "    SELECT DATE_ADD(v_date, INTERVAL 1 DAY) " +
+//                        "    FROM dates " +
+//                        "    WHERE DATE_ADD(v_date, INTERVAL 1 DAY) <= :endDate " +
+//                        ") " +
+//                        "SELECT " +
+//                        "    tt.rest_id, " +
+//                        "    tt.table_type_id, " +
+//                        "    d.v_date, " +
+//                        "    '000000000000000000000000000000000000000000000000' AS reserved_tables, " +
+//                        "    CASE  " +
+//                        "        WHEN SUBSTRING(r.weekly_biz_days, WEEKDAY(d.v_date) + 1, 1) = '1'  " +
+//                        "        THEN tt.reserved_limit  " +
+//                        "        ELSE '000000000000000000000000000000000000000000000000'  " +
+//                        "    END AS reserved_limit " +
+//                        "FROM " +
+//                        "    dates d " +
+//                        "CROSS JOIN " +
+//                        "    table_type tt " +
+//                        "JOIN " +
+//                        "    rest r ON tt.rest_id = r.rest_id " +
+//                        "LEFT JOIN " +
+//                        "    daily_reservation dr ON dr.rest_id = tt.rest_id  " +
+//                        "                             AND dr.table_type_id = tt.table_type_id  " +
+//                        "                             AND dr.reserved_date = d.v_date " +
+//                        "WHERE " +
+//                        "    dr.daily_reservation_id IS NULL";
+//
+//        // 使用 createNativeQuery() 執行原生 SQL，並設置參數
+//        return entityManager.createNativeQuery(sql)
+//                .setParameter("startDate", startDate)
+//                .setParameter("endDate", endDate)
+//                .executeUpdate();
+//    }
+
+
 }

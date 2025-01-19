@@ -19,5 +19,7 @@ public interface DailyReservationDAO {
     List<DailyReservationVO> findDailyReservationsByCompositeQuery(Map<String,String> params);
     DailyReservationVO findByCompositeQuery(Map<String,String> params);
 
+    int insertDefaultDailyReservations();
 
-    }
+//    int insertDefaultDailyReservations(LocalDate startDate, LocalDate endDate);
+}

@@ -25,12 +25,6 @@ public class DailyReservationTestController {
     @Autowired
     private RestService restService;
 
-    /*
-    TODO
-      查詢
-      1.日期查詢：回傳查詢日期的三個桌種的營業時間列表 (以方法回傳包含三個桌種的營業時間列表的 map)
-      2.更新完成：回傳更新日期的三個桌種的營業時間列表 (以方法回傳包含三個桌種的營業時間列表的 map)
-    */
 
     @GetMapping
     public ResponseEntity<?> getDailyReservationsByDate(@RequestParam(name = "restId") Integer restId, @RequestParam(name = "reservedDate") LocalDate reservedDate) {
