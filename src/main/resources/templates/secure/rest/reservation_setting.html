@@ -6,6 +6,7 @@
     <title>營業時間設定</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
     <style>
         .btn-primary {
             background-color: #FF8B4D;
@@ -72,6 +73,8 @@
         }
     </style>
 </head>
+    <head th:insert="~{/included.html}"></head>
+    <head th:insert="~{/header_merchant.html}"></head>
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">營業時間設定</h2>
@@ -331,7 +334,7 @@
     // 載入既有資料
    // 載入既有資料
    function loadExistingData() {
-    fetch('/rests/getBusinessHours?restId=2001')
+    fetch(`/rests/getBusinessHours?restId={restId}`)
         .then(response => response.json())
         .then(businessHoursArrays => {
             console.log('Received business hours arrays:', businessHoursArrays);
@@ -403,7 +406,7 @@
         });
 }
         function loadWeeklyBusinessDays() {
-            fetch('/rests/getWeeklyBusinessDays?restId=2001')
+            fetch(`/rests/getWeeklyBusinessDays?restId={restId}`)
                 .then(response => response.json())
                 .then(businessDays => {
                     console.log('Received weekly business days:', businessDays);
@@ -420,7 +423,7 @@
         }
 
         function loadSpecialClosedDays() {
-    fetch('/specificHoliday/getSpecialClosedDays?restId=2001')
+    fetch(`/specificHoliday/getSpecialClosedDays?restId={restId}`)
         .then(response => response.json())
         .then(data => {
             console.log('Received special closed days:', data);

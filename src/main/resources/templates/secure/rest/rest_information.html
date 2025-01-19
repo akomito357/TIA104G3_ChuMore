@@ -182,7 +182,6 @@
 <!-- JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 $(document).ready(function() {
 
@@ -303,7 +302,7 @@ $(document).ready(function() {
             }
 
             // 再來更新桌型
-            const tableTypesResponse = await fetch(`/tableType/getTableType?restId=${restId}`, {
+            const tableTypesResponse = await fetch(`/tableType/getTableType/${restId}`, {
                 credentials: 'include'
             });
             if (!tableTypesResponse.ok) {
@@ -396,6 +395,8 @@ $(document).ready(function() {
             return response.json();
         })
         .then(data => {
+        	
+        	restId = data.restId;
             // 後端傳回該使用者的餐廳信息
             $('#memberEmail').val(data.merchantEmail);
             $('#memberName').val(data.merchantName);
@@ -523,7 +524,7 @@ $(document).ready(function() {
 
     function loadEnvironmentImages() {
         // 不從 sessionStorage 取 restId，改後端 session
-        fetch('/envImg/images', { credentials: 'include' })
+        fetch(`/envImg/images/${restId}`, { credentials: 'include' })
         .then(resp => resp.json())
         .then(imageIds => {
             const container = $('#environmentImagesDisplay');
@@ -555,7 +556,7 @@ $(document).ready(function() {
     }
 
     function loadMenuImages() {
-        fetch('/menuImg/images', { credentials: 'include' })
+        fetch(`/menuImg/images/${restId}`, { credentials: 'include' })
         .then(resp => resp.json())
         .then(imageIds => {
             const container = $('#menuImagesDisplay');
@@ -587,9 +588,16 @@ $(document).ready(function() {
     }
 
     function loadTableTypes() {
-        // 後端可直接知道當前餐廳 -> 也可改成 "/tableType/getTableType"
-        fetch('/tableType/getTableType', { credentials: 'include' })
-        .then(resp => resp.json())
+        // 使用全域的 restId
+        fetch(`/tableType/getTableType/${restId}`, { 
+            credentials: 'include' 
+        })
+        .then(resp => {
+            if (!resp.ok) {
+                throw new Error('Failed to fetch table types');
+            }
+            return resp.json();
+        })
         .then(data => {
             const container = $('#tablesContainer');
             container.empty();
@@ -606,7 +614,13 @@ $(document).ready(function() {
                 const formGroup = $('<div>').addClass('mb-3');
                 const label = $('<label>').addClass('form-label').text(tableLabel);
                 const input = $('<input>')
-                    .attr({ type:'number', min:'0', required:true, name:`table${tbl.tableType}`, id:`table${tbl.tableType}` })
+                    .attr({ 
+                        type: 'number', 
+                        min: '0', 
+                        required: true, 
+                        name: `table${tbl.tableType}`, 
+                        id: `table${tbl.tableType}` 
+                    })
                     .addClass('form-control')
                     .val(tbl.tableCount)
                     .prop('readonly', true);
@@ -664,6 +678,7 @@ $(document).ready(function() {
         for (let i = 0; i < files.length; i++) {
             formData.append('upFiles', files[i]);
         }
+        formData.append('restId', `${restId}`);
         fetch('/envImg/addEnvImg', { // 後端依 Session 知道 restId
             method: 'POST',
             credentials: 'include',
@@ -683,6 +698,7 @@ $(document).ready(function() {
             console.error('Error uploading environment images:', error);
             alert('圖片上傳失敗，請稍後再試');
         });
+        loadEnviromentImages();
     }
 
     // 上傳菜單圖片
@@ -700,6 +716,7 @@ $(document).ready(function() {
         for (let i = 0; i < files.length; i++) {
             formData.append('upFiles', files[i]);
         }
+        formData.append('restId', `${restId}`);
         fetch('/menuImg/addMenuImg', {
             method: 'POST',
             credentials: 'include',
@@ -719,6 +736,7 @@ $(document).ready(function() {
             console.error('Error uploading menu images:', error);
             alert('菜單圖片上傳失敗');
         });
+        loadMenuImages();
     }
 
     // 密碼欄位即時檢查

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,8 @@ public class EnvImgController {
 
 	@Autowired
 	EnvImgService envImgSvc;
+	
+	HttpSession session;
 
 	@GetMapping("/images/{restId}")
 	@ResponseBody
