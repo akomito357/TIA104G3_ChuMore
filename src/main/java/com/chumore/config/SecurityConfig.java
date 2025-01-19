@@ -9,6 +9,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,12 +72,12 @@ public class SecurityConfig {
                 }
                 response.sendRedirect("/emp/profile");
             })
-            .failureUrl("/login?error")
+            .failureUrl("/login")
             .permitAll()
             .and()
             .logout()
             .logoutUrl("/logout")
-            .logoutSuccessUrl("/login?logout")
+            .logoutSuccessUrl("/login")
             .permitAll()
             .and()
             .csrf().disable();
@@ -88,15 +89,24 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain memberRestaurantFilterChain(HttpSecurity http) throws Exception {
         http
-            .antMatcher("/auth/**")  // 明確指定此配置只處理/auth/**相關請求
+            .antMatcher("/auth/**")
             .authenticationProvider(memberAuthenticationProvider())
             .authorizeRequests()
-            .antMatchers("/css/**", "/js/**", "/images/**", "/auth/register/**", "/auth/login").permitAll()
+            .antMatchers(
+                "/css/**", 
+                "/js/**", 
+                "/images/**", 
+                "/lib/**",
+                "/webjars/**",
+                "/auth/register/**", 
+                "/auth/login"
+            ).permitAll()
             .antMatchers("/secure/member/**").hasRole("MEMBER")
             .antMatchers("/secure/rest/**").hasRole("RESTAURANT")
+            .antMatchers("/auth/logout-confirm").authenticated()
+            .anyRequest().authenticated()
             .and()
             .formLogin()
-            .loginPage("/auth/login")
             .loginProcessingUrl("/auth/login")  // 處理登入表單提交的URL
             .usernameParameter("username")  // 確保與表單中的input name一致
             .passwordParameter("password")  // 確保與表單中的input name一致
@@ -109,13 +119,41 @@ public class SecurityConfig {
 
                 }
             })
-            .failureUrl("/auth/login?error")
+            .failureUrl("/auth/login")
             .permitAll()
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/auth/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .successHandler((request, response, authentication) -> {
+                    String role = authentication.getAuthorities().iterator().next().getAuthority();
+                    if ("ROLE_MEMBER".equals(role)) {
+                        response.sendRedirect("/secure/member/member_information");
+                    } else if ("ROLE_RESTAURANT".equals(role)) {
+                        response.sendRedirect("/secure/rest/rest_information");
+                    }
+                })
+
+                .failureUrl("/auth/login")
+                .permitAll()
             .and()
             .logout()
-            .logoutUrl("/auth/logout")
-            .logoutSuccessUrl("/auth/login?logout")
-            .permitAll()
+                .logoutUrl("/auth/logout")
+                .logoutSuccessUrl("/auth/login")
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .permitAll()
+            .and()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .maximumSessions(1)
+
+                .expiredUrl("/auth/login")
+            .and()
+            .and()
+            .exceptionHandling()
+                .accessDeniedPage("/auth/login")
             .and()
             .csrf().disable();
 

@@ -1,109 +1,161 @@
 package com.chumore.auth.dto;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+
 /**
- * 認證用戶資訊的資料傳輸物件
+ * 整合 Spring Security 的認證用戶資訊類別
+ * 實作 UserDetails 介面以支援 Spring Security 的認證機制
  */
-public class AuthenticatedUser {
-	
-	public static final String TYPE_MEMBER = "MEMBER";
+public class AuthenticatedUser implements UserDetails {
+    
+    private static final long serialVersionUID = 1L;
+    
+    public static final String TYPE_MEMBER = "MEMBER";
     public static final String TYPE_RESTAURANT = "RESTAURANT";
     
     private Integer userId;
-    private Integer memberId;      // 會員 ID
-    private Integer restId;  // 餐廳 ID
+    private Integer memberId;
+    private Integer restId;
     private String email;
-    private String userType;    // "MEMBER" 或 "RESTAURANT"
+    private String password;
+    private String userType;
     private String name;
     private Integer approvalStatus;
     private Integer businessStatus;
-
-    // 建構函
+    private Collection<? extends GrantedAuthority> authorities;
 
     public AuthenticatedUser(Integer userId, Integer memberId, Integer restId, 
-            String email, String userType, String name,
+            String email, String password, String userType, String name,
             Integer approvalStatus, Integer businessStatus) {
         this.userId = userId;
         this.memberId = memberId;
         this.restId = restId;
         this.email = email;
+        this.password = password;
         this.userType = userType;
         this.name = name;
         this.approvalStatus = approvalStatus;
         this.businessStatus = businessStatus;
+        
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(
+            TYPE_MEMBER.equals(userType) ? "ROLE_MEMBER" : "ROLE_RESTAURANT"
+        ));
     }
 
-    // Getters
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return approvalStatus != null && approvalStatus == 1;
+    }
+
     public Integer getUserId() {
         return userId;
     }
-    
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getMemberId() {
-		return memberId;
-	}
-    
+        return memberId;
+    }
+
+    public void setMemberId(Integer memberId) {
+        this.memberId = memberId;
+    }
+
     public Integer getRestId() {
-		return restId;
-	}
+        return restId;
+    }
+
+    public void setRestId(Integer restId) {
+        this.restId = restId;
+    }
 
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUserType() {
         return userType;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Integer getApprovalStatus() {
-        return approvalStatus;
-    }
-
-    public Integer getBusinessStatus() {
-        return businessStatus;
-    }
-
-    // Setters
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-    
-    public void setMemberId(Integer memberId) {
-		this.memberId = memberId;
-	}
-    
-    public void setRestId(Integer restId) {
-		this.restId = restId;
-	}
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public Integer getApprovalStatus() {
+        return approvalStatus;
+    }
+
     public void setApprovalStatus(Integer approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public Integer getBusinessStatus() {
+        return businessStatus;
     }
 
     public void setBusinessStatus(Integer businessStatus) {
         this.businessStatus = businessStatus;
     }
 
-    // Builder 模式實作
     public static class Builder {
         private Integer userId;
         private Integer memberId;
         private Integer restId;
         private String email;
+        private String password;
         private String userType;
         private String name;
         private Integer approvalStatus;
@@ -129,6 +181,11 @@ public class AuthenticatedUser {
             return this;
         }
 
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
         public Builder userType(String userType) {
             this.userType = userType;
             return this;
@@ -151,9 +208,9 @@ public class AuthenticatedUser {
 
         public AuthenticatedUser build() {
             return new AuthenticatedUser(userId, memberId, restId, 
-                    email, userType, name,
+                    email, password, userType, name,
                     approvalStatus, businessStatus);
-}
+        }
     }
 
     public static Builder builder() {
@@ -173,6 +230,4 @@ public class AuthenticatedUser {
                 ", businessStatus=" + businessStatus +
                 '}';
     }
-    
-    
 }

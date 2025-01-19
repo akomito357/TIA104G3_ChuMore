@@ -1,6 +1,6 @@
-
 package com.chumore.config;
 
+import com.chumore.auth.dto.AuthenticatedUser;
 import com.chumore.member.model.MemberRepository;
 import com.chumore.rest.model.RestRepository;
 import com.chumore.rest.model.RestVO;
@@ -8,38 +8,34 @@ import com.chumore.rest.model.RestVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-
 import javax.servlet.http.HttpSession;
 
 @Service
 @Transactional(readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
-    
+
     private final MemberRepository memberRepository;
     private final RestRepository restRepository;
     private final HttpSession session;
-    
+
     @Autowired
     public CustomUserDetailsService(
-            MemberRepository memberRepository, 
+            MemberRepository memberRepository,
             RestRepository restRepository,
             HttpSession session) {
         this.memberRepository = memberRepository;
         this.restRepository = restRepository;
         this.session = session;
     }
-    
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         logger.debug("開始認證用戶，Email: {}", email);
@@ -62,45 +58,60 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UserDetails findMemberByEmail(String email) {
         return memberRepository.findByMemberEmail(email)
-            .map(member -> {
-                logger.debug("找到一般會員: {}", member);
-                return createUserDetails(member.getMemberEmail(), member.getMemberPassword(), "ROLE_MEMBER");
-            })
-            .orElseGet(() -> {
-                logger.debug("未找到一般會員: {}", email);
-                return null;
-            });
+                .map(member -> {
+                    logger.debug("找到一般會員: {}", member);
+                    
+                    // 建立 AuthenticatedUser 物件
+                    AuthenticatedUser authenticatedUser = AuthenticatedUser.builder()
+                            .userId(member.getMemberId())
+                            .memberId(member.getMemberId())
+                            .email(member.getMemberEmail())
+                            .password(member.getMemberPassword())
+                            .userType(AuthenticatedUser.TYPE_MEMBER)
+                            .name(member.getMemberName())
+                            .approvalStatus(1)  // 一般會員預設為已啟用
+                            .build();
+
+                    // 設置會話屬性
+                    session.setAttribute("memberid", member.getMemberId());
+                    session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
+                    
+                    return authenticatedUser;
+                })
+                .orElseGet(() -> {
+                    logger.debug("未找到一般會員: {}", email);
+                    return null;
+                });
     }
 
     private UserDetails findRestaurantByEmail(String email) {
-        RestVO restaurant = restRepository.findByMerchantEmail(email).orElse(null);
-        if (restaurant != null) {
-            logger.debug("找到餐廳會員: {}", restaurant);
-            
-            // 設置會話屬性
-            session.setAttribute("rest_id", restaurant.getRestId());
-            session.setAttribute("userType", "ROLE_RESTAURANT");
-            
-            if (restaurant.getApprovalStatus() != 1) {
-                logger.warn("餐廳會員未通過審核，但允許登入: {}", restaurant.getMerchantEmail());
-            }
+        return restRepository.findByMerchantEmail(email)
+                .map(restaurant -> {
+                    logger.debug("找到餐廳會員: {}", restaurant);
 
-            return createUserDetails(
-                restaurant.getMerchantEmail(),
-                restaurant.getMerchantPassword(),
-                "ROLE_RESTAURANT"
-            );
-        }
-        logger.warn("未找到餐廳會員: {}", email);
-        return null;
-    }
+                    if (restaurant.getApprovalStatus() != 1) {
+                        logger.warn("餐廳會員未通過審核，但允許登入: {}", restaurant.getMerchantEmail());
+                    }
 
-    private UserDetails createUserDetails(String email, String password, String role) {
-        logger.debug("建立 UserDetails: Email={}, Role={}", email, role);
-        return User.builder()
-            .username(email)
-            .password(password)
-            .authorities(Collections.singleton(new SimpleGrantedAuthority(role)))
-            .build();
+                    // 建立 AuthenticatedUser 物件
+                    AuthenticatedUser authenticatedUser = AuthenticatedUser.builder()
+                            .userId(restaurant.getRestId())
+                            .restId(restaurant.getRestId())
+                            .email(restaurant.getMerchantEmail())
+                            .password(restaurant.getMerchantPassword())
+                            .userType(AuthenticatedUser.TYPE_RESTAURANT)
+                            .name(restaurant.getRestName())
+                            .approvalStatus(restaurant.getApprovalStatus())
+                            .businessStatus(restaurant.getBusinessStatus())
+                            .build();
+
+                    
+
+                    return authenticatedUser;
+                })
+                .orElseGet(() -> {
+                    logger.warn("未找到餐廳會員: {}", email);
+                    return null;
+                });
     }
 }
