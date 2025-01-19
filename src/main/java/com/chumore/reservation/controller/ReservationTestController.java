@@ -214,7 +214,7 @@ public class ReservationTestController {
 //        return ResponseEntity.ok(newReservation);
 //    }
 
-    // TODO 訂位頁面
+    // 訂位頁面
     @GetMapping("/reservation")
     public String reservationPage(){
         return "back-end/reservation/reservation_test";
@@ -243,13 +243,6 @@ public class ReservationTestController {
     }
 
 
-//    //session 版本
-//    @PostMapping("/reservation/confirm")
-//    public String confirmReservation(@RequestBody ReservationVO reservation, @SessionAttribute("member") MemberVO member, @SessionAttribute("rest") RestVO rest, ModelMap model){
-//
-//    }
-
-
     // 訂位成功頁面
 
     @GetMapping("/reservation/success")
@@ -264,7 +257,7 @@ public class ReservationTestController {
     }
 
 
-    //TODO 確認訂位
+    //確認訂位
     @GetMapping("/reservation/confirmation-link")
     public String confrimReservation(@RequestParam("token") String token,ModelMap model){
         String redisKey = redisPrefix + token;
@@ -293,7 +286,7 @@ public class ReservationTestController {
         try {
             // 過濾 JSON 中的無效欄位
             ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(reservationJson);
-            jsonNode.remove(List.of("memberName", "restName", "memberGender", "rest")); // 移除整個 rest 物件
+            jsonNode.remove(List.of("memberName", "restName", "memberGender", "rest"));
             int restId = jsonNode.get("restId").asInt(); // 獲取 restId
             int memberId = jsonNode.get("memberId").asInt(); // 獲取 memberId
             jsonNode.remove("restId");

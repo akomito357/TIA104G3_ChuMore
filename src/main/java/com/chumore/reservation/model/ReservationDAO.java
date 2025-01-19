@@ -7,7 +7,7 @@ import java.util.Map;
 public interface ReservationDAO {
 
     // 查詢
-    ReservationVO findById(int reservationId); // 使用 Optional 包裝單筆查詢結果
+    ReservationVO findById(int reservationId);
     List<ReservationVO> findAll();
     List<ReservationVO> findAllByMemberId(int memberId);
     List<ReservationVO> findAllByRestId(int restId);

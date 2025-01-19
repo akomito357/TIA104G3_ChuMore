@@ -46,7 +46,6 @@
             overflow-y: auto;
         }
 
-        /* === 以下為第二段程式碼的樣式（保留 rest-card, rest-title, etc.）=== */
         .rest-card {
             transition: transform 0.2s;
             height: 100%;
@@ -54,7 +53,7 @@
         .rest-card:hover {
             transform: translateY(-5px);
         }
-        /* 這裡的 .favorite-btn.active 重複定義可合併，但為示範保留 */
+
         .favorite-btn.active {
             color: red;
         }
@@ -71,7 +70,7 @@
             color: #0056b3;
             text-decoration: none;
         }
-        /* 更詳細的星星評分樣式 */
+
         .rating-stars {
             font-size: 1.2rem;
             line-height: 1;
@@ -112,34 +111,34 @@
     </style>
 </head>
 <body>
-<!-- 添加頂部空白區域 -->
+<!-- 頂部空白區域 -->
 <div style="height: 50px;"></div>
 
 <div class="container">
     <div class="row">
         <!-- 左側篩選區 -->
         <div class="col-md-3">
-            <!-- 5. 篩選區 -->
+            <!-- 篩選區 -->
             <div class="filter-section mb-4">
-                <!-- 5b. 縣市選擇 -->
+                <!-- 縣市選擇 -->
                 <h5>縣市</h5>
                 <div class="checkbox-list city-options mb-3">
                     <!-- 由 JavaScript 動態產生縣市選項 -->
                 </div>
 
-                <!-- 5c. 鄉鎮市區選擇 -->
+                <!-- 鄉鎮市區選擇 -->
                 <h5>鄉鎮市區</h5>
                 <div class="checkbox-list district-options mb-3">
                     <!-- 由 JavaScript 動態產生地區選項 -->
                 </div>
 
-                <!-- 5d. 料理類型 -->
+                <!-- 料理類型 -->
                 <h5>料理類型</h5>
                 <div class="checkbox-list cuisine-type-options">
                     <!-- 由 JavaScript 動態產生料理類型選項 -->
                 </div>
 
-                <!-- 添加送出按鈕 -->
+                <!-- 送出按鈕 -->
                 <div class="mt-4">
                     <button type="button" class="btn btn-primary w-100" id="submitFilter">
                         <i class="fas fa-search me-2"></i>送出查詢
@@ -150,7 +149,7 @@
 
         <!-- 右側主要內容區 -->
         <div class="col-md-9">
-            <!-- 2. 搜尋篩選區 -->
+            <!-- 搜尋篩選區 -->
             <div class="search-card bg-light p-3 mb-4">
                 <div class="row mb-3">
                     <div class="col-md-4">
@@ -179,7 +178,7 @@
                 </div>
             </div>
 
-            <!-- 3. 搜尋統計與排序區 -->
+            <!-- 搜尋統計與排序區 -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div><span id="searchCount"></span></div>
                 <select class="form-select" id="sortSelect" style="width: auto;">
@@ -190,11 +189,11 @@
                 </select>
             </div>
 
-            <!-- 4. 餐廳搜尋結果顯示區 -->
+            <!-- 餐廳搜尋結果顯示區 -->
             <div class="row g-4" id="restResults">
                 <!-- 餐廳卡片將由 JavaScript 動態產生 -->
             </div>
-            <!-- 添加 loading spinner -->
+
             <div id="loadingSpinner" class="text-center py-4 d-none">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">載入中...</span>
@@ -213,7 +212,6 @@
     let currentRests = [];
 
     $(document).ready(async function() {
-        // 1. 呼叫「頁面初始化」函式
         await initializePage();
     });
 
@@ -227,7 +225,7 @@
         await loadCities();
         await loadCuisineTypes();
 
-        // 渲染縣市、料理類型勾選框
+        // 渲染縣市、料理類型 checkbox
         renderCityOptions(citiesData);
         renderCuisineTypeOptions(cuisineTypesData);
 

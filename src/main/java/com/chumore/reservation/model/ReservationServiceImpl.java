@@ -15,8 +15,6 @@ import java.util.Map;
 @Transactional
 public class ReservationServiceImpl implements ReservationService{
 
-    private Map<String, String> reservationStatusMap = Map.of("0", "已取消", "1", "尚未報到", "2", "已報到");
-
     @Autowired
     private ReservationDAO reservationDAO;
 
