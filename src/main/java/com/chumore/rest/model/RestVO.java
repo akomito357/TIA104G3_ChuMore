@@ -117,8 +117,8 @@ public class RestVO implements Serializable{
 	@Column(name = "order_table_count")
 	private Integer orderTableCount;
 	
-	@Column(name = "rest_stars", columnDefinition = "DECIMAL")
-	private Double restStars;
+	@Column(name = "rest_stars", columnDefinition = "DECIMAL(2,1)")
+	private Double restStars; 
 	
 	@Column(name = "rest_reviewers")
 	private Integer restReviewers;

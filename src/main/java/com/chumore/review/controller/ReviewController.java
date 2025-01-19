@@ -1,5 +1,6 @@
 package com.chumore.review.controller;
 
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -382,6 +385,36 @@ public class ReviewController {
 			result.addError(fieldError);
 		}
 		return result;
+	}
+	
+	@GetMapping("/restaurant/{restId}")
+	@ResponseBody
+	public ResponseEntity<Page<ReviewVO>> getRestaurantReviews(
+	        @PathVariable Integer restId,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "5") int size) {
+	    try {
+	        Pageable pageable = PageRequest.of(page, size);
+	        Page<ReviewVO> reviews = reviewService.getRestaurantReviews(restId, pageable);
+	        return ResponseEntity.ok(reviews);
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body(null);
+	    }
+	}
+
+	@GetMapping("/restaurant/{restId}/summary")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getReviewSummary(@PathVariable Integer restId) {
+	    try {
+	        Map<String, Object> summary = new HashMap<>();
+	        summary.put("averageRating", reviewService.calculateAverageRating(restId));
+	        summary.put("totalReviews", reviewService.getReviewCount(restId));
+	        
+	        return ResponseEntity.ok(summary);
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body(null);
+	    }
+	
 	}
 	
 	
