@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -179,6 +179,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
+    <script th:inline="javascript">
+        window.restId = /*[[${session.restId}]]*/{};
+    </script>
     <script>
         $(document).ready(function() {
     // 初始化時間選項
@@ -334,7 +337,7 @@
     // 載入既有資料
    // 載入既有資料
    function loadExistingData() {
-    fetch(`/rests/getBusinessHours?restId={restId}`)
+    fetch('/rests/getBusinessHours?restId='+ window.restId)
         .then(response => response.json())
         .then(businessHoursArrays => {
             console.log('Received business hours arrays:', businessHoursArrays);
@@ -406,7 +409,7 @@
         });
 }
         function loadWeeklyBusinessDays() {
-            fetch(`/rests/getWeeklyBusinessDays?restId={restId}`)
+            fetch('/rests/getWeeklyBusinessDays?restId='+ window.restId)
                 .then(response => response.json())
                 .then(businessDays => {
                     console.log('Received weekly business days:', businessDays);
@@ -423,7 +426,7 @@
         }
 
         function loadSpecialClosedDays() {
-    fetch(`/specificHoliday/getSpecialClosedDays?restId={restId}`)
+    fetch('/specificHoliday/getSpecialClosedDays?restId='+ window.restId)
         .then(response => response.json())
         .then(data => {
             console.log('Received special closed days:', data);
@@ -551,7 +554,7 @@ $(document).on('change', '.time-select', function() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                restId: 2001,  // 請根據實際需求修改
+                restId: window.restId,  // 請根據實際需求修改
                 day: date
             })
         })
@@ -629,7 +632,7 @@ $(document).on('change', '.time-select', function() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            restId: 2001,
+            restId: window.restId,
             businessHours: timeSlots
         })
     })
@@ -663,7 +666,7 @@ $(document).on('change', '.time-select', function() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            restId: 2001,  // 請根據實際需求修改
+            restId: window.restId,  // 請根據實際需求修改
             weeklyStatus: weeklyStatus
         })
     })

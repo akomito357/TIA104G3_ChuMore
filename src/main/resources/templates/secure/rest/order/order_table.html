@@ -79,8 +79,10 @@
         }
     </style>
 </head>
+<head th:insert="~{/included.html}"></head>
+<head th:insert="~{/header_merchant.html}"></head>
 <body>
-    <main class="main"></main>
+    
     <div class="container py-4">
         <h2 class="mb-4">桌位管理</h2>
         
@@ -184,7 +186,7 @@
 
         function loadTables() {
             console.log('Starting to load tables...');
-            fetch('/ordertables/getAllTables?restId=' + window.restId, {
+            fetch('/rests/ordertables/getAllTables?restId=' + window.restId, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -340,7 +342,7 @@
                 tableNumber: newTableNumber
             };
             
-            fetch(`/ordertables/updateTable/${orderTableId}`, {
+            fetch(`/rests/ordertables/updateTable/${orderTableId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -367,7 +369,7 @@
             })
             .catch(error => {
                 console.error('Error updating table:', error);
-                alert('更新桌位失敗: ' + error.message);
+                alert('桌位重複');
             });
         }
 
@@ -386,7 +388,7 @@
             
             console.log('Sending data:', JSON.stringify(tableData));
             
-            fetch('/ordertables/addTable', {
+            fetch('/rests/ordertables/addTable', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',
@@ -417,7 +419,7 @@
             })
             .catch(error => {
                 console.error('Error adding table:', error);
-                alert('新增桌位失敗: ' + error.message);
+                alert('桌位重複!');
             });
         }
 
@@ -427,7 +429,7 @@
             if (confirm('確定要刪除此桌位嗎？此操作無法復原。')) {
                 $('.delete-btn').addClass('loading');
                 
-                fetch(`/ordertables/deleteTable/${orderTableId}`, {
+                fetch(`/rests/ordertables/deleteTable/${orderTableId}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
@@ -458,7 +460,6 @@
         }
 
         function generateTableUrl(tableNumber) {
-            // const restId = 2001; // 你的餐廳 ID
             return `https://orders/addOrder/${restId}/${tableNumber}`;
         }
     </script>

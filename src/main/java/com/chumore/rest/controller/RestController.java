@@ -154,50 +154,56 @@ public class RestController {
 
 	@PutMapping("updateRest")
 	public ResponseEntity<Map<String, Object>> updateRest(@RequestBody Map<String, Object> requestData) {
-		Map<String, Object> response = new HashMap<>();
+	    Map<String, Object> response = new HashMap<>();
 
-		try {
-			Integer restId = Integer.parseInt(requestData.get("restId").toString());
-			Integer cuisineTypeId = Integer.parseInt(requestData.get("cuisineTypeId").toString());
+	    try {
+	        Integer restId = Integer.parseInt(requestData.get("restId").toString());
+	        Integer cuisineTypeId = Integer.parseInt(requestData.get("cuisineTypeId").toString());
 
-			// 獲取原有的餐廳資料
-			RestVO existingRest = restSvc.getOneById(restId);
-			if (existingRest == null) {
-				response.put("success", false);
-				response.put("message", "找不到餐廳資料");
-				return ResponseEntity.ok(response);
-			}
+	        // 獲取原有的餐廳資料
+	        RestVO existingRest = restSvc.getOneById(restId);
+	        if (existingRest == null) {
+	            response.put("success", false);
+	            response.put("message", "找不到餐廳資料");
+	            return ResponseEntity.ok(response);
+	        }
 
-			CuisineTypeVO cuisineType = cuisineTypeSvc.getOneCuisineType(cuisineTypeId);
-			if (cuisineType == null) {
-				response.put("success", false);
-				response.put("message", "找不到料理類型");
-				return ResponseEntity.ok(response);
-			}
 
-			existingRest.setMerchantName((String) requestData.get("merchantName"));
-			existingRest.setPhoneNumber((String) requestData.get("phoneNumber"));
-			existingRest.setRestName((String) requestData.get("restName"));
-			existingRest.setRestRegist((String) requestData.get("restRegist"));
-			existingRest.setRestPhone((String) requestData.get("restPhone"));
-			existingRest.setRestCity((String) requestData.get("restCity"));
-			existingRest.setRestDist((String) requestData.get("restDist"));
-			existingRest.setRestAddress((String) requestData.get("restAddress"));
-			existingRest.setRestIntro((String) requestData.get("restIntro"));
-			existingRest.setCuisineType(cuisineType);
-			existingRest.setBusinessStatus(Integer.parseInt(requestData.get("businessStatus").toString()));
+	        
 
-			restSvc.updateRest(existingRest);
+	        // 密碼驗證通過或沒有要更新密碼，繼續更新其他資料
+	        CuisineTypeVO cuisineType = cuisineTypeSvc.getOneCuisineType(cuisineTypeId);
+	        if (cuisineType == null) {
+	            response.put("success", false);
+	            response.put("message", "找不到料理類型");
+	            return ResponseEntity.ok(response);
+	        }
 
-			response.put("success", true);
-			response.put("message", "更新成功");
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.put("success", false);
-			response.put("message", "更新失敗：" + e.getMessage());
-			return ResponseEntity.ok(response);
-		}
+	        // ... 更新其他資料 ...
+	        existingRest.setMerchantName((String) requestData.get("merchantName"));
+	        existingRest.setPhoneNumber((String) requestData.get("phoneNumber"));
+	        existingRest.setRestName((String) requestData.get("restName"));
+	        existingRest.setRestRegist((String) requestData.get("restRegist"));
+	        existingRest.setRestPhone((String) requestData.get("restPhone"));
+	        existingRest.setRestCity((String) requestData.get("restCity"));
+	        existingRest.setRestDist((String) requestData.get("restDist"));
+	        existingRest.setRestAddress((String) requestData.get("restAddress"));
+	        existingRest.setRestIntro((String) requestData.get("restIntro"));
+	        existingRest.setCuisineType(cuisineType);
+	        existingRest.setBusinessStatus(Integer.parseInt(requestData.get("businessStatus").toString()));
+
+	        restSvc.updateRest(existingRest);
+
+	        response.put("success", true);
+	        response.put("message", "更新成功");
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("success", false);
+	        response.put("message", "更新失敗：" + e.getMessage());
+	        return ResponseEntity.ok(response);
+	    }
 	}
 
 	@GetMapping("getBusinessHours")
@@ -472,6 +478,47 @@ public class RestController {
 			response.put("message", "更新失敗：" + e.getMessage());
 			return ResponseEntity.ok(response);
 		}
+	}
+	
+	@PostMapping("/updatePassword")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> updatePassword(@RequestBody Map<String, Object> requestData) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        // 從 SecurityContext 獲取當前登入的商家信箱
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String merchantEmail = authentication.getName();
+	        
+	        // 獲取商家資訊
+	        RestVO rest = restSvc.getOneByEmail(merchantEmail);
+	        if (rest == null) {
+	            response.put("success", false);
+	            response.put("message", "找不到商家資料");
+	            return ResponseEntity.ok(response);
+	        }
+	        
+	        String oldPassword = (String) requestData.get("oldPassword");
+	        String newPassword = (String) requestData.get("newPassword");
+	        
+	        // 進行密碼更新
+	        boolean updateSuccess = restSvc.updatePassword(rest.getRestId(), oldPassword, newPassword);
+	        
+	        if (updateSuccess) {
+	            response.put("success", true);
+	            response.put("message", "密碼更新成功");
+	        } else {
+	            response.put("success", false);
+	            response.put("message", "舊密碼錯誤");
+	        }
+	        
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("message", "更新失敗：" + e.getMessage());
+	        return ResponseEntity.ok(response);
+	    }
 	}
 
 	// 獲取根本原因的輔助方法

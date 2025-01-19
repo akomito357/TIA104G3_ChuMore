@@ -32,7 +32,7 @@ import com.chumore.rest.model.RestVO;
 
 @CrossOrigin(origins = {"http://127.0.0.1:5501", "http://localhost:5501"})
 @Controller
-@RequestMapping("/ordertables")
+@RequestMapping("/rests/ordertables")
 public class OrderTableController {
 	@Autowired
 	OrderTableService orderTableSvc;
@@ -65,8 +65,8 @@ public class OrderTableController {
            boolean isDuplicate = existingTables.stream()
                    .anyMatch(table -> table.getTableNumber().equals(tableNumber));
            if (isDuplicate) {
-               response.put("success", false);
-               response.put("message", "桌號已存在，無法新增。");
+//               response.put("success", false);
+               response.put("message", "桌號已存在");
                return ResponseEntity.badRequest().body(response);
            }
             // 建立 RestVO

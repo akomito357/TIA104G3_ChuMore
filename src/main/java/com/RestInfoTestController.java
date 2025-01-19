@@ -23,4 +23,9 @@ public class RestInfoTestController {
 	public String test3() {
 		return "secure/rest/reservation";
 	}
+	
+	@GetMapping("change_password")
+	public String testˋ() {
+		return "secure/change_password.html";
+	}
 }

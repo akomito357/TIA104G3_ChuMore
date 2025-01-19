@@ -19,5 +19,5 @@ public interface RestService {
 	List<Integer> getRestIdsByOptionalFields(List<String> cities,List<String> districts,List<Integer> cuisineTypeIds);
 	List<Integer[]> getBusinessHoursFor(Integer restId);
 	String getBusinessDays(Integer restId);
-
+	boolean updatePassword(Integer restId, String oldPassword, String newPassword);
 }
