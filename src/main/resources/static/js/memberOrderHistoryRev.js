@@ -130,6 +130,7 @@ async function deleteReview(reviewId){
         let response = await res.json();
         console.log(response);
         fetchMemberReview();
+        window.location.reload();
 
     } catch(error) {
         console.log(error);

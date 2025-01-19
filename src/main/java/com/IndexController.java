@@ -73,4 +73,10 @@ public class IndexController {
     	System.out.println("role: " + role);
     	return role;
     }
+	
+//	@GetMapping("/login_page")
+//	public String login() {
+//		return "auth/login";
+//	}
+//	
 }

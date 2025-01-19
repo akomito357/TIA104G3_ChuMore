@@ -82,7 +82,7 @@
                     <li><btn href="menu.html" class="nav-item nav-link header-item header-link">收藏清單</btn></li>
                     <li><btn href="menu.html" class="nav-item nav-link header-item header-link">我的點數</btn></li>
                 </ul> -->
-                <btn onclick="" class="btn btn-primary py-2 px-4 ml-2 login_btn">登入 / 註冊</btn>
+                <form th:action="@{/auth/login}" method="get"><button type="submit" id="login_btn" class="btn btn-primary py-2 px-4 ml-2 login_btn">登入 / 註冊</button></form>
             </div>
         </nav>
     <!-- </div> -->
