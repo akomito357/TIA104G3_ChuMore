@@ -191,7 +191,7 @@ function getOrderMaster(){
                 orderItemHistory += `</div>`;
             })
             // orderItemHistory += `</div>`;
-            $(".modal-body").html(orderItemHistory);
+            $(".orderHistoryModalBody").html(orderItemHistory);
 
             // 將小計代入history總計消費
             // let orderMaterSubtotalPrice = "";
@@ -356,6 +356,88 @@ function init(){
 
 }
 
+// 服務鈴/結束用餐按鈕召喚modal
+function showServiceBellModal(){
+    let modal = new bootstrap.Modal(document.getElementById('serviceBellModal'));
+    modal.show();
+}
+
+$("#service_bell_btn").click(function(e){
+    e.preventDefault();
+    // const restId = restId;
+    // const tableName = tableName;
+    console.log(restId, caller);
+
+    $.ajax({
+        url: "/notification/serviceBell",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            restId: restId,
+            caller: caller
+        }),
+        success: function(res){
+            console.log(res);
+            let modal = new bootstrap.Modal(document.getElementById('serviceBellPressedModal'));
+            modal.show();
+        },
+        error: function(err){
+            console.log(err);
+            let modal = new bootstrap.Modal(document.getElementById('serviceBellFailedModal'));
+            modal.show();
+        }
+    })
+})
+
+function showFinishDiningModal(){
+    let modal = new bootstrap.Modal(document.getElementById('diningFinishConfirmModal'));
+    modal.show();
+}
+
+console.log(window.orderId);
+console.log(orderId);
+
+$("#diningFinishConfirm").click(async function(e){
+    e.preventDefault();
+    const orderData = {
+        orderId: orderId
+    }
+    console.log(JSON.stringify(orderData));
+
+    try{
+        const url = "/orders/finishOrder";
+        const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(orderData),
+            headers:{
+                "Content-Type": "application/json; charset=UTF-8"
+            },
+        })
+        if (!res.ok){
+            // errorData = await res.json();
+            let errorData = await res.json();
+            return {
+                success: false,
+                status: res.status,
+                message: errorData.message || "error occured",
+                errorData: errorData
+            }
+            // throw new Error(errorData.message || "error occured");
+        }
+        console.log(res);
+
+        const html = await res.text();
+        document.open();
+        document.write(html);
+        document.close();
+
+    }catch(error){
+        
+        console.log(error);
+        return [];
+    }
+})
+
 
 // 初始化
 async function main(){
@@ -365,7 +447,9 @@ async function main(){
     await init()
     await updateCartBtn()
     getOrderMaster();
+    // showServiceBellModal();
 }
+
 
 main();
 

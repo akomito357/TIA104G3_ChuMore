@@ -173,8 +173,8 @@ public class ProductCategory_Service {
 		
 		if(!categoryIdToDelete.isEmpty()) {
 			for(Integer categoryId : categoryIdToDelete) {
-				List<ProductVO> productIds = productSvc.getProductByProductCatId(categoryId);
-				for(ProductVO product: productIds) {
+				List<ProductVO> products = productSvc.getProductByProductCatId(categoryId);
+				for(ProductVO product: products) {
 					productSvc.deleteProduct(product.getProductId());
 				}
 				deleteCategory(categoryId);

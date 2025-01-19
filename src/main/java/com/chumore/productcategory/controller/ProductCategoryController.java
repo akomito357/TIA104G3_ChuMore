@@ -90,10 +90,11 @@ public class ProductCategoryController {
 		if (restNum == null) {
 			restId = 2001;
 		} else {
-			RestVO rest = (RestVO) restNum;
-			restId = rest.getRestId();
+			Integer rest = (Integer) restNum;
+//			restId = rest.getRestId();
+			restId = rest;
+			
 		}
-		
 		List<ProductCategoryVO> list = productCategorySvc.getActiveListByRestId(restId);
 		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>(
 				"Success", 200, list);
@@ -231,5 +232,3 @@ public class ProductCategoryController {
 	
 
 }
-
-

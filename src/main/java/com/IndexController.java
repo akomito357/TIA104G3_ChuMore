@@ -24,7 +24,7 @@ public class IndexController {
 	
 	@GetMapping("/header") // test
 	public String headertest() {
-		return "header_member";
+		return "header_merchant_test";
 	}
 	
 	@GetMapping("/check") // test
@@ -36,10 +36,6 @@ public class IndexController {
 	public String memberDiningHistory() {
 		return "secure/member/dining/member_dining_history";
 	}
-//	@GetMapping("/memberDiningHistory")
-//	public String memberDiningHistory() {
-//		return "secure/member/dining/member_dining_history";
-//	}
 	
 	@GetMapping("/restDiningHistory")
 	public String restDiningHistory() {

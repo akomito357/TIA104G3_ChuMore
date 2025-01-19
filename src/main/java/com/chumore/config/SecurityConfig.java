@@ -106,6 +106,7 @@ public class SecurityConfig {
                     response.sendRedirect("/secure/member/member_information");
                 } else if ("ROLE_RESTAURANT".equals(role)) {
                     response.sendRedirect("/secure/rest/rest_information");
+
                 }
             })
             .failureUrl("/auth/login?error")

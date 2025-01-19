@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <div th:fragment="sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 230px; min-height: 100vh;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <span class="fs-5">Foodie ChuMore<br>後台管理系統</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <!-- 所有人都能看見的選項 -->
+                <li class="nav-item">
+                    <a th:href="@{/emp/dashboard}" class="nav-link text-white" 
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active' : ''}">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        主控台
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/emp/profile}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/profile' ? 'active' : ''}">
+                        <i class="bi bi-person me-2"></i>
+                        個人資料
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/emp/approval/list}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/approval/list' ? 'active' : ''}">
+                        <i class="bi bi-clock-history me-2"></i>
+                        餐廳待審核清單
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/emp/approval/approved}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/approval/approved' ? 'active' : ''}">
+                        <i class="bi bi-check-circle me-2"></i>
+                        已審核餐廳清單
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/emp/approval/all}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/approval/all' ? 'active' : ''}">
+                        <i class="bi bi-list-check me-2"></i>
+                        所有審核紀錄
+                    </a>
+                </li>
+
+                <!-- 只有管理員可以看見的選項 -->
+                <li sec:authorize="hasRole('ADMIN')" class="mt-4">
+                    <hr class="text-white">
+                    <h6 class="text-white px-3 mt-4 mb-3">管理員功能</h6>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/emp/admin/list}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/admin/list' ? 'active' : ''}">
+                        <i class="bi bi-people me-2"></i>
+                        員工列表
+                    </a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/emp/admin/add}" class="nav-link text-white"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/emp/admin/add' ? 'active' : ''}">
+                        <i class="bi bi-person-plus me-2"></i>
+                        新增員工
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                    <strong th:text="${#authentication.name}">使用者名稱</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" th:href="@{/emp/profile}">個人資料</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="dropdown-item">
+                            <button type="submit" class="btn btn-link text-white p-0">登出</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

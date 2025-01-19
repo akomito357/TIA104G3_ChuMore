@@ -38,7 +38,7 @@ $(document).ready(function() {
 			method: "GET",
 		}).then(res => res.json())
 			.then(response => {
-				// console.log(response);
+				console.log(response);
 
 				const pageData = response.data;
 				const orderList = pageData.content;
@@ -193,7 +193,7 @@ function showModal(orderId) {
 	}).then(res => res.json())
 		.then(response => {
 
-			// console.log(response);
+			console.log(response);
 			const mealDetailList = response.orderItemListDto;
 			// console.log(mealDetailList);
 
@@ -234,7 +234,7 @@ function showModal(orderId) {
 			mealSummary += `
                         <div class="summary">
                                 <p class="text-gray-600">小計: <span id="discountPoints">${response.subtotalPrice}</span></p>
-                                <p class="text-gray-600">折扣點數: <span id="discountPoints">${response.pointUsed}點   (＝折抵${response.pointUsed * 10} 元)</span></p>
+                                <p class="text-gray-600">折扣點數: <span id="discountPoints">${response.pointUsed?response.pointUsed:"0"}點   (＝折抵 ${response.pointUsed * 10} 元)</span></p>
                                 <p class="text-xl font-semibold">訂單總金額: <span id="totalAmount">${response.totalPrice}</span></p>
                         </div>
                         

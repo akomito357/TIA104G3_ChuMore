@@ -1,91 +1,101 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout :: head('新增員工')">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+<head>
+<title>新增員工</title>
 </head>
 <body>
-    <nav th:replace="layout :: navbar"></nav>
+	<div layout:fragment="content">
 
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">新增員工</h4>
-                        <a th:href="@{/emp/admin/list}" class="btn btn-outline-light">
-                            <i class="fas fa-arrow-left"></i> 返回列表
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <!-- 錯誤訊息 -->
-                        <div th:if="${error}" class="alert alert-danger" role="alert">
-                            <span th:text="${error}"></span>
-                        </div>
 
-                        <form th:action="@{/emp/admin/add}" method="post" th:object="${empDTO}">
-                            <div class="form-group">
-                                <label for="empName">姓名 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="empName" name="empName" required 
-                                       th:field="*{empName}" th:classappend="${#fields.hasErrors('empName')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></div>
-                            </div>
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="card shadow-sm">
+					<div
+						class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+						<h4 class="mb-0">新增員工</h4>
+						<a th:href="@{/emp/admin/list}" class="btn btn-outline-light">
+							<i class="bi bi-arrow-left me-1"></i> 返回列表
+						</a>
+					</div>
+					<div class="card-body">
+						<form th:action="@{/emp/admin/add}" method="post" th:object="${empDTO}" class="needs-validation" novalidate>
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label for="empName" class="form-label">姓名 <span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="empName" th:field="*{empName}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></div>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empAccount">帳號 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="empAccount" name="empAccount" required
-                                       th:field="*{empAccount}" th:classappend="${#fields.hasErrors('empAccount')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empAccount')}" th:errors="*{empAccount}"></div>
-                            </div>
+								<div class="col-md-6">
+									<label for="empAccount" class="form-label">帳號 <span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="empAccount" th:field="*{empAccount}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empAccount')}"
+										th:errors="*{empAccount}"></div>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empPassword">密碼 <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" id="empPassword" name="empPassword" required
-                                       th:field="*{empPassword}" th:classappend="${#fields.hasErrors('empPassword')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empPassword')}" th:errors="*{empPassword}"></div>
-                            </div>
+								<div class="col-md-6">
+									<label for="empPhone" class="form-label">手機 <span
+										class="text-danger">*</span></label> <input type="text"
+										class="form-control" id="empPhone" th:field="*{empPhone}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empPhone')}"
+										th:errors="*{empPhone}"></div>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empPhone">手機 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="empPhone" name="empPhone" required
-                                       th:field="*{empPhone}" th:classappend="${#fields.hasErrors('empPhone')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}"></div>
-                            </div>
+								<div class="col-md-12">
+									<label for="empEmail" class="form-label">Email <span
+										class="text-danger">*</span></label> <input type="email"
+										class="form-control" id="empEmail" th:field="*{empEmail}"
+										required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empEmail')}"
+										th:errors="*{empEmail}"></div>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empEmail">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="empEmail" name="empEmail" required
-                                       th:field="*{empEmail}" th:classappend="${#fields.hasErrors('empEmail')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}"></div>
-                            </div>
+								<div class="col-md-6">
+									<label for="empRole" class="form-label">權限角色 <span
+										class="text-danger">*</span></label> <select class="form-select"
+										id="empRole" th:field="*{empRole}" required>
+										<option value="0">一般員工</option>
+										<option value="1">管理員</option>
+									</select>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empRole">權限角色 <span class="text-danger">*</span></label>
-                                <select class="form-control" id="empRole" name="empRole" required th:field="*{empRole}">
-                                    <option value="0">一般員工</option>
-                                    <option value="1">管理員</option>
-                                </select>
-                            </div>
+								<div class="col-md-6">
+									<label for="empHireDate" class="form-label">到職日 <span
+										class="text-danger">*</span></label> <input type="date"
+										class="form-control" id="empHireDate"
+										th:field="*{empHireDate}" required>
+									<div class="invalid-feedback"
+										th:if="${#fields.hasErrors('empHireDate')}"
+										th:errors="*{empHireDate}"></div>
+								</div>
 
-                            <div class="form-group">
-                                <label for="empHireDate">到職日 <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="empHireDate" name="empHireDate" required
-                                       th:field="*{empHireDate}" th:classappend="${#fields.hasErrors('empHireDate')} ? 'is-invalid'">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('empHireDate')}" th:errors="*{empHireDate}"></div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> 儲存
-                            </button>
-                            <a th:href="@{/emp/admin/list}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> 取消
-                            </a>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div th:replace="layout :: footer"></div>
-    <div th:replace="layout :: scripts"></div>
+								<div class="col-12">
+									<hr>
+									<button type="submit" class="btn btn-primary">
+										<i class="bi bi-save me-1"></i> 儲存
+									</button>
+									<a th:href="@{/emp/admin/list}" class="btn btn-secondary">
+										<i class="bi bi-x-circle me-1"></i> 取消
+									</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

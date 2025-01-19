@@ -12,5 +12,5 @@ public interface ApprovalRepository extends JpaRepository<ApprovalVO, Integer> {
     List<ApprovalVO> findByApprovalResult(Integer approvalResult);
 
     // 根據餐廳ID查詢
-    List<ApprovalVO> findByRest_RestId(Integer restId);
+    List<ApprovalVO> findByRestRestId(Integer restId);
 }

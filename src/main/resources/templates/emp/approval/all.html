@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+<head>
+<title>所有審核記錄</title>
+<style>
+
+/* 表格文字大小調整 */
+.table {
+	font-size: 13px; /* 調整整體字體大小 */
+}
+
+.table th, .table td {
+	font-size: 12px; /* 確保表頭和內容一致 */
+}
+
+/* 調整表格欄位寬度 */
+.table .col-id {
+	width: 1%;
+}
+
+.table .col-rest-name {
+	width: 10%;
+}
+
+.table .col-city {
+	width: 7%;
+}
+
+.table .col-dist {
+	width: 7%;
+}
+
+.table .col-address {
+	width: 12%;
+}
+
+.table .col-regist {
+	width: 10%;
+}
+
+.table .col-phone {
+	width: 8%;
+}
+
+.table .col-merchant-name {
+	width: 10%;
+}
+
+.table .col-merchant-phone {
+	width: 8%;
+}
+
+.table .col-email {
+	width: 12%;
+}
+
+.table .col-submit-time {
+	width: 12%;
+}
+
+.table .col-approval-time {
+	width: 12%;
+}
+
+.table .col-status {
+	width: 7%;
+}
+
+.table .col-approver {
+	width: 7%;
+}
+
+/* Badge 樣式優化 */
+.badge {
+	padding: 0.5em 0.7em;
+	min-width: 65px;
+}
+</style>
+</head>
+<body>
+	<div layout:fragment="content">
+
+
+		<!-- 標題列 -->
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2>所有審核紀錄</h2>
+			<div>
+				<a th:href="@{/emp/approval/list}" class="btn btn-primary btn-sm">
+					<i class="bi bi-clock me-1"></i>待審核清單
+				</a> <a th:href="@{/emp/approval/approved}"
+					class="btn btn-success btn-sm ms-2"> <i
+					class="bi bi-check-circle me-1"></i>已審核清單
+				</a>
+			</div>
+		</div>
+
+		<!-- 表格區域 -->
+		<div class="table-wrapper">
+			<table class="table table-hover mb-10">
+				<thead class="fixed-header">
+					<tr>
+						<th class="col-id">審核編號</th>
+						<th class="col-rest-name">餐廳名稱</th>
+						<th class="col-city">所在縣市</th>
+						<th class="col-dist">鄉鎮市區</th>
+						<th class="col-address">地址</th>
+						<th class="col-regist">食品業者登錄字號</th>
+						<th class="col-phone">電話</th>
+						<th class="col-merchant-name">負責人姓名</th>
+						<th class="col-merchant-phone">手機</th>
+						<th class="col-email">email</th>
+						<th class="col-submit-time">提交時間</th>
+						<th class="col-approval-time">審核時間</th>
+						<th class="col-status">審核狀態</th>
+						<th class="col-approver">審核者</th>
+					</tr>
+				</thead>
+				<tbody class="table-body-wrapper">
+					<tr th:each="approval : ${approvals}">
+						<td th:text="${approval.approvalId}"></td>
+						<td th:text="${approval.rest.restName}"></td>
+						<td th:text="${approval.rest.restCity}"></td>
+						<td th:text="${approval.rest.restDist}"></td>
+						<td th:text="${approval.rest.restAddress}"></td>
+						<td th:text="${approval.rest.restRegist}"></td>
+						<td th:text="${approval.rest.restPhone}"></td>
+						<td th:text="${approval.rest.merchantName}"></td>
+						<td th:text="${approval.rest.phoneNumber}"></td>
+						<td th:text="${approval.rest.merchantEmail}"></td>
+						<td
+							th:text="${#temporals.format(approval.submissionDatetime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td
+							th:text="${#temporals.format(approval.approvalReqDatetime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+						<td><span class="badge bg-success"
+							th:if="${approval.approvalResult == 1}">通過</span> <span
+							class="badge bg-danger" th:if="${approval.approvalResult == 2}">未通過</span>
+						</td>
+						<td th:text="${approval.emp.empName}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+	</div>
+</body>
+</html>

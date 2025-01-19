@@ -4,6 +4,9 @@ import com.chumore.emp.dto.EmpBasicUpdateDTO;
 import com.chumore.emp.dto.EmpBasicViewDTO;
 import com.chumore.emp.dto.EmpFullDTO;
 import com.chumore.emp.model.EmpVO;
+import com.chumore.member.model.MemberRepository;
+import com.chumore.rest.model.RestRepository;
+import com.chumore.emp.model.EmpRepository;
 import com.chumore.emp.model.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,7 +26,14 @@ public class EmpController {
 	@Autowired
 	private EmpService empService;
 
+	@Autowired
+	private MemberRepository memberRepository;
 
+	@Autowired
+	private RestRepository restRepository;
+
+	@Autowired
+	private EmpRepository empRepository;
 	// ========== 一般員工功能 ==========
 	// 查看個人資料
 	@GetMapping("/profile")
@@ -68,7 +78,21 @@ public class EmpController {
 	        return "redirect:/emp/edit";
 	    }
 	}
-
+	
+	@GetMapping("/dashboard")
+	public String showDashboard(Model model) {
+	    // 取得各項數量
+	    long totalMembers = memberRepository.count();
+	    long totalRests = restRepository.count(); 
+	    long totalEmps = empRepository.count();
+	    
+	    // 添加到model
+	    model.addAttribute("totalMembers", totalMembers);
+	    model.addAttribute("totalRests", totalRests); 
+	    model.addAttribute("totalEmps", totalEmps);
+	    
+	    return "emp/dashboard";
+	}
 	// ========== 管理員功能 ==========
 	// 顯示所有員工列表
 	@GetMapping("/admin/list")
@@ -81,8 +105,10 @@ public class EmpController {
 	// 前往新增員工頁面
 	@GetMapping("/admin/add")
 	public String showAddForm(Model model) {
-		model.addAttribute("empDTO", new EmpFullDTO());
-		return "emp/admin/add";
+	    if (!model.containsAttribute("empDTO")) {
+	        model.addAttribute("empDTO", new EmpFullDTO());
+	    }
+	    return "emp/admin/add";  // 不需要前導斜線
 	}
 	// 修改密碼
 	@PostMapping("/admin/reset-password/{id}")
@@ -96,22 +122,27 @@ public class EmpController {
 	    return "redirect:/emp/admin/list";
 	}
 	// 新增員工
+	
 	@PostMapping("/admin/add")
-	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, BindingResult result,
-			RedirectAttributes redirectAttr) {
-		if (result.hasErrors()) {
-			return "emp/admin/add";
-		}
+	public String addEmp(@Valid @ModelAttribute("empDTO") EmpFullDTO dto, 
+	                    BindingResult result,
+	                    RedirectAttributes redirectAttr) {
+	    if (result.hasErrors()) {
+	        return "/emp/admin/add";
+	    }
 
-		try {
-			empService.addEmp(dto);
-			redirectAttr.addFlashAttribute("message", "員工新增成功！");
-			return "redirect:/emp/admin/list";
-		} catch (IllegalArgumentException e) {
-			redirectAttr.addFlashAttribute("error", e.getMessage());
-			return "redirect:/emp/admin/add";
-		}
+	    try {
+	        empService.addEmp(dto);
+	        redirectAttr.addFlashAttribute("message", 
+	            "員工新增成功！預設密碼為：A1234567，請通知員工盡快修改密碼。");
+	        return "redirect:/emp/admin/list";
+	    } catch (IllegalArgumentException e) {
+	        redirectAttr.addFlashAttribute("error", e.getMessage());
+	        return "redirect:/emp/admin/add";
+	    }
 	}
+	
+	
 
 	// 前往編輯員工頁面
 	@GetMapping("/admin/edit/{id}")

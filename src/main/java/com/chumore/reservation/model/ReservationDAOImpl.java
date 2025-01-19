@@ -262,6 +262,3 @@ public class ReservationDAOImpl implements ReservationDAO{
         return predicates;
     }
 }
-
-
-

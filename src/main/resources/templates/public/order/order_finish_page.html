@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結束用餐</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
+    <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+
+    <link th:href="@{/css/ordercommon.css}" rel="stylesheet">
+    <link href="/static/css/ordercommon.css" rel="stylesheet">
+    <style>
+        
+        .checkout-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .order-info {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            
+            border-radius: 8px 8px 0 0;
+        }
+
+        .order_line_item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order_line_item:last-child {
+            border-bottom: none;
+        }
+
+        .order_item_options {
+            /* padding-left: 1rem; */
+            padding-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+
+        }
+
+        .discount-section {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .total-section {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .total-row span:first-child {
+            margin-right: 2rem;
+            min-width: 80px;
+        }
+
+        .total-row span:last-child {
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .checkout-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            width: 100%;
+            border-radius: 0 0 8px 8px;
+            font-size: 1.2rem;
+        }
+
+        .checkout-btn:hover {
+            background-color: var(--btn_hover);
+            transition-duration: 0.3s;
+            color: white;
+        }
+
+        .checkout-btn.disabled{
+            background-color: var(--btn_disable);
+            color: white;
+        }
+
+        .order-time {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .member-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .member-status {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .member-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .member-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        #showMemberPoints {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: none;
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        #showMemberPoints.show {
+            background-color: hsl(216, 100%, 91%);
+            color: hsl(216, 90%, 31%);
+            display: block;
+        }
+
+        #showMemberPoints.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .table-header {
+            background-color: #f8f9fa;
+            padding: 0.75rem 0;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        /* #pointUseForm{
+            display: none;
+        }
+
+        #pointUseForm.show{
+            display:flex;
+        }
+
+        .member-discpts-status {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .member-discpts-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .member-discpts-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        } */
+
+
+
+    </style>
+</head>
+<body>
+    <!-- <div class="main-container d-flex"> -->
+        <main class="mainContent d-flex flex-column align-items-center ">
+            <!-- <main class="main"> -->
+        <div class="checkout-container">
+            <!-- Order Info -->
+            <div class="order-info">
+                <div class="row">
+                    <div class="col-6">
+                        <i class="fas fa-chair me-2"></i>
+                        <span th:text="${orderMaster.orderTable.tableNumber}">內用座位C</span>
+                    </div>
+                    <div class="col-6">
+                        <i class="fas fa-clock me-2"></i>
+                        <span>入座時間：</span><span th:text="${#temporals.format(orderMaster.servedDatetime, 'yyyy/MM/dd HH:mm')}">2024/11/06 17:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <th:block th:each="orderItemVO : ${orderMaster.orderItems}">
+                <div class="p-4">
+                    <div class="order-time">
+                        第<span th:text="${orderItemVOStat.count}">一</span>次點餐　<span th:text="${orderItemVO.formatCreatedDatetime}">17:03</span>
+                    </div>
+
+                    <!-- Table Headers -->
+                    <div class="row table-header">
+                        <div class="col-6">品項</div>
+                        <div class="col-2 text-end">單價</div>
+                        <div class="col-2 text-end">數量</div>
+                        <div class="col-2 text-end">小計</div>
+                    </div>
+
+                    <th:block th:each="orderLineItemVO : ${orderItemVO.orderLineItem}">
+                        <div class="order_line_item">
+                            <div class="row">
+                                <div class="col-6" th:text="${orderLineItemVO.product.productName}">
+                                    起司牛肉堡
+                                </div>
+                                <div class="col-2 text-end">$<span th:text="${#numbers.formatDecimal(orderLineItemVO.price, 1, 0)}">200</span></div>
+                                <div class="col-2 text-end" th:text="${orderLineItemVO.quantity}">2</div>
+                                <div class="col-2 text-end" th:text="'$' + ${#numbers.formatDecimal(orderLineItemVO.price * orderLineItemVO.quantity, 1, 0)}">$400</div>
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <div class="order_item_options" th:switch="${#strings.isEmpty(orderItemVO.memo)}">
+                        備註：
+                        <span th:case="${false}" th:text="${orderItemVO.memo}"></span>
+                        <span th:case="${true}">無</span>
+                    </div>
+                </div>
+            </th:block>
+
+
+
+            <!-- Total Section -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span>小計</span>
+                    <span class="subtotal" th:text="'$ ' + ${#numbers.formatDecimal(orderMaster.subtotalPrice, 1, 0)}">1,000</span>
+                </div>
+                <!-- <div class="total-row">
+                    <span>會員折扣</span>
+                    <span id="discountAmount" class="discount-amount">$ 0</span>
+                </div>
+                <div class="total-row">
+                    <span><strong>總金額</strong></span>
+                    <span><strong id="totalPrice" th:text="'$ ' + ${#numbers.formatDecimal(orderMaster.subtotalPrice, 1, 0)}">1,000</strong></span>
+                </div> -->
+            </div>
+        </main>
+    <!-- </div> -->
+
+    
+    <!-- JavaScript Libraries -->
+    <script th:inline="javascript">
+        window.orderMaster = /*[[${orderMaster}]]*/ {};
+        // window.restId = /*[[${session.restId}]]*/ {};
+        // console.log(orderMaster);
+    </script>
+    <script th:src="@{/js/orderFinish.js}"></script>
+    <script src="/static/js/orderFinish.js"></script>
+</body>
+</html>

@@ -1,51 +1,135 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="layout :: head('個人資料')">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>個人資料</title>
 </head>
 <body>
-    <nav th:replace="layout :: navbar"></nav>
+    <div layout:fragment="content">
+       
 
-    <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
+                <!-- 個人資料卡片 -->
+                <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">個人資料</h4>
-                        <a th:href="@{/emp/edit}" class="btn btn-outline-light btn-sm">編輯資料</a>
+                        <a th:href="@{/emp/edit}" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-pencil-square me-1"></i>編輯資料
+                        </a>
                     </div>
                     
                     <div class="card-body">
-                        <!-- 成功訊息提示 -->
-                        <div th:if="${message}" class="alert alert-success" role="alert">
-                            <span th:text="${message}"></span>
-                        </div>
-                        
+                        <!-- 資料表格 -->
                         <table class="table table-borderless">
-                            <tr>
-                                <th style="width: 30%">姓名：</th>
-                                <td th:text="${empInfo.empName}"></td>
-                            </tr>
-                            <tr>
-                                <th>帳號：</th>
-                                <td th:text="${empInfo.empAccount}"></td>
-                            </tr>
-                            <tr>
-                                <th>手機：</th>
-                                <td th:text="${empInfo.empPhone}"></td>
-                            </tr>
-                            <tr>
-                                <th>Email：</th>
-                                <td th:text="${empInfo.empEmail}"></td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <th style="width: 30%" class="text-secondary">
+                                        <i class="bi bi-person me-2"></i>姓名
+                                    </th>
+                                    <td th:text="${empInfo.empName}">王小明</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-secondary">
+                                        <i class="bi bi-person-badge me-2"></i>帳號
+                                    </th>
+                                    <td th:text="${empInfo.empAccount}">john_doe</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-secondary">
+                                        <i class="bi bi-phone me-2"></i>手機
+                                    </th>
+                                    <td th:text="${empInfo.empPhone}">0912345678</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-secondary">
+                                        <i class="bi bi-envelope me-2"></i>Email
+                                    </th>
+                                    <td th:text="${empInfo.empEmail}">john@example.com</td>
+                                </tr>
+                                <tr sec:authorize="hasRole('ADMIN')">
+                                    <th class="text-secondary">
+                                        <i class="bi bi-shield-check me-2"></i>權限
+                                    </th>
+                                    <td>
+                                        <span class="badge bg-success">管理員</span>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- 密碼管理卡片 -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-key me-2"></i>密碼管理
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">為了確保您的帳戶安全，建議定期更改密碼。</p>
+                        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            <i class="bi bi-lock me-1"></i>修改密碼
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 修改密碼 Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">修改密碼</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form th:action="@{/emp/change-password}" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">目前密碼</label>
+                                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">新密碼</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">確認新密碼</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-primary">確認修改</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div th:replace="layout :: footer"></div>
-    <div th:replace="layout :: scripts"></div>
+    <!-- 頁面特定的 JavaScript -->
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            // 密碼驗證
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (newPassword !== confirmPassword) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: '密碼不符',
+                        text: '新密碼與確認密碼不相符，請重新輸入！'
+                    });
+                }
+            });
+        </script>
+    </th:block>
 </body>
 </html>

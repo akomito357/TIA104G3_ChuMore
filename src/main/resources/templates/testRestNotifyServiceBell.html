@@ -37,7 +37,7 @@
 
         socket.onmessage = function(event) {
             console.log("收到通知：", event);
-            console.log("收到通知：", event.data);
+            console.log("收到通知：", JSON.parse(event.data));
             const li = document.createElement("li");
             li.textContent = event.data;
             document.getElementById("messages").appendChild(li);

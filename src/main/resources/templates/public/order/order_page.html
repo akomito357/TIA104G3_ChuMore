@@ -6,8 +6,8 @@
     <title>餐廳點餐系統</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="/static/css/common.css" rel="stylesheet">
-    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link href="/static/css/ordercommon.css" rel="stylesheet">
+    <link th:href="@{/css/ordercommon.css}" rel="stylesheet">
     <style>
         body {
             padding-top: calc(20vh + 200px);
@@ -42,7 +42,7 @@
 
         .restaurant-info {
             background: white;
-            padding: 15px;
+            padding: 15px 15px 3px 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -257,6 +257,10 @@
         .text-primary{
             color: var(--primary) !important;
         }
+        .dining_finish_cancel_btn{
+            color: white;
+            border: none;
+        }
     </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#menuTabs" data-bs-offset="300">
@@ -284,12 +288,12 @@
                     <div class="text-primary mb-2"><span>目前消費：$</span><span class="subtotal_price" th:text="${orderMaster.subtotalPrice}">300</span></div>
                     <!-- <div class="alert" style="width:20px; height:20px; border: 1px solid black"></div> -->
                     <!-- 搜尋欄 -->
-                    <!-- <div class="input-group" style="width: 200px;">
-                        <input type="text" class="form-control form-control-sm" placeholder="搜尋餐點...">
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div> -->
+                    <!-- <div class="btn" style="width: 200px;"> -->
+                        <!-- <input type="text" class="form-control form-control-sm" placeholder="搜尋餐點..."> -->
+                    <button class="btn btn-outline-secondary btn-sm service-bell-btn" onclick="showServiceBellModal()">
+                        <i class="fas fa-bell mx-2"></i><span>服務鈴 / 結束用餐</span>
+                    </button>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>
@@ -312,7 +316,7 @@
                     <h5 class="modal-title">點餐記錄</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body orderHistoryModalBody">
                     <!-- 第一次點餐 -->
                     <div class="card mb-3 orderItem">
                         <div class="card-header d-flex justify-content-between">
@@ -581,228 +585,106 @@
                     </div>
                 </div>
             </section>
+    </div>
+    
+    <!-- 購物車按鈕 -->
+    <form class="cart-button d-flex" th:action="@{cart}" method="post" >
+            <button type="submit" class="btn btn-outline-primary w-100 position-relative cart">
+                <div>確認購物車 $<span class="currentPrice">0</span></div>
+                <span class="cart-badge d-none">0</span>
+            </button>
+        <!-- </form> -->
+    </form>
+
+
+    <!-- 服務鈴/結束用餐 Modal -->
+    <div class="modal fade" id="serviceBellModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">服務鈴/結束用餐</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body serviceBellModalBody">
+                    我還不知道這邊要寫什麼～～
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-warning service_bell_btn" data-bs-dismiss="modal" id="service_bell_btn"><i class="fas fa-bell mx-2"></i>服務鈴</button>
+                    <button type="button" class="btn btn-primary finish_dining_btn" id="finish_dining_btn" data-bs-dismiss="modal" onclick="showFinishDiningModal()">結束用餐</button>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- 服務鈴提示_成功 -->
+    <div class="modal fade" id="serviceBellPressedModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">已按下服務鈴</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    您已按下服務鈴，服務人員將會盡快來為您服務。
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+                    <button type="button" class="btn btn-primary" id="serviceBellPressedModal" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 服務鈴提示_失敗 -->
+    <div class="modal fade" id="serviceBellFailedModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">錯誤</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    網路連線不穩，請稍後再試。
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button> -->
+                    <button type="button" class="btn btn-primary" id="serviceBellFailedModal" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 結束用餐確認 Modal -->
+    <div class="modal fade" id="diningFinishConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">結束用餐</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    是否確認結束用餐？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary dining_finish_cancel_btn" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="diningFinishConfirm" data-bs-dismiss="modal" onclick="">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
-        <!-- 購物車按鈕 -->
-        <form class="cart-button d-flex" th:action="@{cart}" method="post" >
-            <!-- <button class="btn btn-outline-primary w-100 position-relative checkCart">
-                <div>檢視購物車 $<span>0</span></div>
-            </button> -->
-            <!-- <form class="cart-button d-flex"> -->
-                <button type="submit" class="btn btn-outline-primary w-100 position-relative cart">
-                    <div>確認購物車 $<span class="currentPrice">0</span></div>
-                    <span class="cart-badge d-none">0</span>
-                </button>
-            <!-- </form> -->
-        </form>
+    <script th:inline="javascript">
+        window.orderMaster = /*[[${orderMaster}]]*/{};
+        window.restId = /*[[${orderMaster.rest.restId}]]*/{};
+        window.orderId = /*[[${orderMaster.orderId}]]*/{};
+        window.caller = /*[[${orderMaster.orderTable.tableNumber}]]*/{}; // for notification
+        console.log(window.orderId);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/orderPage.js}"></script>
+    <script src="/static/js/orderPage.js"></script>
         
-        <script th:inline="javascript">
-            window.orderMaster = /*[[${orderMaster}]]*/{};
-            window.restId = /*[[${orderMaster.rest.restId}]]*/{};
-            window.orderId = /*[[${orderMaster.orderId}]]*/{};
-            // console.log(restId);
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-        <script th:src="@{/js/orderPage.js}"></script>
-        <script src="/static/js/orderPage.js"></script>
-        <!-- <script>
-            $(document).ready(function() {
-                // 初始化 Bootstrap ScrollSpy
-                var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-                    target: '#menuTabs',
-                    offset: 300
-                });
-    
-                // 平滑滾動功能
-                $('.nav-tabs a').on('click', function(e) {
-                    e.preventDefault();
-                    let target = $($(this).attr('href'));
-                    $('html, body').animate({
-                        scrollTop: target.offset().top - 280
-                    }, 500);
-                });
-    
-                // 搜尋功能
-                $('.search-bar input').on('input', function() {
-                    let searchText = $(this).val().toLowerCase();
-                    let suggestions = [];
-                    
-                    $('.menu-item h5').each(function() {
-                        let itemName = $(this).text().toLowerCase();
-                        if (itemName.includes(searchText) && searchText.length > 0) {
-                            suggestions.push($(this).text());
-                        }
-                    });
-    
-                    let suggestionsHtml = suggestions.map(suggestion => 
-                        `<div class="suggestion-item">${suggestion}</div>`
-                    ).join('');
-                    
-                    $('.search-suggestions').html(suggestionsHtml);
-                    
-                    if (suggestions.length > 0 && searchText.length > 0) {
-                        $('.search-suggestions').show();
-                    } else {
-                        $('.search-suggestions').hide();
-                    }
-                });
-    
-                // 點擊搜尋建議
-                $(document).on('click', '.suggestion-item', function() {
-                    let selectedText = $(this).text();
-                    $('.search-bar input').val(selectedText);
-                    $('.search-suggestions').hide();
-                    
-                    // 滾動到對應的菜品
-                    let targetItem = $(`h5:contains("${selectedText}")`).closest('.menu-item');
-                    if (targetItem.length) {
-                        $('html, body').animate({
-                            scrollTop: targetItem.offset().top - 500
-                        }, 300);
-                        
-                        // 高亮顯示找到的項目
-                        targetItem.addClass('highlight')
-                        setTimeout(() => {
-                            targetItem.removeClass('highlight');
-                        }, 1500);
-                    }
-                });
-    
-                // 點擊頁面其他區域關閉搜尋建議
-                $(document).on('click', function(e) {
-                    if (!$(e.target).closest('.search-bar').length) {
-                        $('.search-suggestions').hide();
-                    }
-                });
-    
-                // 更新購物車總額和數量
-                function updateCart() {
-                    let total = 0;
-                    let items = 0;
-                    $('.btn-group .disabled').each(function() {
-                        let count = parseInt($(this).text());
-                        let price = parseInt($(this).closest('.menu-item')
-                            .find('.h5').text().replace('$', ''));
-                        total += count * price;
-                        items += count;
-                    });
-    
-                    let cartButton = $('.cart-button .addToCart');
-                    cartButton.html(`
-                        加入購物車 $${total}
-                        ${items > 0 ? `<span class="cart-badge">${items}</span>` : ''}
-                    `);
-    
-                    // 更新按鈕狀態
-                    if (items > 0) {
-                        cartButton.addClass('btn-primary').removeClass('btn-outline-primary');
-                    } else {
-                        cartButton.addClass('btn-outline-primary').removeClass('btn-primary');
-                    }
-                }
-    
-                // 數量加減按鈕功能
-                $('.btn-group .btn').on('click', function() {
-                    let countSpan = $(this).siblings('.disabled');
-                    let count = parseInt(countSpan.text());
-                    let isPlus = $(this).text() === '+';
-                    
-                    if (isPlus) {
-                        count++;
-                    } else if (count > 0) {
-                        count--;
-                    }
-                    
-                    countSpan.text(count);
-                    
-                    // 添加動畫效果
-                    if (isPlus && count === 1) {
-                        $('.cart-button .btn').addClass('btn-pulse');
-                        setTimeout(() => {
-                            $('.cart-button .btn').removeClass('btn-pulse');
-                        }, 500);
-                    }
-                    
-                    updateCart();
-                    
-                    //購物車數量變化動畫
-                    let badge = $('.cart-badge');
-                badge.addClass('bounce');
-                setTimeout(() => {
-                    badge.removeClass('bounce');
-                }, 500);
-            });
-
-            // 優化滾動監聽
-            let lastScrollTop = 0;
-            let ticking = false;
-            let activeSection = null;
-
-            // 計算元素可見度
-            function getVisibility(element) {
-                const rect = element.getBoundingClientRect();
-                const windowHeight = $(window).height();
-                const headerOffset = 200; // 頂部固定區域的高度
-
-                // 計算元素在視窗中可見的部分
-                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, headerOffset);
-                const elementHeight = rect.height;
-                
-                // 如果元素完全不可見，返回0
-                if (visibleHeight <= 0) return 0;
-                
-                // 返回可見比例
-                return visibleHeight / elementHeight;
-            }
-
-            $(window).on('scroll', function() {
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        let scrollTop = $(window).scrollTop();
-                        let maxVisibility = 0;
-                        let mostVisibleSection = null;
-
-                        // 找出最大可見度的區塊
-                        $('.menu-section').each(function() {
-                            const visibility = getVisibility(this);
-                            if (visibility > maxVisibility) {
-                                maxVisibility = visibility;
-                                mostVisibleSection = this;
-                            }
-                        });
-
-                        // 只有當最可見區塊改變時才更新導航
-                        if (mostVisibleSection && mostVisibleSection !== activeSection) {
-                            activeSection = mostVisibleSection;
-                            const id = $(mostVisibleSection).attr('id');
-                            $('.nav-tabs .nav-link').removeClass('active');
-                            $(`.nav-tabs .nav-link[href="#${id}"]`).addClass('active');
-                        }
-
-                        lastScrollTop = scrollTop;
-                        ticking = false;
-                    });
-
-                    ticking = true;
-                }
-            });
-
-            // 初始化
-            function initialize() {
-                // 設置第一個標籤為活動狀態
-                $('.nav-tabs .nav-link:first').addClass('active');
-                
-                // 初始化購物車
-                updateCart();
-
-                // 觸發一次滾動事件來正確設置當前視圖的活動標籤
-                $(window).trigger('scroll');
-            }
-
-            // 頁面加載完成後初始化
-            initialize();
-        });  
-    </script>-->
 </body>
 </html>

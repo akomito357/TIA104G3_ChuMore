@@ -217,11 +217,11 @@ $(document).on('click', '.photo-delete-btn', function(e){
     } else {
         let newDataTransfer = new DataTransfer();
         let currentImgIndex = imgEle.attr('index');
-        console.log(document.querySelector("#upfiles").value);
-        console.log('currentImgIndex = ' + currentImgIndex);
+        // console.log(document.querySelector("#upfiles").value);
+        // console.log('currentImgIndex = ' + currentImgIndex);
         uploadedFiles.splice(currentImgIndex, 1);
         $(this).parent('.photoPreviewItem').remove();
-        console.log('uploadedFiles =' + uploadedFiles);
+        // console.log('uploadedFiles =' + uploadedFiles);
 
         // update indexs
         document.querySelectorAll('img.newImg').forEach((item, index) => {

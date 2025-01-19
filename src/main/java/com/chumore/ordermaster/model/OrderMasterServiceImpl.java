@@ -43,31 +43,31 @@ import com.chumore.usepoints.model.UsePointsVO;
 @Transactional
 @Service("OrderMasterService")
 public class OrderMasterServiceImpl implements OrderMasterService {
-	
+
 	private BigDecimal earnRatio = new BigDecimal(100); // 消費X元得1點
 	private BigDecimal discountRatio = new BigDecimal(10); // 1點抵X元
 
 	@Autowired
 	OrderMasterRepository repository;
-	
+
 	@Autowired
 	OrderItem_Service orderItemSvc;
-	
+
 	@Autowired
 	OrderLineItem_Service orderLineItemSvc;
-	
+
 	@Autowired
 	Product_Service productSvc;
-	
+
 	@Autowired
 	MemberService memberSvc;
-	
+
 	@Autowired
 	DiscPtsService discPtsSvc;
 
 	@Autowired
 	UsePointsService usePtSvc;
-	
+
 	@Autowired
 	SessionFactory factory;
 
@@ -76,11 +76,11 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 	public OrderMasterVO getOneById(Integer orderId) {
 		Optional<OrderMasterVO> optional = repository.findById(orderId);
 		OrderMasterVO order = optional.orElse(null);
-		
+
 		if (order == null) {
 			throw new ResourceNotFoundException("No order found for orderId: " + orderId);
 		}
-		
+
 		return order;
 	}
 
@@ -141,92 +141,88 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 	public Page<OrderMasterVO> findByMemberId(Integer memberId, Pageable pageable) {
 		return repository.findByMemberId(memberId, pageable);
 	}
-	
-	@Transactional(readOnly = true)
-	public Page<RestDiningDto>findOrderByRestId(Integer restId, Pageable pageable){
-		return repository.findOrderByRestId(restId, pageable);
-	}
-	
-	
+
 	public void submitOrder(OrderItemForOrderDto item, HttpSession session) {
 		String memo = item.getMemo();
 //		System.out.println(memo);
-		
+
 		// 建立新點餐
 		OrderItemVO orderItem = new OrderItemVO();
-		orderItem.setOrderId((Integer)session.getAttribute("orderId"));
+		orderItem.setOrderId((Integer) session.getAttribute("orderId"));
 		orderItem.setMemo(memo);
 		orderItem.setCreatedDatetime(new Timestamp(System.currentTimeMillis()));
 		orderItem.setUpdatedDatetime(new Timestamp(System.currentTimeMillis()));
 		orderItem = orderItemSvc.addOrUpdateOrderItem(orderItem);
-		
+
 		// 獲取點餐細項並將資料放入
 		Integer orderItemId = orderItem.getOrderItemId();
 		List<OrderLineItemForOrderDto> orders = item.getOrder();
 		BigDecimal thisSubTotalPrice = new BigDecimal("0");
-		
+
 		for (OrderLineItemForOrderDto lineDto : orders) {
 			Integer productId = lineDto.getProductId();
 			Integer count = lineDto.getCount();
 			BigDecimal priceForOne = lineDto.getOrigPriceForOne();
 			ProductVO product = productSvc.getProductById(productId);
-			OrderMasterVO orderMaster = getOneById((Integer)session.getAttribute("orderId"));
-			
+			OrderMasterVO orderMaster = getOneById((Integer) session.getAttribute("orderId"));
+
 			// 如果送來餐點資料的ID與餐廳ID和價格不符，拋出exception
 			if (!product.getRestId().equals(orderMaster.getRestId())) {
-				throw new DataMismatchException("Rest Id mismatch: in product which id = " + productId.toString() + "; The received Rest Id is " + product.getRestId().toString());
-			} else if(product.getProductPrice().compareTo(priceForOne) != 0) { // 不同時
-				throw new DataMismatchException("Product price mismatch: in product which id = " + productId.toString());
+				throw new DataMismatchException("Rest Id mismatch: in product which id = " + productId.toString()
+						+ "; The received Rest Id is " + product.getRestId().toString());
+			} else if (product.getProductPrice().compareTo(priceForOne) != 0) { // 不同時
+				throw new DataMismatchException(
+						"Product price mismatch: in product which id = " + productId.toString());
 			}
 
 			OrderLineItemVO orderLineItem = new OrderLineItemVO();
 			orderLineItem.setOrderItemId(orderItemId);
-			orderLineItem.setProduct(product);			
+			orderLineItem.setProduct(product);
 			orderLineItem.setQuantity(count);
 			orderLineItem.setPrice(priceForOne);
-			
+
 //			priceForOne.multiply(BigDecimal.valueOf(count));
 			thisSubTotalPrice = thisSubTotalPrice.add(priceForOne.multiply(BigDecimal.valueOf(count)));
-			
+
 			System.out.println(orderLineItem);
 			orderLineItemSvc.addOrderLineItem(orderLineItem);
 		}
-		
+
 		// 更新orderMaster的小計
-		OrderMasterVO order = getOneById((Integer)session.getAttribute("orderId"));
+		OrderMasterVO order = getOneById((Integer) session.getAttribute("orderId"));
 		BigDecimal subtotalPrice = order.getSubtotalPrice();
 		subtotalPrice = subtotalPrice.add(thisSubTotalPrice);
 		order.setSubtotalPrice(subtotalPrice);
 		updateOrderMaster(order);
-		
-		
+
 	}
 
-	public Page<Map<String, Object>> findOrderByRestId(Integer restId,LocalDateTime startDatetime, LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable){
-		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId ,memberName, pageable);
+	public Page<Map<String, Object>> findOrderByRestId(Integer restId, LocalDateTime startDatetime,
+			LocalDateTime endDatetime, Integer orderTableId, String memberName, Pageable pageable) {
+		return repository.findOrderByRestId(restId, startDatetime, endDatetime, orderTableId, memberName, pageable);
 	}
-	
+
 	@Override
 	public BigDecimal calcDiscount(Integer usePoints) {
 		BigDecimal discounts = discountRatio.multiply(BigDecimal.valueOf(usePoints));
 		return discounts;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal calcTotalPrice(Integer orderId, BigDecimal discounts) {
 		OrderMasterVO orderMaster = getOneById(orderId);
 		BigDecimal subtotalPrice = orderMaster.getSubtotalPrice();
 		BigDecimal totalPrice = subtotalPrice.subtract(discounts);
-		
+
 		if (totalPrice.compareTo(BigDecimal.ZERO) == -1) {
 			// totalPrice < 0
 			throw new PointsOverUsedException("discount(" + discounts + ") exceed total price(" + totalPrice + ")");
 		}
-		
+
 		return totalPrice;
 	}
-	
+
 	public Integer calcEarnPoints(BigDecimal totalPrice) {
 		Integer earnedPoints = null;
 		try {
@@ -237,18 +233,17 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 			System.out.println("ArithmeticException!");
 			ae.printStackTrace();
 		}
-		
+
 		return earnedPoints;
 	}
-	
-	
+
 	@Transactional
 	public OrderMasterVO checkout(Integer memberId, Integer orderId, Integer pointUsed) {
 		BigDecimal discounts = calcDiscount(pointUsed);
 		BigDecimal totalPrice = calcTotalPrice(orderId, discounts);
 		Integer earnedPoints = calcEarnPoints(totalPrice);
 		MemberVO member = memberSvc.getOneMember(memberId).orElse(null);
-		
+
 		OrderMasterVO orderMaster = getOneById(orderId);
 		orderMaster.setMember(member);
 		orderMaster.setPointUsed(pointUsed);
@@ -256,7 +251,7 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		orderMaster.setOrderStatus(1); // 已結帳
 		orderMaster.setPointEarned(earnedPoints);
 		orderMaster.setCheckoutDatetime(LocalDateTime.now());
-		
+
 		System.out.println(orderMaster);
 
 		// 處理扣除與新增點數
@@ -264,8 +259,13 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 			discPtsSvc.deductPoints(memberId, orderMaster, pointUsed);
 			discPtsSvc.gainPoints(memberId, orderMaster, pointUsed, earnedPoints);
 		}
-		
+
 		return orderMaster;
+	}
+
+	public Page<Map<String, Object>> findOrderByRestIdUnpaid(Integer restId, LocalDateTime startDatetime,
+			LocalDateTime endDatetime, Integer orderTableId, Pageable pageable) {
+		return repository.findOrderByRestIdUnpaid(restId, startDatetime, endDatetime, orderTableId, pageable);
 	}
 
 }

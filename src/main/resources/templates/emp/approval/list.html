@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>餐廳待審核清單</title>
+    <style>
+        /* 表格文字大小調整 */
+        .table {
+            font-size: 13px; /* 調整整體字體大小 */
+        }
+
+        .table th, .table td {
+            font-size: 12px; /* 確保表頭和內容一致 */
+        }
+
+        /* 調整表格欄位寬度 */
+        .table .col-rest-name {
+            width: 10%;
+        }
+
+        .table .col-city {
+            width: 7%;
+        }
+
+        .table .col-dist {
+            width: 7%;
+        }
+
+        .table .col-address {
+            width: 12%;
+        }
+
+        .table .col-regist {
+            width: 10%;
+        }
+
+        .table .col-phone {
+            width: 8%;
+        }
+
+        .table .col-merchant-name {
+            width: 8%;
+        }
+
+        .table .col-merchant-id {
+            width: 10%;
+        }
+
+        .table .col-merchant-phone {
+            width: 8%;
+        }
+
+        .table .col-email {
+            width: 12%;
+        }
+
+        .table .col-submit-time {
+            width: 12%;
+        }
+
+        .table .col-actions {
+            width: 10%;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- 成功/錯誤訊息提示 -->
+        <div th:if="${message}" class="alert alert-success" role="alert">
+            <span th:text="${message}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- 標題列 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>餐廳待審核清單</h2>
+            <div>
+                <a th:href="@{/emp/approval/approved}" class="btn btn-secondary btn-sm">查看已審核清單</a>
+                <a th:href="@{/emp/approval/all}" class="btn btn-info btn-sm">查看所有記錄</a>
+            </div>
+        </div>
+
+        <!-- 審核清單表格 -->
+        <div class="table-wrapper">
+            <table class="table table-hover mb-0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="col-rest-name">餐廳名稱</th>
+                        <th class="col-city">所在縣市</th>
+                        <th class="col-dist">鄉鎮市區</th>
+                        <th class="col-address">餐廳地址</th>
+                        <th class="col-regist">食品業者登錄字號</th>
+                        <th class="col-phone">連絡電話</th>
+                        <th class="col-merchant-name">負責人姓名</th>
+                        <th class="col-merchant-id">負責人身份證字號</th>
+                        <th class="col-merchant-phone">負責人手機號碼</th>
+                        <th class="col-email">負責人email</th>
+                        <th class="col-submit-time">提交時間</th>
+                        <th class="col-actions">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="approval : ${approvals}">
+                        <td th:text="${approval.rest.restName}"></td>
+                        <td th:text="${approval.rest.restCity}"></td>
+                        <td th:text="${approval.rest.restDist}"></td>
+                        <td th:text="${approval.rest.restAddress}"></td>
+                        <td th:text="${approval.rest.restRegist}"></td>
+                        <td th:text="${approval.rest.restPhone}"></td>
+                        <td th:text="${approval.rest.merchantName}"></td>
+                        <td th:text="${approval.rest.merchantIdNumber}"></td>
+                        <td th:text="${approval.rest.phoneNumber}"></td>
+                        <td th:text="${approval.rest.merchantEmail}"></td>
+                        <td th:text="${#temporals.format(approval.submissionDatetime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td>
+                            <a th:href="@{/emp/approval/update/{id}(id=${approval.approvalId})}" 
+                               class="btn btn-primary btn-sm">審核</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

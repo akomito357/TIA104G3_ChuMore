@@ -29,7 +29,11 @@ public interface RestRepository extends JpaRepository<RestVO, Integer> {
             @Param("cuisineTypeId") Integer cuisineTypeId
     );
 
+
     @Query("SELECT r FROM RestVO r WHERE r.merchantEmail = :merchantEmail")
     Optional<RestVO> findByMerchantEmailWithLog(@Param("merchantEmail") String merchantEmail);
 
 }
+
+}
+
