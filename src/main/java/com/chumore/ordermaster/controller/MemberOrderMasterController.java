@@ -28,7 +28,7 @@ import com.chumore.review.model.ReviewVO;
 
 @Controller
 //@RestController
-@RequestMapping("/member/orderMaster")
+@RequestMapping("/member")
 public class MemberOrderMasterController {
 
 	@Autowired
@@ -48,7 +48,7 @@ public class MemberOrderMasterController {
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
 			@RequestParam String sort) {
 		Object memId = session.getAttribute("memberId");
-		Integer memberId = null;
+		Integer  memberId = null;
 		if (memId == null) {
 			memberId = 1004;
 		} else {
@@ -95,8 +95,8 @@ public class MemberOrderMasterController {
 		return ResponseEntity.ok(response);
 	}
 
-//	@GetMapping("dining/history")
-//	public String memberDiningHistory() {
-//		return "secure/member/dining/member_dining_history";
-//	}
+	@GetMapping("diningAndReview/history")
+	public String memberDiningHistory() {
+		return "secure/member/dining/member_dining_history";
+	}
 }

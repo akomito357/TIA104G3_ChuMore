@@ -126,8 +126,13 @@ $(document).ready(function() {
 			const prevButton = $("#diningPreBtn.prev-btn");
 			const nextButton = $("#diningNextBtn.next-btn");
 
-			prevButton.prop("disabled", currentPage === 0);
-			nextButton.prop("disabled", currentPage === totalPages - 1);
+			if (totalPages === 0) {
+				prevButton.prop("disabled", true);
+				nextButton.prop("disabled", true);
+			} else {
+				prevButton.prop("disabled", currentPage === 0);
+				nextButton.prop("disabled", currentPage >= totalPages - 1);
+			}
 
 		} else {
 			const pagination = $("#reviewPageBlock.pagination");
@@ -138,8 +143,13 @@ $(document).ready(function() {
 			const prevButton = $("#reviewPreBtn.prev-btn");
 			const nextButton = $("#reviewNextBtn.next-btn");
 
-			prevButton.prop("disabled", currentPage === 0);
-			nextButton.prop("disabled", currentPage === totalPages - 1);
+			if (totalPages === 0) {
+				prevButton.prop("disabled", true);
+				nextButton.prop("disabled", true);
+			} else {
+				prevButton.prop("disabled", currentPage === 0);
+				nextButton.prop("disabled", currentPage >= totalPages - 1);
+			}
 		}
 	}
 
