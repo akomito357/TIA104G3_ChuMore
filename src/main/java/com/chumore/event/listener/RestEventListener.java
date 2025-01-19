@@ -6,6 +6,7 @@ import com.chumore.rest.model.RestVO;
 import com.chumore.search.model.LuceneIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,7 @@ public class RestEventListener {
     @Autowired
     private LuceneIndexService luceneIndexService;
 
+    @Async
     @EventListener
     public void handleRestChangedEvent(RestChangedEvent event) {
         RestVO rest = event.getRest();
