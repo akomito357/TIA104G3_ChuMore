@@ -5,31 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChuMore</title> -->
 
-    <!-- <head th:insert="~{/included.html}" /> -->
+<!-- <head th:insert="~{/included.html}" /> -->
 
-        <!-- Favicon -->
-        <link th:href="@{img/favicon.ico}" rel="icon">
+<!-- Favicon -->
+<link th:href="@{img/favicon.ico}" rel="icon">
 
-        <!-- Google Web Fonts -->
-        <!-- <link rel="preconnect" th:href="@{https://fonts.googleapis.com}"> -->
-        <!-- <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin> -->
-        <!-- <link th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}" rel="stylesheet"> -->
+<!-- Google Web Fonts -->
+<!-- <link rel="preconnect" th:href="@{https://fonts.googleapis.com}"> -->
+<!-- <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin> -->
+<!-- <link th:href="@{https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap}" rel="stylesheet"> -->
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap"
+	rel="stylesheet">
 
-        <!-- Icon Font Stylesheet -->
-        <!-- <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}" rel="stylesheet"> -->
-        <!-- <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet"> -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Icon Font Stylesheet -->
+<!-- <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css}" rel="stylesheet"> -->
+<!-- <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet"> -->
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+	rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
-        <link th:href="@{/lib/animate/animate.min.css}" rel="stylesheet">
-        <link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
-        <link th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet">
-        <!-- <link href="lib/animate/animate.min.css" rel="stylesheet">
+<!-- Libraries Stylesheet -->
+<link th:href="@{/lib/animate/animate.min.css}" rel="stylesheet">
+<link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}"
+	rel="stylesheet">
+<link
+	th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}"
+	rel="stylesheet">
+<!-- <link href="lib/animate/animate.min.css" rel="stylesheet">
         <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
         <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet"> -->
 
@@ -65,30 +74,39 @@
     </style>
 </head> -->
 <body>
-    <!-- <div class="position-relative p-0 header-container"> -->
-        <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-3 py-lg-0 sticky-top shadow-sm pageheader">
-            <a href="/" class="navbar-brand p-0 chumore-title">
-                <h1 class="header-title text-primary m-0 "><i class="fa fa-utensils me-3"></i>ChuMore </h1>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="fa fa-bars"></span>
-            </button>
+	<!-- <div class="position-relative p-0 header-container"> -->
+	<nav
+		class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-3 py-lg-0 sticky-top shadow-sm pageheader">
+		<a href="/" class="navbar-brand p-0 chumore-title">
+			<h1 class="header-title text-primary m-0 ">
+				<i class="fa fa-utensils me-3"></i>ChuMore
+			</h1>
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#navbarCollapse">
+			<span class="fa fa-bars"></span>
+		</button>
 
-            <div class="navbar-nav ms-auto py-0 px-4 item-group">
-                
-                <!-- reservations notification -->
-                <div class="nav-item dropdown reservations-notification">
-                    <a href="#" class="nav-link icon-toggle-item dropdown-toggle reservation-icon-toggle-item" data-bs-toggle="dropdown" role="button"><i class="bi bi-calendar-check menu-icon h4 icon-item reservations-icon-item"></i></a>
-                    
-                    <div class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
-                        <div class="notification-header dropdown-item notify-item">
-                            <h3>通知</h3>
-                            <!-- <button class="mark-read">全部標為已讀</button> -->
-                        </div>
-                        
-                        <ul class="notification-list reservation-notification-list">
-                            <li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
-                            <!-- <li class="notification-item unread dropdown-item notify-item">
+		<div class="navbar-nav ms-auto py-0 px-4 item-group">
+
+			<!-- reservations notification -->
+			<div class="nav-item dropdown reservations-notification">
+				<a href="#"
+					class="nav-link icon-toggle-item dropdown-toggle reservation-icon-toggle-item"
+					data-bs-toggle="dropdown" role="button"><i
+					class="bi bi-calendar-check menu-icon h4 icon-item reservations-icon-item"></i></a>
+
+				<div
+					class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
+					<div class="notification-header dropdown-item notify-item">
+						<h3>通知</h3>
+						<!-- <button class="mark-read">全部標為已讀</button> -->
+					</div>
+
+					<ul class="notification-list reservation-notification-list">
+						<li
+							class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
+						<!-- <li class="notification-item unread dropdown-item notify-item">
                                 <div class="notification-title">
                                     <h4>訂位通知</h4>
                                     <span class="unread-dot"></span>
@@ -119,27 +137,33 @@
                                 </div>
                                 <div class="notification-time">2 小時前</div>
                             </li> -->
-                        </ul>
-                        
-                        <div class="notification-footer">
-                            <!-- <a href="#">查看所有通知</a> -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- servicebell-notification -->
-                <div class="nav-item dropdown servicebell-notification">
-                    <a href="#" class="nav-link icon-toggle-item dropdown-toggle servicebell-icon-toggle-item" data-bs-toggle="dropdown" role="button"><i class="bi bi-bell menu-icon h4 icon-item"></i></a>
+					</ul>
 
-                    <div class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
-                        <div class="notification-header dropdown-item notify-item">
-                            <h3>通知</h3>
-                            <!-- <button class="mark-read">全部標為已讀</button> -->
-                        </div>
-                        
-                        <ul class="notification-list servicebell-notification-list" id="servicebell-notification-list">
-                            <li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
-                            <!-- <li class="notification-item unread dropdown-item notify-item">
+					<div class="notification-footer">
+						<!-- <a href="#">查看所有通知</a> -->
+					</div>
+				</div>
+			</div>
+
+			<!-- servicebell-notification -->
+			<div class="nav-item dropdown servicebell-notification">
+				<a href="#"
+					class="nav-link icon-toggle-item dropdown-toggle servicebell-icon-toggle-item"
+					data-bs-toggle="dropdown" role="button"><i
+					class="bi bi-bell menu-icon h4 icon-item"></i></a>
+
+				<div
+					class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
+					<div class="notification-header dropdown-item notify-item">
+						<h3>通知</h3>
+						<!-- <button class="mark-read">全部標為已讀</button> -->
+					</div>
+
+					<ul class="notification-list servicebell-notification-list"
+						id="servicebell-notification-list">
+						<li
+							class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
+						<!-- <li class="notification-item unread dropdown-item notify-item">
                                 <div class="notification-title">
                                     <h4>訂位通知</h4>
                                     <span class="unread-dot"></span>
@@ -170,27 +194,32 @@
                                 </div>
                                 <div class="notification-time">2 小時前</div>
                             </li> -->
-                        </ul>
-                        
-                        <div class="notification-footer">
-                            <!-- <a href="#">查看所有通知</a> -->
-                        </div>
-                    </div>
-                </div>
+					</ul>
 
-                <!-- checkout-notification -->
-                <div class="nav-item dropdown checkout-notification">
-                    <a href="#" class="nav-link icon-toggle-item dropdown-toggle checkout-icon-toggle-item" data-bs-toggle="dropdown" role="button"><i class="bi bi-receipt-cutoff menu-icon h4 icon-item"></i></a>
+					<div class="notification-footer">
+						<!-- <a href="#">查看所有通知</a> -->
+					</div>
+				</div>
+			</div>
 
-                    <div class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
-                        <div class="notification-header dropdown-item notify-item">
-                            <h3>通知</h3>
-                            <!-- <button class="mark-read">全部標為已讀</button> -->
-                        </div>
-                        
-                        <ul class="notification-list checkout-notification-list">
-                            <li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
-                            <!-- <li class="notification-item unread dropdown-item notify-item">
+			<!-- checkout-notification -->
+			<div class="nav-item dropdown checkout-notification">
+				<a href="#"
+					class="nav-link icon-toggle-item dropdown-toggle checkout-icon-toggle-item"
+					data-bs-toggle="dropdown" role="button"><i
+					class="bi bi-receipt-cutoff menu-icon h4 icon-item"></i></a>
+
+				<div
+					class="notification-dropdown dropdown-menu m-0 dropdown-menu-end">
+					<div class="notification-header dropdown-item notify-item">
+						<h3>通知</h3>
+						<!-- <button class="mark-read">全部標為已讀</button> -->
+					</div>
+
+					<ul class="notification-list checkout-notification-list">
+						<li
+							class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>
+						<!-- <li class="notification-item unread dropdown-item notify-item">
                                 <div class="notification-title">
                                     <h4>訂位通知</h4>
                                     <span class="unread-dot"></span>
@@ -221,75 +250,87 @@
                                 </div>
                                 <div class="notification-time">2 小時前</div>
                             </li> -->
-                        </ul>
-                        
-                        <div class="notification-footer">
-                            <!-- <a href="#">查看所有通知</a> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            
-        
-            <div class="collapse navbar-collapse header-collapse rest rest-page-hyperlink" id="navbarCollapse">
-                <div class="navbar-nav py-0 pe-4"> 
-                    <!-- <li> -->
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">商店管理</a>
-                            <div class="dropdown-menu m-0 submenu">
-                                <a href="booking.html" class="dropdown-item">上架餐廳</a>
-                                <a href="team.html" class="dropdown-item">桌號設定</a>
-                                <a href="booking.html" class="dropdown-item">菜單設定</a>
-                                <a href="booking.html" class="dropdown-item">營業/用餐時間設定</a>
-                            </div>
-                        </div>
-                    <!-- </li> -->
-                    
-                    <!-- <li> -->
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">訂位管理</a>
-                            <div class="dropdown-menu m-0">
-                                <a href="booking.html" class="dropdown-item">訂位紀錄</a>
-                                <a href="team.html" class="dropdown-item">訂位設定</a>
-                            </div>
-                        </div>
-                    <!-- </li> -->
-                </div>
+					</ul>
 
-            </div>
-            <btn onclick="" class="btn btn-danger py-2 px-4 ml-2 log-out-btn">登出</btn>
-
-        </nav>
+					<div class="notification-footer">
+						<!-- <a href="#">查看所有通知</a> -->
+					</div>
+				</div>
+			</div>
+		</div>
 
 
-        
-    <!-- </div> -->
 
-    <!-- Template Javascript -->
-    <!-- <script th:src="@{/js/mainpage.js}"></script> -->
 
-    <!-- JavaScript Libraries -->
-    <script th:inline="javascript">
+		<div
+			class="collapse navbar-collapse header-collapse rest rest-page-hyperlink"
+			id="navbarCollapse">
+			<div class="navbar-nav py-0 pe-4">
+				<!-- <li> -->
+				<div class="nav-item dropdown">
+					<a href="#" class="nav-link dropdown-toggle"
+						data-bs-toggle="dropdown">商店管理</a>
+					<div class="dropdown-menu m-0 submenu">
+						<a href="booking.html" class="dropdown-item">上架餐廳</a> <a
+							href="team.html" class="dropdown-item">桌號設定</a> <a
+							href="booking.html" class="dropdown-item">菜單設定</a> <a
+							href="booking.html" class="dropdown-item">營業/用餐時間設定</a>
+					</div>
+				</div>
+				<!-- </li> -->
+
+				<!-- <li> -->
+				<div class="nav-item dropdown">
+					<a href="#" class="nav-link dropdown-toggle"
+						data-bs-toggle="dropdown">訂位管理</a>
+					<div class="dropdown-menu m-0">
+						<a href="booking.html" class="dropdown-item">訂位紀錄</a> <a
+							href="team.html" class="dropdown-item">訂位設定</a>
+					</div>
+				</div>
+				<!-- </li> -->
+			</div>
+
+		</div>
+		<form th:action="@{/auth/logout}" method="post"
+			style="display: inline;" onsubmit="return confirmLogout()">
+			<button type="submit" class="btn btn-danger py-2 px-4 ml-2">登出</button>
+		</form>
+
+	</nav>
+
+	<script>
+		function confirmLogout() {
+			return confirm("您確定要登出嗎？");
+		}
+	</script>
+
+	<!-- </div> -->
+
+	<!-- Template Javascript -->
+	<!-- <script th:src="@{/js/mainpage.js}"></script> -->
+
+	<!-- JavaScript Libraries -->
+	<script th:inline="javascript">
         window.restId = /*[[${session.restId}]]*/{};
     </script>
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="lib/wow/wow.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- <script src="lib/wow/wow.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/counterup/counterup.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="lib/tempusdominus/js/moment.min.js"></script>
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script> -->
-    <!-- <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script> -->
-    <script th:src="@{/js/headerForNotify.js}"></script>
-    
+	<!-- <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script> -->
+	<script th:src="@{/js/headerForNotify.js}"></script>
 
-    <!-- Template Javascript -->
-    <!-- <script src="js/mainpage.js"></script> -->
 
-    
+	<!-- Template Javascript -->
+	<!-- <script src="js/mainpage.js"></script> -->
+
+
 </body>
 </html>
