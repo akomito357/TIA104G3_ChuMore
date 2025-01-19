@@ -395,7 +395,7 @@
     <script>
 
         function showTableOptionList() {
-            fetch(`ordertables/getTableNumberById`, {
+            fetch(`/ordertables/getTableNumberById`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(tableName => {
@@ -450,7 +450,7 @@
             const size = 10;
             function loadDiningList(queryParam) {
 
-                fetch(`rest/orderMaster/diningList?${queryParam.toString()}`, {
+                fetch(`/rest/diningList?${queryParam.toString()}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
@@ -674,28 +674,6 @@
             modal.classList.remove("show");
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const tabs = document.querySelectorAll(".nav-link");
-            const content = document.querySelectorAll(".tab-content");
-
-            tabs.forEach(function (tab) {
-                tab.addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    tabs.forEach(function (tab) {
-                        tab.classList.remove("active");
-                    });
-                    content.forEach(function (cont) {
-                        cont.classList.remove("active");
-                    });
-
-                    tab.classList.add("active");
-
-                    const targetId = tab.getAttribute("data-target");
-                    document.getElementById(targetId).classList.add("active");
-                });
-            });
-        });
 
         function createQueryParam(page) {
             const params = {

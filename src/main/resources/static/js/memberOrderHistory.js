@@ -34,7 +34,7 @@ $(document).ready(function() {
 
 	//for dining
 	function loadOrderData(page, sortField, sortOrder) {
-		fetch(`/member/orderMaster/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+		fetch(`/member/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
 			method: "GET",
 		}).then(res => res.json())
 			.then(response => {
