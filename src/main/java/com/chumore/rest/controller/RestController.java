@@ -138,7 +138,8 @@ public class RestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
+	@Valid
 	@PutMapping("updateRest")
 	public ResponseEntity<Map<String, Object>> updateRest(@RequestBody Map<String, Object> requestData) {
 	    Map<String, Object> response = new HashMap<>();
@@ -154,9 +155,6 @@ public class RestController {
 	            response.put("message", "找不到餐廳資料");
 	            return ResponseEntity.ok(response);
 	        }
-
-
-	        
 
 	        // 密碼驗證通過或沒有要更新密碼，繼續更新其他資料
 	        CuisineTypeVO cuisineType = cuisineTypeSvc.getOneCuisineType(cuisineTypeId);
