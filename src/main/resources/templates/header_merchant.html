@@ -294,8 +294,8 @@
 
 		</div>
 		<form th:action="@{/auth/logout}" method="post"
-			style="display: inline;" onsubmit="return confirmLogout()">
-			<button type="submit" class="btn btn-danger py-2 px-4 ml-2">登出</button>
+			style="display: inline;" onsubmit="return confirmLogout()" class="log-out-btn">
+			<button type="submit" class="btn btn-danger py-2 px-4 ml-2 log-out-btn">登出</button>
 		</form>
 
 	</nav>

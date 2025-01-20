@@ -262,7 +262,7 @@ i.icon-item{
     order: 2;
 }
 .log-out-btn{
-    order: 3;
+    order: 100;
 }
 .header-link.active{
     color: white !important;
