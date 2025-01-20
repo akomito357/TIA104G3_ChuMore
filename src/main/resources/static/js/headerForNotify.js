@@ -120,7 +120,7 @@ $(".reservation-notification").click(async function(){
     console.log(msgs);
     let msgListEle = $(".reservation-notification-list");
     
-    if (msgs != undefined && Object.keys(msgs).length > 0){
+    if (msgs != undefined && Object.keys(msgs).length != 0){
         msgListEle.empty();
         msgs = Object.values(msgs);
     

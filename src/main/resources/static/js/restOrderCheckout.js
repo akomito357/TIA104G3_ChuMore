@@ -3,6 +3,7 @@ console.log('aaamanage');
 console.log(orderMaster);
 let memberPhoneVerify = {};
 let submitUsePoints = 0;
+let memberId = 0;
 
 
 async function getOrderMaster(){
@@ -70,6 +71,8 @@ async function verifyPhoneFetch(){
         $("#memberStatus").removeClass("error");
         $("#memberStatus").addClass("success");
         $("#memberStatus").text(`驗證成功！會員姓名：${memberPhoneVerify.data.memberName}`);
+        memberId = memberPhoneVerify.data.memberId;
+        console.log(memberPhoneVerify);
         
 
         $("#verifyPhoneNumberBtn").disabled = false;
@@ -124,8 +127,7 @@ async function getMemberDiscPts(memberId, restId){
         $("#pointUseForm").addClass("show");
         $("input[name='memberId']").val(memberDiscPts.data.memberId);
 
-        
-        // console.log(memberPoints);
+
 
         return memberDiscPts;
 
@@ -216,7 +218,7 @@ async function verifyPointUseFetch(){
             // throw new Error(JSON.stringify(errorData));
         }
         let verifyPoints = await res.json();
-        console.log(verifyPoints);
+        // console.log(verifyPoints);
         submitUsePoints = verifyPoints.data.usePoints;
         return verifyPoints;
     }catch(error){
@@ -243,10 +245,12 @@ $(".checkout-btn").on("click", function(e){
     e.preventDefault();
 
     const checkoutForm = $("#checkoutSubmitForm");
-    checkoutForm.append(`<input name="orderId" value="${orderMaster.orderId}" type="hidden"></input>`)
-    checkoutForm.append(`<input name="memberId" value="${memberPhoneVerify.data.memberId}" type="hidden"></input>`)
+    checkoutForm.append(`<input name="orderId" value="${orderMaster.orderId}" type="hidden"></input>`);
+
+    checkoutForm.append(`<input name="memberId" value="${memberId}" type="hidden"></input>`);
     checkoutForm.append(`<input name="usePoints" value="${submitUsePoints}" type="hidden" />`);
 
+    // console.log(memberPhoneVerify);
     checkoutForm.submit();
 
 })
