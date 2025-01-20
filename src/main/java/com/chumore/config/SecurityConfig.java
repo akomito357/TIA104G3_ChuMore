@@ -144,10 +144,7 @@ public class SecurityConfig {
 	@Order(3)
 	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 	    http.authorizeRequests()
-	        // 靜態資源存取許可
-	        .antMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-	        
-	        // 搜尋功能相關的完整路徑配置
+	        .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
 	        .antMatchers(
 	            "/search",
 	            "/search/**",
@@ -159,8 +156,6 @@ public class SecurityConfig {
 	            "/dailyReservations/**",
 	            "/getRestaurantByKeyword/**"
 	        ).permitAll()
-	        
-	        // 公開頁面存取許可
 	        .antMatchers(
 	            "/",
 	            "/restaurants/**",
@@ -175,31 +170,49 @@ public class SecurityConfig {
 	            "/getRandomRest/**",
 	            "/dailyReservations/**"
 	        ).permitAll()
-	        
-	        // 註冊相關頁面存取許可
 	        .antMatchers("/register/**").permitAll()
-	        
-	        // API 端點存取許可
 	        .antMatchers("/api/**").permitAll()
-	        
-	        // 會員專區存取權限
 	        .antMatchers("/member/**").hasRole("MEMBER")
-	        
-	        // 餐廳專區存取權限
 	        .antMatchers("/rests/**").hasRole("RESTAURANT")
-	        
-	        // 其他請求需要認證
 	        .anyRequest().authenticated()
 	        .and()
 	        .headers()
 	            .xssProtection()
 	            .and()
 	            .contentSecurityPolicy(
-	                "default-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "img-src 'self' data: https:; " +
-	                "font-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com"
+	                "default-src 'self' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com " +
+	                "https://maps.google.com; " +
+	                
+	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com " +
+	                "https://maps.google.com; " +
+	                
+	                "style-src 'self' 'unsafe-inline' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com; " +
+	                
+	                "img-src 'self' data: https: " +
+	                "https://maps.google.com " +
+	                "https://*.google.com; " +
+	                
+	                "frame-src 'self' " +
+	                "https://maps.google.com " +
+	                "https://www.google.com; " +
+	                
+	                "connect-src 'self' " +
+	                "https://maps.google.com " +
+	                "tel:*; " +
+	                
+	                "form-action 'self';"
 	            )
 	            .and()
 	        .and()
