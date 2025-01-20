@@ -106,7 +106,6 @@ const cityDistricts = {
   ]
 };
 
-
 class FormValidator {
     constructor() {
         this.isSubmitting = false;
