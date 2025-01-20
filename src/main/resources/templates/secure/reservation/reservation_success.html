@@ -11,6 +11,7 @@
         <th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
         <th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
     </th:block>
+    <th:block th:insert="~{/included.html}" />
     <style>
         .success-container {
             max-width: 500px;

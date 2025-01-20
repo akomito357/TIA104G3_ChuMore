@@ -7,10 +7,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
@@ -24,8 +25,8 @@ import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
 
-@RestController
-@RequestMapping("member/orderLineItem")
+@Controller
+@RequestMapping("/member/orderLineItem")
 public class MemberOrderLineItemController {
 
 	@Autowired
@@ -45,6 +46,7 @@ public class MemberOrderLineItemController {
 	Product_Service productSvc;
 	
 	@GetMapping("items")
+	@ResponseBody
 	public ResponseEntity<ShowOrderLineItemDto> showOrderItemList(@RequestParam Integer orderId){
 		ShowOrderLineItemDto showOrderLineItemDto = new ShowOrderLineItemDto();
 		

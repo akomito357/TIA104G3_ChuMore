@@ -34,7 +34,7 @@ $(document).ready(function() {
 
 	//for dining
 	function loadOrderData(page, sortField, sortOrder) {
-		fetch(`/member/orders?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
+		fetch(`/member/order?page=${page}&size=${size}&sort=${sortField},${sortOrder}`, {
 			method: "GET",
 		}).then(res => res.json())
 			.then(response => {
@@ -198,7 +198,7 @@ $(document).ready(function() {
 // 顯示 Modal(餐點明細)
 function showModal(orderId) {
 
-	fetch(`member/orderLineItem/items?orderId=${orderId}`, {
+	fetch(`/member/orderLineItem/items?orderId=${orderId}`, {
 		method: "GET",
 	}).then(res => res.json())
 		.then(response => {

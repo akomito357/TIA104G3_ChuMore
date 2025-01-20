@@ -44,7 +44,7 @@ public class MemberOrderMasterController {
 	@Autowired
 	MemberService memberSvc;
 
-	@GetMapping("orders")
+	@GetMapping("order")
 	@ResponseBody
 	public ResponseEntity<OrderMasterResponse<Page<OrderMasterDto>>> findByMemberId(
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,

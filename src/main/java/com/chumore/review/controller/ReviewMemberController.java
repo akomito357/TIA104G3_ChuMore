@@ -251,7 +251,7 @@ public class ReviewMemberController {
 //    	System.out.println("review = " + review);    	   		
     	review = reviewService.createReviewWithImg(review, reviewImgs);
     	
-    	return "redirect:/memberDiningHistory";
+    	return "redirect:/member/dining_and_review/history";
     }
     
 	@PostMapping("update") // getOneForUpdate
@@ -314,7 +314,7 @@ public class ReviewMemberController {
 		
 		reviewService.updateReviewWithImgs(review, session, reviewImgs);
 		
-		return "redirect:/memberDiningHistory";
+		return "redirect:/member/dining_and_review/history";
 	}
     
     // 顯示單筆評論 - thymeleaf

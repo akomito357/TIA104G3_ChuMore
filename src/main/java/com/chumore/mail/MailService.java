@@ -34,10 +34,12 @@ public class MailService {
             context.setVariable("reservationDate", reservation.getReservationDate().toString()); // 格式化日期
             context.setVariable("reservationTime", reservation.getReservationTime().toString());
             context.setVariable("guestCount", reservation.getGuestCount());
+            context.setVariable("restId", reservation.getRest().getRestId());
+            context.setVariable("memberId", reservation.getMember().getMemberId());
             context.setVariable("confirmationLink", confirmationBaseUrl + "?token=" + token); // 帶入token
 
             // 確認信模板
-            String htmlContent = templateEngine.process("back-end/reservation/reservation_confirmation_mail",context);
+            String htmlContent = templateEngine.process("public/reservation/reservation_confirmation_mail",context);
 
             // 設定信件 metadata
             MimeMessage message = mailSender.createMimeMessage();

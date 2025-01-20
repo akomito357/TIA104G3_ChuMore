@@ -19,7 +19,7 @@ public class MemberHeaderController {
 	// 餐廳預約紀錄
 	@GetMapping("member_reservations")
 	public String toMemberDiningHistory() {
-		return "secure/reservation/member_reservations";
+		return "secure/member/reservation/member_reservations";
 	}
 	
 	// 我的點數

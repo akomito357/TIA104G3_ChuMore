@@ -627,7 +627,7 @@
 
         function showModal(orderId) {
 
-            fetch(`member/orderLineItem/items?orderId=${orderId}`, {
+            fetch(`/rests/items?orderId=${orderId}`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(response => {

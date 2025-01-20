@@ -2,15 +2,19 @@ package com.chumore.rest.controller;
 
 
 import com.chumore.rest.model.RestService;
+import com.chumore.rest.model.RestVO;
+import com.chumore.util.ResponseUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
-@RequestMapping("restaurants")
+@RequestMapping("/restaurants")
 public class RestPublicController {
 
     @Autowired
@@ -46,6 +50,15 @@ public class RestPublicController {
     public ResponseEntity<?> getRestsByRestIds(@RequestBody List<Integer> restIds){
         return ResponseEntity.ok(restService.getRestsByRestIds(restIds));
     }
+    
+    @PostMapping("/getRandomRest")
+	@ResponseBody
+	public ResponseEntity<?> findRandomRest(@RequestBody Map<String, Integer> map){
+		List<RestVO> list = restService.getRandomRests(map.get("count"));
+		ResponseUtil res = new ResponseUtil("success", 200, list);
+		return ResponseEntity.ok(res);
+	}
+	
 
 
 }
