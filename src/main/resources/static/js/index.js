@@ -33,7 +33,8 @@ async function getRestInfo() {
 
 }
 
-getRestInfo();
+
+// getRestInfo();
 
 // 搜尋
 $('#search-button').click(function () {

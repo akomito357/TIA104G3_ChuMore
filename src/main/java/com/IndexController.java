@@ -73,4 +73,12 @@ public class IndexController {
 		return "search_result";
 	}
 	
+	@PostMapping("/getRandomRest")
+	@ResponseBody
+	public ResponseEntity<?> findRandomRest(@RequestBody Map<String, Integer> map){
+		List<RestVO> list = restSvc.getRandomRests(map.get("count"));
+		ResponseUtil res = new ResponseUtil("success", 200, list);
+		return ResponseEntity.ok(res);
+	}
+	
 }
