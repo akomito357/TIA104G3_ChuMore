@@ -129,7 +129,9 @@ public class ReviewVO implements Serializable {
 //		this.productId = productId;
 //	}
 
-    
+    public String getMemberName(){
+		return member.getMemberName();
+	}
     
 	public String getReviewText() {
 		return reviewText;

@@ -1,78 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>訂位確認信</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-    <style>
-        /* 添加一些基本樣式 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header img {
-            max-width: 150px;
-        }
-        .content {
-            margin-bottom: 20px;
-        }
-        .confirmation-button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .footer {
-            text-align: center;
-            color: #6c757d;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <!-- Header -->
-    <div class="header">
-        <h1><i class="fa fa-utensils me-3"></i>  ChuMore</h1>
-        <h2>訂位確認信</h2>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <title>訂位確認信</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
+        <style>
+            /* 添加一些基本樣式 */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f8f9fa;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .header img {
+                max-width: 150px;
+            }
+            .content {
+                margin-bottom: 20px;
+            }
+            .confirmation-button {
+                display: block;
+                width: 100%;
+                padding: 15px;
+                background-color: #007bff;
+                color: #ffffff;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            .footer {
+                text-align: center;
+                color: #6c757d;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fa fa-utensils me-3"></i>  ChuMore</h1>
+                <h2>訂位確認信</h2>
+            </div>
 
-    <!-- Content -->
-    <div class="content">
-        <p>親愛的 <strong th:text="${memberName}">訂位人姓名</strong>，</p>
-        <p>感謝您選擇我們的餐廳進行用餐。以下是您的訂位資訊：</p>
-        <ul>
-            <li><strong>餐廳名稱：</strong> <span th:text="${restName}">餐廳名稱</span></li>
-            <li><strong>用餐日期：</strong> <span th:text="${reservationDate}">2024/03/15 (五)</span></li>
-            <li><strong>用餐時間：</strong> <span th:text="${reservationTime}">18:30</span></li>
-            <li><strong>用餐人數：</strong> <span th:text="${guestCount}">4位</span></li>
-        </ul>
-        <p>請點擊下方按鈕以確認您的訂位：</p>
-        <a th:href="@{${confirmationLink}}" class="confirmation-button">確認訂位</a>
-        <p>此連結將在24小時後過期。如有任何問題，請隨時聯繫我們。</p>
-    </div>
+            <!-- Content -->
+            <div class="content">
+                <p>親愛的 <strong th:text="${memberName}">訂位人姓名</strong>，</p>
+                <p>感謝您選擇我們的餐廳進行用餐。以下是您的訂位資訊：</p>
+                <ul>
+                    <li><strong>餐廳名稱：</strong> <span th:text="${restName}">餐廳名稱</span></li>
+                    <li><strong>用餐日期：</strong> <span th:text="${reservationDate}">2024/03/15 (五)</span></li>
+                    <li><strong>用餐時間：</strong> <span th:text="${reservationTime}">18:30</span></li>
+                    <li><strong>用餐人數：</strong> <span th:text="${guestCount}">4位</span></li>
+                </ul>
+                <p>請點擊下方按鈕以確認您的訂位：</p>
+                <a th:href="@{${confirmationLink}}" class="confirmation-button">確認訂位</a>
+                <p>此連結將在24小時後過期。如有任何問題，請隨時聯繫我們。</p>
 
-    <!-- Footer -->
-    <div class="footer">
-        <p>&copy; 2025 chumore. 版權所有。</p>
-    </div>
-</div>
-</body>
+                <input type="hidden" id="restId" th:value="${restId}" />
+                <input type="hidden" id="caller" th:value="${memberId}" /> <!-- 假設 caller 是 memberId -->
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>&copy; 2025 chumore. 版權所有。</p>
+            </div>
+        </div>
+        <script th:inline="none">
+            document.addEventListener('DOMContentLoaded', function() {
+                const confirmButton = document.getElementById('confirmReservationBtn');
+                const restIdInput = document.getElementById('restId');
+                const callerInput = document.getElementById('caller');
+
+                confirmButton.addEventListener('click', function() {
+                    const restId = restIdInput.value;
+                    const caller = callerInput.value;
+
+                    // 構建請求數據
+                    const requestData = {
+                        restId: restId,
+                        caller: caller
+                    };
+
+                    // 發送 AJAX 請求使用 fetch API
+                    fetch('/notification/confirmReservation', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('網絡回應不是OK');
+                            }
+                            return response.text(); // 假設後端返回的是純文本
+                        })
+                        .then(data => {
+                            console.log(data);
+                            alert('訂位確認已送出成功！');
+                        })
+                        .catch(error => {
+                            console.error('錯誤:', error);
+                            alert('訂位確認送出失敗，請稍後再試。');
+                        });
+                });
+            });
+        </script>
+    </body>
 </html>
