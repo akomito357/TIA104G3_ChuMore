@@ -45,8 +45,8 @@ public class ProductCategory_Service {
 		if (restNum == null) {
 			restId = 2001;
 		} else {
-			RestVO rest = (RestVO) restNum;
-			restId = rest.getRestId();
+			Integer rest = (Integer) restNum;
+			restId = rest;
 		}
 	    ProductCategoryVO productCategoryVO = new ProductCategoryVO();
 	    productCategoryVO.setCategoryName(productCategoryDto.getCategoryName());

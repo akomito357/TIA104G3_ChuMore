@@ -32,7 +32,6 @@ import com.chumore.productcategory.model.MenuUploadReq;
 import com.chumore.productcategory.model.ProductCategoryVO;
 import com.chumore.productcategory.model.ProductCategory_Service;
 import com.chumore.productcategory.res.ProductCategoryResponse;
-import com.chumore.rest.model.RestVO;
 import com.opencsv.CSVReader;
 
 @Controller
@@ -88,16 +87,8 @@ public class ProductCategoryController {
 	@GetMapping("getActiveListByRestId")
 	@ResponseBody
 	public ResponseEntity<ProductCategoryResponse> getActiveListByRestId() {
-		Object restNum = session.getAttribute("restId");
-		Integer restId = null;
-		if (restNum == null) {
-//			restId = 2001;
-		} else {
-			Integer rest = (Integer) restNum;
-//			restId = rest.getRestId();
-			restId = rest;
-			
-		}
+		Integer restId = (Integer)session.getAttribute("restId");
+
 		List<ProductCategoryVO> list = productCategorySvc.getActiveListByRestId(restId);
 		ProductCategoryResponse<List<ProductCategoryVO>> response = new ProductCategoryResponse<List<ProductCategoryVO>>(
 				"Success", 200, list);
@@ -108,14 +99,7 @@ public class ProductCategoryController {
 	@PostMapping("csvFile")
 	@ResponseBody
 	public ResponseEntity<ProductCategoryResponse> uploadfile(@RequestParam("file") MultipartFile mutipartFile) {
-		Object restNum = session.getAttribute("restId");
-		Integer restId = null;
-		if (restNum == null) {
-//			restId = 2001;
-		} else {
-			restId = (Integer) restNum;
-//			restId = rest.getRestId();
-		}
+		Integer restId = (Integer)session.getAttribute("restId");
 
 		ProductCategoryResponse response = new ProductCategoryResponse();
 		List<Map<String, String>> fileData = new ArrayList<>();
@@ -200,14 +184,8 @@ public class ProductCategoryController {
 	
 	@PostMapping("modifyProduct")
 	public ResponseEntity<ProductCategoryResponse> modifyProduct(@RequestBody MenuUploadReq req){
-		Object restNum = session.getAttribute("restId");
-		Integer restId = null;
-		if (restNum == null) {
-			restId = 2001;
-		} else {
-			restId = (Integer) restNum;
-//			restId = rest;
-		}
+		Integer restId = (Integer)session.getAttribute("restId");
+		
 		productCategorySvc.batchDelete(req);
 		for(ProductCategoryDto category : req.getProductCatList()) {
 

@@ -180,6 +180,7 @@ public class SecurityConfig {
 	            .xssProtection()
 	            .and()
 	            .contentSecurityPolicy(
+
 	                "default-src 'self' " +
 	                "https://cdnjs.cloudflare.com " +
 	                "https://cdn.jsdelivr.net " +
