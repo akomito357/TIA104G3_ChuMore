@@ -49,8 +49,7 @@ async function adjustTables(e){
 
 
     try{
-        let restId = 2001;
-        const url = `http://localhost:8080/test/dailyReservations/reservedLimits?restId=${restId}`
+        const url = `/dailyReservations/reservedLimits`
         const res = await fetch(url,{
             method:'POST',
             headers:{
@@ -181,8 +180,7 @@ function transformData(data) {
 //透過 fetch 取得訂位上限資料
 async function getReservedLimit(date){
     try{
-        let restId = 2001;
-        const url = `http://localhost:8080/test/dailyReservations?restId=${restId}&reservedDate=${date}`;
+        const url = `/dailyReservations?reservedDate=${date}`;
         const res = await fetch(url);
 
         if(!res.ok){
