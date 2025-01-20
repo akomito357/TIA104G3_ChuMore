@@ -273,7 +273,7 @@ function closeModal() {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const tabs = document.querySelectorAll(".nav-link.history-page");
+    const tabs = document.querySelectorAll(".nav-link.history-tab");
     const content = document.querySelectorAll(".tab-content");
 
     tabs.forEach(function (tab) {
