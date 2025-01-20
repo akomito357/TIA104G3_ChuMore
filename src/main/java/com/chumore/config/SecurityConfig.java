@@ -87,7 +87,7 @@ public class SecurityConfig {
 				// 公開頁面
 				.antMatchers("/", "/restaurant/**", "/search/**", "/auth/register/**", "/auth/login").permitAll()
 				// 受保護的路徑
-				.antMatchers("/secure/member/**").hasRole("MEMBER").antMatchers("/secure/rest/**").hasRole("RESTAURANT")
+				.antMatchers("/secure/member/**").hasRole("MEMBER").antMatchers("/secure/rest/**").hasRole("RESTAURANT").antMatchers("/rests/**").hasRole("RESTAURANT")
 				.antMatchers("/auth/logout").authenticated().anyRequest().authenticated().and().formLogin()
 				.loginPage("/auth/login").loginProcessingUrl("/auth/login").usernameParameter("username")
 				.passwordParameter("password").successHandler((request, response, authentication) -> {
@@ -110,7 +110,7 @@ public class SecurityConfig {
 					if ("ROLE_MEMBER".equals(role)) {
 						response.sendRedirect("/secure/member/member_information");
 					} else if ("ROLE_RESTAURANT".equals(role)) {
-						response.sendRedirect("/secure/rest/rest_information");
+						response.sendRedirect("/rests/rest_infomation_setting");
 					}
 				}).failureUrl("/auth/login").permitAll().and().logout().logoutUrl("/auth/logout")
 				.logoutSuccessUrl("/auth/login").deleteCookies("JSESSIONID").clearAuthentication(true)
@@ -149,7 +149,7 @@ public class SecurityConfig {
 				.antMatchers("/css/**", "/js/**", "/images/**").permitAll()
 				// 允許訪問首頁和其他公開頁面
 				.antMatchers("/", "/restaurants/**", "/location/**", "/orders/**", "/reservations/**",
-						"/cuisineTypes/**", "/notification/**", "/envImg/**", "reviews/**", "ws/**")
+						"/cuisineTypes/**", "/notification/**", "/envImg/**", "reviews/**", "ws/**", "dailyReservation/**")
 				.permitAll()
 				// 允許訪問註冊相關頁面
 				.antMatchers("/register/**").permitAll()
@@ -158,7 +158,7 @@ public class SecurityConfig {
 				// 設置 /member/** 路徑需要 MEMBER 角色
 				.antMatchers("/member/**").hasRole("MEMBER")
 				// 設置 /rest/** 路徑需要 RESTAURANT 角色
-				.antMatchers("/rest/**").hasRole("RESTAURANT")
+				.antMatchers("/rests/**").hasRole("RESTAURANT")
 				// 其他路徑需要認證
 				.anyRequest().authenticated().and()
 				// 禁用 CSRF（根據需要開啟或關閉）
