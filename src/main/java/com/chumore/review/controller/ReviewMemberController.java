@@ -48,7 +48,7 @@ import com.chumore.util.ResponseUtil;
 
 @Controller
 @RequestMapping("/member/reviews")
-public class ReviewController {
+public class ReviewMemberController {
 
     @Autowired
     private ReviewService reviewService;

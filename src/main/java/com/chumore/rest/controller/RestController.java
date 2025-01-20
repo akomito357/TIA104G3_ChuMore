@@ -88,7 +88,7 @@ public class RestController {
 		model.addAttribute("rest", rest);
 		return "";
 	}
-	// @SessionAttribute("rest") RestVO rest
+
 
 	// update
 	@PostMapping("update")
@@ -102,14 +102,6 @@ public class RestController {
 		return "n";
 	}
 
-	// getOne - for thymeleaf
-	@GetMapping("findRest")
-	public String findRestById(@RequestParam("restId") String restId, ModelMap model, HttpSession session) {
-		RestVO rest = restSvc.getOneById(Integer.valueOf(restId));
-		session.setAttribute("rest", rest);
-		model.addAttribute("rest", session.getAttribute("rest"));
-		return "";
-	}
 
 	@GetMapping("/getOneRest")  // 添加這行
 	@ResponseBody              // 添加這行

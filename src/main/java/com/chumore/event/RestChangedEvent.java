@@ -4,9 +4,9 @@ package com.chumore.event;
 import com.chumore.rest.model.RestVO;
 import org.springframework.context.ApplicationEvent;
 
-/** TODO
- * 1. 功能：當餐廳 (RestVO) 新增或更新時，發送此事件。
- * 2. 搭配 RestEventListener，呼叫 LuceneIndexService 更新索引。
+/**
+ * 功能：當餐廳 (RestVO) 新增或更新時，發送此事件。
+ * 搭配 RestEventListener，呼叫 LuceneIndexService 更新索引。
  */
 
 public class RestChangedEvent extends ApplicationEvent {
