@@ -3,7 +3,7 @@ let reservations = [];
 
 async function getReservations(){
     try{
-        const url = `member/reservations`;
+        const url = `/member/reservations`;
         const res = await fetch(url);
         if(!res.ok){
             errorData = await res.json();
