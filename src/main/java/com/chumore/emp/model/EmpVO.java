@@ -31,7 +31,6 @@ public class EmpVO implements Serializable {
    
    //員工密碼，不可為空，長度限制60
    @Column(name = "emp_password", nullable = false, length = 60)
-   
    private String empPassword;
    
    //員工手機，不可為空，長度20，不可與他人重複

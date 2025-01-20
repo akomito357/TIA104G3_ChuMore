@@ -195,12 +195,22 @@ public class SecurityConfig {
 	            .xssProtection()
 	            .and()
 	            .contentSecurityPolicy(
-	                "default-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "img-src 'self' data: https:; " +
-	                "font-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com"
-	            )
+	            	    "default-src 'self'; " +
+	            	    "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
+	            	    "https://cdn.jsdelivr.net " +
+	            	    "https://maxcdn.bootstrapcdn.com " +
+	            	    "https://cdnjs.cloudflare.com " +
+	            	    "https://code.jquery.com " +  
+	            	    "https://stackpath.bootstrapcdn.com; " +  
+	            	    "style-src 'self' 'unsafe-inline' " +
+	            	    "https://cdn.jsdelivr.net " +
+	            	    "https://maxcdn.bootstrapcdn.com " +
+	            	    "https://cdnjs.cloudflare.com " +
+	            	    "https://stackpath.bootstrapcdn.com; " +
+	            	    "img-src 'self' data: https:; " +
+	            	    "font-src 'self' data: https:; " +
+	            	    "connect-src 'self';"
+	            	)
 	            .and()
 	        .and()
 	        .csrf().disable();
