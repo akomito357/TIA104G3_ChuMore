@@ -23,7 +23,7 @@ async function getOrderMaster(){
 let orderMaster = {};
 
 function getProductCategoriesAndProducts(){
-    let apiUrl= "/rest/productcategory/getListByRestId"
+    let apiUrl= "/orders/productcategory/getListByRestId"
     // let restId = orderMaster.rest;
     let restData = {
         restId: restId,

@@ -48,7 +48,7 @@ async function verifyPhoneFetch(){
     let memberNumFormData = new FormData(document.getElementById("memberPhoneForm"));
 
     try{
-        const url = "/rest/member/findMemberByPhone";
+        const url = "/rests/member/findMemberByPhone";
         const res = await fetch(url, {
             method: "POST",
             body: memberNumFormData,
@@ -91,7 +91,7 @@ async function verifyPhoneFetch(){
 }
 
 async function getMemberDiscPts(memberId, restId){
-    const url = "/rest/points/getPointsByMemberAndRest"
+    const url = "/rests/points/getPointsByMemberAndRest"
     let data = {
         memberId: memberId,
         restId: restId
@@ -191,7 +191,7 @@ $('#verifyDiscPtsUse').on('click', async function(e){
 
 
 async function verifyPointUseFetch(){
-    let url = "/rest/points/verifyUsage"
+    let url = "/rests/points/verifyUsage"
     let data = {
         usePoints: $("input[name='usePoints']").val(),
         memberId: $("input[name='memberId']").val(),

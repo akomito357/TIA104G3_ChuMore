@@ -54,9 +54,9 @@ public class IndexController {
     	return role;
     }
 	
-//	@GetMapping("/login_page")
-//	public String login() {
-//		return "auth/login";
-//	}
-//	
+	@GetMapping("/searchPage")
+	public String login() {
+		return "search_result";
+	}
+	
 }

@@ -5,7 +5,7 @@
 
 
 $(document).ready(function() {
-	const tabs = $(".nav-link");
+	const tabs = $(".nav-link.history-tab");
 	const content = $(".tab-content");
 
 
@@ -301,172 +301,172 @@ const itemsPerPage = 5;
 let currentPage = 1;
 
 // Initialize
-$(document).ready(function() {
-	renderPage(currentPage);
-	setupEventHandlers();
-});
+// $(document).ready(function() {
+// 	renderPage(currentPage);
+// 	setupEventHandlers();
+// });
 
-// Render reviews for current page
-function renderPage(page) {
-	const container = $('#reviewsList');
-	container.empty();
+// // Render reviews for current page
+// function renderPage(page) {
+// 	const container = $('#reviewsList');
+// 	container.empty();
 
-	// Calculate start and end index for current page
-	const startIndex = (page - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
-	const pageReviews = reviews.slice(startIndex, endIndex);
+// 	// Calculate start and end index for current page
+// 	const startIndex = (page - 1) * itemsPerPage;
+// 	const endIndex = startIndex + itemsPerPage;
+// 	const pageReviews = reviews.slice(startIndex, endIndex);
 
-	// Render reviews
-	pageReviews.forEach(review => {
-		const stars = generateStars(review.rating);
+// 	// Render reviews
+// 	pageReviews.forEach(review => {
+// 		const stars = generateStars(review.rating);
 
-		container.append(`
-                   <div class="review-card" data-id="${review.id}">
-                       <div class="row">
-                           <div class="col-2">
-                               <img src="${review.restaurantImageUrl}" alt="${review.restaurantName}" class="restaurant-image">
-                           </div>
-                           <div class="col-8">
-                               <h5 class="mb-2">${review.restaurantName}</h5>
-                               <div class="star-rating mb-2">${stars}</div>
-                               <div class="text-muted mb-2">用餐日期：${review.diningDate}</div>
-                               <div class="text-muted mb-2">人均消費：${review.averageCost}</div>
-                               <div class="text-muted mb-2">最推薦餐點：${review.recommendedDish}</div>
-                               <div class="review-content">
-                                   ${review.reviewContent}
-                                   <span class="show-more">顯示更多</span>
-                               </div>
-                           </div>
-                           <div class="col-2">
-                               <div class="action-buttons">
-                                   <button class="btn btn-outline-secondary edit-btn">編輯</button>
-                                   <button class="btn delete-btn">
-                                       <i class="fas fa-trash-alt me-1"></i>刪除
-                                   </button>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-               `);
+// 		container.append(`
+//                    <div class="review-card" data-id="${review.id}">
+//                        <div class="row">
+//                            <div class="col-2">
+//                                <img src="${review.restaurantImageUrl}" alt="${review.restaurantName}" class="restaurant-image">
+//                            </div>
+//                            <div class="col-8">
+//                                <h5 class="mb-2">${review.restaurantName}</h5>
+//                                <div class="star-rating mb-2">${stars}</div>
+//                                <div class="text-muted mb-2">用餐日期：${review.diningDate}</div>
+//                                <div class="text-muted mb-2">人均消費：${review.averageCost}</div>
+//                                <div class="text-muted mb-2">最推薦餐點：${review.recommendedDish}</div>
+//                                <div class="review-content">
+//                                    ${review.reviewContent}
+//                                    <span class="show-more">顯示更多</span>
+//                                </div>
+//                            </div>
+//                            <div class="col-2">
+//                                <div class="action-buttons">
+//                                    <button class="btn btn-outline-secondary edit-btn">編輯</button>
+//                                    <button class="btn delete-btn">
+//                                        <i class="fas fa-trash-alt me-1"></i>刪除
+//                                    </button>
+//                                </div>
+//                            </div>
+//                        </div>
+//                    </div>
+//                `);
 
-	});
+// 	});
 
-	// Update pagination
-	renderPagination();
-}
+// 	// Update pagination
+// 	renderPagination();
+// }
 
-// Render pagination controls
-function renderPagination() {
-	const totalPages = Math.ceil(reviews.length / itemsPerPage);
-	const pagination = $('#pagination');
-	pagination.empty();
+// // Render pagination controls
+// function renderPagination() {
+// 	const totalPages = Math.ceil(reviews.length / itemsPerPage);
+// 	const pagination = $('#pagination');
+// 	pagination.empty();
 
-	//     // Previous button
-	pagination.append(`
-                           < li class="page-item ${currentPage === 1 ? 'disabled' : ''}" >
-                               <a class="page-link" href="#" data-page="${currentPage - 1}">上一頁</a>
-               </li >
-                           `);
+// 	//     // Previous button
+// 	pagination.append(`
+//                            < li class="page-item ${currentPage === 1 ? 'disabled' : ''}" >
+//                                <a class="page-link" href="#" data-page="${currentPage - 1}">上一頁</a>
+//                </li >
+//                            `);
 
-	// Page numbers
-	for (let i = 1; i <= totalPages; i++) {
-		pagination.append(`
-                           < li class="page-item ${currentPage === i ? 'active' : ''}" >
-                               <a class="page-link" href="#" data-page="${i}">${i}</a>
-                   </li >
-                           `);
-	}
+// 	// Page numbers
+// 	for (let i = 1; i <= totalPages; i++) {
+// 		pagination.append(`
+//                            < li class="page-item ${currentPage === i ? 'active' : ''}" >
+//                                <a class="page-link" href="#" data-page="${i}">${i}</a>
+//                    </li >
+//                            `);
+// 	}
 
-	// Next button
-	pagination.append(`
-                           < li class="page-item ${currentPage === totalPages ? 'disabled' : ''}" >
-                               <a class="page-link" href="#" data-page="${currentPage + 1}">下一頁</a>
-               </li >
-                           `);
-}
+// 	// Next button
+// 	pagination.append(`
+//                            < li class="page-item ${currentPage === totalPages ? 'disabled' : ''}" >
+//                                <a class="page-link" href="#" data-page="${currentPage + 1}">下一頁</a>
+//                </li >
+//                            `);
+// }
 
-// Generate star rating HTML
-function generateStars(rating) {
-	let stars = '';
-	for (let i = 1; i <= 5; i++) {
-		stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
-	}
-	return stars;
-}
+// // Generate star rating HTML
+// function generateStars(rating) {
+// 	let stars = '';
+// 	for (let i = 1; i <= 5; i++) {
+// 		stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
+// 	}
+// 	return stars;
+// }
 
 
 // Setup event handlers
-function setupEventHandlers() {
-	// Pagination click handler
-	$(document).on('click', '.page-link', function(e) {
-		e.preventDefault();
-		const newPage = $(this).data('page');
-		if (newPage && newPage !== currentPage &&
-			newPage >= 1 &&
-			newPage <= Math.ceil(reviews.length / itemsPerPage)) {
-			currentPage = newPage;
-			renderPage(currentPage);
-		}
-	});
+// function setupEventHandlers() {
+// 	// Pagination click handler
+// 	$(document).on('click', '.page-link', function(e) {
+// 		e.preventDefault();
+// 		const newPage = $(this).data('page');
+// 		if (newPage && newPage !== currentPage &&
+// 			newPage >= 1 &&
+// 			newPage <= Math.ceil(reviews.length / itemsPerPage)) {
+// 			currentPage = newPage;
+// 			renderPage(currentPage);
+// 		}
+// 	});
 
-	// Show more button
-	$(document).on('click', '.show-more', function() {
-		const content = $(this).closest('.review-content');
-		content.toggleClass('expanded');
-		$(this).text(content.hasClass('expanded') ? '顯示較少' : '顯示更多');
-	});
+// 	// Show more button
+// 	$(document).on('click', '.show-more', function() {
+// 		const content = $(this).closest('.review-content');
+// 		content.toggleClass('expanded');
+// 		$(this).text(content.hasClass('expanded') ? '顯示較少' : '顯示更多');
+// 	});
 
-	// Edit button
-	$(document).on('click', '.edit-btn', function() {
-		const reviewId = $(this).closest('.review-card').data('id');
-		// Implement edit functionality
-		console.log('Edit review:', reviewId);
-	});
+// 	// Edit button
+// 	$(document).on('click', '.edit-btn', function() {
+// 		const reviewId = $(this).closest('.review-card').data('id');
+// 		// Implement edit functionality
+// 		console.log('Edit review:', reviewId);
+// 	});
 
-	// Delete button
-	// $(document).on('click', '.delete-btn', function() {
-	// 	const reviewId = $(this).closest('.review-card').data('id');
-	// 	// showDeleteConfirm(reviewId);
-	// });
+// 	// Delete button
+// 	// $(document).on('click', '.delete-btn', function() {
+// 	// 	const reviewId = $(this).closest('.review-card').data('id');
+// 	// 	// showDeleteConfirm(reviewId);
+// 	// });
 
-	// Confirm delete
-	// $('#confirmDelete').on('click', function() {
-	// 	const reviewId = $(this).data('reviewId');
-	// 	deleteReview(reviewId);
-	// 	$('#deleteConfirmModal').modal('hide');
-	// });
-}
+// 	// Confirm delete
+// 	// $('#confirmDelete').on('click', function() {
+// 	// 	const reviewId = $(this).data('reviewId');
+// 	// 	deleteReview(reviewId);
+// 	// 	$('#deleteConfirmModal').modal('hide');
+// 	// });
+// }
 
-// Show delete confirmation
-function showDeleteConfirm(reviewId) {
-	$('#confirmDelete').data('reviewId', reviewId);
-	$('#deleteConfirmModal').modal('show');
-}
+// // Show delete confirmation
+// function showDeleteConfirm(reviewId) {
+// 	$('#confirmDelete').data('reviewId', reviewId);
+// 	$('#deleteConfirmModal').modal('show');
+// }
 
-// Delete review
-function deleteReview(reviewId) {
-	// Here you would typically call your backend API
-	const index = reviews.findIndex(review => review.id === reviewId);
-	if (index !== -1) {
-		reviews.splice(index, 1);
+// // Delete review
+// function deleteReview(reviewId) {
+// 	// Here you would typically call your backend API
+// 	const index = reviews.findIndex(review => review.id === reviewId);
+// 	if (index !== -1) {
+// 		reviews.splice(index, 1);
 
-		// Recalculate total pages
-		const totalPages = Math.ceil(reviews.length / itemsPerPage);
+// 		// Recalculate total pages
+// 		const totalPages = Math.ceil(reviews.length / itemsPerPage);
 
-		// If we're on the last page and it's now empty, go to previous page
-		if (currentPage > totalPages) {
-			currentPage = totalPages || 1;
-		}
+// 		// If we're on the last page and it's now empty, go to previous page
+// 		if (currentPage > totalPages) {
+// 			currentPage = totalPages || 1;
+// 		}
 
-		// Re-render the current page
-		renderPage(currentPage);
-	}
+// 		// Re-render the current page
+// 		renderPage(currentPage);
+// 	}
 
-	// Remove from UI with animation
-	$(`.review - card[data - id="${reviewId}"]`).fadeOut(300, function() {
-		$(this).remove();
-	});
-}
+// 	// Remove from UI with animation
+// 	$(`.review - card[data - id="${reviewId}"]`).fadeOut(300, function() {
+// 		$(this).remove();
+// 	});
+// }
 
 
 

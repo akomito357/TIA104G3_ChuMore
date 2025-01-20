@@ -187,7 +187,7 @@
 
     async function reloadReservationAndRefreshTables(){
         try{
-            reservations = await getReservations(1071);
+            reservations = await getReservations(1019);
             renderCustomerTables();
         }catch(error){
             console.log(error);
@@ -196,7 +196,7 @@
     }
 
     async function initializePage(){
-        reservations = await getReservations(1071);
+        reservations = await getReservations(1019);
         renderCustomerTables();
 
         $('#search-general, #search-date, #search-status').on('input change', applyFilters);

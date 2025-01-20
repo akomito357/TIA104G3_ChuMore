@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>餐廳用餐紀錄系統</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-        <head th:insert="~{/included.html}" />
-    <!--     <head th:insert="~{/sidebar_merchant.html}" /> -->
+    <title>訂單管理</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <head th:insert="~{/included.html}" />
 
     <head th:insert="~{/header_merchant.html}" />
 
@@ -86,9 +86,19 @@
             border-bottom: 1px solid #ddd;
         }
 
-        th {
+        .table th {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
             text-align: center;
+            vertical-align: middle;
+        }
 
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+            height: 70px;
         }
 
 
@@ -99,10 +109,7 @@
 
 
 
-        td {
-            text-align: center;
 
-        }
 
 
         .pagination-btns {
@@ -266,15 +273,24 @@
         .sort-icon.desc::after {
             content: '↓';
         }
+
+        input[type="hidden"] {
+            display: none;
+        }
     </style>
+
 </head>
 
 <body>
+
+
+
+
     <main class="main">
         <div class="container mt-4">
             <!-- 調整區 -->
             <div class="control-section mb-4">
-                <h2 class="mb-3">用餐紀錄</h2>
+                <h2 class="mb-3">訂單管理</h2>
                 <form id="filterForm">
                     <div class="row g-3">
                         <!-- 日期範圍 -->
@@ -293,14 +309,7 @@
                                 </div>
                             </div>
 
-                            <!-- 時間範圍波浪符號 -->
-                            <!-- <span class="fw-bold dash-symbol text-nowrap me-3"
-                                    style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">
-                                    <i class="fas fa-window-minimize"></i>
-                                </span> -->
-                            <!-- <div class="dash-symbol"
-                                style="font-size: 1.5rem; margin-left: 10px; margin-right: 10px; white-space: nowrap;">~
-                            </div> -->
+
                             <!-- 結束日期與時間 -->
                             <div class="d-flex align-items-center me-3">
                                 <div class="me-3">
@@ -326,10 +335,6 @@
                                 </select>
                             </div>
 
-                            <div class="me-3">
-                                <label for="customerName" class="form-label">顧客姓名</label>
-                                <input type="text" class="form-control" id="memberName" placeholder="輸入顧客姓名">
-                            </div>
                         </div>
 
                     </div>
@@ -352,11 +357,12 @@
                                     </th>
                                     <th>時間</th>
                                     <th>桌號</th>
-                                    <th>消費者</th>
-                                    <th>用餐金額<span class="sort-icon" data-sort="totalPrice"><i
+                                    <th>用餐小計<span class="sort-icon" data-sort="subtotalPrice"><i
                                                 class="fas fa-sort"></i></span>
                                     </th>
                                     <th>餐點明細</th>
+                                    <th>結帳</th>
+
                                 </tr>
                             </thead>
                             <tbody id="resultTable">
@@ -395,11 +401,11 @@
     <script>
 
         function showTableOptionList() {
-            fetch(`/rests/ordertables/getTableNumberById`, {
+            fetch(`/ordertables/getTableNumberById`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(tableName => {
-                    console.log(tableName);
+                    // console.log(tableName);
 
                     let allTable = `<option value="">全部桌號</option>`;
                     let table_number = "";
@@ -413,11 +419,14 @@
 
         }
 
-
-
-        let currentSort = { field: "served_datetime", order: "desc" };
+        let today = new Date();
+        let todayDate = today.toISOString().split('T')[0];
+        let currentSort = { field: "served_datetime", order: "asc" };
         $(document).ready(function () {
 
+            generateTimeOptions(['startTime', 'endTime']);
+            $("input#startDate").val(todayDate);
+            $("input#endDate").val(todayDate);
 
             const tabs = $(".nav-link");
             const content = $(".tab-content");
@@ -438,7 +447,7 @@
             $(diningNextButton).on("click", function () {
                 const pageNumElement = $("#diningPageNum.page-num");
                 let page = pageNumElement.text();
-                // console.log(page)
+                console.log(page)
                 let pageIndex = parseInt(page) - 1;
 
                 const queryParam = createQueryParam(pageIndex + 1);
@@ -448,18 +457,20 @@
             showTableOptionList();
             const page = 0;
             const size = 10;
-            function loadDiningList(queryParam) {
 
-                fetch(`/rests/diningList?${queryParam.toString()}`, {
+            function loadDiningList(queryParam) {
+                fetch(`/rest/getUnpaidOrder?${queryParam}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
-                        console.log(response);
+                        // console.log(response);
+                        // console.log(queryParam.toString());
 
                         const pageData = response.data;
                         const diningList = pageData.content;
                         const totalPages = pageData.totalPages;
-                        console.log(diningList);
+                        // console.log(totalPages);
+                        // console.log(page);
 
                         let table_body = "";
                         diningList.forEach((orderMaster, index) => {
@@ -470,9 +481,15 @@
                                     <td>${date}</td>
                                     <td>${time}</td>
                                     <td value="${orderMaster.orderTableId}">${orderMaster.tableNumber}</td>
-                                    ${orderMaster.memberName ? `<td>${orderMaster.memberName}</td>` : `<td>未登入</td>`}
-                                    <td>${orderMaster.totalPrice}</td>
+                                    <td>${orderMaster.subtotalPrice}</td>
                                     <td><a href="#"><i class="fa-solid fa-arrow-up-right-from-square" data-orderId=${orderMaster.orderId}></i></a></td>
+                                    <td>
+                                        <form method="get" id="checkoutForm">
+                                            <input hidden type="text" value="${orderMaster.orderId}" name="orderId">
+                                            <button type="button" class="btn btn-primary mx-2 my-2">結帳</button>
+                                        </form>
+
+	                                </td>
                                 </tr>
                             
                             `;
@@ -492,8 +509,6 @@
                         );
                         renderPage(pageData.number, totalPages, "dining");
 
-                        generateTimeOptions(['startTime', 'endTime']);
-
 
                     })
                     .catch(error => {
@@ -501,10 +516,13 @@
                     });
 
             }
+
+            let todayStartDatetime = todayDate + "T00:00";
+            let todayEndDatetime = todayDate + "T23:59";
+
             const queryParam = new URLSearchParams({
-                startDatetime: "",
-                endDatetime: "",
-                memberName: "",
+                startDatetime: todayStartDatetime,
+                endDatetime: todayEndDatetime,
                 orderTableId: "",
                 page: page,
                 size: size,
@@ -513,44 +531,38 @@
 
             loadDiningList(queryParam);
 
+
+            $("#resultTable").on("click", ".btn.btn-primary", function () {
+                const orderId = $(this).closest("form").find("input[name='orderId']").val();
+                // console.log(orderId);
+                window.location.href = `/rest/orderMaster/getOne?orderId=${orderId}`;
+            });
+
+
+
             $("#searchButton").click(function () {
+
+                const today = new Date();
+                const todayDate = today.toISOString().split('T')[0];
 
                 const startDate = $("#startDate").val();
                 const startTime = $("#startTime").val();
                 const endDate = $("#endDate").val();
                 const endTime = $("#endTime").val();
 
-                let startDatetime;
-                
-                if(!startDate && startTime){
-					alert("請填寫日期");
-					return;
-                }else if(startDate && !startTime){
-	                startDatetime = String(startDate)+'T00:00';
-                }else if(startDate && startTime){
-	                startDatetime = String(startDate)+"T"+String(startTime);
-                } else {
-                	startDatetime = null;
-                }
-                
-                console.log(startDatetime);
 
-                let endDatetime;
-                
-                if (!endDate && endTime) {
-                    alert("請填寫日期");
-                    return;
-                } else if (endDate && !endTime) {
-                    endDatetime = String(endDate) + "T23:59";
-                } else if (endDate && endTime) {
-                    endDatetime = String(endDate) + "T" + String(endTime);
-                } else {
-                    endDatetime = null;
-                }
-                
-                console.log(endDatetime);
+                // $("input#startDate").val(todayDate);
+                let startDatetime = startDate ? String(startDate) + (startTime ? "T" + startTime : 'T00:00') : null;
+                // let startDatetime = startTime ? String(todayDate) + "T" + startTime : (startDate ? String(startDate) + (startTime ? "T" + startTime : 'T00:00') : null);
 
-                const memberName = $('#memberName').val().trim();
+
+                // $("input#endDate").val(todayDate);
+                // console.log(startDatetime);
+                let endDatetime = endDate ? String(endDate) + (endTime ? "T" + endTime : "T23:59") : null;
+                // let endDatetime = endTime ? String(todayDate) + "T" + endTime : (endDate ? String(endDate) + (endTime ? "T" + endTime : 'T00:00') : null);
+
+
+
                 const orderTableId = $('#orderTableId').val();
 
                 // console.log(tableNumber);
@@ -558,7 +570,6 @@
                 const queryParam = new URLSearchParams({
                     startDatetime: startDatetime,
                     endDatetime: endDatetime,
-                    memberName: memberName,
                     orderTableId: orderTableId || "",
                     page: page,
                     size: size,
@@ -576,7 +587,7 @@
             // 排序功能
             $('.sort-icon').click(function () {
                 const sortField = $(this).data('sort');
-                //                 console.log(sortField);
+                //console.log(sortField);
                 const currentOrder = currentSort.field === sortField && currentSort.order === 'asc' ? 'desc' : 'asc';
 
                 currentSort = { field: sortField, order: currentOrder };
@@ -609,6 +620,8 @@
                     const prevButton = $("#diningPreBtn.prev-btn");
                     const nextButton = $("#diningNextBtn.next-btn");
 
+                    // prevButton.prop("disabled", currentPage === 0);
+                    // nextButton.prop("disabled", currentPage === totalPages - 1);
                     if (totalPages === 0) {
                         prevButton.prop("disabled", true);
                         nextButton.prop("disabled", true);
@@ -632,7 +645,7 @@
             }).then(res => res.json())
                 .then(response => {
 
-                    console.log(response);
+                    // console.log(response);
                     const mealDetailList = response.orderItemListDto;
                     // console.log(mealDetailList);
 
@@ -673,8 +686,6 @@
                     mealSummary += `
                     <div class="summary">
                             <p class="text-gray-600">小計: <span id="discountPoints">${response.subtotalPrice}</span></p>
-                            <p class="text-gray-600">折扣點數: <span id="discountPoints">${response.pointUsed ? response.pointUsed : "0"}點   (＝折抵 ${response.pointUsed * 10} 元)</span></p>
-                            <p class="text-xl font-semibold">訂單總金額: <span id="totalAmount">${response.totalPrice}</span></p>
                     </div>
                     
                     `;
@@ -699,12 +710,10 @@
             modal.classList.remove("show");
         }
 
-
         function createQueryParam(page) {
             const params = {
                 startDatetime: $("#startDate").val() ? `${$("#startDate").val()}T${$("#startTime").val() || "00:00"}` : "",
                 endDatetime: $("#endDate").val() ? `${$("#endDate").val()}T${$("#endTime").val() || "23:59"}` : "",
-                memberName: $("#memberName").val() || "",
                 orderTableId: $("#orderTableId").val() || "",
                 page: page,
                 size: 10,
@@ -713,8 +722,6 @@
             return new URLSearchParams(params);
         }
 
-
-
         function generateTimeOptions(selectIds) {
             const startTime = 0; // 0:00
             const endTime = 24 * 60; // 24:00 in minutes
@@ -722,6 +729,7 @@
 
             selectIds.forEach((id) => {
                 const selectElement = document.getElementById(id);
+                // let count = 0;
                 for (let time = startTime; time < endTime; time += interval) {
                     const hours = Math.floor(time / 60).toString().padStart(2, '0');
                     const minutes = (time % 60).toString().padStart(2, '0');
@@ -730,12 +738,11 @@
                     option.value = timeValue;
                     option.textContent = timeValue;
                     selectElement.appendChild(option);
+                    // count++
                 }
+                // console.log(count);
             });
         }
-
-
-
     </script>
 </body>
 

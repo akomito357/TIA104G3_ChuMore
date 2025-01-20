@@ -38,11 +38,11 @@
 <!-- Customized Bootstrap Stylesheet -->
 <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
-<!-- <th:block th:insert="~{/included.html}" /> -->
+<th:block th:insert="~{/included.html}" />
 
-<th:block th:switch="${session.role}">
+<th:block th:switch="${session.userType}">
 	<th:block th:case="null" th:insert="~{/header_unlogin.html}" />
-	<th:block th:case="'ROLE_MEMBER'" th:insert="~{/header_member.html}" />
+	<th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
 	<th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
 </th:block>
 
@@ -82,6 +82,9 @@ h5.section-title{
 .rest-btn{
 	color: white;
 }
+#searchKeyword{
+	min-height: 100%;
+}
 </style>
 
 
@@ -98,7 +101,7 @@ h5.section-title{
 			</div>
 		</div>
 		<!-- Spinner End -->
-
+		<!-- <span th:text="${session.userType}"></span> -->
 
 		<!-- Navbar & Hero Start -->
 		<!-- <div class="container-xxl position-relative p-0">
@@ -138,7 +141,7 @@ h5.section-title{
 
 		<div class="container-xxl position-relative p-0">
 
-			<div class="container-xxl py-5 bg-dark hero-header " th:style="'background: linear-gradient(rgba(254, 162, 22, .19), rgba(249, 168, 63, .7)), url(/images/bg-hero.jpg)'">
+			<div class="container-xxl py-5 bg-dark hero-header " th:style="'background: linear-gradient(rgba(254, 162, 22, .19), rgba(249, 168, 63, .85)), url(/images/bg-hero.jpg)'">
 				<div class="container my-5 py-5">
 					<div class="row align-items-center g-5">
 						<div class="col-lg-12 text-center text-lg-start">
@@ -152,7 +155,7 @@ h5.section-title{
 												<div class="input-group search-bar">
 													<input type="text" class="form-control"
 														placeholder="搜尋餐廳美食" id="searchKeyword">
-													<button class="btn btn-primary search-button" type="button">
+													<button class="btn btn-primary search-button" type="button" id="search-button">
 														<i class="fas fa-search me-2"></i>搜尋
 													</button>
 												</div>
@@ -741,26 +744,26 @@ h5.section-title{
         document.getElementById('chatContainer').classList.add('d-none');
     }
 
-	// 判斷登入角色（header需要）
-	const role = "";
+	// // 判斷登入角色（header需要）
+	// const role = "";
 
-	async function getRole(){
-		const url = "/getRole";
-		try {
-			let res = await fetch(url, {
-				method: 'POST',
-			})
-			if (!res.ok){
-				throw new Error('cant get role');
-			}
-			// let resJson = await res.json();
-			console.log(res);
-			return res;
-		} catch(error){
-			console.log(error);
-			return [];
-		}
-	}
+	// async function getRole(){
+	// 	const url = "/getRole";
+	// 	try {
+	// 		let res = await fetch(url, {
+	// 			method: 'POST',
+	// 		})
+	// 		if (!res.ok){
+	// 			throw new Error('cant get role');
+	// 		}
+	// 		// let resJson = await res.json();
+	// 		console.log(res);
+	// 		return res;
+	// 	} catch(error){
+	// 		console.log(error);
+	// 		return [];
+	// 	}
+	// }
 
 	// 搜尋
 	$('#search-button').click(function () {
@@ -768,10 +771,10 @@ h5.section-title{
         const reservedDate = $('#searchDate').val();
         const reservedTime = $('#searchTime').val();
         const guestCount = $('#searchGuestCount').val();
-        window.location.href = `http://localhost:8080/searchPage?keyword=${keyword}&reservedDate=${reservedDate}&reservedTime=${reservedTime}&guestCount=${guestCount}`;
+        window.location.href = `/searchPage?keyword=${keyword}&reservedDate=${reservedDate}&reservedTime=${reservedTime}&guestCount=${guestCount}`;
     });
 
-	getRole();
+	// getRole();
 </script>
 </body>
 
