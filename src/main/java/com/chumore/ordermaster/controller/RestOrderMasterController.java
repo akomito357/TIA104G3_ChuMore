@@ -120,7 +120,6 @@ public class RestOrderMasterController {
 
 	// getOneForCheckOut / getOneForUpdate（連結到商家結帳確認頁面）
 	@GetMapping("getOne")
-	@ResponseBody
 	public String getOneForCheckOut(@RequestParam Integer orderId, Model model, HttpSession session) {
 //			session.setAttribute("orderId", 1);
 		if (session.getAttribute("restId") == null) {
@@ -202,7 +201,6 @@ public class RestOrderMasterController {
 	}
 
 	@PostMapping("checkout")
-	@ResponseBody
 	public String checkoutSubmit(@RequestParam Map<String, String> map) {
 		Integer memberId = Integer.valueOf(map.get("memberId"));
 		Integer orderId = Integer.valueOf(map.get("orderId"));
@@ -214,7 +212,7 @@ public class RestOrderMasterController {
 //		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
 		System.out.println(orderMaster);
 
-		return "success/n" + orderMaster;
+		return "redirect:/rests/order_manage";
 	}
 	
 	@GetMapping("dining/history")
