@@ -80,74 +80,145 @@ public class SecurityConfig {
 	@Bean
 	@Order(2)
 	public SecurityFilterChain memberRestaurantFilterChain(HttpSecurity http) throws Exception {
-		http.requestMatchers().antMatchers("/secure/**", "/auth/**", "/restaurant/**", "/").and()
-				.authenticationProvider(memberAuthenticationProvider()).authorizeRequests()
-				// 靜態資源
-				.antMatchers("/css/**", "/js/**", "/images/**", "/lib/**", "/webjars/**").permitAll()
-				// 公開頁面
-				.antMatchers("/", "/restaurant/**", "/search/**", "/auth/register/**", "/auth/login").permitAll()
-				// 受保護的路徑
-				.antMatchers("/secure/member/**").hasRole("MEMBER").antMatchers("/secure/rest/**").hasRole("RESTAURANT").antMatchers("/rests/**").hasRole("RESTAURANT")
-				.antMatchers("/auth/logout").authenticated().anyRequest().authenticated().and().formLogin()
-				.loginPage("/auth/login").loginProcessingUrl("/auth/login").usernameParameter("username")
-				.passwordParameter("password").successHandler((request, response, authentication) -> {
-					SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-					if (savedRequest != null) {
-						String targetUrl = savedRequest.getRedirectUrl();
-						// 檢查目標URL是否符合用戶角色
-						String role = authentication.getAuthorities().iterator().next().getAuthority();
-						boolean isValidUrl = ("ROLE_MEMBER".equals(role) && targetUrl.contains("/secure/member"))
-								|| ("ROLE_RESTAURANT".equals(role) && targetUrl.contains("/secure/rest"));
+	    http
+	        .requestMatchers()
+	            .antMatchers("/secure/**", "/auth/**", "/restaurant/**", "/")
+	        .and()
+	        .authenticationProvider(memberAuthenticationProvider())
+	        .authorizeRequests()
+	            // 靜態資源訪問許可
+	            .antMatchers("/css/**", "/js/**", "/images/**", "/lib/**", "/webjars/**").permitAll()
+	            // 公開頁面訪問許可
+	            .antMatchers("/", "/restaurant/**", "/search/**", "/auth/register/**", "/auth/login").permitAll()
+	            // 會員專用路徑
+	            .antMatchers("/secure/member/**").hasRole("MEMBER")
+	            // 餐廳專用路徑
+	            .antMatchers("/secure/rest/**", "/rests/**").hasRole("RESTAURANT")
+	            // 登出需要認證
+	            .antMatchers("/auth/logout").authenticated()
+	            .anyRequest().authenticated()
+	        .and()
+	        .formLogin()
+	            .loginPage("/auth/login")
+	            .loginProcessingUrl("/auth/login")
+	            .usernameParameter("username")
+	            .passwordParameter("password")
+	            .successHandler((request, response, authentication) -> {
+	                // 1. 檢查 returnUrl 參數
+	                String returnUrl = request.getParameter("returnUrl");
+	                
+	                // 2. 檢查已保存的請求
+	                SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+	                
+	                // 3. 獲取用戶角色
+	                String role = authentication.getAuthorities().iterator().next().getAuthority();
+	                
+	                // 4. 處理 returnUrl
+	                if (returnUrl != null && !returnUrl.isEmpty()) {
+	                    if (isValidReturnUrl(returnUrl, role)) {
+	                        response.sendRedirect(returnUrl);
+	                        return;
+	                    }
+	                }
+	                
+	                // 5. 處理 SavedRequest
+	                if (savedRequest != null) {
+	                    String targetUrl = savedRequest.getRedirectUrl();
+	                    if (isValidReturnUrl(targetUrl, role)) {
+	                        response.sendRedirect(targetUrl);
+	                        return;
+	                    }
+	                }
+	                
+	                // 6. 使用默認重定向
+	                if ("ROLE_MEMBER".equals(role)) {
+	                    response.sendRedirect("/secure/member/member_information");
+	                } else if ("ROLE_RESTAURANT".equals(role)) {
+	                    response.sendRedirect("/rests/rest_infomation_setting");
+	                }
+	            })
+	            .failureUrl("/auth/login")
+	            .permitAll()
+	        .and()
+	        .logout()
+	            .logoutUrl("/auth/logout")
+	            .logoutSuccessUrl("/auth/login")
+	            .deleteCookies("JSESSIONID")
+	            .clearAuthentication(true)
+	            .invalidateHttpSession(true)
+	            .permitAll()
+	        .and()
+	        .sessionManagement()
+	            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+	            .invalidSessionUrl("/auth/login")
+	            .maximumSessions(1)
+	            .maxSessionsPreventsLogin(true)
+	            .expiredUrl("/auth/login")
+	        .and()
+	        .and()
+	        .exceptionHandling()
+	            .authenticationEntryPoint((request, response, authException) -> {
+	                if (isAjaxRequest(request)) {
+	                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	                } else {
+	                    response.sendRedirect("/auth/login");
+	                }
+	            })
+	            .accessDeniedHandler((request, response, accessDeniedException) -> {
+	                if (isAjaxRequest(request)) {
+	                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	                } else {
+	                    response.sendRedirect("/auth/login");
+	                }
+	            })
+	        .and()
+	        .headers()
+	            .xssProtection()
+	            .and()
+	            .contentSecurityPolicy("script-src 'self' https://cdn.jsdelivr.net")
+	        .and()
+	        .and()
+	        .csrf().disable();
 
-						if (isValidUrl) {
-							response.sendRedirect(targetUrl);
-							return;
-						}
-					}
+	    return http.build();
+	}
 
-					// 如果沒有合適的保存請求，則根據角色重定向
-					String role = authentication.getAuthorities().iterator().next().getAuthority();
-					if ("ROLE_MEMBER".equals(role)) {
-						response.sendRedirect("/secure/member/member_information");
-					} else if ("ROLE_RESTAURANT".equals(role)) {
-						response.sendRedirect("/rests/rest_infomation_setting");
-					}
-				}).failureUrl("/auth/login").permitAll().and().logout().logoutUrl("/auth/logout")
-				.logoutSuccessUrl("/auth/login").deleteCookies("JSESSIONID").clearAuthentication(true)
-				.invalidateHttpSession(true).permitAll().and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).invalidSessionUrl("/auth/login")
-				.maximumSessions(1).maxSessionsPreventsLogin(true).expiredUrl("/auth/login").and().and()
-				.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
-					if (isAjaxRequest(request)) {
-						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-					} else {
-						response.sendRedirect("/auth/login");
-					}
-				}).accessDeniedHandler((request, response, accessDeniedException) -> {
-					if (isAjaxRequest(request)) {
-						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-					} else {
-						response.sendRedirect("/auth/login");
-					}
-				}).and().headers().xssProtection().and()
-				.contentSecurityPolicy("script-src 'self' https://cdn.jsdelivr.net").and().and().csrf().disable();
+	// 驗證返回URL是否合法
+	private boolean isValidReturnUrl(String url, String role) {
+	    // 基本安全檢查
+	    if (url == null || 
+	        url.isEmpty() || 
+	        !url.startsWith("/") || 
+	        url.contains("://") || 
+	        url.contains(";") || 
+	        url.contains("%")) {
+	        return false;
+	    }
 
-		return http.build();
+	    // 根據角色檢查允許的路徑
+	    if ("ROLE_MEMBER".equals(role)) {
+	        return url.startsWith("/secure/member/") || 
+	               url.startsWith("/member/") ||
+	               url.startsWith("/reservations/") ||
+	               url.startsWith("/orders/");
+	    } else if ("ROLE_RESTAURANT".equals(role)) {
+	        return url.startsWith("/secure/rest/") || 
+	               url.startsWith("/rests/");
+	    }
+
+	    return false;
 	}
 
 	// 判斷是否為 AJAX 請求
 	private boolean isAjaxRequest(HttpServletRequest request) {
-		return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+	    return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 	}
 
 	@Bean
 	@Order(3)
 	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 	    http.authorizeRequests()
-	        // 靜態資源存取許可
-	        .antMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-	        
-	        // 搜尋功能相關的完整路徑配置
+	        .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
 	        .antMatchers(
 	            "/search",
 	            "/search/**",
@@ -159,8 +230,6 @@ public class SecurityConfig {
 	            "/dailyReservations/**",
 	            "/getRestaurantByKeyword/**"
 	        ).permitAll()
-	        
-	        // 公開頁面存取許可
 	        .antMatchers(
 	            "/",
 	            "/restaurants/**",
@@ -175,31 +244,49 @@ public class SecurityConfig {
 	            "/getRandomRest/**",
 	            "/dailyReservations/**"
 	        ).permitAll()
-	        
-	        // 註冊相關頁面存取許可
 	        .antMatchers("/register/**").permitAll()
-	        
-	        // API 端點存取許可
 	        .antMatchers("/api/**").permitAll()
-	        
-	        // 會員專區存取權限
 	        .antMatchers("/member/**").hasRole("MEMBER")
-	        
-	        // 餐廳專區存取權限
 	        .antMatchers("/rests/**").hasRole("RESTAURANT")
-	        
-	        // 其他請求需要認證
 	        .anyRequest().authenticated()
 	        .and()
 	        .headers()
 	            .xssProtection()
 	            .and()
 	            .contentSecurityPolicy(
-	                "default-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
-	                "img-src 'self' data: https:; " +
-	                "font-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com"
+	                "default-src 'self' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com " +
+	                "https://maps.google.com; " +
+	                
+	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com " +
+	                "https://maps.google.com; " +
+	                
+	                "style-src 'self' 'unsafe-inline' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://stackpath.bootstrapcdn.com " +
+	                "https://maxcdn.bootstrapcdn.com; " +
+	                
+	                "img-src 'self' data: https: " +
+	                "https://maps.google.com " +
+	                "https://*.google.com; " +
+	                
+	                "frame-src 'self' " +
+	                "https://maps.google.com " +
+	                "https://www.google.com; " +
+	                
+	                "connect-src 'self' " +
+	                "https://maps.google.com " +
+	                "tel:*; " +
+	                
+	                "form-action 'self';"
 	            )
 	            .and()
 	        .and()
