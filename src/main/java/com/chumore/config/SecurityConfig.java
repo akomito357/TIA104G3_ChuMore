@@ -140,30 +140,71 @@ public class SecurityConfig {
 		return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 	}
 
-	// 修改默認的安全配置，允許訪問首頁和其他公開頁面
 	@Bean
 	@Order(3)
 	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-				// 允許訪問靜態資源
-				.antMatchers("/css/**", "/js/**", "/images/**").permitAll()
-				// 允許訪問首頁和其他公開頁面
-				.antMatchers("/", "/restaurants/**", "/location/**", "/orders/**", "/reservations/**",
-						"/cuisineTypes/**", "/notification/**", "/envImg/**", "/reviews/**", "/ws/**", "/searchPage/**", "/getRandomRest/**", "dailyReservations/**")
-				.permitAll()
-				// 允許訪問註冊相關頁面
-				.antMatchers("/register/**").permitAll()
-				// API 端點也需要允許訪問
-				.antMatchers("/api/**").permitAll()
-				// 設置 /member/** 路徑需要 MEMBER 角色
-				.antMatchers("/member/**").hasRole("MEMBER")
-				// 設置 /rest/** 路徑需要 RESTAURANT 角色
-				.antMatchers("/rests/**").hasRole("RESTAURANT")
-				// 其他路徑需要認證
-				.anyRequest().authenticated().and()
-				// 禁用 CSRF（根據需要開啟或關閉）
-				.csrf().disable();
+	    http.authorizeRequests()
+	        // 靜態資源存取許可
+	        .antMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+	        
+	        // 搜尋功能相關的完整路徑配置
+	        .antMatchers(
+	            "/search",
+	            "/search/**",
+	            "/searchPage",
+	            "/searchPage/**",
+	            "/restaurant/search/**",
+	            "/api/search/**",
+	            "/lucene/**",
+	            "/dailyReservations/**",
+	            "/getRestaurantByKeyword/**"
+	        ).permitAll()
+	        
+	        // 公開頁面存取許可
+	        .antMatchers(
+	            "/",
+	            "/restaurants/**",
+	            "/location/**",
+	            "/orders/**",
+	            "/reservations/**",
+	            "/cuisineTypes/**",
+	            "/notification/**",
+	            "/envImg/**",
+	            "/reviews/**",
+	            "/ws/**",
+	            "/getRandomRest/**",
+	            "/dailyReservations/**"
+	        ).permitAll()
+	        
+	        // 註冊相關頁面存取許可
+	        .antMatchers("/register/**").permitAll()
+	        
+	        // API 端點存取許可
+	        .antMatchers("/api/**").permitAll()
+	        
+	        // 會員專區存取權限
+	        .antMatchers("/member/**").hasRole("MEMBER")
+	        
+	        // 餐廳專區存取權限
+	        .antMatchers("/rests/**").hasRole("RESTAURANT")
+	        
+	        // 其他請求需要認證
+	        .anyRequest().authenticated()
+	        .and()
+	        .headers()
+	            .xssProtection()
+	            .and()
+	            .contentSecurityPolicy(
+	                "default-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
+	                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
+	                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com; " +
+	                "img-src 'self' data: https:; " +
+	                "font-src 'self' https://cdn.jsdelivr.net https://maxcdn.bootstrapcdn.com https://cdnjs.cloudflare.com"
+	            )
+	            .and()
+	        .and()
+	        .csrf().disable();
 
-		return http.build();
+	    return http.build();
 	}
 }
