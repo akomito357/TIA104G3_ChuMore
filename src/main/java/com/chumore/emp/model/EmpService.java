@@ -36,25 +36,24 @@ public class EmpService {
 
 	// 更新個人資料
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public void updateOwnBasicInfo(Integer empId, EmpBasicUpdateDTO dto) {
+	public void updateOwnBasicInfo(EmpVO empVO) {
 	    // 檢查是否存在相同電話或Email
-	    if (empRepository.existsByEmpPhoneAndEmpIdNot(dto.getEmpPhone(), empId)) {
+	    if (empRepository.existsByEmpPhoneAndEmpIdNot(empVO.getEmpPhone(), empVO.getEmpId())) {
 	        throw new IllegalArgumentException("此手機號碼已被使用");
 	    }
-	    if (empRepository.existsByEmpEmailAndEmpIdNot(dto.getEmpEmail(), empId)) {
+	    if (empRepository.existsByEmpEmailAndEmpIdNot(empVO.getEmpEmail(), empVO.getEmpId())) {
 	        throw new IllegalArgumentException("此Email已被使用");
 	    }
 
-	    // 獲取現有員工資料
-	    EmpVO emp = empRepository.findById(empId)
+	    // 取得原有資料
+	    EmpVO originalEmp = empRepository.findById(empVO.getEmpId())
 	            .orElseThrow(() -> new NoSuchElementException("找不到該員工資料"));
+	            
+	    // 只更新允許修改的欄位
+	    originalEmp.setEmpPhone(empVO.getEmpPhone());
+	    originalEmp.setEmpEmail(empVO.getEmpEmail());
 	    
-	    // 更新資料
-	    emp.setEmpPhone(dto.getEmpPhone());
-	    emp.setEmpEmail(dto.getEmpEmail());
-	    
-	    // 儲存更新
-	    empRepository.save(emp);
+	    empRepository.save(originalEmp);
 	}
 	@Transactional
 	public void changePassword(Integer empId, String currentPassword, String newPassword, String confirmPassword) {

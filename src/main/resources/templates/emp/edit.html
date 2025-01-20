@@ -8,8 +8,6 @@
 </head>
 <body>
     <div layout:fragment="content">
-        
-
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow-sm">
@@ -28,13 +26,22 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
 
-                        <form th:action="@{/emp/edit}" method="post" class="needs-validation" novalidate>
+                        <form th:action="@{/emp/edit}" method="post" th:object="${empVO}">
+                            <!-- 隱藏的必要欄位 -->
+                            <input type="hidden" th:field="*{empId}" />
+                            <input type="hidden" th:field="*{empRole}" />
+                            <input type="hidden" th:field="*{empAccountStatus}" />
+                            <input type="hidden" th:field="*{empHireDate}" />
+                            <input type="hidden" th:field="*{empPassword}" />
+                            <input type="hidden" th:field="*{empAccount}" />
+                            <input type="hidden" th:field="*{empName}" />
+                            
                             <!-- 姓名（唯讀） -->
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">姓名</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control-plaintext" 
-                                           th:value="${empInfo.empName}" readonly>
+                                           th:value="*{empName}" readonly>
                                 </div>
                             </div>
 
@@ -43,7 +50,7 @@
                                 <label class="col-sm-3 col-form-label">帳號</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control-plaintext" 
-                                           th:value="${empInfo.empAccount}" readonly>
+                                           th:value="*{empAccount}" readonly>
                                 </div>
                             </div>
 
@@ -56,11 +63,14 @@
                                             <i class="bi bi-phone"></i>
                                         </span>
                                         <input type="text" class="form-control" id="empPhone" 
-                                               name="empPhone" th:value="${empInfo.empPhone}" 
-                                               pattern="^09\d{8}$" required>
+                                               th:field="*{empPhone}" 
+                                               onclick="hideContent('empPhone.errors');">
                                     </div>
-                                    <div class="invalid-feedback">
-                                        請輸入有效的手機號碼（格式：09xxxxxxxx）
+                                    <div th:if="${#fields.hasErrors('empPhone')}" 
+                                         class="text-danger" 
+                                         id="empPhone.errors">
+                                        <span th:each="err : ${#fields.errors('empPhone')}" 
+                                              th:text="${err}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -74,10 +84,14 @@
                                             <i class="bi bi-envelope"></i>
                                         </span>
                                         <input type="email" class="form-control" id="empEmail" 
-                                               name="empEmail" th:value="${empInfo.empEmail}" required>
+                                               th:field="*{empEmail}" 
+                                               onclick="hideContent('empEmail.errors');">
                                     </div>
-                                    <div class="invalid-feedback">
-                                        請輸入有效的Email地址
+                                    <div th:if="${#fields.hasErrors('empEmail')}" 
+                                         class="text-danger" 
+                                         id="empEmail.errors">
+                                        <span th:each="err : ${#fields.errors('empEmail')}" 
+                                              th:text="${err}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -93,6 +107,24 @@
                                     </a>
                                 </div>
                             </div>
+
+                            <!-- JavaScript for alert -->
+                            <script th:inline="javascript">
+                                // 當表單提交時執行
+                                document.querySelector('form').addEventListener('submit', function(event) {
+                                    // 如果表單验证通过
+                                    if(this.checkValidity()) {
+                                        // 防止表單立即提交
+                                        event.preventDefault();
+                                        
+                                        // 先彈出提示
+                                        alert('修改成功！');
+                                        
+                                        // 然後提交表單
+                                        this.submit();
+                                    }
+                                });
+                            </script>
                         </form>
                     </div>
                 </div>
@@ -103,25 +135,10 @@
     <!-- 頁面特定的 JavaScript -->
     <th:block layout:fragment="script">
         <script>
-            // 表單驗證
-            (function() {
-                'use strict'
-                
-                // 取得所有需要驗證的表單
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // 對每個表單進行驗證
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
+            // 清除提示信息
+            function hideContent(errorId) {
+                document.getElementById(errorId).style.display = "none";
+            }
         </script>
     </th:block>
 </body>
