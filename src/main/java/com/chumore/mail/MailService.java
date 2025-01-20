@@ -25,6 +25,7 @@ public class MailService {
     private String confirmationBaseUrl;
 
 
+    // 寄出確認信
     public void sendConfirmationMail(ReservationVO reservation , String token) throws MessagingException {
             // thymeleaf 變數傳送
             Context context = new Context();
