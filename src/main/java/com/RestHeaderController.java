@@ -35,13 +35,13 @@ public class RestHeaderController {
 	// 訂位紀錄
 	@GetMapping("rest_reservations")
 	public String toRestReservations() {
-		return "secure/reservation/restaurant_reservations";
+		return "secure/rest/reservation/restaurant_reservations";
 	}
 	
 	// 訂位設定
 	@GetMapping("reserved_limit_setting")
 	public String toReservedLimitSetting() {
-		return "secure/reservation/reserved_limit_setting";
+		return "secure/rest/reservation/reserved_limit_setting";
 	}
 	
 	
