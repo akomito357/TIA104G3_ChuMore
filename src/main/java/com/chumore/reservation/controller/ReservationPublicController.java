@@ -1,8 +1,29 @@
 package com.chumore.reservation.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.chumore.mail.MailService;
 import com.chumore.member.model.MemberService;
 import com.chumore.member.model.MemberVO;
+import com.chumore.notification.model.NotificationService;
 import com.chumore.reservation.model.ReservationService;
 import com.chumore.reservation.model.ReservationVO;
 import com.chumore.rest.model.RestService;
@@ -10,21 +31,9 @@ import com.chumore.rest.model.RestVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/reservations")
@@ -49,6 +58,9 @@ public class ReservationPublicController {
     private MailService mailService;
 
     private final JedisPool jedisPool;
+    
+    @Autowired
+    private NotificationService notificationSvc;
 
     public ReservationPublicController(JedisPool jedisPool)  {
         this.jedisPool = jedisPool;
@@ -154,13 +166,15 @@ public class ReservationPublicController {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
         ReservationVO reservation = null;
+        int restId = 0; //
+        int memberId = 0; //
 
         try {
             // 過濾 JSON 中的無效欄位
             ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(reservationJson);
             jsonNode.remove(List.of("memberName", "restName", "memberGender", "rest"));
-            int restId = jsonNode.get("restId").asInt(); // 獲取 restId
-            int memberId = jsonNode.get("memberId").asInt(); // 獲取 memberId
+            restId = jsonNode.get("restId").asInt(); // 獲取 restId
+            memberId = jsonNode.get("memberId").asInt(); // 獲取 memberId
             jsonNode.remove("restId");
             jsonNode.remove("memberId");
             // 將過濾後的 JSON 轉換為 ReservationVO
@@ -188,6 +202,10 @@ public class ReservationPublicController {
         System.out.println(reservation);
         // 新增訂位
         ReservationVO newReservation = reservationService.addReservation(reservation);
+        
+        // 通知
+        String message = notificationSvc.confirmReservation(Integer.valueOf(restId).toString(), Integer.valueOf(memberId).toString());
+        notificationSvc.notifyToRest(Integer.valueOf(restId).toString(), message);
 
         // 刪除 redis 中的 token
         try{
