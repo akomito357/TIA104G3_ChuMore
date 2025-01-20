@@ -125,7 +125,7 @@ public class ReservationPublicController {
     // 訂位頁面
     @GetMapping("/reservation")
     public String reservationPage(){
-        return "public/reservation/reservation_test";
+        return "public/reservation/reservation";
     }
 
 

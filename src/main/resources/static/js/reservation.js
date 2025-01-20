@@ -5,6 +5,24 @@ $(document).ready(function() {
     const reservationDate = urlParams.get("reservationDate");
     const reservationTime = urlParams.get("reservationTime");
     const guestCount = urlParams.get("guestCount");
+
+    if (reservationDate) {
+        $('#reservedDate').val(reservationDate);
+    }
+
+    if (guestCount) {
+        $('#guestCount').val(guestCount);
+    }
+
+    if(restId){
+        loadRestInfo(restId);
+        initializeImageGrid(restId);
+        // 初始化時段按鈕
+        updateTimeSlots(restId);
+    }
+
+
+
     // 評論相關函數
     function renderStars(rating) {
         let stars = '';
@@ -420,6 +438,9 @@ $(document).ready(function() {
                 }
             );
             if(!res.ok){
+                if(res.status === 403){
+                    window.location.href = '/auth/login';
+                }
                 throw new Error('提交失敗！狀態碼：' + res.status);
             }
 
@@ -429,7 +450,6 @@ $(document).ready(function() {
             document.close();
         }catch(error){
             console.log(error.message);
-            alert('提交失敗，請稍後再試！');
         }
 
     }
@@ -438,11 +458,11 @@ $(document).ready(function() {
     async function loadRestInfo(restId){
         let restData = await getRestData(restId);
         let businessHours = await getRestFormattedBusinessHours(restId);
-
         let restNameEl = $('#restName');
         let restAddressEl = $('#restAddress');
         let restPhoneEl = $('#restPhone');
         let restBusinessHoursEl = $('#restBusinessHours');
+        let restIntroEl = $('#restIntro');
         let cuisineTypeEl = $('#cuisineType');
         let navButtonEl = $('#navButton');
         let callButtonEl = $('#callButton');
@@ -463,6 +483,7 @@ $(document).ready(function() {
         cuisineTypeEl.text(restData.cuisineTypeName);
         let businessHoursText = businessHours.join(', ');
         restBusinessHoursEl.text(businessHoursText);
+        restIntroEl.text(restData.restIntro);
     }
 
 

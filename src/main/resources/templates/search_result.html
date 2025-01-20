@@ -109,6 +109,11 @@
             border: 1px solid #d6d6d6 !important;
         }
     </style>
+    <th:block th:switch="${session.userType}">
+        <th:block th:case="null" th:insert="~{/header_unlogin.html}" />
+        <th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
+        <th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
+    </th:block>
 </head>
 <body>
 <!-- 頂部空白區域 -->
