@@ -15,6 +15,7 @@
 <!-- 其他自訂的 head: included.html, header_merchant.html 等 -->
 <head th:insert="~{/included.html}"></head>
 <head th:insert="~{/header_merchant.html}"></head>
+
 </head>
 
 <body>
@@ -207,56 +208,104 @@ $(document).ready(function() {
 
     $('#cancelButton').click(function() {
         if (confirm('確定要取消編輯？未儲存的修改將會遺失。')) {
-            setReadOnlyMode(true);
+        	const form = $('#restaurantForm');
+            form.removeClass('was-validated');
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+            setReadOnlyMode(true);	
             // 重新載入原始資料
             loadRestaurantData();
         }
     });
-
+    $('#memberPhone, #restaurantPhone').attr({
+        'pattern': '\\d{10}',
+        'title': '請輸入10碼數字',
+        'oninvalid': 'this.setCustomValidity("電話必須是10碼數字")',
+        'oninput': 'this.setCustomValidity("")'
+    });
     // 表單送出（更新資料）
-    $('#restaurantForm').on('submit', async function(e) {
-        e.preventDefault();
-        if (!this.checkValidity()) {
-            e.stopPropagation();
-            $(this).addClass('was-validated');
+$('#restaurantForm').on('submit', async function(e) {
+    e.preventDefault();
+    
+    // 驗證電話號碼格式
+    const merchantPhone = $('#memberPhone').val();
+    const restPhone = $('#restaurantPhone').val();
+    
+    // 創建錯誤訊息陣列
+    const errors = [];
+    
+    // 驗證負責人電話
+    if (!/^\d{10}$/.test(merchantPhone)) {
+        errors.push('負責人電話必須是10碼數字');
+        $('#memberPhone').addClass('is-invalid');
+        // 如果還沒有錯誤提示元素，則新增一個
+        if ($('#memberPhone-error').length === 0) {
+            $('#memberPhone').after('<div id="memberPhone-error" class="invalid-feedback">負責人電話必須是10碼數字</div>');
+        }
+    } else {
+        $('#memberPhone').removeClass('is-invalid');
+        $('#memberPhone-error').remove();
+    }
+    
+    // 驗證餐廳電話
+    if (!/^\d{10}$/.test(restPhone)) {
+        errors.push('餐廳電話必須是10碼數字');
+        $('#restaurantPhone').addClass('is-invalid');
+        // 如果還沒有錯誤提示元素，則新增一個
+        if ($('#restaurantPhone-error').length === 0) {
+            $('#restaurantPhone').after('<div id="restaurantPhone-error" class="invalid-feedback">餐廳電話必須是10碼數字</div>');
+        }
+    } else {
+        $('#restaurantPhone').removeClass('is-invalid');
+        $('#restaurantPhone-error').remove();
+    }
+    
+    // 如果有任何錯誤，阻止表單提交
+    if (errors.length > 0) {
+        e.stopPropagation();
+        return;
+    }
+
+    if (!this.checkValidity()) {
+        e.stopPropagation();
+        $(this).addClass('was-validated');
+        return;
+    }
+    
+    try {
+        const currentInfo = await fetch('/rests/getOneRest', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!currentInfo.ok) {
+            throw new Error('無法取得使用者餐廳資訊');
+        }
+        const data = await currentInfo.json();
+        const restId = data.restId; 
+
+        const cuisineTypeId = $('#cuisineTypeEdit').val();
+        if (!cuisineTypeId) {
+            alert('請選擇料理類型');
             return;
         }
-        
-        try {
-            const currentInfo = await fetch('/rests/getOneRest', {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' }
-            });
 
-            if (!currentInfo.ok) {
-                throw new Error('無法取得使用者餐廳資訊');
-            }
-            const data = await currentInfo.json();
-            const restId = data.restId; 
-
-
-            const cuisineTypeId = $('#cuisineTypeEdit').val();
-            if (!cuisineTypeId) {
-                alert('請選擇料理類型');
-                return;
-            }
-
-            const restData = {
-                restId: restId,
-                merchantEmail: $('#memberEmail').val(),
-                merchantName: $('#memberName').val(),
-                phoneNumber: $('#memberPhone').val(),
-                restName: $('#restaurantName').val(),
-                restRegist: $('#businessId').val(),
-                restPhone: $('#restaurantPhone').val(),
-                cuisineTypeId: parseInt(cuisineTypeId),
-                restCity: $('#cityEdit').val(),
-                restDist: $('#districtEdit').val(),
-                restAddress: $('#address').val(),
-                restIntro: $('#restaurantIntro').val(),
-                businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
-            };
+        const restData = {
+            restId: restId,
+            merchantEmail: $('#memberEmail').val(),
+            merchantName: $('#memberName').val(),
+            phoneNumber: $('#memberPhone').val(),
+            restName: $('#restaurantName').val(),
+            restRegist: $('#businessId').val(),
+            restPhone: $('#restaurantPhone').val(),
+            cuisineTypeId: parseInt(cuisineTypeId),
+            restCity: $('#cityEdit').val(),
+            restDist: $('#districtEdit').val(),
+            restAddress: $('#address').val(),
+            restIntro: $('#restaurantIntro').val(),
+            businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
+        };
 
 
 			const oldPassword = $('#oldPassword').val();
@@ -284,7 +333,7 @@ $(document).ready(function() {
             });
             if (!restResponse.ok) {
                 const errorData = await restResponse.json();
-                throw new Error(errorData.message || '餐廳資料更新失敗');
+                throw new Error('餐廳資料更新失敗');
             }
 
 
@@ -317,7 +366,7 @@ $(document).ready(function() {
             });
 
             const updatePromises = tableData.map(tbl =>
-                fetch('rests/tableType/updateTableCount', {
+                fetch('/rests/tableType/updateTableCount', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -333,7 +382,7 @@ $(document).ready(function() {
             const responseData = await restResponse.json();
             
             if (!responseData.success) {
-                alert(responseData.message || '更新失敗');
+                alert('更新失敗，格式輸入錯誤');
                 return;
             }
             $('#oldPassword').val('');
@@ -346,7 +395,7 @@ $(document).ready(function() {
             loadRestaurantData(); 
         } catch (error) {
             console.error('Error updating restaurant and table types:', error);
-            alert('更新失敗：' + (error.message || '發生未知錯誤'));
+            alert('更新失敗：' + error.message);
         }
     });
 
@@ -366,6 +415,8 @@ $(document).ready(function() {
             $('[id^="table"]').prop('readonly', false);
             $('.edit-only').show();
             $('.view-only').hide();
+            
+        	$('#businessStatusEdit').prop('disabled', true).addClass('read-only-field');
         }
     }
 
@@ -396,7 +447,7 @@ $(document).ready(function() {
             $('#restaurantName').val(data.restName);
             $('#businessId').val(data.restRegist);
             $('#restaurantPhone').val(data.restPhone);
-
+			
             // 料理類型
             $('#cuisineTypeDisplay, #cuisineTypeEdit').val(data.cuisineTypeName);
 
@@ -410,8 +461,10 @@ $(document).ready(function() {
 
             $('#address').val(data.restAddress);
             $('#restaurantIntro').val(data.restIntro);
+            
             const businessStatus = data.businessStatus === 1 ? 'open' : 'closed';
             $('#businessStatusDisplay, #businessStatusEdit').val(businessStatus);
+            $('#businessStatusEdit').prop('disabled', true).addClass('read-only-field');
 
             // 依序載入其他
             loadTableTypes();
@@ -424,6 +477,15 @@ $(document).ready(function() {
             console.error(error);
         });
     }
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        select.read-only-field:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+    `;
+    document.head.appendChild(style);
 
     function loadCuisineTypes() {
         fetch('/cuisineTypes/getAllCuisineType', {
