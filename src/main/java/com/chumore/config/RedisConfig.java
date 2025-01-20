@@ -33,7 +33,9 @@ public class RedisConfig {
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
 		config.setMaxWaitMillis(maxWaitMillis);
-		
+
+		config.setJmxEnabled(false);
+
 		return new JedisPool(config, redisHost, redisPort);
 	}
 	
