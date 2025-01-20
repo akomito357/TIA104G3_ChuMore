@@ -33,89 +33,63 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
 
-                        <form th:action="@{/emp/admin/add}" method="post" th:object="${empDTO}" class="needs-validation" novalidate>
+                        <form th:action="@{/emp/admin/add}" method="post" th:object="${empDTO}" enctype="multipart/form-data">
                             <div class="row g-3">
                                 <!-- 員工姓名 -->
                                 <div class="col-md-6">
                                     <label for="empName" class="form-label">姓名 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="empName" th:field="*{empName}"
-                                           th:classappend="${#fields.hasErrors('empName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}">
-                                        請輸入有效的員工姓名
-                                    </div>
-                                    <small class="form-text text-muted">員工姓名應為中文字且長度大於2</small>
+                                    <input type="text" class="form-control" id="empName" th:field="*{empName}" onclick="hideContent('empName.errors');" />
+                                    <span th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}" class="text-danger" id="empName.errors"></span>
                                 </div>
 
                                 <!-- 員工帳號 -->
                                 <div class="col-md-6">
                                     <label for="empAccount" class="form-label">帳號 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="empAccount" th:field="*{empAccount}"
-                                           th:classappend="${#fields.hasErrors('empAccount')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empAccount')}" th:errors="*{empAccount}">
-                                        請輸入有效的帳號
-                                    </div>
-                                    <small class="form-text text-muted">帳號只能包含英文字母和數字，長度6-50字元</small>
+                                    <input type="text" class="form-control" id="empAccount" th:field="*{empAccount}" onclick="hideContent('empAccount.errors');" />
+                                    <span th:if="${#fields.hasErrors('empAccount')}" th:errors="*{empAccount}" class="text-danger" id="empAccount.errors"></span>
                                 </div>
 
                                 <!-- 手機號碼 -->
                                 <div class="col-md-6">
                                     <label for="empPhone" class="form-label">手機 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="empPhone" th:field="*{empPhone}"
-                                           th:classappend="${#fields.hasErrors('empPhone')} ? 'is-invalid'" required
-                                           pattern="^09\d{8}$">
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}">
-                                        請輸入有效的手機號碼
-                                    </div>
-                                    <small class="form-text text-muted">請輸入正確的台灣手機號碼格式:09XXXXXXXX</small>
+                                    <input type="text" class="form-control" id="empPhone" th:field="*{empPhone}" onclick="hideContent('empPhone.errors');" />
+                                    <span th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}" class="text-danger" id="empPhone.errors"></span>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="col-md-6">
                                     <label for="empEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="empEmail" th:field="*{empEmail}"
-                                           th:classappend="${#fields.hasErrors('empEmail')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}">
-                                        請輸入有效的Email地址
-                                    </div>
-                                    <small class="form-text text-muted">請輸入正確的Email格式</small>
+                                    <input type="email" class="form-control" id="empEmail" th:field="*{empEmail}" onclick="hideContent('empEmail.errors');" />
+                                    <span th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}" class="text-danger" id="empEmail.errors"></span>
                                 </div>
 
                                 <!-- 權限角色 -->
                                 <div class="col-md-6">
                                     <label for="empRole" class="form-label">權限角色 <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="empRole" th:field="*{empRole}"
-                                            th:classappend="${#fields.hasErrors('empRole')} ? 'is-invalid'" required>
+                                    <select class="form-select" id="empRole" th:field="*{empRole}" onclick="hideContent('empRole.errors');">
                                         <option value="">請選擇角色</option>
                                         <option value="0">一般員工</option>
                                         <option value="1">管理員</option>
                                     </select>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empRole')}" th:errors="*{empRole}">
-                                        請選擇權限角色
-                                    </div>
+                                    <span th:if="${#fields.hasErrors('empRole')}" th:errors="*{empRole}" class="text-danger" id="empRole.errors"></span>
                                 </div>
 
                                 <!-- 帳號狀態 -->
                                 <div class="col-md-6">
                                     <label for="empAccountStatus" class="form-label">帳號狀態 <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="empAccountStatus" th:field="*{empAccountStatus}"
-                                            th:classappend="${#fields.hasErrors('empAccountStatus')} ? 'is-invalid'" required>
+                                    <select class="form-select" id="empAccountStatus" th:field="*{empAccountStatus}" onclick="hideContent('empAccountStatus.errors');">
                                         <option value="">請選擇狀態</option>
                                         <option value="1">啟用</option>
                                         <option value="0">停用</option>
                                     </select>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empAccountStatus')}" th:errors="*{empAccountStatus}">
-                                        請選擇帳號狀態
-                                    </div>
+                                    <span th:if="${#fields.hasErrors('empAccountStatus')}" th:errors="*{empAccountStatus}" class="text-danger" id="empAccountStatus.errors"></span>
                                 </div>
 
                                 <!-- 到職日 -->
                                 <div class="col-md-6">
                                     <label for="empHireDate" class="form-label">到職日 <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="empHireDate" th:field="*{empHireDate}"
-                                           th:classappend="${#fields.hasErrors('empHireDate')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('empHireDate')}" th:errors="*{empHireDate}">
-                                        請選擇到職日期
-                                    </div>
+                                    <input type="date" class="form-control" id="empHireDate" th:field="*{empHireDate}" onclick="hideContent('empHireDate.errors');" />
+                                    <span th:if="${#fields.hasErrors('empHireDate')}" th:errors="*{empHireDate}" class="text-danger" id="empHireDate.errors"></span>
                                 </div>
 
                                 <!-- 按鈕群組 -->
@@ -138,28 +112,12 @@
         </div>
     </div>
 
-    <!-- 表單驗證 JavaScript -->
-    <th:block layout:fragment="script">
-        <script>
-            (function () {
-                'use strict'
-                
-                // 取得所有需要驗證的表單
-                var forms = document.querySelectorAll('.needs-validation')
-
-                // 防止表單提交並觸發驗證
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
-        </script>
-    </th:block>
+    <!-- 表單 JavaScript -->
+    <script>
+        // 清除提示信息
+        function hideContent(errorId) {
+            document.getElementById(errorId).style.display = "none";
+        }
+    </script>
 </body>
 </html>

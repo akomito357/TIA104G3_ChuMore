@@ -53,42 +53,52 @@ public class EmpController {
 		return "emp/profile";
 	}
 
-	// 前往編輯個人資料頁面
 	@GetMapping("/edit")
 	public String getEditForm(Model model, Authentication auth) {
-		String account = auth.getName();
-		EmpVO emp = empService.getEmpByAccount(account);
-		EmpBasicViewDTO empInfo = empService.getOwnBasicInfo(emp.getEmpId());
-
-		model.addAttribute("empInfo", empInfo);
-		return "emp/edit";
+	    try {
+	        String account = auth.getName();
+	        EmpVO emp = empService.getEmpByAccount(account);
+	        // 清空密碼欄位，避免安全問題
+	        emp.setEmpPassword(null);
+	        model.addAttribute("empVO", emp);
+	        return "emp/edit";
+	    } catch (Exception e) {
+	        model.addAttribute("error", "載入資料時發生錯誤：" + e.getMessage());
+	        return "redirect:/emp/profile";
+	    }
 	}
 
-	// 更新個人資料
 	@PostMapping("/edit")
-	public String updateProfile(@Valid EmpBasicUpdateDTO dto, 
+	public String updateProfile(@Valid @ModelAttribute("empVO") EmpVO empVO, 
 	                          BindingResult result, 
-	                          Authentication auth, 
-	                          Model model,
-	                          RedirectAttributes redirectAttr) {
+	                          Model model) {
+	    // 記錄接收到的數據
+	    log.info("Received empVO for update: {}", empVO);
+
 	    if (result.hasErrors()) {
-	        model.addAttribute("empInfo", dto);
+	        log.warn("Validation errors: {}", result.getAllErrors());
 	        return "emp/edit";
 	    }
 
 	    try {
-	        String account = auth.getName();
-	        EmpVO emp = empService.getEmpByAccount(account);
-	        empService.updateOwnBasicInfo(emp.getEmpId(), dto);
-	        redirectAttr.addFlashAttribute("message", "資料更新成功！");
-	        return "redirect:/emp/profile";  // 修改這裡，使用redirect
+	        empService.updateOwnBasicInfo(empVO);
+	        return "redirect:/emp/profile";
 	    } catch (IllegalArgumentException e) {
-	        model.addAttribute("error", e.getMessage());
-	        model.addAttribute("empInfo", dto);
-	        return "emp/edit";  // 發生錯誤時返回編輯頁面
+	        log.error("Update failed with IllegalArgumentException: {}", e.getMessage());
+	        if (e.getMessage().contains("手機")) {
+	            result.rejectValue("empPhone", "error.empPhone", e.getMessage());
+	        } else if (e.getMessage().contains("Email")) {
+	            result.rejectValue("empEmail", "error.empEmail", e.getMessage());
+	        } else {
+	            model.addAttribute("error", e.getMessage());
+	        }
+	        return "emp/edit";
+	    } catch (Exception e) {
+	        log.error("Unexpected error during update: ", e);
+	        model.addAttribute("error", "系統發生錯誤：" + e.getMessage());
+	        return "emp/edit";
 	    }
 	}
-
 	@GetMapping("/dashboard")
 	public String showDashboard(Model model) {
 		// 取得各項數量

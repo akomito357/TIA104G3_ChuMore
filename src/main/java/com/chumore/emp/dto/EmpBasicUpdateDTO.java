@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmpBasicUpdateDTO {
@@ -28,4 +28,25 @@ public class EmpBasicUpdateDTO {
             empVO.getEmpEmail()
         );
     }
+
+	public String getEmpPhone() {
+		return empPhone;
+	}
+
+	public void setEmpPhone(String empPhone) {
+		this.empPhone = empPhone;
+	}
+
+	public String getEmpEmail() {
+		return empEmail;
+	}
+
+	public void setEmpEmail(String empEmail) {
+		this.empEmail = empEmail;
+	}
+
+	@Override
+	public String toString() {
+		return "EmpBasicUpdateDTO [empPhone=" + empPhone + ", empEmail=" + empEmail + "]";
+	}
 }
