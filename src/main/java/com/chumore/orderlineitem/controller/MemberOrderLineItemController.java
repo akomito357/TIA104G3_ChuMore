@@ -25,7 +25,7 @@ import com.chumore.product.model.ProductVO;
 import com.chumore.product.model.Product_Service;
 
 @RestController
-@RequestMapping("member/orderLineItem")
+@RequestMapping("/member/orderLineItem")
 public class MemberOrderLineItemController {
 
 	@Autowired
