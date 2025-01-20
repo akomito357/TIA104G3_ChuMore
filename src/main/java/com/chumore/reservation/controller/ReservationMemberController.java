@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -69,8 +70,6 @@ public class ReservationMemberController {
 
         System.out.println(reservation.getRest().getRestName());
         model.addAttribute("reservation", reservation);
-
-
 
         return "secure/reservation/reservation_confirm";
     }

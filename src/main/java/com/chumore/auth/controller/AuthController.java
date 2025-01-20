@@ -99,6 +99,7 @@ public class AuthController {
             session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
             session.setAttribute("loginTime", LocalDateTime.now());
             System.out.println("memberId:" + user.getMemberId());
+
             return "redirect:/secure/member/member_information";
         }
 

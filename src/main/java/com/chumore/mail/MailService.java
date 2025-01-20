@@ -37,7 +37,7 @@ public class MailService {
             context.setVariable("confirmationLink", confirmationBaseUrl + "?token=" + token); // 帶入token
 
             // 確認信模板
-            String htmlContent = templateEngine.process("back-end/reservation/reservation_confirmation_mail",context);
+            String htmlContent = templateEngine.process("public/reservation/reservation_confirmation_mail",context);
 
             // 設定信件 metadata
             MimeMessage message = mailSender.createMimeMessage();
