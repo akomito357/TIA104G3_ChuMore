@@ -8,7 +8,7 @@ async function getRestInfo() {
     };
 
     try{
-        let res = await fetch(`/getRandomRest/` + count, {
+        let res = await fetch(`/restaurants/getRandomRest/` + count, {
             method: 'Post',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -16,12 +16,12 @@ async function getRestInfo() {
             body: JSON.stringify(count),
         });
         if (!res.ok){
-            return {
-                success: false,
-                status: res.status,
-                message: errorData.message || "error occured",
-                errorData: errorData
-            }
+            // return {
+            //     success: false,
+            //     status: res.status,
+            //     errorData: errorData,
+            //     message: errorData.message || "error occured",
+            // }
         }       
         let rests = await res.json();
         console.log(rests);
@@ -33,7 +33,7 @@ async function getRestInfo() {
 
 }
 
-// getRestInfo();
+getRestInfo();
 
 // 搜尋
 $('#search-button').click(function () {
