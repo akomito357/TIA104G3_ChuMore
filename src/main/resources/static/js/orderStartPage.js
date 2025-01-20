@@ -1,5 +1,5 @@
 
-console.log("aaaa");
+// console.log("aaaa");
 
 function startOrder(){
     const startOrderBtn = document.getElementById("startOrderBtn");

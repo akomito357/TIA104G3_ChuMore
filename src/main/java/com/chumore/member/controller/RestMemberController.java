@@ -14,7 +14,7 @@ import com.chumore.member.model.MemberVO;
 import com.chumore.util.ResponseUtil;
 
 @Controller("restOrderMemberController")
-@RequestMapping("/rest/member")
+@RequestMapping("/rests/member")
 public class RestMemberController {
 	
 	@Autowired

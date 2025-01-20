@@ -44,7 +44,7 @@ $(".servicebell-notification").click(async function(){
     console.log(bellMsgs);
     let bellMsgListEle = $(".servicebell-notification-list");
 
-    if (bellMsgs != undefined && bellMsgs.length != 0){
+    if (bellMsgs != undefined && Object.keys(bellMsgs).length != 0){
         bellMsgListEle.empty();
         bellMsgs = Object.values(bellMsgs);
         console.log("bell");
@@ -82,9 +82,10 @@ $(".checkout-notification").click(async function(){
     console.log(checkOutMsgs);
     let checkOutMsgListEle = $(".checkout-notification-list");
     
-    if (checkOutMsgs != undefined){
+    if (checkOutMsgs != undefined && Object.keys(checkOutMsgs).length != 0){
         checkOutMsgListEle.empty();
         checkOutMsgs = Object.values(checkOutMsgs);
+        console.log(checkOutMsgs);
     
         for (let i = 0 ; i < checkOutMsgs.length ; i++){
             console.log(JSON.parse(checkOutMsgs[i]));
@@ -119,7 +120,7 @@ $(".reservation-notification").click(async function(){
     console.log(msgs);
     let msgListEle = $(".reservation-notification-list");
     
-    if (msgs != undefined){
+    if (msgs != undefined && Object.keys(msgs).length > 0){
         msgListEle.empty();
         msgs = Object.values(msgs);
     

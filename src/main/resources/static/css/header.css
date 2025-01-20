@@ -38,7 +38,7 @@ h1.header-title{
     right: 0;
     width: 100%;
     /* height: 100vh; */
-    background-color: var(--dark);
+    /* background-color: var(--dark); */
     color:white;
     /* z-index: 999; */
 }
@@ -264,6 +264,10 @@ i.icon-item{
 .log-out-btn{
     order: 3;
 }
+.header-link.active{
+    color: white !important;
+}
+
 
 @media(max-width: 991.98px) {
     .pageheader{

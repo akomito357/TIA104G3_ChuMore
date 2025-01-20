@@ -21,7 +21,7 @@ import com.chumore.ordermaster.model.OrderMasterService;
 import com.chumore.util.ResponseUtil;
 
 @Controller
-@RequestMapping("/rest/points")
+@RequestMapping("/rests/points")
 public class DiscPtsControllerForRest {
 	
 	@Autowired
