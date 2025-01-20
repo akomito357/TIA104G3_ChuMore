@@ -1,4 +1,98 @@
 $(document).ready(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const restId = urlParams.get("restId");
+    const reservationDate = urlParams.get("reservationDate");
+    const reservationTime = urlParams.get("reservationTime");
+    const guestCount = urlParams.get("guestCount");
+    // 評論相關函數
+    function renderStars(rating) {
+        let stars = '';
+        for (let i = 0; i < 5; i++) {
+            stars += `<i class="fas fa-star ${i < rating ? 'text-warning' : 'text-muted'}"></i>`;
+        }
+        return stars;
+    }
+
+    function renderReview(review) {
+        // 添加空值檢查和預設值
+        const memberName = review.member?.memberName || '匿名用戶';
+        const reviewRating = review.reviewRating || 0;
+        const reviewDateTime = review.formattedReviewDatetime || '未知時間';
+        const reviewText = review.reviewText || '';
+
+        return `
+            <div class="border-bottom pb-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex gap-3">
+                        <img src="https://placehold.co/40x40"
+                             alt="${memberName}的頭像"
+                             class="rounded-circle"
+                             style="width: 40px; height: 40px;">
+                        <div>
+                            <h6 class="mb-1">${memberName}</h6>
+                            <div class="mb-1">
+                                ${renderStars(Number(reviewRating))}
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">${reviewDateTime}</small>
+                </div>
+                <p class="mt-2 mb-0">${reviewText}</p>
+                ${renderReviewImages(review.reviewImages || [])}
+            </div>
+        `;
+    }
+
+    function renderReviewImages(images) {
+        if (!images || images.length === 0) return '';
+
+        return `
+                <div class="review-images mt-2">
+                    <div class="d-flex gap-2 overflow-auto">
+                        ${images.map(image => `
+                            <img src="/member/reviews/image/${image.reviewImgId}"
+                                 class="rounded"
+                                 alt="評論圖片"
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+    }
+
+    async function fetchAndDisplayReviews(restId) {
+
+        try {
+            const response = await fetch(`/reviews/restaurant/${restId}?page=0&size=5`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch reviews');
+            }
+            const data = await response.json();
+
+            // 檢查資料結構
+            console.log('Review data:', data);
+
+            const container = document.getElementById('review-container');
+
+            // 確認是否有評論資料
+            if (data && data.content && data.content.length > 0) {
+                container.innerHTML = data.content.map(renderReview).join('');
+            } else {
+                container.innerHTML = '<p class="text-center text-muted">目前尚無評論</p>';
+            }
+
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+            document.getElementById('review-container').innerHTML =
+                '<p class="text-center text-muted">無法載入評論</p>';
+        }
+    }
+
+    // 初始化時載入評論
+
+    fetchAndDisplayReviews(restId);
+
     // 初始化日期選擇器
     $('#reservedDate').datepicker({
         format: 'yyyy-mm-dd',
@@ -35,31 +129,6 @@ $(document).ready(function() {
 
     let currentTab = 'environment';
 
-
-    // 取得request param 並初始化值
-
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const restId = urlParams.get("restId");
-    const reservationDate = urlParams.get("reservationDate");
-    const reservationTime = urlParams.get("reservationTime");
-    const guestCount = urlParams.get("guestCount");
-
-    if (reservationDate) {
-        $('#reservedDate').val(reservationDate);
-    }
-
-    if (guestCount) {
-        $('#guestCount').val(guestCount);
-    }
-
-    if(restId){
-        loadRestInfo(restId);
-        initializeImageGrid(restId);
-        // 初始化時段按鈕
-        updateTimeSlots(restId);
-    }
-
     // utilities
     function isOpen(hours,indices){
         return indices.some(index => hours[index] === 1);
@@ -74,7 +143,6 @@ $(document).ready(function() {
             let businessHours = await getRestBusinessHours(restId);
             let container = $('#timeSlots'); // 確認選擇器是否正確，假設 id 為 'timeSlots'
 
-            console.log(businessHours);
 
             // 清空容器以避免重複生成
             container.empty();
@@ -137,7 +205,7 @@ $(document).ready(function() {
     function generateTimeSlotsButton(containerId,startHour,endHour,availableTablesData){
         const container = $(`#${containerId}`);
 
-        for(let hour = startHour; hour <= endHour; hour++){
+        for(let hour = startHour; hour < endHour; hour++){
             const time = `${hour.toString().padStart(2,'0')}:00`;
             const availableTables =  parseInt(availableTablesData[hour])
             const isAvailable =  availableTables ? true:false;
@@ -235,7 +303,7 @@ $(document).ready(function() {
 
     async function getAvailableTablesData(restId,guestCount,reservedDate){
         try{
-            const url = `http://localhost:8080/test/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
+            const url = `/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -254,7 +322,7 @@ $(document).ready(function() {
 
     async function getRestData(restId){
         try{
-            let url = `http://localhost:8080/test/rests/rest/${restId}`;
+            let url = `/restaurants/restaurant/${restId}`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -297,7 +365,7 @@ $(document).ready(function() {
 
     async function getRestFormattedBusinessHours(restId){
         try{
-            let url = `http://localhost:8080/test/rests/rest/${restId}/formattedBusinessHours`;
+            let url = `/restaurants/restaurant/${restId}/formattedBusinessHours`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -315,7 +383,7 @@ $(document).ready(function() {
 
     async function getRestBusinessHours(restId){
         try{
-            let url = `http://localhost:8080/test/rests/rest/${restId}/businessHours`;
+            let url = `/restaurants/restaurant/${restId}/businessHours`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -341,7 +409,7 @@ $(document).ready(function() {
 
         //按下確認訂位後，跳轉至確認訂位頁面
         try{
-            const url = `http://localhost:8080/test/reservations/reservation/confirm?memberId=1072&restId=${restId}`;
+            const url = `/member/reservations/reservation/confirm?&restId=${restId}`;
             const res = await fetch(url,
                 {
                     method: 'POST',
@@ -436,14 +504,14 @@ $(document).ready(function() {
     async function fetchEnvImages(restId){
         let imgUrlList = [];
         try {
-            let res = await fetch(`http://localhost:8080/envImg/images/${restId}`);
+            let res = await fetch(`/envImg/images/${restId}`);
             if (!res.ok) {
                 throw new Error(`Failed to fetch image IDs: ${res.status}`);
             }
             let imagesIds = await res.json();
 
             for (const id of imagesIds) {
-                imgUrlList.push(`http://localhost:8080/envImg/image/${id}`);
+                imgUrlList.push(`/envImg/image/${id}`);
             }
 
             return imgUrlList;
@@ -457,14 +525,14 @@ $(document).ready(function() {
     async function fetchMenuImages(restId){
         let imgUrlList = [];
         try {
-            let res = await fetch(`http://localhost:8080/menuImg/images/${restId}`);
+            let res = await fetch(`/menuImg/images/${restId}`);
             if (!res.ok) {
                 throw new Error(`Failed to fetch image IDs: ${res.status}`);
             }
             let imagesIds = await res.json();
 
             for (const id of imagesIds) {
-                imgUrlList.push(`http://localhost:8080/menuImg/image/${id}`);
+                imgUrlList.push(`/menuImg/image/${id}`);
             }
 
             return imgUrlList;

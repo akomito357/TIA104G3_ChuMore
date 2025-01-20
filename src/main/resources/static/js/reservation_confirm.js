@@ -83,7 +83,7 @@ $(document).ready(function() {
 
     async function getAvailableTablesData(restId,guestCount,reservedDate){
         try{
-            const url = `http://localhost:8080/test/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
+            const url = `/dailyReservations/availableTables?restId=${restId}&guestCount=${guestCount}&reservedDate=${reservedDate}`;
             const res = await fetch(url);
             if(!res.ok){
                 if(res.status === 404){
@@ -152,7 +152,7 @@ $(document).ready(function() {
             let memberId = $('#memberId').val();
             console.log(restId);
             console.log(memberId);
-            const url = `http://localhost:8080/test/reservations/reservation?restId=${restId}&memberId=${memberId}`;
+            const url = `/reservations/reservation?restId=${restId}&memberId=${memberId}`;
             const res = await fetch(url,{
                 method:'POST',
                 headers:{
@@ -180,7 +180,7 @@ $(document).ready(function() {
     }
 
     async function transferToReservationStatusPage(reservationStatus){
-        let url = `http://localhost:8080/test/reservations/reservation/${reservationStatus}`;
+        let url = `/member/reservations/reservation/${reservationStatus}`;
         try{
             const res = await fetch(url);
             if(!res.ok){
