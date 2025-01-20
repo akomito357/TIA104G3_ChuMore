@@ -6,6 +6,11 @@
     <title>訂位成功</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <th:block th:switch="${session.userType}">
+        <th:block th:case="null" th:insert="~{/header_unlogin.html}" />
+        <th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
+        <th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
+    </th:block>
     <style>
         .success-container {
             max-width: 500px;
@@ -75,41 +80,45 @@
             z-index: 1000;
         }
     </style>
+
 </head>
 <body class="bg-light">
-<div class="success-container text-center">
-    <!-- 大勾勾 ICON 區 -->
-    <div class="success-icon">
-        <i class="fas fa-check"></i>
-    </div>
+<main class="main">
+    <div class="success-container text-center">
+        <!-- 大勾勾 ICON 區 -->
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
 
-    <!-- 標題與副標題區 -->
-    <h2 class="success-title mb-3">訂位成功！</h2>
-    <p class="success-subtitle text-muted mb-5">訂位確認信已發送至您的電子信箱</p>
+        <!-- 標題與副標題區 -->
+        <h2 class="success-title mb-3">訂位成功！</h2>
+        <p class="success-subtitle text-muted mb-5">訂位確認信已發送至您的電子信箱</p>
 
-    <!-- 功能按鈕區 -->
-    <div class="action-buttons">
-        <p class="caption-text">沒收到確認信嗎？</p>
-        <button id="resendBtn" class="btn btn-primary action-button">
-            重寄訂位確認信
-        </button>
-        <button id="homeBtn" class="btn btn-secondary action-button mt-3">
-            回首頁
-        </button>
-    </div>
-</div>
-
-<!-- Toast 通知元件 -->
-<div class="toast-container">
-    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                確認信已重新發送！
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <!-- 功能按鈕區 -->
+        <div class="action-buttons">
+            <p class="caption-text">沒收到確認信嗎？</p>
+            <button id="resendBtn" class="btn btn-primary action-button">
+                重寄訂位確認信
+            </button>
+            <button id="homeBtn" class="btn btn-secondary action-button mt-3">
+                回首頁
+            </button>
         </div>
     </div>
-</div>
+
+    <!-- Toast 通知元件 -->
+    <div class="toast-container">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    確認信已重新發送！
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>

@@ -101,32 +101,40 @@
             animation: fadeIn 1s ease-out;
         }
     </style>
+    <th:block th:switch="${session.userType}">
+        <th:block th:case="null" th:insert="~{/header_unlogin.html}" />
+        <th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
+        <th:block th:case="'ROLE_RESTAURANT'" th:insert="~{/header_merchant.html}" />
+    </th:block>
 </head>
 <body>
-<div class="error-page">
-    <div class="error-container">
-        <div class="error-code">500</div>
-        <i class="fas fa-cogs error-icon"></i>
-        <div class="error-text">
-            <h2 class="mb-3">哎呀！發生了系統錯誤。</h2>
-            <p class="text-muted mb-4">
-                我們正在努力修復中，請稍後再試一次。<br>
-                很抱歉造成您的困擾！
-            </p>
-        </div>
-        <div class="d-flex flex-column align-items-center">
-            <button class="btn btn-danger btn-action" onclick="window.location.href='/reservation_page_test'">
-                返回訂位頁面
-            </button>
-            <button class="btn btn-outline-danger btn-action" onclick="window.location.reload()">
-                重新整理頁面
-            </button>
-        </div>
-        <div class="support-text">
-            如問題持續發生，請<a href="mailto:support@example.com">聯絡我們的客服團隊</a>
+<main class="main">
+    <div class="error-page">
+        <div class="error-container">
+            <div class="error-code">500</div>
+            <i class="fas fa-cogs error-icon"></i>
+            <div class="error-text">
+                <h2 class="mb-3">哎呀！發生了系統錯誤。</h2>
+                <p class="text-muted mb-4">
+                    我們正在努力修復中，請稍後再試一次。<br>
+                    很抱歉造成您的困擾！
+                </p>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+                <button class="btn btn-danger btn-action" onclick="window.location.href='/reservation_page_test'">
+                    返回訂位頁面
+                </button>
+                <button class="btn btn-outline-danger btn-action" onclick="window.location.reload()">
+                    重新整理頁面
+                </button>
+            </div>
+            <div class="support-text">
+                如問題持續發生，請<a href="mailto:support@example.com">聯絡我們的客服團隊</a>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
