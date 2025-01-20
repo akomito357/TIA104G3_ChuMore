@@ -33,8 +33,8 @@ $(document).ready(function() {
     }
 
     function renderReview(review) {
-        // 添加空值檢查和預設值
-        const memberName = review.member?.memberName || '匿名用戶';
+        // 增加空值檢查和預設值
+        const memberName = review.memberName || '匿名用戶';
         const reviewRating = review.reviewRating || 0;
         const reviewDateTime = review.formattedReviewDatetime || '未知時間';
         const reviewText = review.reviewText || '';
@@ -43,7 +43,7 @@ $(document).ready(function() {
             <div class="border-bottom pb-3 mb-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="d-flex gap-3">
-                        <img src="https://placehold.co/40x40"
+                        <img src="/images/avatar-3.png"
                              alt="${memberName}的頭像"
                              class="rounded-circle"
                              style="width: 40px; height: 40px;">
@@ -82,7 +82,7 @@ $(document).ready(function() {
     async function fetchAndDisplayReviews(restId) {
 
         try {
-            const response = await fetch(`/reviews/restaurant/${restId}?page=0&size=5`);
+            const response = await fetch(`/reviews/restaurant/${restId}?page=0&size=10`);
             if (!response.ok) {
                 throw new Error('Failed to fetch reviews');
             }

@@ -58,6 +58,8 @@
 
 
     </style>
+    <th:block th:insert="~{/included.html}" />
+
     <th:block th:switch="${session.userType}">
         <th:block th:case="null" th:insert="~{/header_unlogin.html}" />
         <th:block th:case="'MEMBER'" th:insert="~{/header_member.html}" />
@@ -140,7 +142,7 @@
     </div>
 </main>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script th:src="@{/js/jquery/jquery-3.4.1.min.js}"></script>
 <script th:src="@{/js/member_reservations.js}"></script>
 </body>
 
