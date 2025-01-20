@@ -25,7 +25,7 @@ public class ReservationDAOImpl implements ReservationDAO{
 
 
     @Override
-    public ReservationVO findById(int reservationId) {
+    public ReservationVO findById(Integer reservationId) {
         ReservationVO reservation = entityManager.find(ReservationVO.class, reservationId);
         if (reservation == null) {
             throw new ResourceNotFoundException("Reservation not found for ID: " + reservationId);
@@ -45,7 +45,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findAllByMemberId(int memberId) {
+    public List<ReservationVO> findAllByMemberId(Integer memberId) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.member.memberId = :memberId", ReservationVO.class)
                 .setParameter("memberId", memberId)
@@ -58,7 +58,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findAllByRestId(int restId) {
+    public List<ReservationVO> findAllByRestId(Integer restId) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.rest.restId = :restId", ReservationVO.class)
                 .setParameter("restId", restId)
@@ -71,7 +71,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findByMemberIdAndDate(int memberId, LocalDate date) {
+    public List<ReservationVO> findByMemberIdAndDate(Integer memberId, LocalDate date) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.member.memberId = :memberId AND r.reservationDate = :reservationDate", ReservationVO.class)
                 .setParameter("memberId", memberId)
@@ -85,7 +85,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findByRestIdAndDate(int restId, LocalDate date) {
+    public List<ReservationVO> findByRestIdAndDate(Integer restId, LocalDate date) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.rest.restId = :restId AND r.reservationDate = :reservationDate", ReservationVO.class)
                 .setParameter("restId", restId)
@@ -99,7 +99,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findByRestIdAndReservationStatus(int restId, String reservationStatus) {
+    public List<ReservationVO> findByRestIdAndReservationStatus(Integer restId, String reservationStatus) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.rest.restId = :restId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
                 .setParameter("restId", restId)
@@ -113,7 +113,7 @@ public class ReservationDAOImpl implements ReservationDAO{
     }
 
     @Override
-    public List<ReservationVO> findByMemberIdAndReservationStatus(int memberId, String reservationStatus) {
+    public List<ReservationVO> findByMemberIdAndReservationStatus(Integer memberId, String reservationStatus) {
         List<ReservationVO> reservations = entityManager.createQuery(
                         "FROM ReservationVO r WHERE r.member.memberId = :memberId AND r.reservationStatus = :reservationStatus", ReservationVO.class)
                 .setParameter("memberId", memberId)

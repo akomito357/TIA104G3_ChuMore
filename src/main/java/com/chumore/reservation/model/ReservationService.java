@@ -7,29 +7,29 @@ import java.util.Map;
 public interface ReservationService {
 
     // 查詢相關功能
-    ReservationVO findReservationById(int reservationId);
+    ReservationVO findReservationById(Integer reservationId);
 
     List<ReservationVO> findReservationsByCompositeQuery(Map<String, String> params);
 
-    List<ReservationVO> findCurrentDateReservation(int restId);
+    List<ReservationVO> findCurrentDateReservation(Integer restId);
 
-    List<ReservationVO> findReservationsByRestIdAndDate(int restId,LocalDate date);
+    List<ReservationVO> findReservationsByRestIdAndDate(Integer restId,LocalDate date);
 
-    List<ReservationVO> findAllRestReservations(int restId);
+    List<ReservationVO> findAllRestReservations(Integer restId);
 
-    List<ReservationVO> findAllMemberReservations(int memberId);
+    List<ReservationVO> findAllMemberReservations(Integer memberId);
 
-    List<ReservationVO> findReservationsByRestIdAndReservationStatus(int restId, String reservationStatus);
+    List<ReservationVO> findReservationsByRestIdAndReservationStatus(Integer restId, String reservationStatus);
 
-    List<ReservationVO> findReservationsByMemberIdAndReservationStatus(int memberId, String reservationStatus);
+    List<ReservationVO> findReservationsByMemberIdAndReservationStatus(Integer memberId, String reservationStatus);
 
 
     // 更新與操作功能
-    ReservationVO cancelReservation(int reservationId);
+    ReservationVO cancelReservation(Integer reservationId);
 
-    ReservationVO processCheckIn(int reservationId);
+    ReservationVO processCheckIn(Integer reservationId);
 
-    ReservationVO restoreReservation(int reservationId);
+    ReservationVO restoreReservation(Integer reservationId);
 
     ReservationVO addReservation(ReservationVO reservation);
 
