@@ -7,14 +7,14 @@ import java.util.Map;
 public interface ReservationDAO {
 
     // 查詢
-    ReservationVO findById(int reservationId); // 使用 Optional 包裝單筆查詢結果
+    ReservationVO findById(Integer reservationId);
     List<ReservationVO> findAll();
-    List<ReservationVO> findAllByMemberId(int memberId);
-    List<ReservationVO> findAllByRestId(int restId);
-    List<ReservationVO> findByMemberIdAndDate(int memberId, LocalDate date);
-    List<ReservationVO> findByRestIdAndDate(int restId, LocalDate date);
-    List<ReservationVO> findByRestIdAndReservationStatus(int restId, String reservationStatus);
-    List<ReservationVO> findByMemberIdAndReservationStatus(int memberId, String reservationStatus);
+    List<ReservationVO> findAllByMemberId(Integer memberId);
+    List<ReservationVO> findAllByRestId(Integer restId);
+    List<ReservationVO> findByMemberIdAndDate(Integer memberId, LocalDate date);
+    List<ReservationVO> findByRestIdAndDate(Integer restId, LocalDate date);
+    List<ReservationVO> findByRestIdAndReservationStatus(Integer restId, String reservationStatus);
+    List<ReservationVO> findByMemberIdAndReservationStatus(Integer memberId, String reservationStatus);
     List<ReservationVO> findByCompositeQuery(Map<String, String> params);
 
     // 新增

@@ -15,15 +15,13 @@ import java.util.Map;
 @Transactional
 public class ReservationServiceImpl implements ReservationService{
 
-    private Map<String, String> reservationStatusMap = Map.of("0", "已取消", "1", "尚未報到", "2", "已報到");
-
     @Autowired
     private ReservationDAO reservationDAO;
 
 
     @Transactional(readOnly = true)
     @Override
-    public ReservationVO findReservationById(int reservationId){
+    public ReservationVO findReservationById(Integer reservationId){
         try{
             return reservationDAO.findById(reservationId);
         }catch(ResourceNotFoundException e){
@@ -43,7 +41,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findCurrentDateReservation(int restId) {
+    public List<ReservationVO> findCurrentDateReservation(Integer restId) {
         List<ReservationVO> reservations = reservationDAO.findByRestIdAndDate(restId, LocalDate.now());
         if (reservations.isEmpty()) {
             throw new ResourceNotFoundException("No reservations found for restId: " + restId + " on today's date.");
@@ -54,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findReservationsByRestIdAndDate(int restId, LocalDate date) {
+    public List<ReservationVO> findReservationsByRestIdAndDate(Integer restId, LocalDate date) {
         List<ReservationVO> reservations = reservationDAO.findByRestIdAndDate(restId, date);
         if(reservations.isEmpty()) {
             throw new ResourceNotFoundException("No reservations found for restId: " + restId + " on date: " + date);
@@ -66,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findAllRestReservations(int restId) {
+    public List<ReservationVO> findAllRestReservations(Integer restId) {
         List<ReservationVO> reservations = reservationDAO.findAllByRestId(restId);
         if (reservations.isEmpty()) {
             throw new ResourceNotFoundException("No reservations found for restId: " + restId);
@@ -76,40 +74,40 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findAllMemberReservations(int memberId) {
+    public List<ReservationVO> findAllMemberReservations(Integer memberId) {
         List<ReservationVO> reservations = reservationDAO.findAllByMemberId(memberId);
         return reservations;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findReservationsByRestIdAndReservationStatus(int restId, String reservationStatus) {
+    public List<ReservationVO> findReservationsByRestIdAndReservationStatus(Integer restId, String reservationStatus) {
         List<ReservationVO> reservations = reservationDAO.findByRestIdAndReservationStatus(restId, reservationStatus);
         return reservations;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<ReservationVO> findReservationsByMemberIdAndReservationStatus(int memberId, String reservationStatus) {
+    public List<ReservationVO> findReservationsByMemberIdAndReservationStatus(Integer memberId, String reservationStatus) {
         return reservationDAO.findByMemberIdAndReservationStatus(memberId, reservationStatus);
     }
 
     @Override
-    public ReservationVO cancelReservation(int reservationId) {
+    public ReservationVO cancelReservation(Integer reservationId) {
         ReservationVO reservation = reservationDAO.findById(reservationId);
         reservation.setReservationStatus(0);
         return reservationDAO.updateReservation(reservation);
     }
 
     @Override
-    public ReservationVO restoreReservation(int reservationId) {
+    public ReservationVO restoreReservation(Integer reservationId) {
         ReservationVO reservation = reservationDAO.findById(reservationId);
         reservation.setReservationStatus(1);
         return reservationDAO.updateReservation(reservation);
     }
 
     @Override
-    public ReservationVO processCheckIn(int reservationId) {
+    public ReservationVO processCheckIn(Integer reservationId) {
         ReservationVO reservation = reservationDAO.findById(reservationId);
         reservation.setReservationStatus(2); // 更新狀態為已報到
         return reservationDAO.updateReservation(reservation);

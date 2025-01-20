@@ -1,7 +1,6 @@
 package com.chumore.reservation.controller;
 
 import com.chumore.mail.MailService;
-import com.chumore.member.model.MemberRepository;
 import com.chumore.member.model.MemberService;
 import com.chumore.member.model.MemberVO;
 import com.chumore.reservation.model.ReservationService;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -24,18 +22,13 @@ import redis.clients.jedis.JedisPool;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 @Controller
-@SessionAttributes(names = {"member"})
-@RequestMapping("/test/reservations")
-public class ReservationTestController {
-
-
+@RequestMapping("/reservations")
+public class ReservationPublicController {
 
     @Value("${app.confirmation.redis.prefix}")
     private String redisPrefix;
@@ -57,52 +50,10 @@ public class ReservationTestController {
 
     private final JedisPool jedisPool;
 
-    public ReservationTestController(JedisPool jedisPool)  {
+    public ReservationPublicController(JedisPool jedisPool)  {
         this.jedisPool = jedisPool;
     }
 
-
-    // 會員查詢
-    @GetMapping("/member/{memberId}")
-    @ResponseBody
-    public ResponseEntity<?> finalAllMemberReservations(@PathVariable int memberId){
-        List<ReservationVO> reservations = reservationService.findAllMemberReservations(memberId);
-        return ResponseEntity.ok(reservations);
-    }
-
-
-
-    // 餐廳查詢
-
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<?> findAllRestReservations(@RequestParam int restId){
-        List<ReservationVO> reservations = reservationService.findAllRestReservations(restId);
-        return ResponseEntity.ok(reservations);
-    }
-
-
-    @GetMapping("/{reservationDate}")
-    @ResponseBody
-    public ResponseEntity<?> findReservationsByRestIdAndDate(@RequestParam int restId, @PathVariable LocalDate reservationDate){
-        List<ReservationVO> reservations = reservationService.findReservationsByRestIdAndDate(restId, reservationDate);
-        return ResponseEntity.ok(reservations);
-    }
-
-
-
-//    @PostMapping("/reservation")
-//    @ResponseBody
-//    public ResponseEntity<?> addReservation(@RequestBody ReservationVO reservation, @SessionAttribute("member") MemberVO member){
-//        reservation.setMember(member);
-//        System.out.println(member.getMemberPhoneNumber());
-//        reservation.setPhoneNumber(member.getMemberPhoneNumber());
-//        if (reservation.getReservationStatus() == null) {
-//            reservation.setReservationStatus(1);
-//        }
-//        ReservationVO newReservation = reservationService.addReservation(reservation);
-//        return ResponseEntity.ok(newReservation);
-//    }
 
     // 新增訂位
     @PostMapping("/reservation")
@@ -171,89 +122,10 @@ public class ReservationTestController {
         ));
     }
 
-    // 修改訂位狀態
-    /*
-    e.g.
-    POST http://localhost:8080/test/reservations/reservation/1/reservationStatus
-    {
-        "reservationStatus": 2
-    }
-     */
-
-
-    @PostMapping("/reservation/{reservationId}/reservationStatus")
-    @ResponseBody
-    public ResponseEntity<?> updateReservationStatus(@RequestBody Map<String,String> conditions, @PathVariable int reservationId){
-        ReservationVO reservation = new ReservationVO();
-        if("checkIn".equals(conditions.get("operation"))){
-            reservation = reservationService.processCheckIn(reservationId);
-        }else if("cancel".equals(conditions.get("operation"))){
-            reservation = reservationService.cancelReservation(reservationId);
-        }else if("restore".equals(conditions.get("operation"))){
-            reservation = reservationService.restoreReservation(reservationId);
-        }
-
-        return ResponseEntity.ok(reservation);
-    }
-
-
-//    @PostMapping("/reservation")
-//    @ResponseBody
-//    public ResponseEntity<?> addReservation(@RequestBody ReservationVO reservation, @SessionAttribute("member") MemberVO member, @RequestParam int restId){
-//        RestVO rest = new RestVO();
-//        rest.setRestId(restId);
-//        reservation.setRest(rest);
-//
-//        reservation.setMember(member);
-//        System.out.println(member.getMemberPhoneNumber());
-//        reservation.setPhoneNumber(member.getMemberPhoneNumber());
-//        if (reservation.getReservationStatus() == null) {
-//            reservation.setReservationStatus(1);
-//        }
-//        ReservationVO newReservation = reservationService.addReservation(reservation);
-//        return ResponseEntity.ok(newReservation);
-//    }
-
     // 訂位頁面
     @GetMapping("/reservation")
     public String reservationPage(){
-        return "back-end/reservation/reservation_test";
-    }
-
-
-    // 已發送確認信的頁面
-    @PostMapping("/reservation/confirm")
-    public String confirmReservationPage(@RequestBody ReservationVO reservation, @RequestParam int memberId, @RequestParam int restId, ModelMap model){
-        RestVO rest = restService.getOneById(restId);
-        reservation.setRest(rest);
-        MemberVO member = memberService.getOneMember(memberId).get();
-        reservation.setMember(member);
-
-        reservation.setPhoneNumber(member.getMemberPhoneNumber());
-        if (reservation.getReservationStatus() == null) {
-            reservation.setReservationStatus(1);
-        }
-
-        System.out.println(reservation.getRest().getRestName());
-        model.addAttribute("reservation", reservation);
-
-
-
-        return "reservation/reservation_confirm";
-    }
-
-
-    // 訂位成功頁面
-
-    @GetMapping("/reservation/success")
-    public String transferToReservationSuccess(){
-        return "back-end/reservation/reservation_success";
-    }
-
-    // 訂位失敗頁面
-    @GetMapping("/reservation/error")
-    public String transferToReservationFail(){
-        return "back-end/reservation/reservation_error";
+        return "public/reservation/reservation_test";
     }
 
 
@@ -270,12 +142,12 @@ public class ReservationTestController {
             jedis.close();
         }catch(Exception e){
             e.printStackTrace();
-            return "reservation/reservation_confirmation_error";
+            return "public/reservation/reservation_confirmation_error";
         }
 
         if(reservationJson == null){
             System.out.println("Token not found in Redis");
-            return "reservation/reservation_confirmation_error";
+            return "public/reservation/reservation_confirmation_error";
         }
 
         // 訂位資料反序列化
@@ -306,7 +178,7 @@ public class ReservationTestController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "reservation/reservation_confirmation_error";
+            return "public/reservation/reservation_confirmation_error";
         }
 
         if (reservation.getGuestCount() == null || reservation.getGuestCount() <= 0) {
@@ -326,12 +198,11 @@ public class ReservationTestController {
         }
 
         model.addAttribute("reservation",newReservation);
-        return "secure/reservation/reservation_confirmation_success";
+        return "public/reservation/reservation_confirmation_success";
 
     }
 
-
-    //TODO 重發確認信
+    //重發確認信
     @PostMapping("/reservation/resend-confirmation-mail")
     @ResponseBody
     public ResponseEntity<?> resendConfirmationEmail(HttpSession session){
@@ -378,7 +249,6 @@ public class ReservationTestController {
         return ResponseEntity.ok("確認信已重新發送至您的電子信箱。");
 
     }
-
 
 
 }

@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
- * 1. 功能：監聽 RestChangedEvent。
- * 2. 事件：新增、更新、刪除餐廳時同步索引
+ * 功能：監聽 RestChangedEvent。
+ * 事件：新增、更新、刪除餐廳時同步索引
  */
 
 @Component

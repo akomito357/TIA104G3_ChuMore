@@ -65,7 +65,7 @@
             <li><strong>用餐人數：</strong> <span th:text="${guestCount}">4位</span></li>
         </ul>
         <p>請點擊下方按鈕以確認您的訂位：</p>
-        <a href="#" th:href="@{${confirmationLink}}" class="confirmation-button">確認訂位</a>
+        <a th:href="@{${confirmationLink}}" class="confirmation-button">確認訂位</a>
         <p>此連結將在24小時後過期。如有任何問題，請隨時聯繫我們。</p>
     </div>
 
