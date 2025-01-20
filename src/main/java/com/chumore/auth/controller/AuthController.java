@@ -3,6 +3,11 @@ package com.chumore.auth.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
@@ -75,11 +80,14 @@ public class AuthController {
 
     
     @PostMapping("login")
-    public String processLogin(Authentication authentication, HttpSession session, 
-                             RedirectAttributes redirectAttributes) {
+    public String processLogin(Authentication authentication, 
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes,
+                             @RequestParam(required = false) String returnUrl) {
+        
         if (authentication == null || !authentication.isAuthenticated()) {
             redirectAttributes.addFlashAttribute("errorMessage", "登入失敗，請重新嘗試");
-            return "redirect:/auth/login?error";
+            return "redirect:/auth/login?error" + (returnUrl != null ? "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8) : "");
         }
 
         AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
@@ -87,24 +95,58 @@ public class AuthController {
 
         logger.info("用戶登入成功，角色: {}", role);
 
-        // 在這裡統一處理 session 設置
+        // 設置共同的 session 屬性
+        session.setAttribute("loginTime", LocalDateTime.now());
+
+        // 根據角色設置特定的 session 屬性
         if ("ROLE_RESTAURANT".equals(role)) {
             session.setAttribute("restId", user.getRestId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_RESTAURANT);
-            session.setAttribute("loginTime", LocalDateTime.now());
-            System.out.println("restId:" + user.getRestId());
-            return "redirect:/secure/rest/rest_information";
+            logger.debug("restId: {}", user.getRestId());
         } else if ("ROLE_MEMBER".equals(role)) {
             session.setAttribute("memberId", user.getMemberId());
             session.setAttribute("userType", AuthenticatedUser.TYPE_MEMBER);
-            session.setAttribute("loginTime", LocalDateTime.now());
-            System.out.println("memberId:" + user.getMemberId());
-
-            return "redirect:/secure/member/member_information";
+            logger.debug("memberId: {}", user.getMemberId());
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
+            return "redirect:/auth/login";
         }
 
-        redirectAttributes.addFlashAttribute("errorMessage", "未知的角色，請聯繫系統管理員");
-        return "redirect:/auth/login?error";
+        // 處理返回 URL
+        if (returnUrl != null && !returnUrl.isBlank()) {
+            // 安全檢查：確保 returnUrl 是相對路徑或當前域名下的 URL
+            if (isValidReturnUrl(returnUrl)) {
+                return "redirect:" + returnUrl;
+            }
+            logger.warn("檢測到無效的 returnUrl: {}", returnUrl);
+        }
+
+        // 如果沒有 returnUrl 或 URL 無效，使用默認重定向
+        return "redirect:" + getDefaultRedirectUrl(role);
+    }
+
+    private boolean isValidReturnUrl(String returnUrl) {
+        // 檢查是否是相對路徑
+        if (returnUrl.startsWith("/")) {
+            return true;
+        }
+        
+        // 如果是絕對路徑，確保是當前域名
+        try {
+            URL url = new URL(returnUrl);
+            // 這裡可以添加您的域名檢查邏輯
+            return url.getHost().equals("your-domain.com");
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
+
+    private String getDefaultRedirectUrl(String role) {
+        return switch (role) {
+            case "ROLE_RESTAURANT" -> "/secure/rest/rest_information";
+            case "ROLE_MEMBER" -> "/secure/member/member_information";
+            default -> "/auth/login";
+        };
     }
 
 

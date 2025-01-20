@@ -16,7 +16,7 @@ import com.chumore.productcategory.model.ProductCategory_Service;
 import com.chumore.productcategory.res.ProductCategoryResponse;
 
 @Controller
-@RequestMapping("/orders")
+@RequestMapping("/orders/productcategory")
 public class OrderProductController {
 
 	@Autowired
