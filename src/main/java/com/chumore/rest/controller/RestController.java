@@ -111,30 +111,26 @@ public class RestController {
 		return "";
 	}
 
-	@GetMapping("getOneRest")
-	@ResponseBody
-	public ResponseEntity<?> getOneData(HttpSession session) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String merchantEmail = authentication.getName();
+	@GetMapping("/getOneRest")  // 添加這行
+	@ResponseBody              // 添加這行
+	public RestVO getOneRest(HttpSession session) {
+	    try {
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String merchantEmail = authentication.getName();
+	        
+	        RestVO rest = restSvc.getOneByEmail(merchantEmail);
+	        
+	        if (rest != null) {
+	            // 設置會話屬性
+	            session.setAttribute("restId", rest.getRestId());
+	            session.setAttribute("userType", "ROLE_RESTAURANT");
+	        }
+	        
+	        return rest;
 
-			RestVO rest = restSvc.getOneByEmail(merchantEmail);
-
-			if (rest == null) {
-
-				Map<String, String> errorResponse = new HashMap<>();
-				errorResponse.put("message", "找不到餐廳資料");
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-			}
-
-			return ResponseEntity.ok(rest);
-
-		} catch (Exception e) {
-
-			Map<String, String> errorResponse = new HashMap<>();
-			errorResponse.put("message", "取得餐廳資料時發生錯誤");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-		}
+	    } catch (Exception e) {
+	        return null;
+	    }
 	}
 
 	@GetMapping("getRestById")

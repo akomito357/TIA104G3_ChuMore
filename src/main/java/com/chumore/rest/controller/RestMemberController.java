@@ -43,7 +43,7 @@ public class RestMemberController {
             }
 
             // 設置會話屬性
-            session.setAttribute("rest_id", restaurantData.getRestId());
+            session.setAttribute("restId", restaurantData.getRestId());
             session.setAttribute("userType", "ROLE_RESTAURANT");
 
             // 設置模型資料
