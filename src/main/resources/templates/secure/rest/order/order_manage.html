@@ -401,7 +401,7 @@
     <script>
 
         function showTableOptionList() {
-            fetch(`/ordertables/getTableNumberById`, {
+            fetch(`/rests/ordertables/getTableNumberById`, {
                 method: "GET",
             }).then(res => res.json())
                 .then(tableName => {
@@ -428,10 +428,7 @@
             $("input#startDate").val(todayDate);
             $("input#endDate").val(todayDate);
 
-            const tabs = $(".nav-link");
-            const content = $(".tab-content");
-
-
+      
             const diningPrevButton = $("#diningPreBtn.prev-btn");
             const diningNextButton = $("#diningNextBtn.next-btn");
             $(diningPrevButton).on("click", function () {
@@ -459,7 +456,7 @@
             const size = 10;
 
             function loadDiningList(queryParam) {
-                fetch(`/rest/getUnpaidOrder?${queryParam}`, {
+                fetch(`/rests/getUnpaidOrder?${queryParam}`, {
                     method: "GET",
                 }).then(res => res.json())
                     .then(response => {
