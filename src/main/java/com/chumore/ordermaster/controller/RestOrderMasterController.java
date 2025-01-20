@@ -268,7 +268,7 @@ public class RestOrderMasterController {
 	
 	@GetMapping("check")
 	public String orderCheck() {
-		return "secure/rest/order/order_manage_test";
+		return "secure/rest/order/order_manage";
 	}
 	
 }
