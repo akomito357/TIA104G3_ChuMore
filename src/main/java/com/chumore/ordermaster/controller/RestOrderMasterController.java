@@ -24,13 +24,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.chumore.orderitem.model.OrderItemVO;
 import com.chumore.orderitem.model.OrderItem_Service;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto.LineItemDto;
+import com.chumore.orderlineitem.dto.ShowOrderLineItemDto.OrderItemListDto;
+import com.chumore.orderlineitem.model.OrderLineItemVO;
 import com.chumore.ordermaster.dto.RestDiningDto;
 import com.chumore.ordermaster.dto.RestUnpaidDto;
 import com.chumore.ordermaster.model.OrderMasterServiceImpl;
 import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
 import com.chumore.ordertable.model.OrderTableService;
+import com.chumore.product.model.ProductVO;
 import com.chumore.rest.model.RestVO;
 
 @Controller
@@ -48,6 +54,8 @@ public class RestOrderMasterController {
 
 	@Autowired
 	OrderItem_Service orderItemSvc;
+	
+	
 
 	@GetMapping("diningList")
 	@ResponseBody
@@ -213,6 +221,44 @@ public class RestOrderMasterController {
 		System.out.println(orderMaster);
 
 		return "redirect:/rests/order_manage";
+	}
+	
+	@GetMapping("items")
+	@ResponseBody
+	public ResponseEntity<ShowOrderLineItemDto> showOrderItemList(@RequestParam Integer orderId){
+		ShowOrderLineItemDto showOrderLineItemDto = new ShowOrderLineItemDto();
+		
+		OrderMasterVO orderMaster = ordersvc.getOneById(orderId);
+		showOrderLineItemDto.setSubtotalPrice(orderMaster.getSubtotalPrice());
+		showOrderLineItemDto.setPointUsed(orderMaster.getPointUsed());
+		showOrderLineItemDto.setTotalPrice(orderMaster.getTotalPrice());
+		
+		List<OrderItemListDto> orderItemListDto = new ArrayList<OrderItemListDto>();
+		showOrderLineItemDto.setOrderItemListDto(orderItemListDto);
+		
+		List<OrderItemVO> list = orderItemSvc.getOrderItemListByOrderId(orderId);
+		for(OrderItemVO orderItem : list) {
+			OrderItemListDto orderItemList = new OrderItemListDto(orderItem);
+			List<LineItemDto> lineItemList = new ArrayList<LineItemDto>();
+			orderItemList.setLineItemList(lineItemList);
+			
+			List<OrderLineItemVO> orderLineItemList = orderItem.getOrderLineItem();
+			for(OrderLineItemVO orderLineItem : orderLineItemList) {
+				LineItemDto lineItemDto = new LineItemDto();
+				
+//				ProductVO product = productSvc.getProductById(orderLineItem.getProductId());
+				ProductVO product = orderLineItem.getProduct();
+				lineItemDto.setProductName(product.getProductName());
+				lineItemDto.setQuantity(orderLineItem.getQuantity());
+				lineItemDto.setPrice(orderLineItem.getPrice());
+				
+				lineItemList.add(lineItemDto);
+			}
+			orderItemListDto.add(orderItemList);
+			
+		}
+		
+		return ResponseEntity.ok(showOrderLineItemDto);
 	}
 	
 	@GetMapping("dining/history")
