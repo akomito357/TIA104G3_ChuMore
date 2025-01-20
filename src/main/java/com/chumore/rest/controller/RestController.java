@@ -16,24 +16,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.chumore.cuisinetype.model.CuisineTypeService;
 import com.chumore.cuisinetype.model.CuisineTypeVO;
 import com.chumore.dailyreservation.model.DailyReservationService;
 import com.chumore.dailyreservation.model.DailyReservationVO;
-import com.chumore.exception.ErrorResponse;
 import com.chumore.exception.ResourceNotFoundException;
 import com.chumore.rest.model.RestService;
 import com.chumore.rest.model.RestVO;
@@ -41,6 +39,7 @@ import com.chumore.rest.model.SpecificHolidayService;
 import com.chumore.rest.model.SpecificHolidayVO;
 import com.chumore.tabletype.model.TableTypeService;
 import com.chumore.tabletype.model.TableTypeVO;
+import com.chumore.util.ResponseUtil;
 
 // @SessionAttributes(names={"rest","member"})
 

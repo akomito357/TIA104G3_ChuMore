@@ -20,4 +20,6 @@ public interface RestService {
 	List<Integer[]> getBusinessHoursFor(Integer restId);
 	String getBusinessDays(Integer restId);
 	boolean updatePassword(Integer restId, String oldPassword, String newPassword);
+	
+	public List<RestVO> getRandomRests(Integer count);
 }

@@ -261,6 +261,10 @@ public class RestServiceImpl implements RestService{
         return repository.findByMerchantEmail(merchantEmail)
             .orElse(null);
     }
+	
+	public List<RestVO> getRandomRests(Integer count){
+		return repository.findRandomRest(count);
+	}
 
 	
 }

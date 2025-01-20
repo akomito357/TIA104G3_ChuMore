@@ -149,7 +149,7 @@ public class SecurityConfig {
 				.antMatchers("/css/**", "/js/**", "/images/**").permitAll()
 				// 允許訪問首頁和其他公開頁面
 				.antMatchers("/", "/restaurants/**", "/location/**", "/orders/**", "/reservations/**",
-						"/cuisineTypes/**", "/notification/**", "/envImg/**", "reviews/**", "ws/**", "dailyReservations/**")
+						"/cuisineTypes/**", "/notification/**", "/envImg/**", "/reviews/**", "/ws/**", "/searchPage/**", "/getRandomRest/**", "dailyReservations/**")
 				.permitAll()
 				// 允許訪問註冊相關頁面
 				.antMatchers("/register/**").permitAll()
