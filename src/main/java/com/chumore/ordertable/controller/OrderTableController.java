@@ -74,7 +74,6 @@ public class OrderTableController {
             orderTable.setTableNumber(tableNumber);
             
             // 生成 URL（如果需要在 Controller 層處理的話）
-            
             String orderUrl = String.format("https://chumore.ddns.net/orders/addOrder/%d/%s", restId, tableNumber);
             orderTable.setOrderTableUrl(orderUrl);
             
