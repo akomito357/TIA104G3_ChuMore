@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -56,25 +58,45 @@ public class SecurityConfig {
 	@Bean
 	@Order(1)
 	public SecurityFilterChain employeeFilterChain(HttpSecurity http) throws Exception {
-		http.antMatcher("/login") // 明確指定此配置只處理/login相關請求
-				.authenticationProvider(employeeAuthenticationProvider()).authorizeRequests()
-				.antMatchers("/css/**", "/js/**", "/images/**", "/login").permitAll().antMatchers("/emp/admin/**")
-				.hasRole("ADMIN").antMatchers("/emp/**").hasAnyRole("USER", "ADMIN").and().formLogin()
-				.loginPage("/login").loginProcessingUrl("/login") // 處理登入表單提交的URL
-				.usernameParameter("username") // 確保與表單中的input name一致
-				.passwordParameter("password") // 確保與表單中的input name一致
-				.successHandler((request, response, authentication) -> {
-					for (GrantedAuthority auth : authentication.getAuthorities()) {
-						if (auth.getAuthority().equals("ROLE_ADMIN")) {
-							response.sendRedirect("/emp/admin/list");
-							return;
-						}
-					}
-					response.sendRedirect("/emp/profile");
-				}).failureUrl("/login").permitAll().and().logout().logoutUrl("/logout").logoutSuccessUrl("/login")
-				.permitAll().and().csrf().disable();
+	    http
+	        .antMatcher("/login")  
+	        .authenticationProvider(employeeAuthenticationProvider())
+	        .authorizeRequests()
+	            .antMatchers("/css/**", "/js/**", "/images/**", "/login").permitAll()
+	            .antMatchers("/emp/admin/**").hasRole("ADMIN")
+	            .antMatchers("/emp/**").hasAnyRole("USER", "ADMIN")
+	        .and()
+	        .formLogin()
+	            .loginPage("/login")
+	            .loginProcessingUrl("/login")
+	            .usernameParameter("username")
+	            .passwordParameter("password")
+	            .successHandler((request, response, authentication) -> {
+	                for (GrantedAuthority auth : authentication.getAuthorities()) {
+	                    if (auth.getAuthority().equals("ROLE_ADMIN")) {
+	                        response.sendRedirect("/emp/admin/list");
+	                        return;
+	                    }
+	                }
+	                response.sendRedirect("/emp/profile");
+	            })
+	            .failureHandler((request, response, exception) -> {
+	                if (exception instanceof DisabledException) {
+	                    response.sendRedirect("/login?disabled");  // 移除 =true
+	                } else {
+	                    response.sendRedirect("/login?error");     // 移除 =true
+	                }
+	            })
+	            .permitAll()
+	        .and()
+	        .logout()
+	            .logoutUrl("/logout")
+	            .logoutSuccessUrl("/login?logout")
+	            .permitAll()
+	        .and()
+	        .csrf().disable();
 
-		return http.build();
+	    return http.build();
 	}
 
 	@Bean
