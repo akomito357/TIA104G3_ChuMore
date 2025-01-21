@@ -170,7 +170,7 @@ $(document).ready(function() {
             }
             reservationStatus = "success";
             newReservation = await res.json();
-            alert("新增成功！\n"+JSON.stringify(newReservation));
+            alert("訂位確認信已寄出！\n");
             await transferToReservationStatusPage(reservationStatus);
         }catch(error){
             reservationStatus = "error";

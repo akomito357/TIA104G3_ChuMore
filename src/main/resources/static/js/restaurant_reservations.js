@@ -140,8 +140,20 @@ function returnToTodayBookings() {
     loadTodayBookings();
 }
 
-function refreshHistoryBookings(){
-    if($("#history").hasClass('show')){
+function refreshHistoryBookings() {
+    if ($("#history").hasClass('show')) {
+        // 如果有選定的歷史日期，將篩選條件設為該日期
+        if (selectedHistoryDate) {
+            $('#historyStartDate').val(selectedHistoryDate);
+            $('#historyEndDate').val(selectedHistoryDate);
+
+            // 重置其他篩選條件
+            $('#historySearchName').val('');
+            $('#historySearchPhone').val('');
+            $('#historyStartTime').val('');
+            $('#historyEndTime').val('');
+            $('#historyStatusFilter').val('all');
+        }
         applyHistoryFilters();
     }
 }

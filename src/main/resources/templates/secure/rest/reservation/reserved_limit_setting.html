@@ -51,6 +51,68 @@
         .table-hover tbody tr:hover {
             background-color: rgba(0,0,0,.05);
         }
+
+        .rule-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            height: 100%;
+        }
+
+        .time-rule {
+            background-color: rgba(13, 110, 253, 0.1);  /* Bootstrap primary color with 0.1 opacity */
+        }
+
+        .quantity-rule {
+            background-color: rgba(255, 193, 7, 0.1);  /* Bootstrap warning color with 0.1 opacity */
+        }
+
+        .rule-title {
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .rule-content {
+            font-size: 0.875rem;
+        }
+
+        .rule-example {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .btn-custom {
+            background-color: #F2994A !important;
+            border-color: #F2994A !important;
+            color: white !important;
+        }
+
+        .btn-custom:hover {
+            background-color: #e88b35;
+            border-color: #e88b35;
+            color: white;
+        }
+
+        .btn-outline-custom {
+            color: #F2994A !important;
+            border-color: #F2994A;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #F2994A;
+            color: white;
+        }
+
+        /* 表單元件焦點狀態 */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #F2994A;
+            box-shadow: 0 0 0 0.25rem rgba(242, 153, 74, 0.25);
+        }
+
+        /* 自定義文字顏色 */
+        .text-custom {
+            color: #F2994A !important;
+        }
     </style>
     <th:block th:switch="${session.userType}">
         <th:block th:case="null" th:insert="~{/header_unlogin.html}" />
@@ -72,8 +134,8 @@
                 </h6>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 h-100">
-                            <h6 class="text-primary small fw-bold">
+                        <div class="rule-box time-rule">
+                            <h6 class="rule-title text-primary">
                                 <i class="bi bi-clock"></i> 時間設定影響範圍
                             </h6>
                             <ul class="list-unstyled small mb-0">
@@ -84,8 +146,8 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 h-100">
-                            <h6 class="text-warning small fw-bold">
+                        <div class="rule-box quantity-rule">
+                            <h6 class="rule-title text-warning">
                                 <i class="bi bi-info-circle"></i> 減少訂位數量規則
                             </h6>
                             <p class="small mb-2">系統會自動確保剩餘可訂位數量不會低於目前已訂位桌數。</p>
@@ -160,7 +222,7 @@
                 <!-- 操作按鈕 -->
                 <div class="row mt-4">
                     <div class="col">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-custom">
                             <i class="bi bi-check-lg"></i> 立即送出
                         </button>
                         <button type="reset" class="btn btn-secondary">
@@ -177,7 +239,7 @@
                 <h4>訂位開放狀況</h4>
                 <div class="d-flex gap-2">
                     <input type="date" class="form-control" id="queryDate">
-                    <button class="btn btn-outline-primary" onclick="queryTables()">
+                    <button class="btn btn-outline-custom" onclick="queryTables()">
                         <i class="bi bi-search"></i> 查詢
                     </button>
                 </div>
@@ -218,7 +280,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/resered_limit_setting.js}"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<script th:src="@{/js/reserved_limit_setting.js}"></script>
 </body>
 </html>
