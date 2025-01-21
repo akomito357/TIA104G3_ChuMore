@@ -1,6 +1,7 @@
 package com.chumore.emp.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,11 @@ public class EmpUserDetailsService implements UserDetailsService {
         EmpVO emp = empRepository.findByEmpAccount(username)
                 .orElseThrow(() -> new UsernameNotFoundException("找不到帳號：" + username));
         
+        // 先檢查帳號狀態
+        if (emp.getEmpAccountStatus() == 0) {
+            throw new DisabledException("此帳號已被停用");
+        }
+        
         // 設定角色
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         if (emp.getEmpRole() == 1) {  // 1代表管理員
@@ -30,11 +36,10 @@ public class EmpUserDetailsService implements UserDetailsService {
         }
         authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // 所有員工都有USER角色
         
-        // 回傳 UserDetails 物件
+        // 回傳 UserDetails 物件，注意這裡不再設置 disabled
         return User.builder()
                 .username(emp.getEmpAccount())
                 .password(emp.getEmpPassword())
-                .disabled(emp.getEmpAccountStatus() == 0)  // 0代表停用
                 .authorities(authorities)
                 .build();
     }

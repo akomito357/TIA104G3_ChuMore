@@ -3,49 +3,48 @@
 <head th:replace="layout :: head('員工登入')">
 </head>
 <body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h4 class="mb-0">員工登入系統</h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- 顯示錯誤訊息 -->
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            帳號或密碼錯誤，請重新輸入
-                        </div>
-                        <!-- 顯示登出訊息 -->
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            您已成功登出
-                        </div>
-                        
-                        <form th:action="@{/login}" method="post">
-                            <div class="form-group">
-                                <label for="username">帳號</label>
-                                <input type="text" class="form-control" id="username" 
-                                       name="username" required autofocus>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="password">密碼</label>
-                                <input type="password" class="form-control" id="password" 
-                                       name="password" required>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block">
-                                    登入
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container">
+		<div class="row justify-content-center mt-5">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header bg-primary text-white text-center">
+						<h4 class="mb-0">員工登入系統</h4>
+					</div>
+					
+					<div class="card-body">
+						<!-- 顯示錯誤訊息 -->
+						<div th:if="${param.error}" class="alert alert-danger">
+							帳號密碼錯誤或帳號被停權，請洽管理員</div>
+						<div th:if="${param.disabled}" class="alert alert-danger">
+							此帳號已被停用，請聯繫管理員</div>
+						<!-- 顯示登出訊息 -->
+						<div th:if="${param.logout}" class="alert alert-success">
+							您已成功登出</div>
 
-    <!-- 由於這是登入頁面，我們只需要基本的scripts -->
-    <div th:replace="layout :: scripts"></div>
+						<form th:action="@{/login}" method="post">
+							<div class="form-group">
+								<label for="username">帳號</label> <input type="text"
+									class="form-control" id="username" name="username" required
+									autofocus>
+							</div>
+							<br>
+							<div class="form-group">
+								<label for="password">密碼</label> <input type="password"
+									class="form-control" id="password" name="password" required>
+							</div>
+							<br>
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary btn-block">
+									登入</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 由於這是登入頁面，我們只需要基本的scripts -->
+	<div th:replace="layout :: scripts"></div>
 </body>
 </html>
