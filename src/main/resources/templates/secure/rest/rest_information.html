@@ -192,7 +192,8 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
 $(document).ready(function() {
-
+	
+	
     setReadOnlyMode(true);
     loadRestaurantData();
 
@@ -505,6 +506,27 @@ $('#restaurantForm').on('submit', async function(e) {
             background-color: #e9ecef;
             opacity: 1;
         }
+        .delete-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        border: none;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        cursor: pointer;
+        padding: 0;
+    }
+    .edit-only {
+        display: none !important;
+    }
+    .edit-mode .edit-only {
+        display: inline-block !important;
+    }
     `;
     document.head.appendChild(style);
 
@@ -614,7 +636,7 @@ $('#restaurantForm').on('submit', async function(e) {
                     .attr('src', `/envImg/image/${id}`)
                     .css({ 'max-width':'200px', 'max-height':'200px', 'object-fit':'contain' });
                 const deleteBtn = $('<button>')
-                    .addClass('delete-btn')
+                    .addClass('delete-btn edit-only')
                     .attr({ 'data-id': id, 'data-type': 'env' })
                     .html('<i class="bi bi-x"></i>');
                 imgContainer.append(imgElement);
@@ -646,7 +668,7 @@ $('#restaurantForm').on('submit', async function(e) {
                     .attr('src', `/menuImg/image/${id}`)
                     .css({ 'max-width':'200px', 'max-height':'200px', 'object-fit':'contain' });
                 const deleteBtn = $('<button>')
-                    .addClass('delete-btn')
+                    .addClass('delete-btn edit-only')
                     .attr({ 'data-id': id, 'data-type': 'menu' })
                     .html('<i class="bi bi-x"></i>');
                 imgContainer.append(imgElement);
@@ -710,6 +732,8 @@ $('#restaurantForm').on('submit', async function(e) {
     }
 
 
+       
+    
     $(document).on('click', '.delete-btn', function(e) {
         e.preventDefault();
         if (!confirm('確定要刪除這張圖片嗎？')) return;
