@@ -1,7 +1,5 @@
 package com.chumore.config;
 
-import com.chumore.emp.model.EmpUserDetailsService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+
+import com.chumore.emp.model.EmpUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -87,7 +87,7 @@ public class SecurityConfig {
 	        .authenticationProvider(memberAuthenticationProvider())
 	        .authorizeRequests()
 	            // 靜態資源訪問許可
-	            .antMatchers("/css/**", "/js/**", "/images/**", "/lib/**", "/webjars/**").permitAll()
+	            .antMatchers("/css/**", "/js/**", "/images/**", "/lib/**", "/webjars/**", "/menu_demo.csv").permitAll()
 	            // 公開頁面訪問許可
 	            .antMatchers("/", "/restaurant/**", "/search/**", "/auth/register/**", "/auth/login").permitAll()
 	            // 會員專用路徑
