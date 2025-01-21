@@ -51,7 +51,9 @@ function getProductCategoriesAndProducts(){
                     // console.log(item);
                     productCategoryJson = productCategory;
                     if (productCategory.productList.length != 0){
-                        productCategories += `<a class="nav-link productCategory" href="#procat-${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
+                        if (productCategory.enableStatus == 1){
+                            productCategories += `<a class="nav-link productCategory" href="#procat-${productCategory.productCategoryId}">${productCategory.categoryName}</a>`;
+                        }
                     }
                 });
                 // console.log(productCategories);
@@ -61,51 +63,54 @@ function getProductCategoriesAndProducts(){
                 let productCategorySections = "";
                 $.each(res.data, function(i, productCategory){
                     if (productCategory.productList.length != 0){ // 該類別有餐點才顯示
-                        productCategorySections += 
-                        `<section id="procat-${productCategory.productCategoryId}" class="menu-section productCategorySection">
-                        <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
-                        `;
-                        console.log(productCategory.productList);
-                        
-                        $.each(productCategory.productList, function(index, product){
-                            // console.log(product);
-                            productJSON = product;
-                            if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
-                                // let productDiv = "";
-                                productCategorySections += `
-                                <div class="menu-item product" id="product-${product.productId}">
-                                    <div class="menu-item-img-container">`;
-                                if (product.productImage){ // 有圖片才顯示，否則顯示預設
-                                    // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
-                                    // console.log('not null');
-                                    // console.log(product.productImage);
-                                    productCategorySections += `<img src="data:image/jpeg; base64, ${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
-                                }else{
-                                    // console.log('null');
-                                    productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
-                                }
-                                        // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
-                                productCategorySections +=  `</div>
-                                    <div class="menu-item-content">
-                                        <h5 class="productName">${product.productName}</h5>
-                                        <div class="menu-item-description">
-                                            <p class="text-muted small mb-0 productDescription">${product.productDescription}</p>
-                                        </div>
-                                        <div class="menu-item-footer">
-                                            <div class="d-flex justify-content-between align-items-center priceAndCount">
-                                                <div class="h5 mb-0">$<span class="productPrice">${product.productPrice}</span></div>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
-                                                    <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
-                                                    <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                        if (productCategory.enableStatus == 1){
+
+                            productCategorySections += 
+                            `<section id="procat-${productCategory.productCategoryId}" class="menu-section productCategorySection">
+                            <h3 class="menu-section-title productCategoryTitel">${productCategory.categoryName}</h3>
+                            `;
+                            console.log(productCategory.productList);
+                            
+                            $.each(productCategory.productList, function(index, product){
+                                // console.log(product);
+                                productJSON = product;
+                                if (product.supplyStatus == 0){ // 有供應才顯示在菜單上
+                                    // let productDiv = "";
+                                    productCategorySections += `
+                                    <div class="menu-item product" id="product-${product.productId}">
+                                        <div class="menu-item-img-container">`;
+                                    if (product.productImage){ // 有圖片才顯示，否則顯示預設
+                                        // 使用原生JS才能正確判斷null，jQuery會回傳jQuery物件
+                                        // console.log('not null');
+                                        // console.log(product.productImage);
+                                        productCategorySections += `<img src="data:image/jpeg; base64, ${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">`
+                                    }else{
+                                        // console.log('null');
+                                        productCategorySections += `<img src="https://placehold.co/160x120" alt="${product.productName}" class="menu-item-img productImage">`
+                                    }
+                                            // <img src="${product.productImage}" alt="${product.productName}" class="menu-item-img productImage">
+                                    productCategorySections +=  `</div>
+                                        <div class="menu-item-content">
+                                            <h5 class="productName">${product.productName}</h5>
+                                            <div class="menu-item-description">
+                                                <p class="text-muted small mb-0 productDescription">${product.productDescription}</p>
+                                            </div>
+                                            <div class="menu-item-footer">
+                                                <div class="d-flex justify-content-between align-items-center priceAndCount">
+                                                    <div class="h5 mb-0">$<span class="productPrice">${product.productPrice}</span></div>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-outline-primary btn-sm btnMinus">-</button>
+                                                        <span class="btn btn-outline-primary btn-sm disabled orderCount">0</span>
+                                                        <button class="btn btn-outline-primary btn-sm btnPlus">+</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>`;
-                            }
-                            
-                        })
+                                    </div>`;
+                                }
+                                
+                            })
+                        }
                         productCategorySections += `</section>`
                         // $(".productCategorySection").html(productDiv);
                         // console.log("================")S
