@@ -725,6 +725,13 @@
             $("button.btn-success").on("click", function () {
                 submitData();
             });
+            
+            $("button.btn-secondary").on("click", function(){
+				const clean = confirm("確認要清除嗎");
+				if(clean){
+					window.location.reload();
+				}
+            });
 
 
 
