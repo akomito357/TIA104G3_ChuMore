@@ -50,7 +50,7 @@ public class RestServiceImpl implements RestService{
 	
 
 	@Override
-	@Transactional(propagation = Propagation.NEVER)
+	@Transactional
 	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
