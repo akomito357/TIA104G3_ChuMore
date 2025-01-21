@@ -50,17 +50,15 @@ public class OrderTableController {
     public ResponseEntity<Map<String, Object>> addTable(@RequestBody Map<String, Object> tableData) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // 從 Map 中取得資料
-            Integer restId = Integer.parseInt(tableData.get("restID").toString());  // 注意：前端傳來的是 "restID"
+
+            Integer restId = Integer.parseInt(tableData.get("restID").toString());
             String tableNumber = tableData.get("tableNumber").toString();
-            
-            
+                        
            List<OrderTableVO> existingTables = orderTableSvc.getAllByRestId(restId);
             
            boolean isDuplicate = existingTables.stream()
                    .anyMatch(table -> table.getTableNumber().equals(tableNumber));
            if (isDuplicate) {
-//               response.put("success", false);
                response.put("message", "桌號已存在");
                return ResponseEntity.badRequest().body(response);
            }
@@ -70,14 +68,13 @@ public class OrderTableController {
             
             // 建立並設定 OrderTableVO
             OrderTableVO orderTable = new OrderTableVO();
-            orderTable.setRest(rest);  // 設定關聯的 RestVO
+            orderTable.setRest(rest);
             orderTable.setTableNumber(tableNumber);
             
-            // 生成 URL（如果需要在 Controller 層處理的話）
+            //生成 URL
             String orderUrl = String.format("https://chumore.ddns.net/orders/addOrder/%d/%s", restId, tableNumber);
-            orderTable.setOrderTableUrl(orderUrl);
+            orderTable.setOrderTableUrl(orderUrl);            
             
-            // 呼叫 Service 新增桌位
             OrderTableVO newTable = orderTableSvc.addOrderTable(orderTable);
             
             response.put("success", true);
