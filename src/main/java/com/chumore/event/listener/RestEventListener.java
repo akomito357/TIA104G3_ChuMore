@@ -4,6 +4,8 @@ package com.chumore.event.listener;
 import com.chumore.event.RestChangedEvent;
 import com.chumore.rest.model.RestVO;
 import com.chumore.search.model.LuceneIndexService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -20,9 +22,12 @@ public class RestEventListener {
     @Autowired
     private LuceneIndexService luceneIndexService;
 
+    private static final Logger logger = LoggerFactory.getLogger(RestEventListener.class);
+
     @Async
     @EventListener
     public void handleRestChangedEvent(RestChangedEvent event) {
+        logger.info("Received RestChangedEvent: restId={}", event.getRest().getRestId());
         RestVO rest = event.getRest();
         try{
             switch(event.getOperation()){

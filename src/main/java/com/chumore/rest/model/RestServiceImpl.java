@@ -9,6 +9,8 @@ import javax.persistence.TypedQuery;
 
 import com.chumore.event.RestChangedEvent;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +44,8 @@ public class RestServiceImpl implements RestService{
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	private static final Logger logger = LoggerFactory.getLogger(RestServiceImpl.class);
+
 	@Override
 	public void addRest(RestVO rest) {
 		repository.save(rest);
@@ -50,21 +54,21 @@ public class RestServiceImpl implements RestService{
 	
 
 	@Override
-	@Transactional(propagation = Propagation.NEVER)
 	public void updateRest(RestVO rest) {
-	        try {
-	            // 獲取原有資料
-				System.out.println("更新開始");
-//	            RestVO existingRest = repository.findById(rest.getRestId())
-//	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
+		logger.info("開始執行 updateRest 方法，restId: {}", rest.getRestId());
+		try {
+			repository.saveAndFlush(rest);
+			logger.info("Rest entity saved and flushed successfully for restId: {}", rest.getRestId());
 
-	            repository.saveAndFlush(rest);
-				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
-				System.out.println("更新成功");
-			}catch(Exception e){		
-			}
+			publisher.publishEvent(new RestChangedEvent(this, rest, "UPDATE"));
+			logger.info("RestChangedEvent published successfully for restId: {}", rest.getRestId());
 
-	    }
+			logger.info("更新成功 for restId: {}", rest.getRestId());
+		} catch (Exception e) {
+			logger.error("Error occurred while updating Rest entity for restId: {}", rest.getRestId(), e);
+			throw e; // 根據需要重新拋出例外或處理
+		}
+	}
 	
 	
 //	    @Autowired
