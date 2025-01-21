@@ -156,32 +156,38 @@
 						<div class="form-text">可以選擇多張圖片</div>
 					</div>
 
-					
 					<div class="row mb-3">
 						<div class="col-md-3">
-							<label class="form-label">審核狀態</label> <select
+							<label class="form-label">營業狀態</label> <select
 								class="form-select view-only" id="businessStatusDisplay"
 								disabled>
-								<option value="open">通過</option>
-								<option value="closed">待審核</option>
+								<option value="1">營業中</option>
+								<option value="0">停業</option>
 							</select> <select class="form-select edit-only" name="businessStatus"
 								id="businessStatusEdit">
-								<option value="open">通過</option>
-								<option value="closed">待審核</option>
+								<option value="1">營業中</option>
+								<option value="0">停業</option>
 							</select>
 						</div>
-						
-						<label class="form-label" style="margin-top:10px">預設桌數</label>
-						<div id="tablesContainer" class="col-md-8">
-							<!-- 桌型資訊將由 JavaScript 動態載入 -->
+						<div class="col-md-3">
+							<label class="form-label">審核狀態</label> <input type="text"
+								class="form-control read-only-field" id="approvalStatusDisplay"
+								readonly>
 						</div>
-						
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-md-12">
+							<label class="form-label">預設桌數</label>
+							<div id="tablesContainer" class="col-md-8">
+								<!-- 桌型資訊將由 JavaScript 動態載入 -->
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
-
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
@@ -314,7 +320,7 @@ $('#restaurantForm').on('submit', async function(e) {
             restDist: $('#districtEdit').val(),
             restAddress: $('#address').val(),
             restIntro: $('#restaurantIntro').val(),
-            businessStatus: $('#businessStatusEdit').val() === 'open' ? 1 : 0
+            businessStatus: parseInt($('#businessStatusEdit').val())
         };
 
 
@@ -424,9 +430,7 @@ $('#restaurantForm').on('submit', async function(e) {
             form.find('input:not(.read-only-field), textarea').prop('readonly', false);
             $('[id^="table"]').prop('readonly', false);
             $('.edit-only').show();
-            $('.view-only').hide();
-            
-        	$('#businessStatusEdit').prop('disabled', true).addClass('read-only-field');
+            $('.view-only').hide();  
         }
     }
 
@@ -472,9 +476,16 @@ $('#restaurantForm').on('submit', async function(e) {
             $('#address').val(data.restAddress);
             $('#restaurantIntro').val(data.restIntro);
             
-            const businessStatus = data.businessStatus === 1 ? 'open' : 'closed';
+            const businessStatus = data.businessStatus;
             $('#businessStatusDisplay, #businessStatusEdit').val(businessStatus);
-            $('#businessStatusEdit').prop('disabled', true).addClass('read-only-field');
+            
+            // 設置審核狀態
+           	const approvalStatus = data.approvalStatus;
+	        const approvalStatusText = approvalStatus === 1 ? '審核通過' : '審核中';
+	        $('#approvalStatusDisplay').val(approvalStatusText);
+
+            // 移除營業狀態的唯讀屬性
+            $('#businessStatusEdit').prop('disabled', false).removeClass('read-only-field');
 
             // 依序載入其他
             loadTableTypes();
@@ -523,7 +534,6 @@ $('#restaurantForm').on('submit', async function(e) {
         })
         .catch(err => {
             console.error('Error loading cuisine types:', err);
-            alert('載入料理類型失敗');
         });
     }
 
@@ -801,21 +811,6 @@ $('#restaurantForm').on('submit', async function(e) {
         });
         loadMenuImages();
     }
-
-    // 密碼欄位即時檢查
-    $('#newPassword, #confirmPassword').on('input', function() {
-        const newPassword = $('#newPassword').val();
-        const confirmPassword = $('#confirmPassword').val();
-        if (newPassword || confirmPassword) {
-            if (newPassword === confirmPassword) {
-                $('#passwordMatch').text('密碼符合').removeClass('text-danger').addClass('text-success');
-            } else {
-                $('#passwordMatch').text('密碼不符合').removeClass('text-success').addClass('text-danger');
-            }
-        } else {
-            $('#passwordMatch').text('');
-        }
-    });
 
 });
 </script>

@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,7 +23,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +41,6 @@ import com.chumore.rest.model.SpecificHolidayService;
 import com.chumore.rest.model.SpecificHolidayVO;
 import com.chumore.tabletype.model.TableTypeService;
 import com.chumore.tabletype.model.TableTypeVO;
-import com.chumore.util.ResponseUtil;
 
 // @SessionAttributes(names={"rest","member"})
 
@@ -67,6 +68,12 @@ public class RestController {
 
 	@Autowired
 	SpecificHolidayService specificHolidaySvc;
+	
+	@Autowired
+	private ApplicationEventPublisher publisher;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	// add
 	@GetMapping("addRest")
@@ -147,9 +154,10 @@ public class RestController {
 	    try {
 	        Integer restId = Integer.parseInt(requestData.get("restId").toString());
 	        Integer cuisineTypeId = Integer.parseInt(requestData.get("cuisineTypeId").toString());
-
+	        
 	        // 獲取原有的餐廳資料
 	        RestVO existingRest = restSvc.getOneById(restId);
+	        
 	        if (existingRest == null) {
 	            response.put("success", false);
 	            response.put("message", "找不到餐廳資料");
@@ -465,46 +473,46 @@ public class RestController {
 		}
 	}
 	
-	@PostMapping("/updatePassword")
-	@ResponseBody
-	public ResponseEntity<Map<String, Object>> updatePassword(@RequestBody Map<String, Object> requestData) {
-	    Map<String, Object> response = new HashMap<>();
-	    
-	    try {
-	        // 從 SecurityContext 獲取當前登入的商家信箱
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        String merchantEmail = authentication.getName();
-	        
-	        // 獲取商家資訊
-	        RestVO rest = restSvc.getOneByEmail(merchantEmail);
-	        if (rest == null) {
-	            response.put("success", false);
-	            response.put("message", "找不到商家資料");
-	            return ResponseEntity.ok(response);
-	        }
-	        
-	        String oldPassword = (String) requestData.get("oldPassword");
-	        String newPassword = (String) requestData.get("newPassword");
-	        
-	        // 進行密碼更新
-	        boolean updateSuccess = restSvc.updatePassword(rest.getRestId(), oldPassword, newPassword);
-	        
-	        if (updateSuccess) {
-	            response.put("success", true);
-	            response.put("message", "密碼更新成功");
-	        } else {
-	            response.put("success", false);
-	            response.put("message", "舊密碼錯誤");
-	        }
-	        
-	        return ResponseEntity.ok(response);
-	        
-	    } catch (Exception e) {
-	        response.put("success", false);
-	        response.put("message", "更新失敗：" + e.getMessage());
-	        return ResponseEntity.ok(response);
-	    }
-	}
+//	@PostMapping("/updatePassword")
+//	@ResponseBody
+//	public ResponseEntity<Map<String, Object>> updatePassword(@RequestBody Map<String, Object> requestData) {
+//	    Map<String, Object> response = new HashMap<>();
+//	    
+//	    try {
+//	        // 從 SecurityContext 獲取當前登入的商家信箱
+//	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//	        String merchantEmail = authentication.getName();
+//	        
+//	        // 獲取商家資訊
+//	        RestVO rest = restSvc.getOneByEmail(merchantEmail);
+//	        if (rest == null) {
+//	            response.put("success", false);
+//	            response.put("message", "找不到商家資料");
+//	            return ResponseEntity.ok(response);
+//	        }
+//	        
+//	        String oldPassword = (String) requestData.get("oldPassword");
+//	        String newPassword = (String) requestData.get("newPassword");
+//	        
+//	        // 進行密碼更新
+//	        boolean updateSuccess = restSvc.updatePassword(rest.getRestId(), oldPassword, newPassword);
+//	        
+//	        if (updateSuccess) {
+//	            response.put("success", true);
+//	            response.put("message", "密碼更新成功");
+//	        } else {
+//	            response.put("success", false);
+//	            response.put("message", "舊密碼錯誤");
+//	        }
+//	        
+//	        return ResponseEntity.ok(response);
+//	        
+//	    } catch (Exception e) {
+//	        response.put("success", false);
+//	        response.put("message", "更新失敗：" + e.getMessage());
+//	        return ResponseEntity.ok(response);
+//	    }
+//	}
 
 	// 獲取根本原因的輔助方法
 	private Throwable getRootCause(Throwable e) {
