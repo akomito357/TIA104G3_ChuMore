@@ -40,14 +40,14 @@ $(document).ready( async function() {
     async function fetchEnvImages(restId) {
         let imgUrlList = [];
         try {
-            let res = await fetch(`http://localhost:8080/envImg/images/${restId}`);
+            let res = await fetch(`/envImg/images/${restId}`);
             if (!res.ok) {
                 throw new Error(`Failed to fetch image IDs: ${res.status}`);
             }
             let imagesIds = await res.json();
 
             for (const id of imagesIds) {
-                imgUrlList.push(`http://localhost:8080/envImg/image/${id}`);
+                imgUrlList.push(`/envImg/image/${id}`);
             }
 
             return imgUrlList;
