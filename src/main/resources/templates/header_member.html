@@ -101,6 +101,7 @@
                         <a th:href="@{/member/points}" class="nav-item nav-link header-item header-link">我的點數</a>
                     <!-- </form> -->
                 </li>
+				<li><a th:href="@{/member/points_usage}" class="nav-item nav-link header-item header-link">點數使用紀錄</a></li>
             </ul>
 			<form th:action="@{/auth/logout}" method="post" class="log-out-btn"
 				style="display: inline;" onsubmit="return confirmLogout()">

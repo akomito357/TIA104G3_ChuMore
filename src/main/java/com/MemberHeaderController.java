@@ -22,7 +22,11 @@ public class MemberHeaderController {
 		return "secure/member/reservation/member_reservations";
 	}
 	
-	// 我的點數
+	// 點數使用
+	@GetMapping("points_usage")
+	public String toMemberPointUsage() {
+		return "secure/member/points_usage";
+	}
 	
 	
 	
