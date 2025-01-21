@@ -50,11 +50,13 @@ public class RestServiceImpl implements RestService{
 	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
-	            RestVO existingRest = repository.findById(rest.getRestId())
-	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
+				System.out.println("更新開始");
+//	            RestVO existingRest = repository.findById(rest.getRestId())
+//	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
 
 	            repository.saveAndFlush(rest);
 				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
+				System.out.println("更新成功");
 
 	        } catch (Exception e) {
 	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
