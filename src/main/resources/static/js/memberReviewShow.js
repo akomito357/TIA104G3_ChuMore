@@ -9,7 +9,7 @@ async function fetchEnvImgs(restId){
         let res = await fetch(`/envImg/images/${restId}`);
         if (!res.ok){
             throw new Error(`Failed to fetch image IDs: ${res.status}`);
-        }       
+        }
         let imagesIds = await res.json();
 
         for (const id of imagesIds){
@@ -75,8 +75,19 @@ async function populateRevImageGrid(reviewId){
     if (images.review.length != 0){
         for (const img of images.review){
             ReviewImgGrid.innerHTML += `<div class="photoPreviewItem photo-preview-item">
-                                            <img src="${img}" alt="預覽圖">
+                                            <img src="${img}" alt="預覽圖" class="review-image" style="cursor: pointer;">
                                         </div>`
         }
     }
+
+
+    const reviewImages = document.querySelectorAll('.review-image');
+    reviewImages.forEach(img => {
+        img.addEventListener('click', function() {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = this.src;
+            const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            imageModal.show();
+        });
+    });
 }
