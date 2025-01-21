@@ -77,7 +77,7 @@
             transition: color 0.3s;
             font-size: 2rem;
         }
-        .star-rating.selected, 
+        .star-rating.selected,
         .star-rating.active {
             color: #ffc107;
         }
@@ -150,10 +150,32 @@
             color: #6c757d;
             background-color: white;
         }
+        /* 添加圖片互動效果 */
+        .review-image {
+            transition: transform 0.2s;
+        }
+
+        .review-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* 模態框樣式調整 */
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 0.5rem;
+        }
+
+        .modal-body {
+            padding: 0;
+        }
     </style>
 </head>
 <body>
-    <main class="main">
+<main class="main">
     <div class="container">
         <div class="review-container">
             <!-- 頁面標題 -->
@@ -171,7 +193,7 @@
                 <div class="restaurant-image-container">
                     <img src="https://placehold.co/200x150" alt="餐廳照片" class="restaurant-image">
                 </div>
-                
+
                 <div class="restaurant-text-info">
                     <h2 th:text="${orderMaster.rest.restName}">阿美餐廳</h2>
                     <p class="text-muted"><span th:text="${orderMaster.rest.restCity}">台北市</span><span th:text="${orderMaster.rest.restDist}">大安區</span><span th:text="${orderMaster.rest.restAddress}">信義路上</span></p>
@@ -215,11 +237,11 @@
             <div class="mb-4">
                 <label class="form-label">評論圖片</label>
                 <!-- <div id="photoUploadContainer" class="photo-upload-container">
-                    <input 
-                        type="file" 
-                        id="photoUpload" 
-                        accept="image/jpeg,image/png" 
-                        multiple 
+                    <input
+                        type="file"
+                        id="photoUpload"
+                        accept="image/jpeg,image/png"
+                        multiple
                         style="display:none;"
                     >
                     <label for="photoUpload" class="btn btn-outline-secondary">
@@ -249,12 +271,12 @@
                 </label>
                 <div class="input-group">
                     <span class="input-group-text">NT$</span>
-                    <input 
-                        type="number" 
-                        id="avgCost" 
-                        class="form-control" 
-                        placeholder="輸入金額"
-                        min="0" th:value="${review.avgCost}" readonly
+                    <input
+                            type="number"
+                            id="avgCost"
+                            class="form-control"
+                            placeholder="輸入金額"
+                            min="0" th:value="${review.avgCost}" readonly
                     >
                 </div>
             </div>
@@ -267,17 +289,31 @@
             </div> -->
         </div>
     </div>
-    </main>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:src="@{/js/memberReviewShow.js}"></script>
-    <script src="/static/js/memberReviewShow.js"></script>
-    <script th:inline="javascript">
-        populateImageGrid(/*[[${review.rest.restId}]]*/);
-        populateRevImageGrid(/*[[${review.reviewId}]]*/);
-        console.log(/*[[${review.reviewId}]]*/);
-    </script>
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="大圖" style="max-width: 100%; max-height: 80vh;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/memberReviewShow.js}"></script>
+<script src="/static/js/memberReviewShow.js"></script>
+<script th:inline="javascript">
+    populateImageGrid(/*[[${review.rest.restId}]]*/);
+    populateRevImageGrid(/*[[${review.reviewId}]]*/);
+    console.log(/*[[${review.reviewId}]]*/);
+</script>
 
 </body>
 </html>

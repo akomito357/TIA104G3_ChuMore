@@ -3,10 +3,12 @@ package com.chumore.review.controller;
 import com.chumore.review.model.ReviewService;
 import com.chumore.review.model.ReviewVO;
 import com.chumore.reviewimg.model.ReviewImageService;
+import com.chumore.reviewimg.model.ReviewImageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +57,12 @@ public class ReviewPublicController {
         }
     }
 
+    @GetMapping("/image/{reviewImgId}")
+    @ResponseBody
+    public ResponseEntity<byte[]> getOneRevImg(@PathVariable Integer reviewImgId) {
+        ReviewImageVO reviewImage = reviewImageService.getOneRevImg(reviewImgId);
+//		System.out.println(reviewImage.getReviewImage());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(reviewImage.getReviewImage());
+    }
 
 }

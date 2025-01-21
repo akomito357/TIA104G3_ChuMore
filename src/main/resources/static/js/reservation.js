@@ -1,4 +1,27 @@
 $(document).ready(function() {
+    const images = {
+        environment: [
+            'https://placehold.co/800x600?text=環境1',
+            'https://placehold.co/800x600?text=環境2',
+            'https://placehold.co/800x600?text=環境3',
+            'https://placehold.co/800x600?text=環境4',
+            'https://placehold.co/800x600?text=環境5',
+            'https://placehold.co/800x600?text=環境6',
+            'https://placehold.co/800x600?text=環境7',
+            'https://placehold.co/800x600?text=環境8',
+        ],
+        menu: [
+            'https://placehold.co/800x600?text=菜單1',
+            'https://placehold.co/800x600?text=菜單2',
+            'https://placehold.co/800x600?text=菜單3',
+            'https://placehold.co/800x600?text=菜單4',
+            'https://placehold.co/800x600?text=菜單5',
+            'https://placehold.co/800x600?text=菜單6',
+            'https://placehold.co/800x600?text=菜單7',
+            'https://placehold.co/800x600?text=菜單8',
+        ]
+    };
+
     const urlParams = new URLSearchParams(window.location.search);
 
     const restId = urlParams.get("restId");
@@ -66,17 +89,19 @@ $(document).ready(function() {
         if (!images || images.length === 0) return '';
 
         return `
-                <div class="review-images mt-2">
-                    <div class="d-flex gap-2 overflow-auto">
-                        ${images.map(image => `
-                            <img src="/member/reviews/image/${image.reviewImgId}"
-                                 class="rounded"
-                                 alt="評論圖片"
-                                 style="width: 80px; height: 80px; object-fit: cover;">
-                        `).join('')}
-                    </div>
+            <div class="review-images mt-2">
+                <div class="d-flex gap-2 overflow-auto">
+                    ${images.map((image, index) => `
+                        <img src="/reviews/image/${image.reviewImgId}"
+                             class="rounded review-image"
+                             alt="評論圖片"
+                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                             onclick="openReviewImageViewer(${image.reviewImgId}, ${index})"
+                             data-review-img-id="${image.reviewImgId}">
+                    `).join('')}
                 </div>
-            `;
+            </div>
+        `;
     }
 
     async function fetchAndDisplayReviews(restId) {
@@ -120,29 +145,6 @@ $(document).ready(function() {
         language: 'zh-TW'
     });
 
-
-    const images = {
-        environment: [
-            'https://placehold.co/800x600?text=環境1',
-            'https://placehold.co/800x600?text=環境2',
-            'https://placehold.co/800x600?text=環境3',
-            'https://placehold.co/800x600?text=環境4',
-            'https://placehold.co/800x600?text=環境5',
-            'https://placehold.co/800x600?text=環境6',
-            'https://placehold.co/800x600?text=環境7',
-            'https://placehold.co/800x600?text=環境8',
-        ],
-        menu: [
-            'https://placehold.co/800x600?text=菜單1',
-            'https://placehold.co/800x600?text=菜單2',
-            'https://placehold.co/800x600?text=菜單3',
-            'https://placehold.co/800x600?text=菜單4',
-            'https://placehold.co/800x600?text=菜單5',
-            'https://placehold.co/800x600?text=菜單6',
-            'https://placehold.co/800x600?text=菜單7',
-            'https://placehold.co/800x600?text=菜單8',
-        ]
-    };
 
 
     let currentTab = 'environment';
@@ -257,8 +259,14 @@ $(document).ready(function() {
             // 重新綁定點擊事件
             $('.time-slot-btn').off('click').on('click', function() {
                 if (!$(this).hasClass('disabled-slot')) {
-                    $('.time-slot-btn').removeClass('active');
-                    $(this).addClass('active');
+                    // 如果已經是 active 狀態，則取消選取
+                    if ($(this).hasClass('active')) {
+                        $(this).removeClass('active');
+                    } else {
+                        // 否則移除其他按鈕的 active 狀態，並將此按鈕設為 active
+                        $('.time-slot-btn').removeClass('active');
+                        $(this).addClass('active');
+                    }
                     updateBookingSummary();
                 }
             });
@@ -746,7 +754,7 @@ $(document).ready(function() {
         });
         event.target.classList.add('active');
         updateCarouselImages(tab);
-        updateImageCounter(1);
+        updateImageCounter(1, images[tab].length);
     }
 
     function updateCarouselImages(tab) {
@@ -761,14 +769,48 @@ $(document).ready(function() {
         });
     }
 
-    function updateImageCounter(current) {
+    function updateImageCounter(current, total) {
         const counter = document.querySelector('.image-counter');
-        const total = images[currentTab].length;
         counter.textContent = `${current}/${total}`;
     }
 
     // 監聽輪播圖切換事件
     document.getElementById('imageViewerCarousel').addEventListener('slide.bs.carousel', function (event) {
-        updateImageCounter(event.to + 1);
+        updateImageCounter(event.to + 1, images[currentTab].length);
     });
+
+    // 新增 review images 相關函數
+    window.openReviewImageViewer = async function(reviewImgId, index) {
+        const modal = new bootstrap.Modal(document.getElementById('imageViewerModal'));
+
+        // 獲取當前評論的所有圖片
+        const reviewImages = Array.from(document.querySelectorAll('.review-image'))
+            .map(img => img.getAttribute('data-review-img-id'));
+
+        // 更新輪播圖內容
+        const carouselInner = document.querySelector('#imageViewerCarousel .carousel-inner');
+        carouselInner.innerHTML = '';
+
+        // 添加所有評論圖片到輪播圖
+        reviewImages.forEach((imgId, i) => {
+            const div = document.createElement('div');
+            div.className = `carousel-item${i === index ? ' active' : ''}`;
+            div.innerHTML = `<img src="/reviews/image/${imgId}" class="d-block mx-auto" alt="評論圖片${i + 1}">`;
+            carouselInner.appendChild(div);
+        });
+
+        // 更新圖片計數器
+        updateImageCounter(index + 1, reviewImages.length);
+
+        // 隱藏環境/菜單切換按鈕
+        document.querySelector('.btn-group').style.display = 'none';
+
+        modal.show();
+
+        // 監聽 modal 關閉事件，重新顯示切換按鈕
+        const modalElement = document.getElementById('imageViewerModal');
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            document.querySelector('.btn-group').style.display = 'flex';
+        }, { once: true });
+    }
 });

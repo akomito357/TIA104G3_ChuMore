@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,7 +38,6 @@ import com.chumore.ordermaster.model.OrderMasterVO;
 import com.chumore.ordermaster.res.OrderMasterResponse;
 import com.chumore.ordertable.model.OrderTableService;
 import com.chumore.product.model.ProductVO;
-import com.chumore.rest.model.RestVO;
 
 @Controller
 @RequestMapping("/rests")
@@ -210,10 +210,27 @@ public class RestOrderMasterController {
 
 	@PostMapping("checkout")
 	public String checkoutSubmit(@RequestParam Map<String, String> map) {
-		Integer memberId = Integer.valueOf(map.get("memberId"));
 		Integer orderId = Integer.valueOf(map.get("orderId"));
-		Integer pointUsed = Integer.valueOf(map.get("usePoints"));
-
+		Integer memberId = null;
+		Integer pointUsed = null;
+		
+		try {
+			memberId = Integer.valueOf(map.get("memberId"));
+		}catch (NumberFormatException ne) {
+			memberId = 0;
+		}
+		
+		try {
+			pointUsed = Integer.valueOf(map.get("usePoints"));
+		} catch (NumberFormatException ne) {
+			pointUsed = 0;
+		}
+		
+		
+//		Integer memberId = Integer.valueOf(map.get("memberId"));
+//		Integer orderId = Integer.valueOf(map.get("orderId"));
+//		Integer pointUsed = Integer.valueOf(map.get("usedPoints"));
+		
 		OrderMasterVO orderMaster = ordersvc.checkout(memberId, orderId, pointUsed);
 		orderMaster = ordersvc.updateOrderMaster(orderMaster);
 
@@ -268,7 +285,7 @@ public class RestOrderMasterController {
 	
 	@GetMapping("check")
 	public String orderCheck() {
-		return "secure/rest/order/order_manage_test";
+		return "secure/rest/order/order_manage";
 	}
 	
 }

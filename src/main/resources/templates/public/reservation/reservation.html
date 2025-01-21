@@ -63,8 +63,36 @@
             margin-top: 2rem;
         }
         .time-slot-btn {
+            width: 100px;
+            margin: 0;
+            height: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white !important;
+            border: 2px solid #F2994A !important;
+            color: #F2994A !important;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .time-slot-btn:hover {
+            background-color: #F2994A !important;
+            border-color: #F2994A !important;
+            color: white !important;
+        }
+        .time-slot-btn.disabled-slot {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #6c757d !important;
+        }
+        .time-slot-btn.active {
+            background-color: #F2994A !important;
+            border-color: #F2994A !important;
+            color: white !important;
         }
         .btn.rounded-pill {
             border-radius: 8px !important;
@@ -133,6 +161,32 @@
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
+        }
+
+        .btn-primary {
+            background-color: #F2994A ;
+            border-color: #F2994A ;
+            color: white ;
+        }
+
+        .btn-primary:hover {
+            background-color: #e88b35 ;
+            border-color: #e88b35 ;
+        }
+
+        .btn-outline-primary {
+            color: #F2994A;
+            border-color: #F2994A ;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #F2994A ;
+            color: white ;
+        }
+        .btn-primary:disabled {
+            background-color: #F2994A !important;
+            border-color: #F2994A !important;
+            opacity: 0.65;
         }
     </style>
 </head>

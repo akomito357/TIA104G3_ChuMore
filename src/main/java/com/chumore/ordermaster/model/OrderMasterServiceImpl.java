@@ -245,11 +245,20 @@ public class OrderMasterServiceImpl implements OrderMasterService {
 		MemberVO member = memberSvc.getOneMember(memberId).orElse(null);
 
 		OrderMasterVO orderMaster = getOneById(orderId);
+		
 		orderMaster.setMember(member);
-		orderMaster.setPointUsed(pointUsed);
+		System.out.println("pointUsed: " + pointUsed);
+		
+		
+		if (member != null) {
+			orderMaster.setPointEarned(earnedPoints);
+			orderMaster.setPointUsed(pointUsed);	 		
+		} else {
+			System.out.println("member == null");
+		}
+		
 		orderMaster.setTotalPrice(totalPrice);
 		orderMaster.setOrderStatus(1); // 已結帳
-		orderMaster.setPointEarned(earnedPoints);
 		orderMaster.setCheckoutDatetime(LocalDateTime.now());
 
 		System.out.println(orderMaster);

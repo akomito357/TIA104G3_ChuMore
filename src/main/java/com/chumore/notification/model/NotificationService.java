@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chumore.notification.NotificationMessage;
+import com.chumore.websocket.NotificationWebSocketHandler;
 import com.google.gson.Gson;
 
 @Service
@@ -20,6 +21,15 @@ public class NotificationService {
 	
 	@Autowired
 	Gson gson;
+	
+	@Autowired
+	private final NotificationWebSocketHandler handler;
+	
+	public NotificationService(NotificationRepository notiRepository, Gson gson, NotificationWebSocketHandler handler) {
+		this.notiRepository = notiRepository;
+		this.gson = gson;
+		this.handler = handler;
+	}
 	
 	
 	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -41,7 +51,7 @@ public class NotificationService {
 	
 	public String confirmReservation(String restId, String caller) {
 		String type = "reservation";
-		String content = "";
+		String content = "有一筆〈" + caller + "〉的新訂位";
 		String message = saveMessage(restId, caller, type, content);
 		return message;
 	}
@@ -65,5 +75,12 @@ public class NotificationService {
 		return notiRepository.getRestNotifications(restId, type);
 	}
 	
+	public void notifyToRest(String restId, String message) {
+		try {
+			handler.notifyToRest(restId, message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

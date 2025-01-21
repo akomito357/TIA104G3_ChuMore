@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chumore.notification.model.NotificationRequest;
@@ -43,11 +44,13 @@ public class NotificationController {
 		String message = notiService.pressServiceBell(restId, caller);
 		
 		// 2. 用websocket推送通知
-		try {
-			handler.notifyToRest(restId, message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			handler.notifyToRest(restId, message);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		
+		notiService.notifyToRest(restId, message);
 		
 		return "notification from " + caller + " has send to " + restId;
 	}
@@ -58,27 +61,31 @@ public class NotificationController {
 		String caller = notiReq.getCaller();
 		String message = notiService.requestCheckout(restId, caller);
 		
-		try {
-			handler.notifyToRest(restId, message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		notiService.notifyToRest(restId, message);
+//		try {
+//			handler.notifyToRest(restId, message);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 		return "requestCheckout from " + caller + " has send to " + restId;
 		
 	}
 	
 	@PostMapping("confirmReservation")
-	public String confirmReservation(@RequestBody NotificationRequest notiReq) {
-		String restId = notiReq.getRestId();
-		String caller = notiReq.getCaller();
+	public String confirmReservation(@RequestParam String restId, @RequestParam String caller) {
+//		String restId = notiReq.get("restId");
+//		String caller = notiReq.get("caller");
 		String message = notiService.requestCheckout(restId, caller);
 		
-		try {
-			handler.notifyToRest(restId, message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		notiService.notifyToRest(restId, message);
+		
+//		try {
+//			handler.notifyToRest(restId, message);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 		return "requestCheckout from " + caller + " has send to " + restId;
 		
