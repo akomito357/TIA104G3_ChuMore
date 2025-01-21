@@ -61,6 +61,8 @@ public class RestServiceImpl implements RestService{
 	            repository.saveAndFlush(rest);
 				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
 				System.out.println("更新成功");
+			}catch(Exception e){		
+			}
 
 	    }
 	
