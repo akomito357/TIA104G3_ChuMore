@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     const images = {
         environment: [
             'https://placehold.co/800x600?text=環境1',

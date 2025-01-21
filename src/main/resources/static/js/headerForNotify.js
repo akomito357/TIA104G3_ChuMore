@@ -71,6 +71,8 @@ $(".servicebell-notification").click(async function(){
         }
     } else{
         console.log("no bell msg");
+        bellMsgListEle.empty();
+        bellMsgListEle.prepend(`<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`);
     }
 });
 
@@ -108,7 +110,7 @@ $(".checkout-notification").click(async function(){
         }
     }else{
         checkOutMsgListEle.empty();
-        checkOutMsgListEle += `<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`
+        checkOutMsgListEle.prepend(`<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`);
     }
 });
 
@@ -145,7 +147,7 @@ $(".reservation-notification").click(async function(){
         }
     }else{
         msgListEle.empty();
-        msgLiEle += `<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`
+        msgLiEle.prepend(`<li class="notification-item dropdown-item notify-item notification-content">尚未收到通知！</li>`);
     }
 });
 
