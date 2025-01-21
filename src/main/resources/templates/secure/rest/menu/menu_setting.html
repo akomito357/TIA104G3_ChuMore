@@ -384,7 +384,7 @@
                     <!-- 批量上傳 -->
                     <div class="tab-pane fade" id="batch-upload">
                         <div class="upload-area text-center p-5">
-                            <button class="btn btn-primary mb-3">下載模板</button>
+                            <a href="/menu_demo.csv" class="btn btn-primary mb-3" download="menu_demo.csv">下載模板</a>
                             <input type="file" class="file-input" id="file-upload" accept=".csv" hidden>
                             <label for="file-upload" class="d-block">
                                 <div class="d-flex flex-column align-items-center">
@@ -724,6 +724,13 @@
 
             $("button.btn-success").on("click", function () {
                 submitData();
+            });
+            
+            $("button.btn-secondary").on("click", function(){
+				const clean = confirm("確認要清除嗎");
+				if(clean){
+					window.location.reload();
+				}
             });
 
 
