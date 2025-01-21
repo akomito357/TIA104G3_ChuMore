@@ -1,5 +1,7 @@
 package com.chumore.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,25 +32,35 @@ public class HibernateConfig {
     public DataSource dataSource() throws NamingException {
         boolean useJndi = Boolean.parseBoolean(env.getProperty("app.datasource.jndi-enabled","false"));
         if(useJndi){
-            //使用連線池連線
+            // 使用 JNDI 連線
             JndiObjectFactoryBean jndi = new JndiObjectFactoryBean();
             jndi.setJndiName(env.getProperty("spring.datasource.jndi-name"));
             jndi.setProxyInterface(DataSource.class);
             jndi.afterPropertiesSet();
-            System.out.println("using connection pool");
+            System.out.println("using JNDI DataSource");
             return (DataSource) jndi.getObject();
-        }else{
-            // 使用內建driver連線
-            DriverManagerDataSource dataSource = new DriverManagerDataSource();
-            dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
-            dataSource.setUrl(env.getProperty("spring.datasource.url"));
-            dataSource.setUsername(env.getProperty("spring.datasource.username"));
-            dataSource.setPassword(env.getProperty("spring.datasource.password"));
-            System.out.println("using default datasource");
-            return dataSource;
-        }
+        } else {
+            // 使用 HikariCP 連線池
+            HikariConfig config = new HikariConfig();
+            config.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+            config.setJdbcUrl(env.getProperty("spring.datasource.url"));
+            config.setUsername(env.getProperty("spring.datasource.username"));
+            config.setPassword(env.getProperty("spring.datasource.password"));
 
+            // 設定 HikariCP 相關參數
+            config.setMinimumIdle(Integer.parseInt(env.getProperty("spring.datasource.hikari.minimum-idle", "5")));
+            config.setMaximumPoolSize(Integer.parseInt(env.getProperty("spring.datasource.hikari.maximum-pool-size", "10")));
+            config.setIdleTimeout(Long.parseLong(env.getProperty("spring.datasource.hikari.idle-timeout", "30000")));
+            config.setConnectionTimeout(Long.parseLong(env.getProperty("spring.datasource.hikari.connection-timeout", "30000")));
+            config.setPoolName(env.getProperty("spring.datasource.hikari.pool-name", "MyHikariCP"));
+
+            HikariDataSource hikariDataSource = new HikariDataSource(config);
+
+            System.out.println("using HikariCP datasource");
+            return hikariDataSource;
+        }
     }
+
 
 
     // Spring Data JPA 的 EntityManagerFactory 設定
