@@ -47,6 +47,7 @@ public class MailService {
             helper.setTo(reservation.getMember().getMemberEmail()); //收件者
             helper.setSubject("chumore 訂位確認信"); //主旨
             helper.setText(htmlContent,true); // true 表示此為 html
+            helper.setFrom("foodiechumore@gmail.com");
 
             // 寄送 mail
             mailSender.send(message);
