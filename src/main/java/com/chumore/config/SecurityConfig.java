@@ -76,11 +76,11 @@ public class SecurityConfig {
 	            .successHandler((request, response, authentication) -> {
 	                for (GrantedAuthority auth : authentication.getAuthorities()) {
 	                    if (auth.getAuthority().equals("ROLE_ADMIN")) {
-	                        response.sendRedirect("/emp/admin/list");
+	                        response.sendRedirect("/emp/dashboard");
 	                        return;
 	                    }
 	                }
-	                response.sendRedirect("/emp/profile");
+	                response.sendRedirect("/emp/dashboard");
 	            })
 	            .failureHandler((request, response, exception) -> {
 	                if (exception instanceof DisabledException) {
