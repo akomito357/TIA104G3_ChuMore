@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,9 +99,6 @@ public class ReservationPublicController {
         reservationJsonNode.put("memberId", memberId);
         String reservationJson = "";
 
-
-
-
         try{
             reservationJson = objectMapper.writeValueAsString(reservationJsonNode);
         }catch (JsonProcessingException e){
@@ -136,7 +134,9 @@ public class ReservationPublicController {
 
     // 訂位頁面
     @GetMapping("/reservation")
-    public String reservationPage(){
+    public String reservationPage(HttpSession session, HttpServletRequest req){
+    	session.setAttribute("returnUrl", req.getRequestURI() + "?" + req.getQueryString());
+    	System.out.println(req.getRequestURI() + "?" + req.getQueryString());
         return "public/reservation/reservation";
     }
 
