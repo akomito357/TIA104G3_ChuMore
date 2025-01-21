@@ -25,6 +25,8 @@ import com.chumore.ordertable.model.OrderTableVO;
 import com.chumore.reservation.model.ReservationVO;
 import com.chumore.rest.compositequery.RestCompositeQuery;
 import com.chumore.util.ConverterUtil;
+
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -45,8 +47,10 @@ public class RestServiceImpl implements RestService{
 		repository.save(rest);
 		publisher.publishEvent(new RestChangedEvent(this,rest, "ADD"));
 	}
+	
 
 	@Override
+	@Transactional(propagation = Propagation.NEVER)
 	public void updateRest(RestVO rest) {
 	        try {
 	            // 獲取原有資料
@@ -58,36 +62,32 @@ public class RestServiceImpl implements RestService{
 				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
 				System.out.println("更新成功");
 
-	        } catch (Exception e) {
-	            throw new RuntimeException("更新餐廳資料失敗: " + e.getMessage());
-	        }
 	    }
 	
 	
-	    @Autowired
-	    private PasswordEncoder passwordEncoder;
-	    
-	    @Override
-	    public boolean updatePassword(Integer restId, String oldPassword, String newPassword) {
-	        try {
-	            RestVO rest = getOneById(restId);
-	            if (rest == null) {
-	                return false;
-	            }
-
-	            if (!passwordEncoder.matches(oldPassword, rest.getMerchantPassword())) {
-	                return false;
-	            }
-
-	            rest.setMerchantPassword(passwordEncoder.encode(newPassword));
-	            updateRest(rest);
-	            
-	            return true;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return false;
-	        }
-	    }
+//	    @Autowired
+//	    private PasswordEncoder passwordEncoder;
+//	    
+//	    @Override
+//	    public boolean updatePassword(Integer restId, String oldPassword, String newPassword) {
+//	        try {
+//	            RestVO rest = getOneById(restId);
+//	            if (rest == null) {
+//	                return false;
+//	            }
+//	            if (!passwordEncoder.matches(oldPassword, rest.getMerchantPassword())) {
+//	                return false;
+//	            }
+//
+//	            rest.setMerchantPassword(passwordEncoder.encode(newPassword));
+//	            updateRest(rest);
+//	            
+//	            return true;
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//            return false;
+//        }
+//	    }
 	
 	
 	@Override
