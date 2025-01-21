@@ -1,5 +1,6 @@
 package com.chumore.rest.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,10 @@ public interface RestRepository extends JpaRepository<RestVO, Integer> {
     boolean existsByMerchantEmail(String merchantEmail);
 
     boolean existsByPhoneNumber(String phoneNumber);
+     // 計算7天內的新餐廳數量
+    long countByRegisterDatetimeAfter(LocalDateTime datetime);
+    // 添加獲取營業中餐廳數量的方法
+    long countByBusinessStatus(Integer businessStatus);
 
     List<RestVO> findByRestIdIn(List<Integer> restIds);
 

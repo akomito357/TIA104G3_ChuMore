@@ -52,9 +52,15 @@ public class RestServiceImpl implements RestService{
 	@Override
 	@Transactional(propagation = Propagation.NEVER)
 	public void updateRest(RestVO rest) {
-            repository.saveAndFlush(rest);	     
+	        try {
+	            // 獲取原有資料
+				System.out.println("更新開始");
+//	            RestVO existingRest = repository.findById(rest.getRestId())
+//	                .orElseThrow(() -> new RuntimeException("餐廳不存在"));
+
+	            repository.saveAndFlush(rest);
 				publisher.publishEvent(new RestChangedEvent(this,rest, "UPDATE"));
-				System.out.println("成功");
+				System.out.println("更新成功");
 
 	    }
 	

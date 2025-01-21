@@ -1,5 +1,6 @@
 package com.chumore.emp.controller;
 
+import com.chumore.approval.model.ApprovalService;
 import com.chumore.emp.dto.EmpBasicUpdateDTO;
 import com.chumore.emp.dto.EmpBasicViewDTO;
 import com.chumore.emp.dto.EmpFullDTO;
@@ -11,6 +12,7 @@ import com.chumore.emp.model.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -23,6 +25,8 @@ import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.validation.Valid;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -40,6 +44,9 @@ public class EmpController {
 
 	@Autowired
 	private EmpRepository empRepository;
+	
+	@Autowired
+	private ApprovalService approvalService;
 
 	// ========== 一般員工功能 ==========
 	// 查看個人資料
@@ -105,12 +112,27 @@ public class EmpController {
 		long totalMembers = memberRepository.count();
 		long totalRests = restRepository.count();
 		long totalEmps = empRepository.count();
-
+		long pendingApprovals = approvalService.findByApprovalResult(2).size(); // 2表示待審核狀態
+		// 計算最近7天的餐廳註冊數量
+	    LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+	    long newRestsLast7Days = restRepository.countByRegisterDatetimeAfter(sevenDaysAgo);
+	 // 新增：獲取營業中的餐廳數量
+	    long activeRests = restRepository.countByBusinessStatus(1);
+	    // 獲取當前登入員工資訊
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String account = auth.getName();
+	    EmpVO emp = empService.getEmpByAccount(account);
+	    EmpBasicViewDTO empInfo = empService.getOwnBasicInfo(emp.getEmpId());
 		// 添加到model
-		model.addAttribute("totalMembers", totalMembers);
-		model.addAttribute("totalRests", totalRests);
-		model.addAttribute("totalEmps", totalEmps);
-
+	    model.addAttribute("totalMembers", totalMembers);
+	    model.addAttribute("totalRests", totalRests); 
+	    model.addAttribute("totalEmps", totalEmps);
+	    model.addAttribute("pendingApprovals", pendingApprovals);
+	    model.addAttribute("newRestsLast7Days", newRestsLast7Days);
+	    model.addAttribute("activeRests", activeRests);
+	    model.addAttribute("empInfo", empInfo);
+	    
+	   
 		return "emp/dashboard";
 	}
 	@PostMapping("/change-password")
