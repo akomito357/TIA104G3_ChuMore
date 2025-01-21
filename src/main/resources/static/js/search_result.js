@@ -618,7 +618,7 @@ function renderRests(restList) {
                     <div class="card rest-card">
                         <div class="row g-0">
                             <div class="col-md-4">
-                                <a href="/restaurant_details.html?id=${rest.restId}" class="rest-image-link">
+                                <a href="/reservations/reservation?restId=${rest.restId}" class="rest-image-link">
                                     <img src="${rest.restImage}" class="img-fluid h-100 w-100" alt="${rest.restName}" style="object-fit: cover;">
                                 </a>
                             </div>
@@ -626,7 +626,7 @@ function renderRests(restList) {
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h5 class="card-title mb-0">
-                                            <a href="/my_page/restaurant_details.html?id=${rest.restId}" class="rest-title">${rest.restName}</a>
+                                            <a href="/reservations/reservation?restId=${rest.restId}" class="rest-title">${rest.restName}</a>
                                         </h5>
                                         <i class="fas fa-heart favorite-btn ${rest.isFavorite ? 'active' : ''}"
                                            data-rest-id="${rest.restId}"></i>

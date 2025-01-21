@@ -1,8 +1,13 @@
-$(document).ready(function() {
+$(document).ready( async function() {
     // 儲存原始值
     let originalDate = '';
     let originalGuestCount = '';
     let hasLoadedTimes = false;  // 新增：追蹤是否已載入時間選項
+
+    let params = new URLSearchParams(window.location.search);
+    let images = await fetchEnvImages(params.get("restId"));
+    $(".card-img-top").attr("src", images[0]);
+
 
     // Modal 開啟時儲存原始值
     $('#editModal').on('show.bs.modal', function () {
@@ -31,6 +36,26 @@ $(document).ready(function() {
             });
         }
     });
+
+    async function fetchEnvImages(restId) {
+        let imgUrlList = [];
+        try {
+            let res = await fetch(`http://localhost:8080/envImg/images/${restId}`);
+            if (!res.ok) {
+                throw new Error(`Failed to fetch image IDs: ${res.status}`);
+            }
+            let imagesIds = await res.json();
+
+            for (const id of imagesIds) {
+                imgUrlList.push(`http://localhost:8080/envImg/image/${id}`);
+            }
+
+            return imgUrlList;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
 
     async function updateAvailableTime(){
         const reservationDate = $('#reservationDate').val();
