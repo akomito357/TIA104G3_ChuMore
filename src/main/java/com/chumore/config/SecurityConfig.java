@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
@@ -54,6 +55,7 @@ public class SecurityConfig {
 		provider.setPasswordEncoder(passwordEncoder());
 		return provider;
 	}
+
 
 	@Bean
 	@Order(1)
@@ -289,8 +291,8 @@ public class SecurityConfig {
 	                "https://stackpath.bootstrapcdn.com " +
 	                "https://maxcdn.bootstrapcdn.com " +
                     "https://code.jquery.com " +
-	                "https://maps.google.com" +
-                    "https://cdn.datatables.net;" +
+	                "https://maps.google.com " +
+                    "https://cdn.datatables.net; " +
 	                
 	                "style-src 'self' 'unsafe-inline' " +
 	                "https://cdnjs.cloudflare.com " +
