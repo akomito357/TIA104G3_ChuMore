@@ -254,7 +254,6 @@ public class SecurityConfig {
 	            .xssProtection()
 	            .and()
 	            .contentSecurityPolicy(
-
 	                "default-src 'self' " +
 	                "https://cdnjs.cloudflare.com " +
 	                "https://cdn.jsdelivr.net " +
@@ -267,13 +266,15 @@ public class SecurityConfig {
 	                "https://cdn.jsdelivr.net " +
 	                "https://stackpath.bootstrapcdn.com " +
 	                "https://maxcdn.bootstrapcdn.com " +
-                  "https://code.jquery.com " +
-	                "https://maps.google.com; " +
+                    "https://code.jquery.com " +
+	                "https://maps.google.com" +
+                    "https://cdn.datatables.net;" +
 	                
 	                "style-src 'self' 'unsafe-inline' " +
 	                "https://cdnjs.cloudflare.com " +
 	                "https://cdn.jsdelivr.net " +
 	                "https://stackpath.bootstrapcdn.com " +
+                    "https://cdn.datatables.net " +
 	                "https://maxcdn.bootstrapcdn.com; " +
 	                
 	                "img-src 'self' data: https: " +

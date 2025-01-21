@@ -36,7 +36,7 @@ public class DailyReservationRestController {
 
     // 變更特定時間、特定桌種每日訂位上限
     @PostMapping("/reservedLimits")
-    public ResponseEntity<?> addReservedLimitsByCondition(@RequestBody Map<String, String> conditions, @RequestParam Integer restId) {
+    public ResponseEntity<?> addReservedLimitsByCondition(@RequestBody Map<String, String> conditions, @SessionAttribute("restId") Integer restId) {
         validateRequestForAddReservedLimits(conditions);
         String startTime = conditions.get("startTime");
         String endTime = conditions.get("endTime");

@@ -22,8 +22,9 @@
     </th:block>
     <style>
         :root {
-            --primary-orange: #fd7e14;
-            --secondary-orange: #e76b00;
+            --primary-orange: #F2994A;
+            --secondary-orange: #e07f2f;
+            --completed-booking: #444774;
         }
         .booking-list {
             height: calc(100vh - 300px);
@@ -53,6 +54,8 @@
             padding: 5px 10px;
             border-radius: 15px;
             margin-right: 10px;
+            background-color: var(--primary-orange) !important;
+            color: white !important;
         }
         .calendar-container {
             background: white;
@@ -159,6 +162,51 @@
             color: #fff;
             background-color: #6c757d;
             border-color: #6c757d;
+        }
+
+        /* 修改按鈕相關樣式 */
+        .btn-primary {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+        }
+
+        /* 修改卡片標題背景色 */
+        .card-header.bg-primary {
+            background-color: var(--primary-orange) !important;
+        }
+
+        /* 修改導航項目活動狀態 */
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-orange);
+        }
+
+        .nav-pills .nav-link {
+            color: var(--primary-orange);
+        }
+
+        /* FullCalendar 按鈕樣式 */
+        .fc .fc-button-primary {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+
+        .fc .fc-button-primary:hover,
+        .fc .fc-button-primary:focus,
+        .fc .fc-button-primary:active,
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: var(--secondary-orange);
+            border-color: var(--secondary-orange);
+        }
+
+        .card-header.bg-completed {
+            background-color: var(--completed-booking) !important;
         }
     </style>
 </head>
@@ -300,7 +348,7 @@
 
                             <!-- 已完成的訂位 -->
                             <div class="card">
-                                <div class="card-header bg-secondary text-white">
+                                <div class="card-header bg-completed text-white">
                                     <h5 class="mb-0">
                                         <i class="bi bi-check2-circle"></i> 已完成訂位
                                     </h5>

@@ -257,8 +257,14 @@ $(document).ready(function() {
             // 重新綁定點擊事件
             $('.time-slot-btn').off('click').on('click', function() {
                 if (!$(this).hasClass('disabled-slot')) {
-                    $('.time-slot-btn').removeClass('active');
-                    $(this).addClass('active');
+                    // 如果已經是 active 狀態，則取消選取
+                    if ($(this).hasClass('active')) {
+                        $(this).removeClass('active');
+                    } else {
+                        // 否則移除其他按鈕的 active 狀態，並將此按鈕設為 active
+                        $('.time-slot-btn').removeClass('active');
+                        $(this).addClass('active');
+                    }
                     updateBookingSummary();
                 }
             });
