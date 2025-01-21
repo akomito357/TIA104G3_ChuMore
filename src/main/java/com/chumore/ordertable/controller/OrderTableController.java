@@ -72,7 +72,7 @@ public class OrderTableController {
             orderTable.setTableNumber(tableNumber);
             
             //生成 URL
-            String orderUrl = String.format("https://chumore.ddns.net/orders/addOrder/%d/%s", restId, tableNumber);
+            String orderUrl = String.format("http://chumore.ddns.net/orders/addOrder/%d/%s", restId, tableNumber);
             orderTable.setOrderTableUrl(orderUrl);            
             
             OrderTableVO newTable = orderTableSvc.addOrderTable(orderTable);
