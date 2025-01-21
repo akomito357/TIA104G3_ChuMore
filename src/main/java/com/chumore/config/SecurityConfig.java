@@ -275,11 +275,18 @@ public class SecurityConfig {
 	                "https://cdn.jsdelivr.net " +
 	                "https://stackpath.bootstrapcdn.com " +
                     "https://cdn.datatables.net " +
+	                "https://fonts.googleapis.com " +
+	                "https://fonts.gstatic.com " +
 	                "https://maxcdn.bootstrapcdn.com; " +
 	                
 	                "img-src 'self' data: https: " +
 	                "https://maps.google.com " +
 	                "https://*.google.com; " +
+	                
+	                "font-src 'self' " +
+	                "https://cdnjs.cloudflare.com " +
+	                "https://cdn.jsdelivr.net " +
+	                "https://fonts.gstatic.com; " +
 	                
 	                "frame-src 'self' " +
 	                "https://maps.google.com " +
