@@ -83,8 +83,9 @@ public class AuthController {
     public String processLogin(Authentication authentication, 
                              HttpSession session,
                              RedirectAttributes redirectAttributes,
-                             @RequestParam(required = false) String returnUrl) {
-        
+                             @RequestParam(required = false) String returnUrl,
+                             HttpServletRequest req) {
+    	
         if (authentication == null || !authentication.isAuthenticated()) {
             redirectAttributes.addFlashAttribute("errorMessage", "登入失敗，請重新嘗試");
             return "redirect:/auth/login?error" + (returnUrl != null ? "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8) : "");
@@ -115,7 +116,7 @@ public class AuthController {
         // 處理返回 URL
         if (returnUrl != null && !returnUrl.isBlank()) {
             // 安全檢查：確保 returnUrl 是相對路徑或當前域名下的 URL
-            if (isValidReturnUrl(returnUrl)) {
+            if (isValidReturnUrl(returnUrl, req)) {
                 return "redirect:" + returnUrl;
             }
             logger.warn("檢測到無效的 returnUrl: {}", returnUrl);
@@ -125,9 +126,10 @@ public class AuthController {
         return "redirect:" + getDefaultRedirectUrl(role);
     }
 
-    private boolean isValidReturnUrl(String returnUrl) {
+    private boolean isValidReturnUrl(String returnUrl, HttpServletRequest req) {
         // 檢查是否是相對路徑
         if (returnUrl.startsWith("/")) {
+        	System.out.println("是有效相對路徑");
             return true;
         }
         
@@ -135,8 +137,10 @@ public class AuthController {
         try {
             URL url = new URL(returnUrl);
             // 這裡可以添加您的域名檢查邏輯
-            return url.getHost().equals("your-domain.com");
+            System.out.println("是有效絕對路徑");
+            return url.getHost().equals(req.getServerName());
         } catch (MalformedURLException e) {
+        	System.out.println("無效路徑");
             return false;
         }
     }

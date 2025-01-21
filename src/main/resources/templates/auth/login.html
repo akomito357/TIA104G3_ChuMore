@@ -93,8 +93,8 @@ h3.h5, i.bi{
 						<form action="/auth/login" method="post" class="needs-validation"
 							novalidate>
 							<!-- 隱藏的 returnUrl 欄位 -->
-							<input type="hidden" name="returnUrl"
-								th:value="${param.returnUrl}" />
+							<input type="hidden" name="returnUrl" 
+							th:value="${session.returnUrl} ?: ''" />
 
 							<!-- 電子信箱欄位 -->
 							<div class="mb-3">
