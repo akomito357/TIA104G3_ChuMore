@@ -85,8 +85,8 @@
                         <label class="mb-0">請輸入欲使用的點數：</label>
                         <input type="number" min="0" class="form-control" style="max-width: 200px;" 
                             placeholder="請輸入使用點數數量" id="usePoints" name="usePoints">
-                        <input type="text" name="memberId" readonly>
-                        <input type="text" th:value="${orderMaster.orderId}" name="orderId" readonly>
+                        <input type="hidden" name="memberId" readonly>
+                        <input type="hidden" th:value="${orderMaster.orderId}" name="orderId" readonly>
                         <button type="button" class="btn btn-primary" id="verifyDiscPtsUse">確認</button>
                     </form>
                 </div>

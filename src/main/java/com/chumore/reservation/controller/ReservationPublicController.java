@@ -167,14 +167,17 @@ public class ReservationPublicController {
         objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
         ReservationVO reservation = null;
         int restId = 0; //
-        int memberId = 0; //
+        String reservationDate = "";
+        String reservationTime = "";
 
         try {
             // 過濾 JSON 中的無效欄位
             ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(reservationJson);
             jsonNode.remove(List.of("memberName", "restName", "memberGender", "rest"));
             restId = jsonNode.get("restId").asInt(); // 獲取 restId
-            memberId = jsonNode.get("memberId").asInt(); // 獲取 memberId
+            int memberId = jsonNode.get("memberId").asInt(); // 獲取 memberId
+            reservationDate = jsonNode.get("reservationDate").asText(); // 獲取 reservationDate
+            reservationTime = jsonNode.get("reservationTime").asText(); // 獲取 reservationTime
             jsonNode.remove("restId");
             jsonNode.remove("memberId");
             // 將過濾後的 JSON 轉換為 ReservationVO
@@ -204,7 +207,8 @@ public class ReservationPublicController {
         ReservationVO newReservation = reservationService.addReservation(reservation);
         
         // 通知
-        String message = notificationSvc.confirmReservation(Integer.valueOf(restId).toString(), Integer.valueOf(memberId).toString());
+        String reservationDateTime = reservationDate + " " + reservationTime;
+        String message = notificationSvc.confirmReservation(Integer.valueOf(restId).toString(), reservationDateTime);
         notificationSvc.notifyToRest(Integer.valueOf(restId).toString(), message);
 
         // 刪除 redis 中的 token

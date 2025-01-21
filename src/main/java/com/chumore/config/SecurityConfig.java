@@ -275,6 +275,8 @@ public class SecurityConfig {
 	                "https://cdn.jsdelivr.net " +
 	                "https://stackpath.bootstrapcdn.com " +
                     "https://cdn.datatables.net " +
+	                "https://fonts.googleapis.com " +
+	                "https://fonts.gstatic.com " +
 	                "https://maxcdn.bootstrapcdn.com; " +
 	                
 	                "img-src 'self' data: https: " +

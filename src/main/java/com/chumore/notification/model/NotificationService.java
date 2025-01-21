@@ -51,7 +51,7 @@ public class NotificationService {
 	
 	public String confirmReservation(String restId, String caller) {
 		String type = "reservation";
-		String content = "已收到〈" + caller + "〉的訂位";
+		String content = "有一筆〈" + caller + "〉的新訂位";
 		String message = saveMessage(restId, caller, type, content);
 		return message;
 	}
