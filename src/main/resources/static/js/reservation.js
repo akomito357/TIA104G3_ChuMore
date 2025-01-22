@@ -225,7 +225,7 @@ $(document).ready(function() {
     function generateTimeSlotsButton(containerId,startHour,endHour,availableTablesData){
         const container = $(`#${containerId}`);
 
-        for(let hour = startHour; hour < endHour; hour++){
+        for(let hour = startHour; hour <= endHour; hour++){
             const time = `${hour.toString().padStart(2,'0')}:00`;
             const availableTables =  parseInt(availableTablesData[hour])
             const isAvailable =  availableTables ? true:false;
